@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "Shaitan",
+  "DisplayName": "Lair of Shaitan",
+  "Music": "Abyss",
+  "Difficulty": 4,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "Shaitan.jm" ]
+}

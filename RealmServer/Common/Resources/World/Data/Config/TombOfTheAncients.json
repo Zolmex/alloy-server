@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "Tomb",
+  "DisplayName": "Tomb of the Ancients",
+  "Music": "Tomb",
+  "Difficulty": 4,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "Tomb.jm" ]
+}

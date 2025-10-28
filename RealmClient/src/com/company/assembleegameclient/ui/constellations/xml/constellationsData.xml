@@ -1,0 +1,255 @@
+﻿<Nodes>
+	<!-- INDUS NODES START -->
+	<Node id="1" constellation="0" large="true" name="Nature's Vengeance" row="0">
+		<Description>
+			- Wrath: Each time you apply a debuff to an enemy, also apply a stack of Wrath lasting five seconds. When an enemy reaches a minimum of three Wrath stacks, replace all Wrath stacks with Venom stacks. Additionally, the enemy will explode, dealing damage, spreading their debuffs, and applying a Wrath stack to all nearby enemies. Adding a new stack refreshes the duration.
+			- Venom: Entities take poison damage equal to the base damage multiplied by the number of Venom stacks, distributed evenly over the duration of the effect. Each stack lasts 6 seconds by default, with the duration reducing to a minimum of 3 seconds based on your Wisdom. Adding a new stack refreshes the duration.
+			- Vengeance: Wrath and Venom will affect you and other Nature’s Vengeance users.
+		</Description>
+	</Node>
+	<Node id="2" constellation="0" large="true" name="Steady Assault" row="0">
+		<Description>
+			- Firm Grip: Increases your weapon’s max damage by 20%, and then averages your weapon damage.
+			- Onslaught: For every attack you land on an enemy, gain an onslaught stack (max 15). If you have Fading Fury stacks, instead remove one. Gain +x% attack speed and +x% critical strike chance per stack of onslaught.
+			- Fading Fury: Stacks of onslaught will begin rapidly depleting when you have not hit an enemy in the past second. While you have 0 Onslaught stacks, rapidly gain Fading Fury stacks up to 15, which decrease your attack speed and critical strike chance by the same amount.
+		</Description>
+	</Node>
+	<Node id="3" constellation="0" large="true" name="Masterpiece" row="0">
+		<Description>
+			- Untouched: While at max life, gain an additional +x% damage as well as +x% critical damage.
+			- Influential: Gain bonus on-hit adaptive damage scaling with your current life. Deals no damage at 50%, maxes out at 100%, and deals negative damage at 0%.
+			- Desecrated: Your life regeneration, defense, movement speed, and healing received are all dramatically lowered based on how little health you have, starting at 50%.
+		</Description>
+	</Node>
+	<Node id="4" constellation="0" large="true" name="Diverging Destiny" row="0">
+		<Description>
+			- Diverge: Projectiles will split and chain towards nearby enemies on-hit, each dealing half the damage of the original.
+			- Destiny: Your attack speed is capped at x. Your projectiles will chain an extra time for every x excess attack speed.
+			- Converge: If there are no enemies nearby, projectiles do not chain and will instead strike enemies with lightning on-hit, dealing adaptive damage based on your bonus chains from Destiny.
+		</Description>
+	</Node>
+
+	<Node id="1" constellation="0" large="false" name="Rising Fury" row="0">
+		<Description>Every 3 seconds in combat, gain a stack of Fury. Each stack grants +1% additional overall damage, with diminishing returns beginning at 20 stacks.</Description>
+	</Node>
+	<Node id="2" constellation="0" large="false" name="Beat-em-up" row="0">
+		<Description>Every three hits against a single enemy strikes them with an additional blow, damaging the enemy for half the damage of the previous hit.</Description>
+	</Node>
+	<Node id="3" constellation="0" large="false" name="Holy Excalibur" row="0">
+		<Description>Your next attack shoots a large sword that hits the first enemy, dealing damage identical to your weapon, but always critting. This skill gains bonus damage for each enemy hit during its cooldown. (3 second cooldown)</Description>
+	</Node>
+	<Node id="1" constellation="0" large="false" name="Lifeblood" row="1">
+		<Description>Excess healing beyond your maximum life that is not basic regeneration is stored in your Lifeblood Pool, containing up to 10% of your max life. When below full health, you will be healed immediately from this pool.</Description>
+	</Node>
+	<Node id="2" constellation="0" large="false" name="Delightful Harvest" row="1">
+		<Description>After killing an enemy, regain up to 15% of your life and mana depending on how long it took to kill said enemy.</Description>
+	</Node>
+	<Node id="3" constellation="0" large="false" name="Inner Machinations" row="1">
+		<Description>Gain a stack of machinations for three seconds upon hitting an enemy, each stack grants increased mana regeneration with diminishing returns. Gain increased attack speed scaling with your current mana regeneration.</Description>
+	</Node>
+	<Node id="1" constellation="0" large="false" name="Blood Reaper" row="2">
+		<Description>Gain one stack of Blood Reaper every time you kill an enemy, and one stack every third time you damage an enemy, these stacks last five seconds. Gain increased attack speed per stack. Every 8 stacks lost, gain a small burst of health</Description>
+	</Node>
+	<Node id="2" constellation="0" large="false" name="Soul Reaper" row="2">
+		<Description>Gain one stack of Soul Reaper every time you kill an enemy, and one stack every third time you damage an enemy, these stacks last five seconds. Gain increased critical strike chance per stack. Every time you lose 10 stacks, your next hit will strike twice.</Description>
+	</Node>
+	<Node id="3" constellation="0" large="false" name="Mind Reaper" row="2">
+		<Description>Gain one stack of Mind Reaper every time you kill an enemy, and one stack every third time you damage an enemy, these stacks last five seconds. Gain increased damage based on how full your mana is per stack. Every 8 stacks lost, gain a small burst of mana.</Description>
+	</Node>
+
+	<!-- INDUS NODES END -->
+
+	<!-- APUS NODES START -->
+
+	<Node id="1" constellation="1" large="true" name="Primal Strike" row="0">
+		<Description>
+			- Vital: When you hit an enemy for the first time, deal 12% increased damage to that enemy for the next five seconds.
+			- Smite: When the Vital effect runs out, smite the enemy from above, dealing 10% of the amount of damage you dealt during the effect. If the enemy dies before the effect runs out, or is killed by the smite, smite all enemies within 2.5 tiles of the killed enemy, dividing the damage across each smite. Smite is not affected by Exhaustion.
+			- Exhaustion: When the Vital effect wears off, deal 5% less damage to that enemy for the next ten seconds.
+		</Description>
+	</Node>
+	<Node id="2" constellation="1" large="true" name="Bloody Rage" row="0">
+		<Description>
+			- Gore: Converts all weapon damage dealt into a bleed effect on enemies that lasts three seconds, specifically, this bleed will deal 1/3 of the original shot’s damage every second three times.
+			- Slaughter: Each bleed tick counts as a regular hit against enemies, and the third tick counts as an ability hit.
+			- Bloodletting: Lose 1% overall damage every time you hit an enemy up to -30%, each % expires after three seconds.
+		</Description>
+	</Node>
+	<Node id="3" constellation="1" large="true" name="Explosive Tyranny" row="0">
+		<Description>
+			- Combustion: Upon hitting an enemy, your projectiles and abilities will explode, dealing bonus adaptive damage to all enemies in a radius based on the damage that procced the explosion. (editor note, explosions will also damage the enemy that procced the explosion)
+			- Burn-out: Gain a stack of burn-out every time Combustion procs. Upon reaching 30 stacks, you lose all stacks and Combustion stops working for five seconds. During this time you lose 33% attack speed and mana gained from all sources is halved.
+		</Description>
+	</Node>
+	<Node id="4" constellation="1" large="true" name="Warmongering Revolutionary" row="0">
+		<Description>
+			- Warmonger: Convert 75% of your attack speed and critical chance into a massive weapon damage increase. Critical hits deal twice as much damage.
+			- Stress: Your critical chance is capped at 10%.
+		</Description>
+	</Node>
+
+	<Node id="1" constellation="1" large="false" name="Sudden Impact" row="0">
+		<Description>+100% damage for your first strike onto an enemy</Description>
+	</Node>
+	<Node id="2" constellation="1" large="false" name="Sadist’s Flame" row="0">
+		<Description>Gain increased rate of fire the lower your health.</Description>
+	</Node>
+	<Node id="3" constellation="1" large="false" name="Point Blank" row="0">
+		<Description>Projectiles deal up to x% more damage to targets at the start of their movement, dealing less damage as they travel farther.</Description>
+	</Node>
+	<Node id="1" constellation="1" large="false" name="One Thousand Cuts" row="1">
+		<Description>Gain +x% increased attack speed for two seconds upon hitting an enemy for the first time.</Description>
+	</Node>
+	<Node id="2" constellation="1" large="false" name="Marked for Death" row="1">
+		<Description>Deal +x% bonus damage to enemies per debuff they have.</Description>
+	</Node>
+	<Node id="3" constellation="1" large="false" name="eyeball collection3" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="1" constellation="1" large="false" name="treasure hunter" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="1" large="false" name="treasure hunter2" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="1" large="false" name="treasure hunter3" row="2">
+		<Description>small node gg</Description>
+	</Node>
+
+	<!-- APUS NODES END -->
+
+	<!-- CYGNUS NODES START -->
+
+	<Node id="1" constellation="2" large="true" name="Comet" row="0">
+		<Description>comet node from league of legends gg</Description>
+	</Node>
+	<Node id="2" constellation="2" large="true" name="Comet2" row="0">
+		<Description>comet node from league of legends gg</Description>
+	</Node>
+	<Node id="3" constellation="2" large="true" name="Comet3" row="0">
+		<Description>comet node from league of legends gg</Description>
+	</Node>
+	<Node id="4" constellation="2" large="true" name="Comet4" row="0">
+		<Description>comet node from league of legends gg</Description>
+	</Node>
+
+	<Node id="1" constellation="2" large="false" name="manaflow band" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="2" large="false" name="manaflow band2" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="2" large="false" name="manaflow band3" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="1" constellation="2" large="false" name="celerity" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="2" large="false" name="celerity2" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="2" large="false" name="celerity3" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="1" constellation="2" large="false" name="scorch" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="2" large="false" name="scorch2" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="2" large="false" name="scorch3" row="2">
+		<Description>small node gg</Description>
+	</Node>
+
+	<!-- CYGNUS NODES END -->
+
+	<!-- GRUS NODES START -->
+
+	<Node id="1" constellation="3" large="true" name="Grasp" row="0">
+		<Description>grasp node from league of legends gg</Description>
+	</Node>
+	<Node id="2" constellation="3" large="true" name="Grasp2" row="0">
+		<Description>grasp node from league of legends gg</Description>
+	</Node>
+	<Node id="3" constellation="3" large="true" name="Grasp3" row="0">
+		<Description>grasp node from league of legends gg</Description>
+	</Node>
+	<Node id="4" constellation="3" large="true" name="Grasp4" row="0">
+		<Description>grasp node from league of legends gg</Description>
+	</Node>
+
+	<Node id="1" constellation="3" large="false" name="demolish" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="3" large="false" name="demolish2" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="3" large="false" name="demolish3" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="1" constellation="3" large="false" name="conditioning" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="3" large="false" name="conditioning2" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="3" large="false" name="conditioning3" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="1" constellation="3" large="false" name="overgrowth" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="3" large="false" name="overgrowth2" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="3" large="false" name="overgrowth3" row="2">
+		<Description>small node gg</Description>
+	</Node>
+
+	<!-- GRUS NODES END -->
+
+	<!-- PYXIS NODES START -->
+
+	<Node id="1" constellation="4" large="true" name="Unsealed Spellbook" row="0">
+		<Description>spellbook node from league of legends gg</Description>
+	</Node>
+	<Node id="2" constellation="4" large="true" name="Unsealed Spellbook2" row="0">
+		<Description>spellbook node from league of legends gg</Description>
+	</Node>
+	<Node id="3" constellation="4" large="true" name="Unsealed Spellbook3" row="0">
+		<Description>spellbook node from league of legends gg</Description>
+	</Node>
+	<Node id="4" constellation="4" large="true" name="Unsealed Spellbook4" row="0">
+		<Description>spellbook node from league of legends gg</Description>
+	</Node>
+
+	<Node id="1" constellation="4" large="false" name="perfect timing" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="4" large="false" name="perfect timing2" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="4" large="false" name="perfect timing3" row="0">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="1" constellation="4" large="false" name="futures market" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="4" large="false" name="futures market2" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="4" large="false" name="futures market3" row="1">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="1" constellation="4" large="false" name="approach velocity" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="2" constellation="4" large="false" name="approach velocity2" row="2">
+		<Description>small node gg</Description>
+	</Node>
+	<Node id="3" constellation="4" large="false" name="approach velocity3" row="2">
+		<Description>small node gg</Description>
+	</Node>
+
+	<!-- PYXIS NODES END -->
+</Nodes>

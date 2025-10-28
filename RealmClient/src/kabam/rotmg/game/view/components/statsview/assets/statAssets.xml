@@ -1,0 +1,27 @@
+<statAssets>
+    <statAsset name="AllStatsBackground" x="0" y="0" width="206" height="600"/>
+    <statAsset name="AllStatsTab" x="206" y="0" width="73" height="17"/>
+    <statAsset name="AllStatsTabDark" x="206" y="17" width="73" height="17"/>
+
+    <statAsset name="StatsRightSide" x="0" y="600" width="186" height="129"/>
+    <statAsset name="StatsButtonBig" x="206" y="34" width="80" height="19"/>
+    <statAsset name="StatsButtonSmall" x="206" y="53" width="63" height="19"/>
+
+    <statAsset name="StatsSubtractButton" x="206" y="72" width="16" height="16"/>
+    <statAsset name="StatsAddButton" x="222" y="72" width="16" height="16"/>
+    <statAsset name="StatsSubtractButtonDark" x="206" y="88" width="16" height="16"/>
+    <statAsset name="StatsAddButtonDark" x="222" y="88" width="16" height="16"/>
+
+    <statAsset name="StatsSubtractButtonGold" x="238" y="72" width="16" height="16"/>
+    <statAsset name="StatsAddButtonGold" x="254" y="72" width="16" height="16"/>
+    <statAsset name="StatsSubtractButtonDarkGold" x="238" y="88" width="16" height="16"/>
+    <statAsset name="StatsAddButtonDarkGold" x="254" y="88" width="16" height="16"/>
+
+    <statAsset name="AttackIcon" x="208" y="104" width="13" height="13"/>
+    <statAsset name="DefenseIcon" x="208" y="120" width="13" height="13"/>
+    <statAsset name="DexterityIcon" x="208" y="136" width="7" height="9"/>
+    <statAsset name="WisdomIcon" x="208" y="152" width="7" height="9"/>
+
+    <statAsset name="InventoryRightSide" x="0" y="729" width="186" height="129"/>
+    <statAsset name="ConstellationsRightSide" x="0" y="858" width="186" height="129"/>
+</statAssets>

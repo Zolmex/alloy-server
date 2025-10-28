@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "HauntedCemetery",
+  "DisplayName": "Haunted Cemetery",
+  "Music": "Abyss",
+  "Difficulty": 3,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "HauntedCemetery.jm", "HauntedCemeteryGates.jm", "HauntedCemeteryGraves.jm", "HauntedCemeteryFinalBattle.jm" ]
+}

@@ -1,0 +1,1841 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget></PlatformTarget>
+    <OutputPath>../bin/debug</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>../bin/release</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\RealmClient\src\com\company\assembleegameclient\ui\constellations\xml\constellationsData.xml" Link="FeatureData\constellationsData.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_alienInvasionChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_alienInvasionChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_alienInvasionChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_alienInvasionChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_alienInvasionObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_alienInvasionObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_alienInvasionObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_alienInvasionObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_ancientRuinsChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_ancientRuinsChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_ancientRuinsChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_ancientRuinsChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_ancientRuinsObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_ancientRuinsObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_ancientRuinsObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_ancientRuinsObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_archbishopChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_archbishopChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_archbishopChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_archbishopChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_archbishopObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_archbishopObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_archbishopObjects64x64.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_archbishopObjects64x64.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_archbishopObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_archbishopObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_autumnNexusChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_autumnNexusChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_autumnNexusChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_autumnNexusChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_autumnNexusObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_autumnNexusObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_autumnNexusObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_autumnNexusObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_battleOryxChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_battleOryxChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_battleOryxChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_battleOryxChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_battleOryxObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_battleOryxObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_battleOryxObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_battleOryxObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_buffedBunnyChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_buffedBunnyChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_buffedBunnyObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_buffedBunnyObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_buffedBunnyObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_buffedBunnyObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars16x16dEncounters.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars16x16dEncounters.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars16x16dEncounters2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars16x16dEncounters2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars16x16dMountains1.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars16x16dMountains1.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars16x16dMountains2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars16x16dMountains2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars16x16rEncounters.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars16x16rEncounters.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars16x8dEncounters.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars16x8dEncounters.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars16x8rEncounters.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars16x8rEncounters.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8dBeach.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8dBeach.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8dEncounters.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8dEncounters.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8dHero1.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8dHero1.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rBeach.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rBeach.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rEncounters.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rEncounters.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rHero1.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rHero1.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rHero2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rHero2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rHigh.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rHigh.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rLow1.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rLow1.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rLow2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rLow2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rMid.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rMid.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rMid2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rMid2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rPets1.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rPets1.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rPets1Mask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rPets1Mask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rPets2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rPets2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_chars8x8rPetsKaratePenguin.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_chars8x8rPetsKaratePenguin.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cnidarianReefObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cnidarianReefObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cnidarianReefObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cnidarianReefObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_crystalCaveChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_crystalCaveChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_crystalCaveChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_crystalCaveChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_crystalCaveObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_crystalCaveObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_crystalCaveObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_crystalCaveObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cursedLibraryChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cursedLibraryChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cursedLibraryChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cursedLibraryChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cursedLibraryCharsAvalon16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cursedLibraryCharsAvalon16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cursedLibraryObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cursedLibraryObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cursedLibraryObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cursedLibraryObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_cursors.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_cursors.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d1Chars16x16r.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d1Chars16x16r.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d1Chars8x8r.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d1Chars8x8r.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d1LofiObj.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d1LofiObj.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d1LofiObjBig.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d1LofiObjBig.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d2Chars16x16r.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d2Chars16x16r.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d2LofiObj.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d2LofiObj.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d2LofiObjBig.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d2LofiObjBig.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d3Chars16x16r.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d3Chars16x16r.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d3Chars8x8r.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d3Chars8x8r.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d3LofiObj.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d3LofiObj.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_d3LofiObjBig.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_d3LofiObjBig.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_DarknessBackground.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_DarknessBackground.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_epicHiveChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_epicHiveChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_epicHiveChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_epicHiveChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_epicHiveObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_epicHiveObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_epicHiveObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_epicHiveObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_EvolveBackground.jpg">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_EvolveBackground.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_fungalCavernChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_fungalCavernChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_fungalCavernChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_fungalCavernChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_fungalCavernObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_fungalCavernObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_fungalCavernObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_fungalCavernObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_Hanami8x8chars.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_Hanami8x8chars.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_HanamiParts8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_HanamiParts8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_innerMask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_innerMask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_innerP1Mask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_innerP1Mask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_innerP2Mask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_innerP2Mask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_innerWorkingsChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_innerWorkingsChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_innerWorkingsChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_innerWorkingsChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_innerWorkingsObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_innerWorkingsObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_innerWorkingsObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_innerWorkingsObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lairOfDraconisChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lairOfDraconisChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lairOfDraconisChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lairOfDraconisChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lairOfDraconisObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lairOfDraconisObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lairOfDraconisObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lairOfDraconisObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lairOfShaitanChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lairOfShaitanChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lairOfShaitanObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lairOfShaitanObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lairOfShaitanObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lairOfShaitanObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofi.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofi.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiChar.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiChar.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiChar2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiChar2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiCharBig.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiCharBig.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiEnvironment.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiEnvironment.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiEnvironment2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiEnvironment2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiEnvironment3.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiEnvironment3.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiGravestone.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiGravestone.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiInterface.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiInterface.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiInterface2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiInterface2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiInterfaceBig.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiInterfaceBig.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj2.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj2.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj3.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj3.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj4.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj4.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj40x40.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj40x40.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj5.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj5.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj5b.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj5b.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObj6.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObj6.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiObjBig.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiObjBig.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParticlesBeam.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParticlesBeam.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParticlesElectric.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParticlesElectric.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParticlesHolyBeam.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParticlesHolyBeam.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParticlesMeteor.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParticlesMeteor.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParticlesShocker.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParticlesShocker.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParticlesSkull.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParticlesSkull.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParticlesTelegraph.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParticlesTelegraph.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiParts.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiParts.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiProjs.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiProjs.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lofiProjsBig.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lofiProjsBig.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lostHallsChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lostHallsChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lostHallsChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lostHallsChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lostHallsObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lostHallsObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_lostHallsObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_lostHallsObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_magicWoodsChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_magicWoodsChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_magicWoodsChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_magicWoodsChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_magicWoodsObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_magicWoodsObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_magicWoodsObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_magicWoodsObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_mountainTempleChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_mountainTempleChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_mountainTempleChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_mountainTempleChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_mountainTempleObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_mountainTempleObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_mountainTempleObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_mountainTempleObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxHordeChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxHordeChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxHordeChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxHordeChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxHordeObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxHordeObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxHordeObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxHordeObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxSanctuaryChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxSanctuaryChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxSanctuaryChars32x32.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxSanctuaryChars32x32.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxSanctuaryChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxSanctuaryChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxSanctuaryObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxSanctuaryObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxSanctuaryObjects32x32.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxSanctuaryObjects32x32.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_oryxSanctuaryObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_oryxSanctuaryObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_outerMask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_outerMask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_parasiteDenChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_parasiteDenChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_parasiteDenChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_parasiteDenChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_parasiteDenObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_parasiteDenObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_parasiteDenObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_parasiteDenObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_petsDivine.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_petsDivine.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_players.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_players.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_playersMask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_playersMask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_playersSkins.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_playersSkins.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_playersSkins16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_playersSkins16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_playersSkins16Mask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_playersSkins16Mask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_playersSkinsMask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_playersSkinsMask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_redLootBag.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_redLootBag.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_SakuraEnvironment16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_SakuraEnvironment16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_SakuraEnvironment8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_SakuraEnvironment8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_santaWorkshopChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_santaWorkshopChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_santaWorkshopChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_santaWorkshopChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_santaWorkshopObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_santaWorkshopObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_santaWorkshopObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_santaWorkshopObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_secludedThicketChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_secludedThicketChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_secludedThicketChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_secludedThicketChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_secludedThicketObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_secludedThicketObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_secludedThicketObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_secludedThicketObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_sidesMask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_sidesMask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_StarburstSpinner.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_StarburstSpinner.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_stars.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_stars.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_stPatricksChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_stPatricksChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_stPatricksChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_stPatricksChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_stPatricksObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_stPatricksObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_stPatricksObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_stPatricksObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_summerNexusChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_summerNexusChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_summerNexusChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_summerNexusChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_summerNexusObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_summerNexusObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_summerNexusObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_summerNexusObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_textile10x10.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_textile10x10.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_textile4x4.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_textile4x4.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_textile5x5.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_textile5x5.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_textile9x9.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_textile9x9.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_theGoldenArcher.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_theGoldenArcher.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_theGoldenArcherMask.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_theGoldenArcherMask.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_theMachineChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_theMachineChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_theMachineChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_theMachineChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_theMachineObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_theMachineObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_theMachineObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_theMachineObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_xmasNexusChars16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_xmasNexusChars16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_xmasNexusChars8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_xmasNexusChars8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_xmasNexusObjects16x16.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_xmasNexusObjects16x16.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_xmasNexusObjects8x8.png">
+      <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_xmasNexusObjects8x8.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_AbyssOfDemonsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_AbyssOfDemonsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_alienInvasionGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_alienInvasionGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_alienInvasionObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_alienInvasionObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_AlliesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_AlliesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ancientRuinsGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ancientRuinsGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ancientRuinsObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ancientRuinsObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_archbishopGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_archbishopGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_archbishopObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_archbishopObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_archbishopObjectsMenCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_archbishopObjectsMenCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ArenaCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ArenaCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_autumnNexusGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_autumnNexusGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_autumnNexusObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_autumnNexusObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_battleOryxGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_battleOryxGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_battleOryxObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_battleOryxObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_BelladonnaCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_BelladonnaCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_BTestingCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_BTestingCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_buffedBunnyObjectCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_buffedBunnyObjectCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_CandyLandCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_CandyLandCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_CaveOfAThousandTreasuresCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_CaveOfAThousandTreasuresCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_cnidarianReefGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_cnidarianReefGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_cnidarianReefObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_cnidarianReefObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ContainersCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ContainersCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_crystalCaveGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_crystalCaveGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_crystalCaveObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_crystalCaveObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_cursedLibraryGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_cursedLibraryGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_cursedLibraryObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_cursedLibraryObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_DyesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_DyesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EncountersCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EncountersCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EpicForestMazeCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EpicForestMazeCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_epicHiveGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_epicHiveGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_epicHiveObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_epicHiveObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EpicPirateCaveCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EpicPirateCaveCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EpicSpiderDenCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EpicSpiderDenCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EquipCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EquipCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EquipKeysCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EquipKeysCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EquipmentSetsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EquipmentSetsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EquipSkinsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EquipSkinsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_EquipTestCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_EquipTestCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_eventChestObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_eventChestObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ForbiddenJungleCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ForbiddenJungleCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ForestMazeCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ForestMazeCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_fungalCavernGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_fungalCavernGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_fungalCavernObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_fungalCavernObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_GhostShipCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_GhostShipCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_GraveStonesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_GraveStonesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_GroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_GroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_hanaminexusGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_hanaminexusGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_hanaminexusObjectCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_hanaminexusObjectCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_HauntedCemeteryCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_HauntedCemeteryCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_HeroesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_HeroesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_HighCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_HighCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_iceCaveGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_iceCaveGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_iceCaveObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_iceCaveObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_IceTombCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_IceTombCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_innerWorkingsGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_innerWorkingsGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_innerWorkingsObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_innerWorkingsObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_KTestingCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_KTestingCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_LairOfDraconisCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_LairOfDraconisCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_lairOfDraconisGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_lairOfDraconisGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_lairOfDraconisObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_lairOfDraconisObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_LairOfShaitanCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_LairOfShaitanCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_lairOfShaitanObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_lairOfShaitanObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_lostHallsGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_lostHallsGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_lostHallsObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_lostHallsObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_LowCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_LowCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_MadLabCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_MadLabCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_magicWoodsGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_magicWoodsGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_magicWoodsObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_magicWoodsObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ManorOfTheImmortalsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ManorOfTheImmortalsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_MidCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_MidCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_miniDungeonHubCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_miniDungeonHubCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_MountainsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_MountainsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_mountainTempleGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_mountainTempleGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_mountainTempleObjectCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_mountainTempleObjectCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_MTestingCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_MTestingCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_NexusDestroyedCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_NexusDestroyedCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_NPCsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_NPCsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_OceanTrenchCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_OceanTrenchCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_OryxCastleCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_OryxCastleCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_OryxChamberCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_OryxChamberCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_OryxChickenChamberCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_OryxChickenChamberCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_oryxHordeGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_oryxHordeGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_oryxHordeObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_oryxHordeObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_oryxSanctuaryGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_oryxSanctuaryGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_oryxSanctuaryObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_oryxSanctuaryObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_oryxSanctuaryUObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_oryxSanctuaryUObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_OryxWineCellarCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_OryxWineCellarCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_parasiteDenGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_parasiteDenGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_parasiteDenObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_parasiteDenObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_particlesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_particlesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PermaFrostLordCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PermaFrostLordCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PermapetsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PermapetsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PetsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PetsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PirateCaveCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PirateCaveCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PlayersCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PlayersCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PlayersZombiesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PlayersZombiesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PortalsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PortalsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ProjectilesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ProjectilesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PuppetMasterCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PuppetMasterCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_PuppetMasterEncoreCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_PuppetMasterEncoreCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_RegionsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_RegionsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_santaWorkshopGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_santaWorkshopGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_santaWorkshopObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_santaWorkshopObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_secludedThicketGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_secludedThicketGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_secludedThicketObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_secludedThicketObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ShattersCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ShattersCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ShoreCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ShoreCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_SkinsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_SkinsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_SnakePitCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_SnakePitCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_SpiderDenCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_SpiderDenCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_SpriteWorldCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_SpriteWorldCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_StaticObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_StaticObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_STestingCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_STestingCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_stPatricksGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_stPatricksGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_stPatricksObjectCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_stPatricksObjectCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_summerNexusGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_summerNexusGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_summerNexusObjectCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_summerNexusObjectCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TestingObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TestingObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TextilesCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TextilesCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TheHiveCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TheHiveCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_theMachineGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_theMachineGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_theMachineObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_theMachineObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TokenCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TokenCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TombOfTheAncientsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TombOfTheAncientsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_ToxicSewersCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_ToxicSewersCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TTestingCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TTestingCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TutorialMonstersCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TutorialMonstersCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TutorialObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TutorialObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_TutorialScriptCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_TutorialScriptCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_UndeadLairCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_UndeadLairCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_WillemTestingCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_WillemTestingCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_xmasNexusGroundCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_xmasNexusGroundCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\xmls\EmbeddedData_xmasNexusObjectsCXML.xml">
+      <Link>Resources\Xml\Data\xmls\EmbeddedData_xmasNexusObjectsCXML.xml</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ionic.Zlib.Core" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\Config\Data\appEngineConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\databaseConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\apiConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\discordBotConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\realmConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\gameServerConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\newAccountsConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\newCharsConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\newsConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Abyss1.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Abyss2.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Abyss3.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Guild0.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Guild1.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Guild2.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Guild3.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\MadLabTEST.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Nexus.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_Avatar.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_RockDragon.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\UndeadLair1.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\UndeadLair2.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Vault.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Realm1.wmap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Realm2.wmap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Realm3.wmap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_GhostShip.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_Hermit.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_KageKami.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Behaviors\BehaviorLib_Test.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_AbyssOfDemonsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_CandyLandCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_CaveOfAThousandTreasuresCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_DyesCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_EncountersCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_EquipCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_ForbiddenJungleCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_GhostShipCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_GroundCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_HauntedCemeteryCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_HighCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_LowCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_MadLabCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_ManorOfTheImmortalsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_MidCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_MonstersCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_ObjectsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_OceanTrenchCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_OryxCastleCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_OryxChamberCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_OryxWineCellarCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_PermapetsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_PetsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_PirateCaveCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_PlayersCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_ProjectilesCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_RegionsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_ShoreCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_SkinsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_SnakePitCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_SpriteWorldCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_StaticObjectsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_TempObjectsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_TestingObjectsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_TextilesCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_TombOfTheAncientsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_TutorialObjectsCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_TutorialScriptCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_UndeadLairCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Merchants\NexusMerchants.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Xml\Data\EmbeddedData_SwampBiomeGroundCXML.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Config\Data\databaseManagerConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\IceCave.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\HauntedCemeteryGates.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Shaitan.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\HauntedCemeteryGraves.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\BilgewatersGrotto.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\HauntedCemetery.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\ForbiddenJungle.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\HauntedCemeteryFinalBattle.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\DeadwaterDocks.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\ForestMaze.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\IceTomb.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\CaveThousandTreasures.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\DavyJonesLocker.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\LostHalls.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\MadLab.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Manor.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\MountainTemple.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\OceanTrench.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\OryxChamber.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\PirateCave.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\PuppetMastersEncore.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\PuppetMastersTheatre.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SnakePit.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SpiderDen.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SpriteWorld.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\CrawlingDepths.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\InnerSanctum.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Shatters.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Tomb.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\UndeadLair3.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Toxic Sewers.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\WineCellar.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\WoodlandLabyrinth.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Abyss.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Test.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\GuildHall.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\UndeadLair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\TombOfTheAncients.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Nexus.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Vault.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\OceanTrench.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\OryxCastle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Realm.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SnakePit.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_Avatar.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_GhostShip.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_Hermit.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_KageKami.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_RockDragon.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\WineCellar.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\OryxCastle.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\BilgewatersGrotto.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\CaveTT.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\CrawlingDepths.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\DavyJones.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\DeadwaterDocks.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\ForbiddenJungle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\ForestMaze.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\HauntedCemetery.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\IceCave.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\IceTomb.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\InnerSanctum.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\LostHalls.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\MadLab.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Manor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\MountainTemple.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\OryxChamber.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\PirateCave.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\PuppetMastersEncore.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\PuppetTheatre.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Shaitan.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\Shatters.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SpiderDen.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SpriteWorld.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\ToxicSewers.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\WoodlandLabyrinth.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\ToxicSewers.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\realm1-test.wmap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\realm2-test.wmap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\realm3-test.wmap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_HermitDeath.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_HermitDeath.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_AvatarDeath.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_AvatarDeath.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_Sphinx.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_Sphinx.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\Config\SP_GhostShipDeath.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\World\Data\SP_GhostShipDeath.jm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Xml\Data\" />
+  </ItemGroup>
+
+</Project>

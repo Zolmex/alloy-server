@@ -1,0 +1,5 @@
+﻿<DiscordBotConfig>
+  <Port>8080</Port>
+  <Address>localhost</Address>
+  <BearerToken>TOKEN</BearerToken>
+</DiscordBotConfig>

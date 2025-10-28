@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "OryxCastle",
+  "DisplayName": "Oryx Castle",
+  "Music": "OryxCastle",
+  "Difficulty": 4,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "OryxCastle.jm" ]
+}

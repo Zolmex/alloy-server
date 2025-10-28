@@ -1,0 +1,12 @@
+﻿{
+  "Id": -1,
+  "Name": "Nexus",
+  "DisplayName": "Nexus",
+  "Music": "Nexus",
+  "Difficulty": -1,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": true,
+  "ShowDisplays": true,
+  "Maps": [ "Nexus.jm" ]
+}

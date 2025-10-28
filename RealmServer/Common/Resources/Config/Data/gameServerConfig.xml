@@ -1,0 +1,15 @@
+﻿<GameServerConfig>
+	<XmlsDir>Resources/Xml/Data/</XmlsDir>
+	<MerchantsDir>Resources/Xml/Merchants/</MerchantsDir>
+	<WorldsDir>Resources/World/Data/</WorldsDir>
+	<Port>2050</Port>
+	<Address>127.0.0.1</Address>
+	<ServerName>Localhost</ServerName>
+	<TPS>20</TPS>
+	<MaxPlayers>2000</MaxPlayers>
+	<Version>0.3.3</Version>
+	<!--<AdminOnly/>-->
+	<BehaviorsDir>../../../GameServer/Game/Entities/Behaviors/Library</BehaviorsDir>
+	<RealmCount>1</RealmCount>
+	<MaxClientsPerIP>2000</MaxClientsPerIP>
+</GameServerConfig>

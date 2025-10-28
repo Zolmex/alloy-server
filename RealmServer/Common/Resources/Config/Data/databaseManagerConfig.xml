@@ -1,0 +1,11 @@
+﻿<DatabaseManagerConfig>
+
+  <!-- How frequently (in seconds) should we backup automatically -->
+  <!-- <AutoSaveInterval>300</AutoSaveInterval> -->
+  <AutoSaveInterval>300</AutoSaveInterval>
+
+  <!-- How many auto backup files should we keep at most -->
+  <!-- <AutoBackupLimit>24</AutoBackupLimit> -->
+  <AutoBackupLimit>24</AutoBackupLimit>
+  
+</DatabaseManagerConfig>

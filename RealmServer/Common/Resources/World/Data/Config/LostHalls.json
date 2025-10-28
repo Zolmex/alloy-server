@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "LostHalls",
+  "DisplayName": "Lost Halls",
+  "Music": "Abyss",
+  "Difficulty": 5,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "LostHalls.jm" ]
+}

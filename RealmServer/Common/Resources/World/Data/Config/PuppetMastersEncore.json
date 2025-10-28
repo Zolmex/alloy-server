@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "PuppetEncore",
+  "DisplayName": "Puppet Master's Encore",
+  "Music": "Abyss",
+  "Difficulty": 4,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "PuppetMastersEncore.jm" ]
+}

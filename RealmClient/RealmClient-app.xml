@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/51.2">
+	<id>astrum-core</id>
+	<versionNumber>0.0.0</versionNumber>
+	<filename>RealmClient</filename>
+	<name>RealmClient</name>
+	<architecture>64</architecture>
+	<initialWindow>
+		<content>[Path to content will be replaced by Visual Studio Code]</content>
+		<visible>true</visible>
+		<renderMode>direct</renderMode>
+		<depthAndStencil>true</depthAndStencil>
+	</initialWindow>
+</application>

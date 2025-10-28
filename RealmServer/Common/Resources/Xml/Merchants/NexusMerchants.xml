@@ -1,0 +1,76 @@
+﻿<Merchants>
+	<Merchant region="Store_1">
+		<Entry id="Short Sword" price="100" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">15</Discount>
+		</Entry>
+		<Entry id="Archon Sword" price="100" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">15</Discount>
+		</Entry>
+		<Entry id="Demon Blade" price="100" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">15</Discount>
+		</Entry>
+		<Entry id="Fire Wand" price="100" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">15</Discount>
+		</Entry>
+		<Entry id="Shortbow" price="100" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">15</Discount>
+		</Entry>
+		<Entry id="Steel Dagger" price="100" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">15</Discount>
+		</Entry>
+	</Merchant>
+	<Merchant region="Store_2">
+		<Entry id="White Drake Egg" price="120" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">20</Discount>
+		</Entry>
+		<Entry id="Purple Drake Egg" price="120" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">20</Discount>
+		</Entry>
+		<Entry id="Blue Drake Egg" price="120" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">20</Discount>
+		</Entry>
+		<Entry id="Orange Drake Egg" price="120" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="0.5">20</Discount>
+		</Entry>
+		<Entry id="Green Drake Egg" price="120" currency="Fame">
+			<Stock min="5" max="10"/>
+			<Duration min="2" max="4"/>
+			<Discount prob="1">10</Discount>
+			<Discount prob="0.5">75</Discount>
+		</Entry>
+	</Merchant>
+	<Merchant region="Store_3">
+		<Entry id="Admin Sword" rankReq="0" price="1500000" currency="Fame">
+			<Stock min="1" max="1"/>
+			<Duration min="1" max="2"/>
+			<Discount prob="0.5">20</Discount>
+		</Entry>
+	</Merchant>
+	<Merchant region="Store_4">
+		<Entry id="Admin Staff" rankReq="0" price="150000" currency="Gold">
+			<Stock min="1" max="1"/>
+			<Duration min="1" max="1"/>
+			<Discount prob="0.5">20</Discount>
+		</Entry>
+	</Merchant>
+</Merchants>

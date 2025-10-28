@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "MadLab",
+  "DisplayName": "Mad Lab",
+  "Music": "Abyss",
+  "Difficulty": 3,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "MadLab.jm" ]
+}

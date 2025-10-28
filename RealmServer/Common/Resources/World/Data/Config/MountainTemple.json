@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "MountainTemple",
+  "DisplayName": "Mountain Temple",
+  "Music": "Abyss",
+  "Difficulty": 5,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "MountainTemple.jm" ]
+}

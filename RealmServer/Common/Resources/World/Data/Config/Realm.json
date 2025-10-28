@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "Realm",
+  "DisplayName": "Realm",
+  "Music": "Realm",
+  "Difficulty": -1,
+  "MaxPlayers": 200,
+  "Blocksight": 0,
+  "LongLasting": true,
+  "Maps": [ "realm1-test.wmap", "realm2-test.wmap", "realm3-test.wmap" ]
+}

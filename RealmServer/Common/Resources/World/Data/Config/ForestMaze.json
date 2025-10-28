@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "ForestMaze",
+  "DisplayName": "Forest Maze",
+  "Music": "Abyss",
+  "Difficulty": 1,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "ForestMaze.jm" ]
+}

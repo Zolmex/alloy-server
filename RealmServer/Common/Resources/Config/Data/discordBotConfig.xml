@@ -1,0 +1,6 @@
+﻿<DiscordBotConfig>
+  <XmlsDir>Resources/Xml/Data/</XmlsDir>
+  <SpritesDir>Resources/Sprites/Data/</SpritesDir>
+  <Port>8081</Port>
+  <Address>127.0.0.1</Address>
+</DiscordBotConfig>

@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "DeadwaterDocks",
+  "DisplayName": "Deadwater Docks",
+  "Music": "Abyss",
+  "Difficulty": 4,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "DeadwaterDocks.jm" ]
+}

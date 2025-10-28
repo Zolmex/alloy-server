@@ -1,0 +1,12 @@
+﻿{
+  "Id": 0,
+  "Name": "Guild Hall",
+  "DisplayName": "Guild Hall",
+  "Music": "GuildHall",
+  "Difficulty": -1,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "ShowDisplays": true,
+  "Maps": [ "Guild0.jm", "Guild1.jm", "Guild2.jm", "Guild3.jm" ]
+}

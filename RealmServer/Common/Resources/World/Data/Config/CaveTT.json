@@ -1,0 +1,11 @@
+﻿{
+  "Id": 0,
+  "Name": "CaveTT",
+  "DisplayName": "Cave of a Thousand Treasures",
+  "Music": "Abyss",
+  "Difficulty": 3,
+  "MaxPlayers": -1,
+  "Blocksight": 0,
+  "LongLasting": false,
+  "Maps": [ "CaveThousandTreasures.jm" ]
+}

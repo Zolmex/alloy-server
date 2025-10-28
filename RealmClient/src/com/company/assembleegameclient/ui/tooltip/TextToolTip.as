@@ -1,0 +1,52 @@
+package com.company.assembleegameclient.ui.tooltip
+{
+import com.company.assembleegameclient.game.GameSprite;
+import com.company.ui.SimpleText;
+   import flash.filters.DropShadowFilter;
+   
+   public class TextToolTip extends ToolTip
+   {
+      public var titleText_:SimpleText;
+      
+      public var tipText_:SimpleText;
+      
+      public function TextToolTip(background:uint, outline:uint, title:String, text:String, maxWidth:int, gs:GameSprite = null)
+      {
+         super(background,1,outline,1,true,gs);
+         if(title != null)
+         {
+            this.titleText_ = new SimpleText(14,0xb3b3b3,false,maxWidth,0);
+            this.titleText_.setBold(true);
+            this.titleText_.wordWrap = true;
+            this.titleText_.text = title;
+            this.titleText_.updateMetrics();
+            this.titleText_.filters = [new DropShadowFilter(0,0,0)];
+            addChild(this.titleText_);
+         }
+         if(text != null)
+         {
+            this.tipText_ = new SimpleText(12,0xb3b3b3,false,maxWidth,0);
+            this.tipText_.wordWrap = true;
+            this.tipText_.y = this.titleText_ != null?Number(this.titleText_.height + 8):Number(0);
+            this.tipText_.text = text;
+            this.tipText_.useTextDimensions();
+            this.tipText_.filters = [new DropShadowFilter(0,0,0)];
+            addChild(this.tipText_);
+         }
+      }
+      
+      public function setTitle(title:String) : void
+      {
+         this.titleText_.text = title;
+         this.titleText_.updateMetrics();
+         draw();
+      }
+      
+      public function setText(text:String) : void
+      {
+         this.tipText_.text = text;
+         this.tipText_.useTextDimensions();
+         draw();
+      }
+   }
+}
