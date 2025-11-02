@@ -8,8 +8,10 @@ public class CharacterWindowBackground extends Sprite {
 
     public function CharacterWindowBackground() {
         super();
-        var background:Bitmap = TextureParser.instance.getTexture("UI", "hud_background");
-        addChild(background);
+        var bg:Sprite = new Sprite();
+        bg.graphics.beginFill(3552822);
+        bg.graphics.drawRect(0,0,200,600);
+        addChild(bg);
     }
 }
 }

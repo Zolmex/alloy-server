@@ -1,21 +1,27 @@
-package kabam.rotmg.ui.view {
+package kabam.rotmg.ui.view
+{
 import flash.display.Sprite;
-
-import io.decagames.rotmg.ui.texture.TextureParser;
-
 import kabam.rotmg.ui.view.components.PotionSlotView;
 
-public class PotionInventoryView extends Sprite {
+public class PotionInventoryView extends Sprite
+{
 
-    private static const BUTTON_SPACE:int = 6;
+    private static const LEFT_BUTTON_CUTS:Array = [1,0,0,1];
 
-    private const slots:Array = ["potion_slot_left", "potion_slot_right"];
+    private static const RIGHT_BUTTON_CUTS:Array = [0,1,1,0];
 
-    public function PotionInventoryView() {
+    private static const BUTTON_SPACE:int = 4;
+
+
+    private const cuts:Array = [LEFT_BUTTON_CUTS,RIGHT_BUTTON_CUTS];
+
+    public function PotionInventoryView()
+    {
         var psv:PotionSlotView = null;
         super();
-        for (var i:int = 0; i < 2; i++) {
-            psv = new PotionSlotView(this.slots[i], i);
+        for(var i:int = 0; i < 2; i++)
+        {
+            psv = new PotionSlotView(this.cuts[i],i);
             psv.x = i * (PotionSlotView.BUTTON_WIDTH + BUTTON_SPACE);
             addChild(psv);
         }
