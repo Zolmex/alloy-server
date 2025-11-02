@@ -48,6 +48,9 @@ package kabam.lib.net.impl
       public function require(id:int) : Message
       {
          var pool:MessagePool = this.pools[id] = this.pools[id] || this.makePool(id);
+         if (pool == null){
+            return null;
+         }
          return pool.require();
       }
       

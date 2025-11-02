@@ -439,7 +439,6 @@ public class GameServerConnection {
         messages.unmap(CANCELTRADE);
         messages.unmap(ACCEPTTRADE);
         messages.unmap(PARTYINVITE);
-        messages.unmap(DAMAGECOUNTERUPDATE);
     }
 
     public function nextIntRange(min:uint, max:uint):uint {
