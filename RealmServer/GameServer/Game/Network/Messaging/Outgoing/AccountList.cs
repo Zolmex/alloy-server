@@ -4,47 +4,46 @@ using Common.Utilities;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+[Packet(PacketId.ACCOUNTLIST)]
+public class AccountList : IOutgoingPacket
 {
-    [Packet(PacketId.ACCOUNTLIST)]
-    public class AccountList : IOutgoingPacket
+    public const int Locked = 0;
+    public const int Ignored = 1;
+
+    public int AccountListId { get; }
+    public int[] AccountIds { get; }
+
+    public static void Write(NetworkHandler network, int accListId, int[] accIds)
     {
-        public const int Locked = 0;
-        public const int Ignored = 1;
-
-        public int AccountListId { get; }
-        public int[] AccountIds { get; }
-
-        public static void Write(NetworkHandler network, int accListId, int[] accIds)
+        var state = network.SendState;
+        var wtr = state.Writer;
+        using (TimedLock.Lock(state))
         {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
+            var begin = state.PacketBegin();
 
-                wtr.Write(accListId);
-                wtr.Write((short)accIds.Length);
-                foreach (var id in accIds)
-                    wtr.Write(id);
+            wtr.Write(accListId);
+            wtr.Write((short)accIds.Length);
+            foreach (var id in accIds)
+                wtr.Write(id);
 
-                state.PacketEnd(begin, PacketId.ACCOUNTLIST);
-            }
+            state.PacketEnd(begin, PacketId.ACCOUNTLIST);
+        }
+    }
+
+    public override string ToString()
+    {
+        var type = typeof(AccountList);
+        var props = type.GetProperties();
+        var ret = $"\n";
+        foreach (var prop in props)
+        {
+            ret += $"{prop.Name}:{prop.GetValue(this)}";
+            if (!(props.IndexOf(prop) == props.Length - 1))
+                ret += "\n";
         }
 
-        public override string ToString()
-        {
-            var type = typeof(AccountList);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
-        }
+        return ret;
     }
 }
