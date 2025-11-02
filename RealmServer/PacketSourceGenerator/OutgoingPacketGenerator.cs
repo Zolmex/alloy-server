@@ -50,7 +50,7 @@ public class OutgoingPacketGenerator : IIncrementalGenerator
             context.SyntaxProvider.CreateSyntaxProvider( // A
                 (node, _) => node is RecordDeclarationSyntax rec && rec.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.RecordStructDeclaration) && rec.ParameterList?.Parameters.Count > 0, // B
                 (syntax, _) => GetSemanticTargetForGeneration(syntax)) // C
-                ;
+                .Where(n => n.Item1 is not null && n.Item2 is not null);
         context.RegisterSourceOutput(pipeline, Execute);
     }
     static (RecordDeclarationSyntax, ITypeSymbol) GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
