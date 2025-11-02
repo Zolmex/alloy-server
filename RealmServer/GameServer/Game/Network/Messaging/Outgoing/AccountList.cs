@@ -6,11 +6,12 @@ using Common.Utilities;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-[Packet(PacketId.ACCOUNTLIST)]
-public class AccountList : IOutgoingPacket
+public readonly record struct AccountList : IOutgoingPacket
 {
     public const int Locked = 0;
     public const int Ignored = 1;
+
+    public static PacketId PacketId => PacketId.ACCOUNTLIST;
 
     public int AccountListId { get; }
     public int[] AccountIds { get; }
