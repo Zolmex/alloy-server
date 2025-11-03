@@ -34,6 +34,7 @@ partial record struct {typeSymbol.Name}
     public readonly void Write(NetworkWriter wtr)
     {{
 {GenerateMethods(paramListSyntax).TrimEnd()}
+/*{debugStuff}*/
     }}
 }}";
     }
@@ -61,6 +62,7 @@ partial record struct {typeSymbol.Name}
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        debugStuff = new();
         var pipeline =
             context.SyntaxProvider.CreateSyntaxProvider( // A
                 (node, _) => node is RecordDeclarationSyntax rec &&
@@ -84,6 +86,15 @@ partial record struct {typeSymbol.Name}
         var inter = context.SemanticModel.Compilation.GetTypeByMetadataName("GameServer.Game.Network.Messaging.IOutgoingPacket");
         if (symbol.Interfaces.Contains(inter))
         {
+            var bonus = symbol.GetMembers("Write");
+            //foreach (var item in bonus)
+            //{
+            //    debugStuff.AppendLine(item.Name);
+            //}
+            if (bonus.Length > 0)
+            {
+                return (null, null);
+            }
             return (syn, symbol);
         }
 

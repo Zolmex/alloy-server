@@ -2,6 +2,7 @@
 
 using System.IO;
 using System.Net;
+using System.Numerics;
 using System.Text;
 
 #endregion
@@ -33,6 +34,44 @@ public class NetworkWriter : BinaryWriter
             base.Write(value);
     }
 
+    /// <summary>
+    /// Writes array length as ushort and array to stream.
+    /// Use base method to write without length.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    public void Write<T>(T[] value)
+    where T : struct, INumber<T>
+    {
+        Write((ushort)value.Length);
+
+        if (value is byte[] bytes)
+            base.Write(bytes);
+
+        for (var i = 0; i < value.Length; i++)
+        {
+            switch (value[i])
+            {
+                case long l: Write(l); break;
+                case float f: Write(f); break;
+                case double d: Write(d); break;
+                case decimal dec: Write(dec); break;
+                case short s: Write(s); break;
+                case ushort us: Write(us); break;
+                case uint ui: Write(ui); break;
+                case ulong ul: Write(ul); break;
+                case int integer: Write(integer); break;
+            }
+        }
+    }
+    public void Write(string[] value)
+    {
+        Write((ushort)value.Length);
+        for (var i = 0; i < value.Length; i++)
+        {
+            Write(value[i]);
+        }
+    }
     public override void Write(long value)
     {
         if (!_littleEndian)
@@ -85,30 +124,33 @@ public class NetworkWriter : BinaryWriter
 
     public void WriteNullTerminatedString(string str)
     {
-        Write(Encoding.UTF8.GetBytes(str));
+        base.Write(Encoding.UTF8.GetBytes(str));
         Write((byte)0);
     }
 
     public void WriteUTF(string str)
     {
         if (str == null)
-            Write((short)0);
+            Write((ushort)0);
         else
         {
             var bytes = Encoding.UTF8.GetBytes(str);
-            Write((short)bytes.Length);
             Write(bytes);
         }
     }
     public override void Write(string str)
     {
-        base.Write(str);
+        WriteUTF(str);
     }
-
+    public void Write(WorldPosData wp)
+    {
+        Write(wp.X);
+        Write(wp.Y);
+    }
     public void Write32UTF(string str)
     {
         var bytes = Encoding.UTF8.GetBytes(str);
         Write(bytes.Length);
-        Write(bytes);
+        base.Write(bytes);
     }
 }

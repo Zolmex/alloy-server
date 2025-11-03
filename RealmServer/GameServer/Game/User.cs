@@ -83,15 +83,15 @@ public class User : IIdentifiable
 
         GameInfo.Load(chr, world);
 
-        CreateSuccess.Write(Network,
+        SendPacket(new CreateSuccess(
             GameInfo.Player.Id,
-            chr.CharId);
-        AccountList.Write(Network,
+            chr.CharId));
+        SendPacket(new AccountList(
             AccountList.Locked,
-            Account.LockedIds ?? new int[0]);
-        AccountList.Write(Network,
+            Account.LockedIds ?? Array.Empty<int>()));
+        SendPacket(new AccountList(
             AccountList.Ignored,
-            Account.IgnoredIds ?? new int[0]);
+            Account.IgnoredIds ?? Array.Empty<int>()));
     }
 
     public void Unload(bool reconnect, bool death = false)
@@ -112,8 +112,7 @@ public class User : IIdentifiable
 
     public void SendFailure(int errorId = Failure.DEFAULT, string message = Failure.DEFAULT_MESSAGE, bool disconnect = true)
     {
-        Failure.Write(Network, errorId, message);
-
+        SendPacket(new Failure(errorId, message));
         if (disconnect)
             RealmManager.AddTimedAction(1000, () => Disconnect(message, DisconnectReason.Failure));
     }
