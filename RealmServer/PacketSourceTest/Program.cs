@@ -1,4 +1,4 @@
-﻿using GameServer.Game.Network.Messaging.Outgoing;
+﻿using GameServer.Game.Network.Messaging;
 
 namespace PacketSourceTest;
 
@@ -6,8 +6,6 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
-        var test = new Text("a", 0, 1, 2, "nekoT", "This is a test");
-        Console.WriteLine(test);
+        Console.WriteLine(typeof(IOutgoingPacket).AssemblyQualifiedName);
     }
 }

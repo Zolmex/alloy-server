@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using PacketSourceGenerator;
 
 namespace TestPacketGen;
 
@@ -23,6 +24,7 @@ public static class TestHelper
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
         // Run the source generator!
+
         driver = driver.RunGenerators(compilation);
 
         // Use verify to snapshot test the source generator output!

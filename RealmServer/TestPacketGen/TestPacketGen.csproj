@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
-    <ProjectReference Include="..\PacketSourceGenerator\PacketSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\PacketSourceGenerator\PacketSourceGenerator.csproj" OutputItemType="Analyzer" />
   </ItemGroup>
 
   <ItemGroup>
