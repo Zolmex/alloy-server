@@ -10,36 +10,34 @@ namespace PacketSourceGenerator;
 [Generator(LanguageNames.CSharp)]
 public class OutgoingPacketGenerator : IIncrementalGenerator
 {
-    private static string GenerateShit(ImmutableArray<(RecordDeclarationSyntax, ITypeSymbol)> stuff)
-    {
-        var str = new StringBuilder();
-        str.Append(debugStuff.ToString());
-        foreach (var item in stuff)
+    /*    private static string GenerateShit(ImmutableArray<(RecordDeclarationSyntax, ITypeSymbol)> stuff)
         {
-            var nod = item.Item1;
-            str.AppendLine(GenerateMethods(nod.ParameterList));
-        }
-        if (stuff.Length == 0)
-        {
-            str.AppendLine("Stuff length is 0 dawg.");
-        }
-        return str.ToString();
-    }
+            var str = new StringBuilder();
+            str.Append(debugStuff.ToString());
+            foreach (var item in stuff)
+            {
+                var nod = item.Item1;
+                str.AppendLine(GenerateMethods(nod.ParameterList));
+            }
+            if (stuff.Length == 0)
+            {
+                str.AppendLine("Stuff length is 0 dawg.");
+            }
+            return str.ToString();
+        }*/
     private string GeneratePropertyChanged(ITypeSymbol typeSymbol, ParameterListSyntax paramListSyntax)
     {
-        return $@"
-    using Common.Utilities.Net;
-    namespace {typeSymbol.ContainingNamespace}
+        return $@"using Common.Utilities.Net;
+namespace {typeSymbol.ContainingNamespace};
+partial record struct {typeSymbol.Name}
+{{
+    public readonly void Write(NetworkWriter wtr)
     {{
-      partial record struct {typeSymbol.Name}
-      {{
-            public readonly void Write(NetworkWriter wtr)
-            {{
-                {GenerateMethods(paramListSyntax)}
-            }}
-      }}
-    }}";
+{GenerateMethods(paramListSyntax).TrimEnd()}
+    }}
+}}";
     }
+
     private static string GenerateMethods(ParameterListSyntax typeSymbol)
     {
         var sb = new StringBuilder();
@@ -47,9 +45,8 @@ public class OutgoingPacketGenerator : IIncrementalGenerator
         foreach (var fieldSymbol in typeSymbol.Parameters)
         {
             var propName = fieldSymbol.Identifier.Text;
-            sb.AppendLine($"wtr.Write({propName});");
+            sb.AppendLine($"\t\twtr.Write({propName});");
         }
-
         return sb.ToString();
     }
     public void Execute(SourceProductionContext context,
@@ -71,23 +68,6 @@ public class OutgoingPacketGenerator : IIncrementalGenerator
                 (syntax, _) => GetSemanticTargetForGeneration(syntax)) // C
                 .Where(n => n.Item1 is not null).Collect();
 
-        //        context.RegisterSourceOutput(pipeline, static (sourceProductionContext, filePaths) =>
-        //        {
-        //            sourceProductionContext.AddSource("additionalFiles.cs", @$"
-        //namespace PacketGen
-        //{{
-        //    public class AdditionalTextList
-        //    {{
-        //        public static void PrintTexts()
-        //        {{
-        //            System.Console.WriteLine(""Additional Texts were: {string.Join(", ", filePaths.Length)}"");
-        ///*
-        //{GenerateShit(filePaths)}
-        //*/
-        //        }}
-        //    }}
-        //}}");
-        //        });
         context.RegisterSourceOutput(pipeline, Execute);
     }
     static StringBuilder debugStuff = new();
