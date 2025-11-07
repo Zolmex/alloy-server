@@ -25,13 +25,12 @@ public class Program
 
     private static HttpListener _listener;
 
-    // TOKEN - MTIzMTU4MDIzOTYxNzA2NTA0MA.GxWLUW.5zBdPzjM_hgFsFgpwuCTxmwz-Y3EMh6hpfuOBk
     public static async Task Main()
     {
         _client = new DiscordSocketClient();
         _client.Log += Log;
 
-        await _client.LoginAsync(TokenType.Bot, "MTIzMTU4MDIzOTYxNzA2NTA0MA.GxWLUW.5zBdPzjM_hgFsFgpwuCTxmwz-Y3EMh6hpfuOBk");
+        await _client.LoginAsync(TokenType.Bot, "tokenlol");
         await _client.StartAsync();
 
         DiscordBotOutput.Load(_client);
