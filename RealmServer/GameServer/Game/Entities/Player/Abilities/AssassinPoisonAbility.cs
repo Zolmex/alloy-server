@@ -3,7 +3,6 @@ using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Network.Messaging.Outgoing;
 using System;
-using System.Collections.Generic;
 
 namespace GameServer.Game.Entities;
 
@@ -59,7 +58,7 @@ public class AssassinPoisonAbility : Ability
             0,
             poison.ThrowTravelTime,
             new WorldPosData(usePos.X, usePos.Y),
-            default);
+            default));
 
         // Schedule poison impact after travel time
         RealmManager.AddTimedAction(poison.ThrowTravelTime, () => { PoisonEnemies(item, usePos, RealmManager.WorldTime.TotalElapsedMs); });

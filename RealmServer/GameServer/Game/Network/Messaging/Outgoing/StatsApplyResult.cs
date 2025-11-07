@@ -4,6 +4,6 @@
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct StatsApplyResult(int Success) : IOutgoingPacket
+public readonly partial record struct StatsApplyResult(bool Success) : IOutgoingPacket
 {
 }

@@ -10,12 +10,8 @@ using System.IO;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> statuses) : IOutgoingPacket
+public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> Statuses) : IOutgoingPacket
 {
-    static PacketId IOutgoingPacket.PacketId => PacketId.NEWTICK;
-
-    public ObjectStatusData[] Statuses { get; }
-
     public void Write(NetworkWriter wtr)
     {
         var begin = wtr.BaseStream.Position;
@@ -23,9 +19,9 @@ public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> 
         var updateCount = 0;
         wtr.Write((short)0); // Placeholder
 
-        using (TimedLock.Lock(statuses))
+        using (TimedLock.Lock(Statuses))
         {
-            foreach (var status in statuses.Values)
+            foreach (var status in Statuses.Values)
             {
                 if (!status.Update)
                     continue;

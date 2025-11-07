@@ -1,20 +1,14 @@
 using Common;
-using Common.Resources.Config;
-using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Network.Messaging.Outgoing;
-using GameServer.Game.Worlds;
-using System;
-using System.Diagnostics.Metrics;
-using System.Numerics;
 
 namespace GameServer.Game.Entities;
 
 public class PaladinSealAbility : Ability
 {
-    private static readonly Logger _log = new Logger(typeof(PaladinSealAbility));
+    private static readonly Logger _log = new(typeof(PaladinSealAbility));
 
     private long _cooldownReset;
     private Entity _banner;
@@ -32,24 +26,24 @@ public class PaladinSealAbility : Ability
 
         _player.MP -= seal.MpCost;
         _cooldownReset = RealmManager.WorldTime.TotalElapsedMs + RealmManager.TicksFromTime(item.Cooldown); // Reset cooldown
-        
+
         foreach (var player in _player.GetPlayersWithin(seal.Radius))
             if (player.MS < player.MaxMS + seal.ShieldAmount)
                 player.MS += seal.ShieldAmount;
         if (_player.MS < _player.MaxMS + seal.ShieldAmount)
             _player.MS += seal.ShieldAmount;
-        
-        ShowEffect.Write(_player.User.Network,
+
+        _player.User.SendPacket(new ShowEffect(
             (byte)ShowEffectIndex.Nova,
             _player.Id,
             0,
             seal.Radius,
             _player.Position,
-            default);
-        
+            default));
+
         if (_bannerCount >= seal.MaxBanners)
             return;
-        
+
         _banner = _player.World.SpawnEntity("Paladin Banner", _player.Position);
         _behavior = (PaladinBanner)((Character)_banner).Behavior;
         _behavior.Seal = seal;
@@ -70,7 +64,7 @@ public class PaladinSealAbility : Ability
     {
         if (slot != 1 || _item == item)
             return;
-        
+
         _item = item; // Can be null
     }
 }
