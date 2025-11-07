@@ -26,7 +26,7 @@ public class DamageCounterUpdate extends IncomingMessage {
 
         var key:int;
         var value:uint;
-        var count:int = data.readByte();
+        var count:int = data.readUnsignedByte();
         for (var i:int = 0; i < count; i++) {
             key = data.readInt();
             value = data.readUnsignedInt();

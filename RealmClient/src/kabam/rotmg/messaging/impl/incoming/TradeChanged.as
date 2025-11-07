@@ -17,7 +17,7 @@ public class TradeChanged extends IncomingMessage
     override public function parseFromInput(data:IDataInput) : void
     {
         this.offer_.length = 0;
-        var num:int = data.readByte();
+        var num:int = data.readUnsignedByte();
         for(var i:int = 0; i < num; i++)
         {
             this.offer_.push(data.readBoolean());

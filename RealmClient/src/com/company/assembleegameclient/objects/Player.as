@@ -198,7 +198,7 @@ public class Player extends Character {
         for (var i:int = 0; i < player.itemTypes.length; i++) {
             var itemType:int = player.itemTypes[i];
             if (itemType == -1) {
-                dataStream.readByte(); // Read byte 0
+                dataStream.readUnsignedByte(); // Read byte 0
                 player.equipment_.push(null);
                 continue;
             }

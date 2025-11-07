@@ -20,9 +20,9 @@ public class StatBoost {
     }
 
     public function ParseData(itemDatas:ByteArray):void {
-        var fieldCount:int = itemDatas.readByte();
+        var fieldCount:int = itemDatas.readUnsignedByte();
         for (var i:int = 0; i < fieldCount; i++) {
-            var field:int = itemDatas.readByte();
+            var field:int = itemDatas.readUnsignedByte();
             switch (field) {
                 case 0:
                     this.Stat = itemDatas.readInt();

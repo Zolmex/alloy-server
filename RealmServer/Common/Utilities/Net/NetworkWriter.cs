@@ -46,7 +46,10 @@ public class NetworkWriter : BinaryWriter
         Write((ushort)value.Length);
 
         if (value is byte[] bytes)
+        {
             base.Write(bytes);
+            return;
+        }
 
         for (var i = 0; i < value.Length; i++)
         {

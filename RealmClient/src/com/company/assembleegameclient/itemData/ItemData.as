@@ -181,9 +181,9 @@ public class ItemData {
     }
 
     public function ParseData(itemDatas:ByteArray):void {
-        var fieldCount:int = itemDatas.readByte();
+        var fieldCount:int = itemDatas.readUnsignedByte();
         for (var i:int = 0; i < fieldCount; i++) {
-            var field:int = itemDatas.readByte();
+            var field:int = itemDatas.readUnsignedByte();
             switch (field) {
                 case ItemDataField.OBJECT_ID:
                     this.ObjectId = itemDatas.readUTF();
@@ -231,7 +231,7 @@ public class ItemData {
                     this.FameBonus = itemDatas.readInt();
                     break;
                 case ItemDataField.NUM_PROJECTILES:
-                    this.NumProjectiles = itemDatas.readByte();
+                    this.NumProjectiles = itemDatas.readUnsignedByte();
                     break;
                 case ItemDataField.ARC_GAP:
                     this.ArcGap = itemDatas.readFloat();

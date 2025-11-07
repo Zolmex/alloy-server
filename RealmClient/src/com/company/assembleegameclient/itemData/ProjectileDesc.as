@@ -71,12 +71,12 @@ public class ProjectileDesc {
     }
 
     public function ParseData(itemDatas:ByteArray):void {
-        var fieldCount:int = itemDatas.readByte();
+        var fieldCount:int = itemDatas.readUnsignedByte();
         for (var i:int = 0; i < fieldCount; i++) {
-            var field:int = itemDatas.readByte();
+            var field:int = itemDatas.readUnsignedByte();
             switch (field) {
                 case 0:
-                    this.BulletId = itemDatas.readByte();
+                    this.BulletId = itemDatas.readUnsignedByte();
                     break;
                 case 1:
                     this.ObjectId = itemDatas.readUTF();
@@ -100,7 +100,7 @@ public class ProjectileDesc {
                     var effects:Vector.<ConditionEffectDesc> = new Vector.<ConditionEffectDesc>();
                     var len:int = itemDatas.readUnsignedShort();
                     for (i = 0; i < len; i++) {
-                        var effId:int = itemDatas.readByte();
+                        var effId:int = itemDatas.readUnsignedByte();
                         var duration:int = itemDatas.readInt();
                         effects.push(new ConditionEffectDesc(null, duration));
                     }

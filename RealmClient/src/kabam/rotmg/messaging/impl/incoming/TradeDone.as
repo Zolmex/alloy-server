@@ -23,7 +23,7 @@ public class TradeDone extends IncomingMessage
 
     override public function parseFromInput(data:IDataInput) : void
     {
-        this.code_ = data.readByte();
+        this.code_ = data.readUnsignedByte();
         switch (code_) {
             case 0:
                 description_ = "Trade Successful";

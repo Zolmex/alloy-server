@@ -92,7 +92,7 @@ public class Character : Entity
         RealmManager.AddTimedAction(5000, () =>
         {
             foreach (var player in DamageStorage.GetAttackers())
-                DamageCounterUpdate.WriteClose(player.User.Network.SendState.Writer);
+                player.User.SendPacket(new DamageCounterUpdate(-1, 0, null));
         });
     }
 

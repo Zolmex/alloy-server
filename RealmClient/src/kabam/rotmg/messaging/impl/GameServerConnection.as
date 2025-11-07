@@ -377,6 +377,7 @@ public class GameServerConnection {
         messages.map(TRADECHANGED).toMessage(TradeChanged).toMethod(this.onTradeChanged);
         messages.map(TRADEDONE).toMessage(TradeDone).toMethod(this.onTradeDone);
         messages.map(TRADEACCEPTED).toMessage(TradeAccepted).toMethod(this.onTradeAccepted);
+        messages.map(DAMAGECOUNTERUPDATE).toMessage(DamageCounterUpdate).toMethod(this.onDamageCounterUpdate);
     }
 
     private function unmapMessages():void {
@@ -439,6 +440,7 @@ public class GameServerConnection {
         messages.unmap(CANCELTRADE);
         messages.unmap(ACCEPTTRADE);
         messages.unmap(PARTYINVITE);
+        messages.unmap(DAMAGECOUNTERUPDATE);
     }
 
     public function nextIntRange(min:uint, max:uint):uint {
@@ -1673,6 +1675,10 @@ public class GameServerConnection {
 
     private function onTradeAccepted(tradeAccepted:TradeAccepted):void {
         this.gs_.hudView.tradeAccepted(tradeAccepted);
+    }
+
+    private function onDamageCounterUpdate(dmgCounterUpdate:DamageCounterUpdate):void {
+        // Ignore
     }
 }
 }
