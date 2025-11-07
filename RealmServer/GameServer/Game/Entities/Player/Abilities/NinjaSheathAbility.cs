@@ -1,17 +1,14 @@
 using Common;
-using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Network.Messaging.Outgoing;
-using GameServer.Game.Worlds;
 using System;
-using System.Diagnostics.Metrics;
 
 namespace GameServer.Game.Entities;
 
 public class NinjaSheathAbility : Ability
 {
-    private static readonly Logger _log = new Logger(typeof(NinjaSheathAbility));
+    private static readonly Logger _log = new(typeof(NinjaSheathAbility));
 
     public bool InStance { get; private set; }
 
@@ -57,7 +54,7 @@ public class NinjaSheathAbility : Ability
     {
         if (time.TotalElapsedMs < _nextSlashAt) // Wait for slash cooldown
             return;
-        
+
         _nextSlashAt = time.TotalElapsedMs + _item.Sheath.SlashCooldownMS;
 
         var target = _player.GetNearestOtherEnemyByName(null, _item.Sheath.Radius); // Find target
@@ -71,21 +68,21 @@ public class NinjaSheathAbility : Ability
         var dmgDealt = target.Damage(slashDmg, _player);
         if (_item.Sheath.Effects != null)
             target.ApplyConditionEffects(_item.Sheath.Effects);
-        
-        Notification.Write(_player.User.Network, // Enemy damage notif
+
+        _player.User.SendPacket(new Notification(// Enemy damage notif
             target.Id,
             dmgDealt.ToString(),
             0,
             0,
-            true); // Must be true so that the client formats it properly
-        
-        ShowEffect.Write(_player.User.Network,
+            true)); // Must be true so that the client formats it properly
+
+        _player.User.SendPacket(new ShowEffect(
             (byte)ShowEffectIndex.SheatheSlash,
             target.Id,
             0,
             0,
             default,
-            default);
+            default));
 
         _wellDamage -= dmgDealt;
         _player.MP -= _item.Sheath.ManaPerSlash;
@@ -101,7 +98,7 @@ public class NinjaSheathAbility : Ability
         _wellDamage = 0; // Reset well damage on ability change
         _player.AbilityDataA = 0;
     }
-    
+
     private void OnDamageDealt(Character target, int damage)
     {
         if (_item?.Sheath == null || InStance)
@@ -116,10 +113,10 @@ public class NinjaSheathAbility : Ability
     {
         if (InStance)
             return;
-        
+
         InStance = true;
         _stanceLifetime = _item.Sheath.StanceDuration;
-        
+
         _player.OnTick += Tick;
         _player.ApplyConditionEffect(ConditionEffectIndex.SheatheStance, -1);
     }
@@ -133,7 +130,7 @@ public class NinjaSheathAbility : Ability
         _stanceLifetime = 0;
         _wellDamage = 0;
         _player.AbilityDataA = 0;
-        
+
         _player.OnTick -= Tick;
         _player.RemoveConditionEffect(ConditionEffectIndex.SheatheStance);
     }

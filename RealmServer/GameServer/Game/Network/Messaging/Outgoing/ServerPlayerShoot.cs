@@ -1,62 +1,32 @@
 ﻿#region
 
 using Common;
-using Common.Utilities;
+using Common.Utilities.Net;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly partial record struct ServerPlayerShoot(WorldPosData StartPos,
+        float Angle, float AngleInc, int[] DamageList, float[] CritList, int ItemType = -1) : IOutgoingPacket
 {
-    [Packet(PacketId.SERVERPLAYERSHOOT)]
-    public class ServerPlayerShoot : IOutgoingPacket
+    static PacketId IOutgoingPacket.PacketId => PacketId.SERVERPLAYERSHOOT;
+
+    public void Write(NetworkWriter wtr)
     {
-        public WorldPosData StartPos { get; }
-        public float Angle { get; }
-        public float AngleInc { get; }
-        public int[] DamageList { get; }
-        public float[] CritList { get; }
-        public short ItemType { get; }
+        wtr.Write(StartPos);
+        wtr.Write(Angle);
+        wtr.Write(AngleInc);
 
-        public static void Write(NetworkHandler network, WorldPosData startPos,
-            float angle, float angleInc, int[] damageList, float[] critList, int itemType = -1)
-        {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
+        wtr.Write((byte)DamageList.Length);
+        for (var i = 0; i < DamageList.Length; i++)
+            wtr.Write(DamageList[i]);
 
-                startPos.Write(wtr);
-                wtr.Write(angle);
-                wtr.Write(angleInc);
+        wtr.Write((byte)CritList.Length);
+        for (var i = 0; i < CritList.Length; i++)
+            wtr.Write(CritList[i]);
 
-                wtr.Write((byte)damageList.Length);
-                for (var i = 0; i < damageList.Length; i++)
-                    wtr.Write(damageList[i]);
+        wtr.Write((short)ItemType);
 
-                wtr.Write((byte)critList.Length);
-                for (var i = 0; i < critList.Length; i++)
-                    wtr.Write(critList[i]);
-
-                wtr.Write((short)itemType);
-
-                state.PacketEnd(begin, PacketId.SERVERPLAYERSHOOT);
-            }
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(ServerPlayerShoot);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
-        }
     }
 }

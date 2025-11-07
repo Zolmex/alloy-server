@@ -6,114 +6,113 @@ using System.Linq;
 
 #endregion
 
-namespace GameServer.Game.Entities
+namespace GameServer.Game.Entities;
+
+public partial class Player
 {
-    public partial class Player
+    private const int TextCooldown = 500;
+
+    private long _lastMessageSent;
+
+    public void SendInfo(string text)
     {
-        private const int TextCooldown = 500;
+        User.SendPacket(new Text(
+            "",
+            0,
+            -1,
+            (byte)0,
+            null,
+            text));
+    }
 
-        private long _lastMessageSent;
+    public void SendParty(string text, Player speaker = null)
+    {
+        User.SendPacket(new Text(
+            speaker?.Name,
+            speaker?.Id ?? 0,
+            speaker?.NumStars ?? -1,
+            speaker is null ? (byte)0 : (byte)5,
+            "*Party*",
+            text));
+    }
 
-        public void SendInfo(string text)
+    public void SendError(string text)
+    {
+        User.SendPacket(new Text(
+                    "*Error*",
+            0,
+            -1,
+            (byte)0,
+            null,
+            text));
+    }
+
+    public void SendHelp(string text)
+    {
+        User.SendPacket(new Text(
+                    "*Help*",
+            0,
+            -1,
+            (byte)0,
+            null,
+            text));
+    }
+
+    public void SendEnemy(Entity entity, string text)
+    {
+        User.SendPacket(new Text($"#{entity.Desc.DisplayName}", entity.Id, -1, (byte)3, null, text));
+    }
+
+    public void SendEnemy(string name, string text)
+    {
+        User.SendPacket(new Text($"#{name}", -1, -1, (byte)3, null, text));
+    }
+
+    public void Speak(string text)
+    {
+        if (!ValidateSpeak(RealmManager.WorldTime, text))
+            return;
+
+        if (text.StartsWith('/'))
         {
-            Text.Write(User.Network,
-                "",
-                0,
-                -1,
-                (byte)0,
-                null,
-                text);
+            ExecuteCommand(text);
+            return;
         }
 
-        public void SendParty(string text, Player speaker = null)
+        var acc = User.Account;
+
+        // Speak to nearby entities
+        foreach (var en in World.GetEnemiesWithin(Position.X, Position.Y, SIGHT_RADIUS))
+            en.PlayerTextReceived(this, text);
+
+        // Send text message to players in current world
+        World.BroadcastAll(plr =>
         {
-            Text.Write(User.Network,
-                speaker?.Name,
-                speaker?.Id ?? 0,
-                speaker?.NumStars ?? -1,
-                speaker is null ? (byte)0 : (byte)5,
-                "*Party*",
-                text);
-        }
+            var user = plr.User;
+            if (!user.Account.IgnoredIds?.Contains(acc.AccountId) ?? true)
+                User.SendPacket(new Text(acc.Admin ? $"@{acc.Name}" : acc.Name, Id, NumStars, (byte)5, null, text));
+        });
+    }
 
-        public void SendError(string text)
-        {
-            Text.Write(User.Network,
-                "*Error*",
-                0,
-                -1,
-                (byte)0,
-                null,
-                text);
-        }
-
-        public void SendHelp(string text)
-        {
-            Text.Write(User.Network,
-                "*Help*",
-                0,
-                -1,
-                (byte)0,
-                null,
-                text);
-        }
-
-        public void SendEnemy(Entity entity, string text)
-        {
-            Text.Write(User.Network, $"#{entity.Desc.DisplayName}", entity.Id, -1, (byte)3, null, text);
-        }
-
-        public void SendEnemy(string name, string text)
-        {
-            Text.Write(User.Network, $"#{name}", -1, -1, (byte)3, null, text);
-        }
-
-        public void Speak(string text)
-        {
-            if (!ValidateSpeak(RealmManager.WorldTime, text))
-                return;
-
-            if (text.StartsWith('/'))
-            {
-                ExecuteCommand(text);
-                return;
-            }
-
-            var acc = User.Account;
-
-            // Speak to nearby entities
-            foreach (var en in World.GetEnemiesWithin(Position.X, Position.Y, SIGHT_RADIUS))
-                en.PlayerTextReceived(this, text);
-
-            // Send text message to players in current world
-            World.BroadcastAll(plr =>
-            {
-                var user = plr.User;
-                if (!user.Account.IgnoredIds?.Contains(acc.AccountId) ?? true)
-                    Text.Write(user.Network, acc.Admin ? $"@{acc.Name}" : acc.Name, Id, NumStars, (byte)5, null, text);
-            });
-        }
-
-        private bool ValidateSpeak(RealmTime time, string text)
-        {
-            if (User.Account.Admin)
-                return true;
-
-            // If desired, word filter goes here
-
-            if (time.TotalElapsedMs - _lastMessageSent < TextCooldown)
-                return false;
-
-            _lastMessageSent = time.TotalElapsedMs;
+    private bool ValidateSpeak(RealmTime time, string text)
+    {
+        if (User.Account.Admin)
             return true;
-        }
 
-        public void ExecuteCommand(string text)
-        {
-            var spaceIndex = text.IndexOf(' ');
-            var command = text.Substring(0, spaceIndex == -1 ? text.Length : spaceIndex);
-            var args = spaceIndex == -1 ? null : text.Substring(spaceIndex + 1);
-            CommandManager.ExecuteCommand(this, command, args);
-        }
+        // If desired, word filter goes here
+
+        if (time.TotalElapsedMs - _lastMessageSent < TextCooldown)
+            return false;
+
+        _lastMessageSent = time.TotalElapsedMs;
+        return true;
+    }
+
+    public void ExecuteCommand(string text)
+    {
+        var spaceIndex = text.IndexOf(' ');
+        var command = text.Substring(0, spaceIndex == -1 ? text.Length : spaceIndex);
+        var args = spaceIndex == -1 ? null : text.Substring(spaceIndex + 1);
+        CommandManager.ExecuteCommand(this, command, args);
     }
 }

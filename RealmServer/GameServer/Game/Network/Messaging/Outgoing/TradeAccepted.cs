@@ -1,27 +1,16 @@
-﻿using Common.Utilities;
+﻿using Common.Utilities.Net;
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly partial record struct TradeAccepted(bool[] MyOffer, bool[] TheirOffer) : IOutgoingPacket
 {
-    [Packet(PacketId.TRADEACCEPTED)]
-    public class TradeAccepted : IOutgoingPacket
+    public void Write(NetworkWriter wtr)
     {
-        public static void Write(NetworkHandler network, bool[] myOffer, bool[] theirOffer)
-        {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
-
-                wtr.Write((byte)myOffer.Length);
-                foreach (var item in myOffer)
-                    wtr.Write(item);
-                wtr.Write((byte)theirOffer.Length);
-                foreach (var item in theirOffer)
-                    wtr.Write(item);
-
-                state.PacketEnd(begin, PacketId.TRADEACCEPTED);
-            }
-        }
+        wtr.Write((byte)MyOffer.Length);
+        foreach (var item in MyOffer)
+            wtr.Write(item);
+        wtr.Write((byte)TheirOffer.Length);
+        foreach (var item in TheirOffer)
+            wtr.Write(item);
     }
 }

@@ -5,91 +5,90 @@ using GameServer.Game.Network.Messaging.Outgoing;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors.Actions
+namespace GameServer.Game.Entities.Behaviors.Actions;
+
+public class HealGroupInfo
 {
-    public class HealGroupInfo
+    public int RemainingTime;
+}
+
+public record HealGroup : BehaviorScript
+{
+    private readonly float _range;
+    private readonly string _group;
+    private readonly int _cooldownMS;
+    private readonly int _healAmount;
+
+    public HealGroup(float range, string group, int cooldownMS = 1000, int healAmount = 0)
     {
-        public int RemainingTime;
+        _range = range;
+        _group = group;
+        _cooldownMS = cooldownMS;
+        _healAmount = healAmount;
     }
 
-    public record HealGroup : BehaviorScript
+    public override void Start(Character host)
     {
-        private readonly float _range;
-        private readonly string _group;
-        private readonly int _cooldownMS;
-        private readonly int _healAmount;
+        var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
+        healGroupInfo.RemainingTime = 0; // Make sure the behavior runs once
+    }
 
-        public HealGroup(float range, string group, int cooldownMS = 1000, int healAmount = 0)
+    public override BehaviorTickState Tick(Character host, RealmTime time)
+    {
+        var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
+        if (healGroupInfo.RemainingTime <= 0)
         {
-            _range = range;
-            _group = group;
-            _cooldownMS = cooldownMS;
-            _healAmount = healAmount;
-        }
+            if (host.HasConditionEffect(ConditionEffectIndex.Stunned))
+                return BehaviorTickState.BehaviorFailed;
 
-        public override void Start(Character host)
-        {
-            var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
-            healGroupInfo.RemainingTime = 0; // Make sure the behavior runs once
-        }
-
-        public override BehaviorTickState Tick(Character host, RealmTime time)
-        {
-            var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
-            if (healGroupInfo.RemainingTime <= 0)
+            foreach (var entity in host.GetOtherEnemiesByName(_group, _range))
             {
-                if (host.HasConditionEffect(ConditionEffectIndex.Stunned))
-                    return BehaviorTickState.BehaviorFailed;
+                if (entity is not Character character)
+                    continue;
 
-                foreach (var entity in host.GetOtherEnemiesByName(_group, _range))
+                var newHp = entity.MaxHP;
+                if (_healAmount != 0)
                 {
-                    if (entity is not Character character)
-                        continue;
-
-                    var newHp = entity.MaxHP;
-                    if (_healAmount != 0)
-                    {
-                        var newHealth = _healAmount + entity.HP;
-                        if (newHp > newHealth)
-                            newHp = newHealth;
-                    }
-
-                    if (newHp != entity.HP)
-                    {
-                        var n = newHp - entity.HP;
-
-                        entity.HP = newHp;
-                        entity.World.BroadcastAll(p => ShowEffect.Write(p.User.Network,
-                            (byte)ShowEffectIndex.Heal,
-                            entity.Id,
-                            0xFFFFFF,
-                            0,
-                            default,
-                            default
-                        ));
-                        entity.World.BroadcastAll(p => ShowEffect.Write(p.User.Network,
-                            (byte)ShowEffectIndex.Line,
-                            host.Id,
-                            0xFFFFFF,
-                            0,
-                            entity.Position,
-                            default
-                        ));
-                        entity.World.BroadcastAll(p =>
-                            Notification.Write(p.User.Network,
-                                entity.Id,
-                                "+" + n,
-                                0x00FF00)
-                        );
-                    }
+                    var newHealth = _healAmount + entity.HP;
+                    if (newHp > newHealth)
+                        newHp = newHealth;
                 }
 
-                healGroupInfo.RemainingTime = _cooldownMS;
-            }
-            else
-                healGroupInfo.RemainingTime -= time.ElapsedMsDelta;
+                if (newHp != entity.HP)
+                {
+                    var n = newHp - entity.HP;
 
-            return BehaviorTickState.BehaviorActive;
+                    entity.HP = newHp;
+                    entity.World.BroadcastAll(p => p.User.SendPacket(new ShowEffect(
+                        (byte)ShowEffectIndex.Heal,
+                        entity.Id,
+                        0xFFFFFF,
+                        0,
+                        default,
+                        default
+                    )));
+                    entity.World.BroadcastAll(p => p.User.SendPacket(new ShowEffect(
+                        (byte)ShowEffectIndex.Line,
+                        host.Id,
+                        0xFFFFFF,
+                        0,
+                        entity.Position,
+                        default
+                    )));
+                    entity.World.BroadcastAll(p =>
+                        p.User.SendPacket(new Notification(
+                            entity.Id,
+                            "+" + n,
+                            0x00FF00)
+                    ));
+                }
+            }
+
+            healGroupInfo.RemainingTime = _cooldownMS;
         }
+        else
+            healGroupInfo.RemainingTime -= time.ElapsedMsDelta;
+
+        return BehaviorTickState.BehaviorActive;
     }
 }

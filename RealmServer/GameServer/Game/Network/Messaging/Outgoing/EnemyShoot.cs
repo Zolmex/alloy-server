@@ -2,82 +2,48 @@
 
 using Common;
 using Common.ProjectilePaths;
-using Common.Utilities;
+using Common.Utilities.Net;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly partial record struct EnemyShoot(ushort BulletId, int OwnerId, ushort ProjType, float X, float Y,
+        float Angle, short Damage,
+        byte NumShots, float AngleInc, ProjectilePath Path, float Lifetime, bool MultiHit, bool PassesCover,
+        bool ArmorPiercing, int Size, (ConditionEffectIndex, int)[] Effects, int PropId = -1) : IOutgoingPacket
 {
-    [Packet(PacketId.ENEMYSHOOT)]
-    public class EnemyShoot : IOutgoingPacket
+    public void Write(NetworkWriter wtr)
     {
-        public int OwnerId { get; }
-        public int ProjId { get; }
-        public byte BulletId { get; }
-        public WorldPosData StartPosition { get; }
-        public float Angle { get; }
-        public uint Damage { get; }
-        public byte PathType { get; }
-
-        public static void Write(NetworkHandler network, ushort bulletId, int ownerId, ushort projType, float x, float y,
-            float angle, short damage,
-            byte numShots, float angleInc, ProjectilePath path, float lifetime, bool multiHit, bool passesCover,
-            bool armorPiercing, int size, (ConditionEffectIndex, int)[] effects, int propId = -1)
+        wtr.Write(BulletId);
+        wtr.Write(OwnerId);
+        wtr.Write(X);
+        wtr.Write(Y);
+        wtr.Write(Angle);
+        wtr.Write(Damage);
+        wtr.Write(PropId); // -1 means we're sending custom properties, otherwise use xml properties
+        if (PropId == -1)
         {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
-
-                wtr.Write(bulletId);
-                wtr.Write(ownerId);
-                wtr.Write(x);
-                wtr.Write(y);
-                wtr.Write(angle);
-                wtr.Write(damage);
-                wtr.Write(propId); // -1 means we're sending custom properties, otherwise use xml properties
-                if (propId == -1)
+            // Write custom projectile properties
+            wtr.Write(ProjType);
+            Path.Write(wtr);
+            wtr.Write(Lifetime);
+            wtr.Write(MultiHit);
+            wtr.Write(PassesCover);
+            wtr.Write(ArmorPiercing);
+            wtr.Write(Size);
+            wtr.Write((ushort)(Effects?.Length ?? 0));
+            if (Effects != null)
+                foreach (var eff in Effects)
                 {
-                    // Write custom projectile properties
-                    wtr.Write(projType);
-                    path.Write(wtr);
-                    wtr.Write(lifetime);
-                    wtr.Write(multiHit);
-                    wtr.Write(passesCover);
-                    wtr.Write(armorPiercing);
-                    wtr.Write(size);
-                    wtr.Write((ushort)(effects?.Length ?? 0));
-                    if (effects != null)
-                        foreach (var eff in effects)
-                        {
-                            wtr.Write((ushort)eff.Item1);
-                        }
+                    wtr.Write((ushort)eff.Item1);
                 }
-
-                if (numShots > 1)
-                {
-                    wtr.Write(numShots);
-                    wtr.Write(angleInc);
-                }
-
-                state.PacketEnd(begin, PacketId.ENEMYSHOOT);
-            }
         }
 
-        public override string ToString()
+        if (NumShots > 1)
         {
-            var type = typeof(EnemyShoot);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
+            wtr.Write(NumShots);
+            wtr.Write(AngleInc);
         }
     }
 }

@@ -21,13 +21,13 @@ public class TradeAccepted extends IncomingMessage
     {
         var i:int = 0;
         this.myOffer_.length = 0;
-        var num:int = data.readByte();
+        var num:int = data.readUnsignedByte();
         for(i = 0; i < num; i++)
         {
             this.myOffer_.push(data.readBoolean());
         }
         this.yourOffer_.length = 0;
-        num = data.readByte();
+        num = data.readUnsignedByte();
         for(i = 0; i < num; i++)
         {
             this.yourOffer_.push(data.readBoolean());

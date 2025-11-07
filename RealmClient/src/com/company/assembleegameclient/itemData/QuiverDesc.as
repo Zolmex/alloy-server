@@ -25,21 +25,21 @@ public class QuiverDesc {
     }
 
     public function ParseData(itemDatas:ByteArray):void {
-        var fieldCount:int = itemDatas.readByte();
+        var fieldCount:int = itemDatas.readUnsignedByte();
         for (var i:int = 0; i < fieldCount; i++) {
-            var field:int = itemDatas.readByte();
+            var field:int = itemDatas.readUnsignedByte();
             switch (field) {
                 case 0:
                     MpCost = itemDatas.readShort();
                     break;
                 case 1:
-                    ProjectileId = itemDatas.readByte();
+                    ProjectileId = itemDatas.readUnsignedByte();
                     break;
                 case 2:
                     ArrowChance = itemDatas.readFloat();
                     break;
                 case 3:
-                    MaxArrows = itemDatas.readByte();
+                    MaxArrows = itemDatas.readUnsignedByte();
                     break;
                 case 4:
                     MpPerArrow = itemDatas.readShort();
@@ -48,7 +48,7 @@ public class QuiverDesc {
                     UseMpArrows = itemDatas.readBoolean();
                     break;
                 case 6:
-                    MpProjectileId = itemDatas.readByte();
+                    MpProjectileId = itemDatas.readUnsignedByte();
                     break;
             }
         }

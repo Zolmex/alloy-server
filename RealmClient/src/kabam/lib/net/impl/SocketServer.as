@@ -163,7 +163,7 @@ import kabam.lib.net.api.MessageProvider;
             messageId = this.socket.readUnsignedByte();
             message = this.messages.require(messageId);
             try {
-//               trace("Receiving", messageId);
+               trace("Receiving", messageId);
             }catch(e:Error){}
             data.position = 0;
             data.length = 0;
@@ -183,18 +183,25 @@ import kabam.lib.net.api.MessageProvider;
                logErrorAndClose("Socket-Server Protocol Error: {0}", [error.toString()]);
                return;
             }
+            if (data.bytesAvailable > 0){
+               trace(data.bytesAvailable + " bytes not read for packet " + message.id);
+            }
             message.consume();
          }
       }
 
       private function logError(message:String, arguments:Array = null) : void
       {
-         this.error.dispatch(this.parseString(message,arguments));
+         var msg:String = this.parseString(message,arguments);
+         this.error.dispatch(msg);
+         trace(msg);
       }
 
       private function logErrorAndClose(message:String, arguments:Array = null) : void
       {
-         this.error.dispatch(this.parseString(message,arguments));
+         var msg:String = this.parseString(message,arguments);
+         this.error.dispatch(msg);
+         trace(msg);
          this.disconnect();
       }
 

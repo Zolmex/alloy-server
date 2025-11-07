@@ -1,33 +1,22 @@
 ﻿#region
 
 using Common;
-using Common.Utilities;
+using Common.Utilities.Net;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[] TheirItems, string Name) : IOutgoingPacket
 {
-    [Packet(PacketId.TRADESTART)]
-    public class TradeStart : IOutgoingPacket
+    public void Write(NetworkWriter wtr)
     {
-        public static void Write(NetworkHandler network, TradeItem[] myItems, TradeItem[] theirItems, string name)
-        {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
-
-                wtr.Write((byte)myItems.Length);
-                foreach (var item in myItems)
-                    item.Write(wtr);
-                wtr.WriteUTF(name);
-                wtr.Write((byte)theirItems.Length);
-                foreach (var item in theirItems)
-                    item.Write(wtr);
-
-                state.PacketEnd(begin, PacketId.TRADESTART);
-            }
-        }
+        wtr.Write((byte)MyItems.Length);
+        foreach (var item in MyItems)
+            item.Write(wtr);
+        wtr.WriteUTF(Name);
+        wtr.Write((byte)TheirItems.Length);
+        foreach (var item in TheirItems)
+            item.Write(wtr);
     }
 }
