@@ -36,8 +36,6 @@ import flash.filters.DropShadowFilter;
       
       private var mpBar_:StatusBar;
 
-      private var msBar_:StatusBar;
-
       private var lineBreak_:LineBreakDesign;
       
       private var bestLevel_:SimpleText;
@@ -61,18 +59,14 @@ import flash.filters.DropShadowFilter;
          this.player_.animatedChar_ = this.factory.makeCharacter(skin.template);
          this.playerPanel_ = new GameObjectListItem(11776947,true,this.player_);
          addChild(this.playerPanel_);
-         this.mpBar_ = new StatusBar("mp_bar_background", "mp_bar_fill", "MP");
+         this.hpBar_ = new StatusBar(176,16,14693428,5526612,"HP");
+         this.hpBar_.x = 6;
+         this.hpBar_.y = 40;
+         addChild(this.hpBar_);
+         this.mpBar_ = new StatusBar(176,16,6325472,5526612,"MP");
          this.mpBar_.x = 6;
          this.mpBar_.y = 64;
          addChild(this.mpBar_);
-         this.hpBar_ = new StatusBar("hp_bar_background", "hp_bar_fill", "HP");
-         this.hpBar_.x = 7;
-         this.hpBar_.y = 41;
-         this.msBar_ = new StatusBar("ms_bar_background", "ms_bar_fill", null);
-         this.msBar_.x = this.hpBar_.x - 2;
-         this.msBar_.y = this.hpBar_.y - 2;
-         addChild(this.msBar_);
-         addChild(this.hpBar_);
          this.eGrid = new EquippedGrid(null,this.player_.slotTypes_,this.player_);
          this.eGrid.x = 8;
          this.eGrid.y = 88;
@@ -120,7 +114,6 @@ import flash.filters.DropShadowFilter;
       {
          this.hpBar_.draw(this.player_.hp,this.player_.maxHP);
          this.mpBar_.draw(this.player_.mp,this.player_.maxMP);
-         this.msBar_.draw(this.player_.ms,this.player_.maxMS);
          this.lineBreak_.setWidthColor(width - 10,1842204);
          super.draw();
       }

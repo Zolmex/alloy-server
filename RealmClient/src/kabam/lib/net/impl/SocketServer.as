@@ -173,7 +173,7 @@ import kabam.lib.net.api.MessageProvider;
             data.position = 0;
             this.messageLen = -1;
             if (message == null) {
-               this.logErrorAndClose("Socket-Server Protocol Error: Unknown message");
+               this.logError("Socket-Server Protocol Error: Unknown message '" + messageId + "'");
                return;
             }
             try {
@@ -187,6 +187,11 @@ import kabam.lib.net.api.MessageProvider;
          }
       }
 
+      private function logError(message:String, arguments:Array = null) : void
+      {
+         this.error.dispatch(this.parseString(message,arguments));
+      }
+
       private function logErrorAndClose(message:String, arguments:Array = null) : void
       {
          this.error.dispatch(this.parseString(message,arguments));
@@ -195,6 +200,10 @@ import kabam.lib.net.api.MessageProvider;
 
       private function parseString(error:String, arguments:Array) : String
       {
+         if (arguments == null){
+            return error;
+         }
+
          var count:int = arguments.length;
          for(var i:int = 0; i < count; i++)
          {

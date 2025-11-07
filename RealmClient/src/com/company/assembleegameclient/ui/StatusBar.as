@@ -1,109 +1,163 @@
-package com.company.assembleegameclient.ui {
+package com.company.assembleegameclient.ui
+{
 import com.company.ui.SimpleText;
-
-import flash.display.Bitmap;
-
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.filters.DropShadowFilter;
 
-import io.decagames.rotmg.ui.texture.TextureParser;
+public class StatusBar extends Sprite
+{
+    public var w_:int;
 
-public class StatusBar extends Sprite {
+    public var h_:int;
 
-    private var background:Bitmap;
-    private var fill:Bitmap;
+    public var color_:uint;
+
+    public var backColor_:uint;
+
+    public var pulseBackColor:uint;
+
     public var textColor_:uint;
+
     public var val_:int = -1;
+
     public var max_:int = -1;
+
     public var labelText_:SimpleText;
+
     public var valueText_:SimpleText;
+
     public var boostText_:SimpleText;
-    public var hideValue_:Boolean = false;
+
+    private var colorSprite:Sprite;
+
+    private var defaultForegroundColor:Number;
+
+    private var defaultBackgroundColor:Number;
+
     private var repetitions:int;
+
     private var direction:int = -1;
+
     private var speed:Number = 0.1;
 
-    public function StatusBar(backgroundUI:String, fillUI:String, label:String = null) {
+    private var hasBack:Boolean = true;
+
+    public function StatusBar(w:int, h:int, color:uint, backColor:uint, label:String = null, hasBack:Boolean = true)
+    {
+        this.colorSprite = new Sprite();
         super();
-        background = TextureParser.instance.getTexture("UI", backgroundUI);
-        addChild(background);
-        fill = TextureParser.instance.getTexture("UI", fillUI);
-        addChild(fill);
-        textColor_ = 16777215;
-        if (label != null && label.length != 0) {
-            labelText_ = new SimpleText(13, textColor_, false, 0, 0);
-            labelText_.setBold(true);
-            labelText_.text = label;
-            labelText_.updateMetrics();
-            labelText_.y = label == "HP" ? -4 : -3;
-            labelText_.filters = [new DropShadowFilter(1.5, 90, 0)];
-            addChild(labelText_);
+        addChild(this.colorSprite);
+        this.hasBack = hasBack;
+        this.w_ = w;
+        this.h_ = h;
+        this.defaultForegroundColor = this.color_ = color;
+        this.defaultBackgroundColor = this.backColor_ = backColor;
+        this.textColor_ = 16777215;
+        if(label != null && label.length != 0)
+        {
+            this.labelText_ = new SimpleText(14,this.textColor_,false,0,0);
+            this.labelText_.setBold(true);
+            this.labelText_.text = label;
+            this.labelText_.updateMetrics();
+            this.labelText_.y = -3;
+            this.labelText_.filters = [new DropShadowFilter(0,0,0)];
+            addChild(this.labelText_);
         }
-        valueText_ = new SimpleText(13, 16777215, false, 0, 0);
-        valueText_.setBold(true);
-        valueText_.filters = [new DropShadowFilter(1.5, 90, 0)];
-        valueText_.y = label == "HP" ? -4 : -3;
-        boostText_ = new SimpleText(13, textColor_, false, 0, 0);
-        boostText_.setBold(true);
-        boostText_.alpha = 0.6;
-        boostText_.y = label == "HP" ? -4 : -3;
-        boostText_.filters = [new DropShadowFilter(1.5, 90, 0)];
+        this.valueText_ = new SimpleText(14,16777215,false,0,0);
+        this.valueText_.setBold(true);
+        this.valueText_.filters = [new DropShadowFilter(0,0,0)];
+        this.valueText_.y = -3;
+        this.boostText_ = new SimpleText(14,this.textColor_,false,0,0);
+        this.boostText_.setBold(true);
+        this.boostText_.alpha = 0.6;
+        this.boostText_.y = -3;
+        this.boostText_.filters = [new DropShadowFilter(0,0,0)];
     }
 
-    public function draw(val:int, max:int):void {
-        if (max > 0) {
-            val = Math.min(max, Math.max(0, val));
+    public function draw(val:int, max:int) : void
+    {
+        if(max > 0)
+        {
+            val = Math.min(max,Math.max(0,val));
         }
-        if (val == val_ && max == max_) {
+        if(val == this.val_ && max == this.max_)
+        {
             return;
         }
-        val_ = val;
-        max_ = max;
-        internalDraw();
+        this.val_ = val;
+        this.max_ = max;
+        this.internalDraw();
     }
 
-    private function setTextColor(textColor:uint):void {
-        textColor_ = textColor;
-        if (boostText_ != null) {
-            boostText_.setColor(textColor_);
+    private function setTextColor(textColor:uint) : void
+    {
+        this.textColor_ = textColor;
+        if(this.boostText_ != null)
+        {
+            this.boostText_.setColor(this.textColor_);
         }
-        valueText_.setColor(textColor_);
+        this.valueText_.setColor(this.textColor_);
     }
 
-    private function internalDraw():void {
+    private function internalDraw() : void
+    {
+        graphics.clear();
+        this.colorSprite.graphics.clear();
         var textColor:uint = 16777215;
-        if (textColor_ != textColor) {
-            setTextColor(textColor);
+        if(this.textColor_ != textColor)
+        {
+            this.setTextColor(textColor);
         }
+        if (hasBack)
+            graphics.beginFill(this.backColor_);
 
-        if (max_ > 0) {
-            var perc:Number = val_ / max_;
-            fill.scaleX = perc;
-        } else {
-            fill.scaleX = 1;
+        graphics.drawRect(0,0,this.w_,this.h_);
+        graphics.endFill();
+        this.colorSprite.graphics.beginFill(this.color_);
+        if(this.max_ > 0)
+        {
+            this.colorSprite.graphics.drawRect(0,0,this.w_ * (this.val_ / this.max_),this.h_);
         }
+        else
+        {
+            this.colorSprite.graphics.drawRect(0,0,this.w_,this.h_);
+        }
+        this.colorSprite.graphics.endFill();
 
-        if (!hideValue_) {
-            if (max_ > 0) {
-                valueText_.text = "" + val_ + "/" + max_;
-            } else {
-                valueText_.text = "" + val_;
-            }
-            valueText_.updateMetrics();
-            if (!contains(valueText_)) {
-                addChild(valueText_);
-            }
-            valueText_.x = (background.width - valueText_.width) / 2;
-        } else {
-            if (contains(valueText_))
-                removeChild(valueText_);
+        if(this.max_ > 0)
+        {
+            this.valueText_.text = "" + this.val_ + "/" + this.max_;
         }
-
-        if (contains(boostText_)) {
-            removeChild(boostText_);
+        else
+        {
+            this.valueText_.text = "" + this.val_;
         }
+        this.valueText_.updateMetrics();
+        if(!contains(this.valueText_))
+        {
+            addChild(this.valueText_);
+        }
+        /*if(this.boost_ != 0)
+        {
+           this.boostText_.text = " (" + (this.boost_ > 0?"+":"") + this.boost_.toString() + ")";
+           this.boostText_.updateMetrics();
+           this.valueText_.x = this.w_ / 2 - (this.valueText_.width + this.boostText_.width) / 2;
+           this.boostText_.x = this.valueText_.x + this.valueText_.width;
+           if(!contains(this.boostText_))
+           {
+              addChild(this.boostText_);
+           }
+        }
+        else
+        {*/
+        this.valueText_.x = this.w_ / 2 - this.valueText_.width / 2;
+        if(contains(this.boostText_))
+        {
+            removeChild(this.boostText_);
+        }
+        //}
     }
 }
 }

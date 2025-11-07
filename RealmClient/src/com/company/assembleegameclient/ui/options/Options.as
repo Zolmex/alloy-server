@@ -355,10 +355,6 @@ public class Options extends Sprite {
         this.addOption(new ChoiceOption("allyNotifsList", makeHideLabels(), [0, 1, 2, 3, 4], "Ally Notifications", "This toggles whether to show notifications above players other than you. This includes damage taken by others and their item effects, etc.", onOptionsChanged));
         this.addOption(new ChoiceOption("allyEntitiesList", makeHideLabels(), [0, 1, 2, 3, 4], "Ally Entities", "Hides/shows all entities and pets spawned by players. Ex: Cards, Pets, Decoys", null));
         this.addOption(new ChoiceOption("allyParticlesList", makeHideLabels(), [0, 1, 2, 3, 4], "Ally Particles", "Disable particles produces by allies, such as particles produced by abilities.", onOptionsChanged));
-        this.addOption(new ChoiceOption("damageCounter",
-                new <String>["Full","Compact", "Minimal", "Off"],
-                [DamageCounterType.FULL, DamageCounterType.COMPACT, DamageCounterType.MINIMAL, DamageCounterType.OFF],
-                "Damage Counter UI", "This toggles whether to show the Damage Counter UI", onOptionsChanged));
         this.addOption(new ChoiceOption("showTierTag", new <String>["On","Off"], [true,false], "Show Tier Tag","This toggles whether to show tier tags on your gear", onToggleTierTag));
         this.addOption(new ChoiceOption("projOutline", new <String>["On","Off"], [true, false], "Projectile Outlines", "Toggles outlines on projectiles", null));
     }
@@ -379,8 +375,6 @@ public class Options extends Sprite {
     private static function onOptionsChanged():void {
         if (GameServerConnection.instance != null) {
             GameServerConnection.instance.optionsChanged();
-
-            GameServerConnection.instance.gs_.addDamageCounter(Parameters.data_.damageCounter);
         }
     }
 

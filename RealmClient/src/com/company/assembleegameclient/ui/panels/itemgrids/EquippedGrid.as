@@ -23,7 +23,7 @@ public class EquippedGrid extends ItemGrid {
         this.tiles = new Vector.<EquipmentTile>(this.NUM_SLOTS);
         for (var i:int = 0; i < this.NUM_SLOTS; i++) {
             tile = new EquipmentTile(i, this, interactive);
-            addToGrid(tile, 1, i, true);
+            addToGrid(tile, 1, i);
             tile.setType(invTypes[i]);
             this.tiles[i] = tile;
         }
@@ -57,10 +57,6 @@ public class EquippedGrid extends ItemGrid {
                 refreshTooltip();
             }
         }
-    }
-
-    public function abilityUse():void{
-        this.tiles[1].abilityUse();
     }
 
     public function toggleTierTag():void {

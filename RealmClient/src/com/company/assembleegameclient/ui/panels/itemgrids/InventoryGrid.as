@@ -51,10 +51,10 @@ public class InventoryGrid extends ItemGrid {
         }
     }
 
-   public function toggleTierTag():void {
-      for each (var tile:ItemTile in this.tiles){
-         tile.toggleTierTag(Parameters.data_.showTierTag);
-      }
-   }
+    public function toggleTierTag():void {
+        for each (var tile:ItemTile in this.tiles){
+            tile.toggleTierTag(Parameters.data_.showTierTag);
+        }
+    }
 }
 }

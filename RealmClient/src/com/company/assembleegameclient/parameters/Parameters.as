@@ -188,7 +188,6 @@ public class Parameters {
         setDefault("allyNotifsList", 0);
         setDefault("allyParticlesList", 0);
         setDefault("allyEntitiesList", 0);
-        setDefault("damageCounter", DamageCounterType.FULL);
         setDefault("statsViewOpen", false);
         setDefault("statsViewIndex", 0);
         setDefault("showConstellationsTutorial", true);

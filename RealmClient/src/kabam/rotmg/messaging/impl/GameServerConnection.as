@@ -377,7 +377,6 @@ public class GameServerConnection {
         messages.map(TRADECHANGED).toMessage(TradeChanged).toMethod(this.onTradeChanged);
         messages.map(TRADEDONE).toMessage(TradeDone).toMethod(this.onTradeDone);
         messages.map(TRADEACCEPTED).toMessage(TradeAccepted).toMethod(this.onTradeAccepted);
-        messages.map(DAMAGECOUNTERUPDATE).toMessage(DamageCounterUpdate).toMethod(onDamageCounterUpdate);
     }
 
     private function unmapMessages():void {
@@ -440,7 +439,6 @@ public class GameServerConnection {
         messages.unmap(CANCELTRADE);
         messages.unmap(ACCEPTTRADE);
         messages.unmap(PARTYINVITE);
-        messages.unmap(DAMAGECOUNTERUPDATE);
     }
 
     public function nextIntRange(min:uint, max:uint):uint {
@@ -584,8 +582,6 @@ public class GameServerConnection {
     }
 
     public function useItem(time:int, objectId:int, slotId:int, posX:Number, posY:Number):void {
-        this.gs_.hudView.equippedGrid.abilityUse();
-
         var useItemMess:UseItem = this.messages.require(USEITEM) as UseItem;
         useItemMess.slotObject_.objectId_ = objectId;
         useItemMess.slotObject_.slotId_ = slotId;
@@ -1066,15 +1062,9 @@ public class GameServerConnection {
                     continue;
                 case StatData.EXP_STAT:
                     player.experience_ = value;
-                    if (go == this.gs_.map.player_) {
-                        this.gs_.hudView.characterDetails.updateXP(player.level_, player.experience_, player.nextLevelXp_);
-                    }
                     continue;
                 case StatData.LEVEL_STAT:
                     go.level_ = value;
-                    if (go == this.gs_.map.player_) {
-                        this.gs_.hudView.characterDetails.updateXP(player.level_, player.experience_, player.nextLevelXp_);
-                    }
                     continue;
                 case StatData.STAT_POINTS_STAT:
                     go.statPoints_ = value;
@@ -1683,11 +1673,6 @@ public class GameServerConnection {
 
     private function onTradeAccepted(tradeAccepted:TradeAccepted):void {
         this.gs_.hudView.tradeAccepted(tradeAccepted);
-    }
-
-    private function onDamageCounterUpdate(message:DamageCounterUpdate) : void {
-        if (gs_.damageCounterView)
-            gs_.damageCounterView.update(message.targetId, message.playerDamage, message.topDamagers);
     }
 }
 }

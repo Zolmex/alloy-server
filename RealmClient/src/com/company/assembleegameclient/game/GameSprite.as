@@ -76,7 +76,6 @@ public class GameSprite extends Sprite {
     public var allStatsView:AllStatsView;
     public var statsView:StatsView;
     public var optionsView:Options;
-    public var damageCounterView:IDamageCounterView;
 
     public function GameSprite(server:Server, gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
         this.camera_ = new Camera();
@@ -96,37 +95,6 @@ public class GameSprite extends Sprite {
         this.createCharacter_ = createCharacter;
         this.charId_ = charId;
         this.mapJSON_ = mapJSON;
-        addDamageCounter(Parameters.data_.damageCounter);
-    }
-
-    public function addDamageCounter(type:int) : void {
-        if (damageCounterView != null)
-            damageCounterView.dispose();
-
-        var view:IDamageCounterView;
-
-        switch (type) {
-            case DamageCounterType.OFF:
-                damageCounterView = null;
-                return;
-            case DamageCounterType.MINIMAL:
-                view = new MinimalDamageCounterView(map);
-                break;
-            case DamageCounterType.COMPACT:
-                view = new CompactDamageCounterView(map);
-                break;
-            case DamageCounterType.FULL:
-            default:
-                view = new FullDamageCounterView(map);
-                break;
-        }
-
-        damageCounterView = view;
-
-        var damageCounterSprite:Sprite = damageCounterView.getSprite();
-        damageCounterSprite.x = 10;
-        damageCounterSprite.y = 10;
-        addChild(damageCounterSprite);
     }
 
     public function setFocus(focus:GameObject):void {
@@ -309,9 +277,6 @@ public class GameSprite extends Sprite {
                     this.hudView.tabStrip.inventoryGrid.showGemstonesUI(true);
                 }
             }
-
-            if (damageCounterView)
-                damageCounterView.dispose();
 
             this.isGameStarted = false;
             Renderer.inGame = false;
