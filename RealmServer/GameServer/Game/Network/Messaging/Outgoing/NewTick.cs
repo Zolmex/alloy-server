@@ -18,7 +18,7 @@ public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> 
 
     public void Write(NetworkWriter wtr)
     {
-        var begin = wtr.BaseStream.Position - 5;
+        var begin = wtr.BaseStream.Position;
 
         var updateCount = 0;
         wtr.Write((short)0); // Placeholder
@@ -41,7 +41,7 @@ public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> 
 
         var end = wtr.BaseStream.Position;
 
-        wtr.BaseStream.Seek(begin + 5, SeekOrigin.Begin); // Go back to beginning (+ 5 bytes cus of header) and write the actual update count
+        wtr.BaseStream.Seek(begin, SeekOrigin.Begin); // Go back to beginning (+ 5 bytes cus of header) and write the actual update count
         wtr.Write((short)updateCount);
         wtr.BaseStream.Seek(end, SeekOrigin.Begin); // Go to the end of the packet body
     }

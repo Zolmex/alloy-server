@@ -8,7 +8,7 @@ namespace GameServer.Game.Entities;
 
 public class PoisonInstance
 {
-    private static readonly Logger _log = new Logger(typeof(PoisonInstance));
+    private static readonly Logger _log = new(typeof(PoisonInstance));
 
     public Item Item { get; private set; }
     public Character Target { get; private set; }
@@ -35,20 +35,20 @@ public class PoisonInstance
         Active = true;
 
         var poison = item.Poison;
-        
+
         // Calculate total damage over time with efficiency
         var totalTicks = poison.Duration / poison.TickSpeed;
         DamageLeft = (int)Math.Floor(poison.Damage * totalTicks * efficiency / 100);
-        
+
         // First tick happens after impact damage
         NextTickTime = startTime + poison.TickSpeed;
-        
+
         if (poison.ImpactDamage > 0)
         {
             int impactDamage = (int)Math.Floor(poison.ImpactDamage * (efficiency / 100));
             target.DamageWithText(impactDamage, from: caster, prefix: "Poison Impact: ", ignoreInvincible: true);
         }
-        
+
         caster.OnTick += Tick;
     }
 
@@ -62,14 +62,14 @@ public class PoisonInstance
             // Handle poison spread on expiration/death
             if (Target.Dead && poison.SpreadEfficiency != 0 && poison.SpreadRange != 0)
                 SpreadPoison(time.TotalElapsedMs);
-            
+
             Deactivate();
             return;
         }
-        
+
         if (time.TotalElapsedMs < NextTickTime)
             return;
-        
+
         var tickDamage = (int)Math.Floor(poison.Damage * (Efficiency / 100));
         var actualDamage = Math.Min(DamageLeft, tickDamage);
 
@@ -77,7 +77,7 @@ public class PoisonInstance
 
         DamageLeft -= actualDamage;
         NextTickTime += poison.TickSpeed;
-        
+
         if (poison.Effects != null)
             Target.ApplyConditionEffects(poison.Effects);
     }
@@ -91,7 +91,7 @@ public class PoisonInstance
         {
             if (enemy is not Enemy || enemy.Dead)
                 continue;
-            
+
             if (spreadTargetNum >= poison.SpreadTargetsNum)
                 break;
 
@@ -100,25 +100,26 @@ public class PoisonInstance
             new PoisonInstance(Item, enemy, Caster, currentTime, Efficiency * poison.SpreadEfficiency);
 
             // Visual effect per enemy when poison spreads
-            ShowEffect.Write(Caster.User.Network,
+            Caster.User.SendPacket(new
+            ShowEffect(
                 (byte)ShowEffectIndex.Nova,
                 Caster.Id,
                 0xFFFFFF,
                 1,
                 new WorldPosData(enemy.Position.X, enemy.Position.Y),
-                new WorldPosData());
+                new WorldPosData()));
 
             spreadTargetNum++;
         }
 
         // Visual effect at spread origin
-        ShowEffect.Write(Caster.User.Network,
-            (byte)ShowEffectIndex.Nova,
+        Caster.User.SendPacket(new ShowEffect(
+        (byte)ShowEffectIndex.Nova,
             Caster.Id,
             0xFF0000,
             poison.SpreadRange,
             new WorldPosData(Target.Position.X, Target.Position.Y),
-            new WorldPosData());
+            new WorldPosData()));
     }
 
     public void Deactivate()

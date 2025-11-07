@@ -1,24 +1,13 @@
-﻿using Common.Utilities;
+﻿using Common.Utilities.Net;
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly partial record struct TradeChanged(bool[] Offer) : IOutgoingPacket
 {
-    [Packet(PacketId.TRADECHANGED)]
-    public class TradeChanged : IOutgoingPacket
+    public void Write(NetworkWriter wtr)
     {
-        public static void Write(NetworkHandler network, bool[] offer)
-        {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
-
-                wtr.Write((byte)offer.Length);
-                foreach (var item in offer)
-                    wtr.Write(item);
-
-                state.PacketEnd(begin, PacketId.TRADECHANGED);
-            }
-        }
+        wtr.Write((byte)Offer.Length);
+        foreach (var item in Offer)
+            wtr.Write(item);
     }
 }

@@ -80,7 +80,7 @@ public struct ObjectStatusData
     public void Write(NetworkWriter wtr)
     {
         wtr.Write(ObjectId);
-        Pos.Write(wtr);
+        wtr.Write(Pos);
         var statCount = 0;
         var pos = wtr.BaseStream.Position;
         wtr.Write((byte)0); // Placeholder

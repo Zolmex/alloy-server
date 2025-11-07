@@ -2,59 +2,30 @@
 
 using Common;
 using Common.Utilities;
+using Common.Utilities.Net;
 using GameServer.Game.Worlds;
 using System.Collections.Generic;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectData> NewEntities, List<ObjectDropData> OldEntities, Dictionary<int, ObjectStatusData> Updates) : IOutgoingPacket
 {
-    [Packet(PacketId.UPDATE)]
-    public class Update : IOutgoingPacket
+    public void Write(NetworkWriter wtr)
     {
-        public WorldTile[] NewTiles { get; }
-        public ObjectData[] NewEntities { get; }
-        public ObjectDropData[] OldEntities { get; }
-
-        public static void Write(NetworkHandler network, List<WorldTile> tiles, List<ObjectData> newEntities, List<ObjectDropData> oldEntities, Dictionary<int, ObjectStatusData> updates)
+        wtr.Write((short)Tiles.Count);
+        for (var i = 0; i < Tiles.Count; i++)
+            Tiles[i].Write(wtr);
+        wtr.Write((short)NewEntities.Count);
+        for (var i = 0; i < NewEntities.Count; i++)
+            NewEntities[i].Write(wtr);
+        wtr.Write((short)OldEntities.Count);
+        for (var i = 0; i < OldEntities.Count; i++)
         {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
-
-                wtr.Write((short)tiles.Count);
-                for (var i = 0; i < tiles.Count; i++)
-                    tiles[i].Write(wtr);
-                wtr.Write((short)newEntities.Count);
-                for (var i = 0; i < newEntities.Count; i++)
-                    newEntities[i].Write(wtr);
-                wtr.Write((short)oldEntities.Count);
-                for (var i = 0; i < oldEntities.Count; i++)
-                {
-                    oldEntities[i].Write(wtr);
-                    using (TimedLock.Lock(updates))
-                        updates.Remove(oldEntities[i].ObjectId);
-                }
-
-                state.PacketEnd(begin, PacketId.UPDATE);
-            }
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(Update);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
+            OldEntities[i].Write(wtr);
+            using (TimedLock.Lock(Updates))
+                Updates.Remove(OldEntities[i].ObjectId);
         }
     }
 }

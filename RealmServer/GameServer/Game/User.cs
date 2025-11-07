@@ -147,9 +147,7 @@ public class User : IIdentifiable
 
         Unload(true); // Begin reconnect process, player leaves world and set gamestate to idle
 
-        Reconnect.Write(Network,
-            world.Id
-        );
+        SendPacket(new Reconnect(world.Id));
     }
 
     public void ReconnectTo(int worldId)

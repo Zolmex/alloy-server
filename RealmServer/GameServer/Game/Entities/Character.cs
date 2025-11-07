@@ -385,7 +385,7 @@ public class Character : Entity
         {
             if (plr.DistSqr(this) <= Math.Max(radiusSqr, SIGHT_RADIUS_SQR))
             {
-                EnemyShoot.Write(plr.User.Network,
+                plr.User.SendPacket(new EnemyShoot(
                     firstProjId,
                     Id,
                     projType,
@@ -402,7 +402,7 @@ public class Character : Entity
                     armorPiercing,
                     size,
                     effects,
-                    propId);
+                    propId));
             }
         });
 

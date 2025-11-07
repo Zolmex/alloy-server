@@ -1,25 +1,16 @@
 ﻿#region
 
-using Common.Utilities;
+using Common.Utilities.Net;
 using GameServer.Game.Entities;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Outgoing
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly partial record struct TradeDone(Player.TradeResult Result) : IOutgoingPacket
 {
-    [Packet(PacketId.TRADEDONE)]
-    public class TradeDone : IOutgoingPacket
+    public void Write(NetworkWriter wtr)
     {
-        public static void Write(NetworkHandler network, Player.TradeResult result)
-        {
-            var state = network.SendState;
-            var wtr = state.Writer;
-            using (TimedLock.Lock(state))
-            {
-                var begin = state.PacketBegin();
-                wtr.Write((byte)result);
-                state.PacketEnd(begin, PacketId.TRADEDONE);
-            }
-        }
+        wtr.Write((byte)Result);
     }
 }

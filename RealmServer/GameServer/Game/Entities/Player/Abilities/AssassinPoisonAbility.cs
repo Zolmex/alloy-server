@@ -9,7 +9,7 @@ namespace GameServer.Game.Entities;
 
 public class AssassinPoisonAbility : Ability
 {
-    private static readonly Logger _log = new Logger(typeof(AssassinPoisonAbility));
+    private static readonly Logger _log = new(typeof(AssassinPoisonAbility));
 
     private long _cooldownReset;
 
@@ -53,8 +53,8 @@ public class AssassinPoisonAbility : Ability
     {
         var poison = item.Poison;
 
-        ShowEffect.Write(_player.User.Network,
-            (byte)ShowEffectIndex.Throw,
+        _player.User.SendPacket(new ShowEffect(
+(byte)ShowEffectIndex.Throw,
             _player.Id,
             0,
             poison.ThrowTravelTime,
@@ -73,17 +73,17 @@ public class AssassinPoisonAbility : Ability
         {
             if (enemy is not Enemy)
                 continue;
-            
+
             // Create new poison instance for every enemy
             new PoisonInstance(item, enemy, _player, time, 100f);
         }
-        
-        ShowEffect.Write(_player.User.Network,
-            (byte)ShowEffectIndex.Nova,
+
+        _player.User.SendPacket(new ShowEffect(
+(byte)ShowEffectIndex.Nova,
             _player.Id,
             0,
             poison.PoisonRange,
             new WorldPosData(usePos.X, usePos.Y),
-            new WorldPosData());
+            new WorldPosData()));
     }
 }

@@ -25,7 +25,7 @@ public class OutgoingPacketGenerator : IIncrementalGenerator
             }
             return str.ToString();
         }*/
-    private string GeneratePropertyChanged(ITypeSymbol typeSymbol, ParameterListSyntax paramListSyntax)
+    private string GenerateWriteImpl(ITypeSymbol typeSymbol, ParameterListSyntax paramListSyntax)
     {
         return $@"using Common.Utilities.Net;
 namespace {typeSymbol.ContainingNamespace};
@@ -33,9 +33,17 @@ partial record struct {typeSymbol.Name}
 {{
     public readonly void Write(NetworkWriter wtr)
     {{
-{GenerateMethods(paramListSyntax).TrimEnd()}
+{GenerateMethods(paramListSyntax)}
 /*{debugStuff}*/
     }}
+}}";
+    }
+    private string GeneratePacketIdImpl(ITypeSymbol typeSymbol)
+    {
+        return $@"namespace {typeSymbol.ContainingNamespace};
+partial record struct {typeSymbol.Name}
+{{
+    static PacketId IOutgoingPacket.PacketId => PacketId.{typeSymbol.Name.ToUpper()};
 }}";
     }
 
@@ -48,15 +56,23 @@ partial record struct {typeSymbol.Name}
             var propName = fieldSymbol.Identifier.Text;
             sb.AppendLine($"\t\twtr.Write({propName});");
         }
-        return sb.ToString();
+        return sb.ToString().TrimEnd();
     }
     public void Execute(SourceProductionContext context,
-      ImmutableArray<(RecordDeclarationSyntax, ITypeSymbol)> source)
+      ImmutableArray<TargetData> source)
     {
         foreach (var item in source)
         {
-            var code = GeneratePropertyChanged(item.Item2, item.Item1.ParameterList);
-            context.AddSource($"{item.Item2.Name}.Write.cs", SourceText.From(code, Encoding.UTF8));
+            if (!item.HasWrite)
+            {
+                var code = GenerateWriteImpl(item.Symbol, item.Syntax.ParameterList);
+                context.AddSource($"{item.Symbol.Name}.Write.cs", SourceText.From(code, Encoding.UTF8));
+            }
+            if (!item.HasPacketId)
+            {
+                var code = GeneratePacketIdImpl(item.Symbol);
+                context.AddSource($"{item.Symbol.Name}.PacketId.cs", SourceText.From(code, Encoding.UTF8));
+            }
         }
     }
 
@@ -68,12 +84,12 @@ partial record struct {typeSymbol.Name}
                 (node, _) => node is RecordDeclarationSyntax rec &&
                 rec.ParameterList?.Parameters.Count > 0, // B
                 (syntax, _) => GetSemanticTargetForGeneration(syntax)) // C
-                .Where(n => n.Item1 is not null).Collect();
+                .Where(n => n is not null).Collect();
 
         context.RegisterSourceOutput(pipeline, Execute);
     }
     static StringBuilder debugStuff = new();
-    static (RecordDeclarationSyntax, ITypeSymbol) GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    static TargetData GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var syn = (RecordDeclarationSyntax)context.Node;
 
@@ -81,23 +97,31 @@ partial record struct {typeSymbol.Name}
         {
             debugStuff.AppendLine($"Context is {context.SemanticModel.GetSymbolInfo(syn).Symbol?.GetType().AssemblyQualifiedName ?? "null"}");
             // weird, we couldn't get the symbol, ignore it
-            return (null, null);
+            return null;
         }
         var inter = context.SemanticModel.Compilation.GetTypeByMetadataName("GameServer.Game.Network.Messaging.IOutgoingPacket");
         if (symbol.Interfaces.Contains(inter))
         {
-            var bonus = symbol.GetMembers("Write");
+            var write = symbol.GetMembers("Write");
+            var packetIdImpl = symbol.GetMembers("GameServer.Game.Network.Messaging.IOutgoingPacket.PacketId");
+            //
+            //static PacketId IOutgoingPacket.PacketId => ;
             //foreach (var item in bonus)
             //{
             //    debugStuff.AppendLine(item.Name);
             //}
-            if (bonus.Length > 0)
-            {
-                return (null, null);
-            }
-            return (syn, symbol);
+
+            return new(syn, symbol, write.Length > 0, packetIdImpl.Length > 0);
         }
 
-        return (null, null);
+        return null;
     }
+
+}
+public class TargetData(RecordDeclarationSyntax syntax, ITypeSymbol symbol, bool hasWriteImpl, bool hasPacketIdImpl)
+{
+    public readonly RecordDeclarationSyntax Syntax = syntax;
+    public readonly ITypeSymbol Symbol = symbol;
+    public readonly bool HasWrite = hasWriteImpl;
+    public readonly bool HasPacketId = hasPacketIdImpl;
 }
