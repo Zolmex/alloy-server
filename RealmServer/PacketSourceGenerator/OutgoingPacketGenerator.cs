@@ -43,7 +43,7 @@ partial record struct {typeSymbol.Name}
         return $@"namespace {typeSymbol.ContainingNamespace};
 partial record struct {typeSymbol.Name}
 {{
-    static PacketId IOutgoingPacket.PacketId => PacketId.{typeSymbol.Name.ToUpper()};
+    public static PacketId PacketId => PacketId.{typeSymbol.Name.ToUpper()};
 }}";
     }
 

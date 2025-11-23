@@ -50,7 +50,6 @@ public class NetworkWriter : BinaryWriter
             base.Write(bytes);
             return;
         }
-
         for (var i = 0; i < value.Length; i++)
         {
             switch (value[i])
