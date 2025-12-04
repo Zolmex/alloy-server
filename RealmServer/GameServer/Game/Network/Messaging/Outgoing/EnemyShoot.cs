@@ -11,7 +11,7 @@ namespace GameServer.Game.Network.Messaging.Outgoing;
 public readonly partial record struct EnemyShoot(ushort BulletId, int OwnerId, ushort ProjType, float X, float Y,
         float Angle, short Damage,
         byte NumShots, float AngleInc, ProjectilePath Path, float Lifetime, bool MultiHit, bool PassesCover,
-        bool ArmorPiercing, int Size, (ConditionEffectIndex, int)[] Effects, int PropId = -1) : IOutgoingPacket
+        bool ArmorPiercing, int Size, (ConditionEffectIndex, int)[] Effects, int PropId = -1) : IOutgoingPacket<EnemyShoot>
 {
     public void Write(NetworkWriter wtr)
     {
@@ -45,5 +45,9 @@ public readonly partial record struct EnemyShoot(ushort BulletId, int OwnerId, u
             wtr.Write(NumShots);
             wtr.Write(AngleInc);
         }
+    }
+    public static EnemyShoot Read(NetworkReader rdr)
+    {
+        return new();
     }
 }

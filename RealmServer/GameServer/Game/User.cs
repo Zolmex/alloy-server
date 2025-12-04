@@ -158,7 +158,7 @@ public class User : IIdentifiable
         ReconnectTo(world);
     }
     public void SendPacket<T>(T packet)
-        where T : IOutgoingPacket
+        where T : IOutgoingPacket<T>
     {
         var state = Network.SendState;
         var wtr = state.Writer;

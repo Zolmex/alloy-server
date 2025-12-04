@@ -9,10 +9,8 @@ using System.Collections.Generic;
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
 
-public readonly partial record struct DamageCounterUpdate(int TargetId, int PlayerDamage, List<KeyValuePair<Player, int>> TopDamagers) : IOutgoingPacket
+public readonly partial record struct DamageCounterUpdate(int TargetId, int PlayerDamage, List<KeyValuePair<Player, int>> TopDamagers) : IOutgoingPacket<DamageCounterUpdate>
 {
-    static PacketId IOutgoingPacket.PacketId => PacketId.DAMAGECOUNTERUPDATE;
-    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write(TargetId);
@@ -30,5 +28,9 @@ public readonly partial record struct DamageCounterUpdate(int TargetId, int Play
             wtr.Write(player.Id);
             wtr.Write((uint)damage);
         }
+    }
+    public static DamageCounterUpdate Read(NetworkReader wtr)
+    {
+        return new();
     }
 }

@@ -4,7 +4,6 @@
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct Death(int AccountId, int CharId, string Killer) : IOutgoingPacket
+public readonly partial record struct Death(int AccountId, int CharId, string Killer) : IOutgoingPacket<Death>
 {
-    static PacketId IOutgoingPacket.PacketId => PacketId.DEATH;
 }

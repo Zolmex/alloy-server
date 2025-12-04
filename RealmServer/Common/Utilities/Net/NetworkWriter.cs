@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 #endregion
@@ -155,5 +156,27 @@ public class NetworkWriter : BinaryWriter
         var bytes = Encoding.UTF8.GetBytes(str);
         Write(bytes.Length);
         base.Write(bytes);
+    }
+}
+public static class NetworkWriterExtension
+{
+    extension(NetworkWriter wtr)
+    {
+        public void Write<T>(T value) where T : struct, Enum
+        {
+            wtr.Write(MemoryMarshal.AsBytes(new ReadOnlySpan<T>(in value)));
+        }
+        public void Write<T>(T[] value) where T : struct, Enum
+        {
+            wtr.Write((ushort)value.Length);
+            wtr.Write(MemoryMarshal.AsBytes(value));
+        }
+        //public void Write(TradeItem value)
+        //{
+        //    wtr.Write(value.Item);
+        //    wtr.Write(value.SlotType);
+        //    wtr.Write(value.Tradeable);
+        //    wtr.Write(value.Included);
+        //}
     }
 }
