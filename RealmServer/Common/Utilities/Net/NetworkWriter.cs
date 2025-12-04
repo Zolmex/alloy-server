@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.IO;
 using System.Net;
 using System.Numerics;
@@ -124,20 +125,20 @@ public class NetworkWriter : BinaryWriter
             base.Write(value);
     }
 
-    public void WriteNullTerminatedString(string str)
+    public void WriteNullTerminatedString(ReadOnlySpan<char> str)
     {
-        base.Write(Encoding.UTF8.GetBytes(str));
-        Write((byte)0);
+        base.Write(str);
+        base.Write(byte.MinValue);
     }
 
-    public void WriteUTF(string str)
+    public void WriteUTF(ReadOnlySpan<char> str)
     {
-        if (str == null)
-            Write((ushort)0);
+        if (str.IsEmpty)
+            Write(ushort.MinValue);
         else
         {
-            var bytes = Encoding.UTF8.GetBytes(str);
-            Write(bytes);
+            Write((ushort)str.Length);
+            Write(str);
         }
     }
     public override void Write(string str)
