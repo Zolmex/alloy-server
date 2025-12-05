@@ -45,6 +45,7 @@ public class OutgoingPacketGenerator : IIncrementalGenerator
     private string GenerateWriteImpl(ITypeSymbol typeSymbol, ParameterListSyntax paramListSyntax)
     {
         return $@"using Common.Utilities.Net;
+using Common;
 namespace {typeSymbol.ContainingNamespace};
 partial record struct {typeSymbol.Name}
 {{
@@ -58,6 +59,7 @@ partial record struct {typeSymbol.Name}
     private string GenerateReadImpl(ITypeSymbol typeSymbol, ParameterListSyntax paramListSyntax)
     {
         return $@"using Common.Utilities.Net;
+using Common;
 namespace {typeSymbol.ContainingNamespace};
 partial record struct {typeSymbol.Name}
 {{
@@ -95,10 +97,14 @@ partial record struct {typeSymbol.Name}
         {
             var fieldSymbol = typeSymbol.Parameters[i];
             var type = fieldSymbol.Type.ToString();
-            string str = $"<{type}>";
+            string str = $"<{type.Replace("[]", null)}>";
             if (types.TryGetValue(type, out var fullName))
             {
                 str = char.ToUpper(fullName[0]) + fullName.Substring(1);
+            }
+            else if (!type.Contains("[]"))
+            {
+                str = char.ToUpper(type[0]) + type.Substring(1);
             }
             sb.Append($"r.Read{str}()");
             if (i != typeSymbol.Parameters.Count - 1)
@@ -117,17 +123,17 @@ partial record struct {typeSymbol.Name}
             if (!item.HasWrite)
             {
                 var code = GenerateWriteImpl(item.Symbol, item.Syntax.ParameterList);
-                context.AddSource($"{item.Symbol.Name}.Write.cs", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"OutgoingWrites/{item.Symbol.Name}.Write.cs", SourceText.From(code, Encoding.UTF8));
             }
             if (!item.HasRead)
             {
                 var code = GenerateReadImpl(item.Symbol, item.Syntax.ParameterList);
-                context.AddSource($"{item.Symbol.Name}.Read.cs", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"OutgoingReads/{item.Symbol.Name}.Read.cs", SourceText.From(code, Encoding.UTF8));
             }
             if (!item.HasPacketId)
             {
                 var code = GeneratePacketIdImpl(item.Symbol);
-                context.AddSource($"{item.Symbol.Name}.PacketId.cs", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"OutgoingPacketIds/{item.Symbol.Name}.PacketId.cs", SourceText.From(code, Encoding.UTF8));
             }
         }
     }

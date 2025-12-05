@@ -171,6 +171,13 @@ public struct WorldPosData : IEquatable<WorldPosData>
 
 public static class WorldPosDataExtensions
 {
+    extension(NetworkReader rdr)
+    {
+        public WorldPosData ReadWorldPosData()
+        {
+            return new WorldPosData(rdr.ReadSingle(), rdr.ReadSingle());
+        }
+    }
     public static Vector2 ToVec2(this WorldPosData data)
     {
         return new Vector2(data.X, data.Y);
