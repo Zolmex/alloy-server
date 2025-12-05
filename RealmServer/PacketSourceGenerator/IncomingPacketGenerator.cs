@@ -68,7 +68,7 @@ partial record {typeSymbol.Name}
 {{
     public void Read(NetworkReader r)
     {{
-        {GenerateReadMethods(paramListSyntax)}
+{GenerateReadMethods(paramListSyntax)}
     }}
 }}";
     }
@@ -111,7 +111,7 @@ partial record {typeSymbol.Name}
                 {
                     str = char.ToUpper(type[0]) + type.Substring(1);
                 }
-                sb.AppendLine($"{name} = r.Read{str}();");
+                sb.AppendLine($"\t\t{name} = r.Read{str}();");
             }
         }
         return sb.ToString().TrimEnd();
