@@ -43,8 +43,20 @@ public class NetworkWriter : BinaryWriter
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     public void Write<T>(T[] value)
-    where T : struct, INumber<T>
+    where T : IConvertible
     {
+        if (value is char[] chars)
+        {
+            var span = chars.AsSpan();
+            Write((ushort)Encoding.UTF8.GetByteCount(span));
+            base.Write(span);
+            return;
+        }
+        if(value is string[] strings)
+        {
+            Write(strings);
+            return;
+        }
         Write((ushort)value.Length);
 
         if (value is byte[] bytes)
@@ -56,15 +68,20 @@ public class NetworkWriter : BinaryWriter
         {
             switch (value[i])
             {
-                case long l: Write(l); break;
-                case float f: Write(f); break;
-                case double d: Write(d); break;
-                case decimal dec: Write(dec); break;
-                case short s: Write(s); break;
-                case ushort us: Write(us); break;
-                case uint ui: Write(ui); break;
-                case ulong ul: Write(ul); break;
-                case int integer: Write(integer); break;
+                case bool @bool: Write(@bool); break;
+                case byte @byte: Write(@byte); break; // this one will probably never work because of byte[] check above
+                case char @char: Write(@char); break;
+                case decimal @decimal: Write(@decimal); break;
+                case double @double: Write(@double); break;
+                case short @short: Write(@short); break;
+                case int @int: Write(@int); break;
+                case long @long: Write(@long); break;
+                case sbyte @sbyte: Write(@sbyte); break;
+                case float @float: Write(@float); break;
+                case string @string: Write(@string); break;
+                case ushort @ushort: Write(@ushort); break;
+                case uint @uint: Write(@uint); break;
+                case ulong @ulong: Write(@ulong); break;
             }
         }
     }
@@ -132,14 +149,14 @@ public class NetworkWriter : BinaryWriter
         base.Write(byte.MinValue);
     }
 
-    public void WriteUTF(ReadOnlySpan<char> str)
+    private void WriteUTF(ReadOnlySpan<char> str)
     {
         if (str.IsEmpty)
             Write(ushort.MinValue);
         else
         {
             Write((ushort)str.Length);
-            Write(str);
+            base.Write(str);
         }
     }
     public override void Write(string str)

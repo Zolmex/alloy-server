@@ -12,15 +12,15 @@ using GameServer.Game.Network.Messaging.Outgoing;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.INVSWAP)]
-public class InvSwap : IIncomingPacket
+public partial record InvSwap : IIncomingPacket
 {
     public SlotObjectData SlotObject1;
     public SlotObjectData SlotObject2;
 
     public void Read(NetworkReader rdr)
     {
-        SlotObject1 = SlotObjectData.Read(rdr);
-        SlotObject2 = SlotObjectData.Read(rdr);
+        SlotObject1 = rdr.ReadSlotObjectData();
+        SlotObject2 = rdr.ReadSlotObjectData();
     }
 
     public void Handle(User user)
@@ -183,19 +183,4 @@ public class InvSwap : IIncomingPacket
 
     //    return null;
     //}
-
-    public override string ToString()
-    {
-        var type = typeof(InvSwap);
-        var props = type.GetProperties();
-        var ret = $"\n";
-        foreach (var prop in props)
-        {
-            ret += $"{prop.Name}:{prop.GetValue(this)}";
-            if (!(props.IndexOf(prop) == props.Length - 1))
-                ret += "\n";
-        }
-
-        return ret;
-    }
 }

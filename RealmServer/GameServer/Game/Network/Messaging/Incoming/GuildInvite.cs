@@ -9,7 +9,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.GUILDINVITE)]
-    public class GuildInvite : IIncomingPacket
+    public partial record GuildInvite : IIncomingPacket
     {
         public string TargetName;
 
@@ -35,21 +35,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
                 return;
 
             target.GuildInvite(user, acc.GuildName);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(GuildInvite);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

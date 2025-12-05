@@ -9,7 +9,7 @@ using GameServer.Game.Worlds;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.CONSTELLATIONSTRIAL)]
-    public class ConstellationsTrial : IIncomingPacket
+    public partial record ConstellationsTrial : IIncomingPacket
     {
         public void Read(NetworkReader rdr)
         { }
@@ -39,21 +39,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
                         user.ReconnectTo(world);
                 }
             });
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(ConstellationsTrial);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

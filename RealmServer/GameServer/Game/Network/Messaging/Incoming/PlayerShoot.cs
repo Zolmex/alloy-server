@@ -14,7 +14,7 @@ using System.Numerics;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.PLAYERSHOOT)]
-    public class PlayerShoot : IIncomingPacket
+    public partial record PlayerShoot : IIncomingPacket
     {
         public float Angle;
         public WorldPosData Pos;
@@ -103,21 +103,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
             player.Shoot(weapon.Projectiles[0], weapon.NumProjectiles, Angle.Deg2Rad(), weapon.ArcGap.Deg2Rad(), new Vector2(Pos.X, Pos.Y));
             player.LastShootAck = RealmManager.RealTime.ElapsedMilliseconds;
             player.LastClientShootTime = Time;
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(PlayerShoot);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

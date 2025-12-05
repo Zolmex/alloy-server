@@ -7,7 +7,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.TRADEREQUEST)]
-    public class TradeRequest : IIncomingPacket
+    public partial record TradeRequest : IIncomingPacket
     {
         public string Name;
 

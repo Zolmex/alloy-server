@@ -9,7 +9,7 @@ using GameServer.Game.Worlds;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.ESCAPE)]
-    public class Escape : IIncomingPacket
+    public partial record Escape : IIncomingPacket
     {
         public void Read(NetworkReader rdr)
         { }
@@ -26,21 +26,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
             }
 
             user.ReconnectTo(RealmManager.NexusInstance);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(Escape);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

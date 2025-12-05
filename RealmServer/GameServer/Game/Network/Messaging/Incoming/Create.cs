@@ -10,7 +10,7 @@ using GameServer.Game.Network.Messaging.Outgoing;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.CREATE)]
-    public class Create : IIncomingPacket
+    public partial record Create : IIncomingPacket
     {
         public short ClassType;
         public short SkinType;
@@ -42,21 +42,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
 
                 user.Load(chr, world);
             }
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(Create);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

@@ -10,7 +10,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.CHANGEGUILDRANK)]
-    public class ChangeGuildRank : IIncomingPacket
+    public partial record ChangeGuildRank : IIncomingPacket
     {
         public string TargetName;
         public int TargetRank;
@@ -39,21 +39,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
             targetAcc.GuildRank = TargetRank;
             target.GuildRank = TargetRank;
             DbClient.Save(targetAcc);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(ChangeGuildRank);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

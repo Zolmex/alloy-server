@@ -7,8 +7,8 @@ using Common.Utilities.Net;
 
 namespace GameServer.Game.Network.Messaging.Incoming
 {
-    [Packet(PacketId.GEMSTONE_REMOVE)]
-    public class GemstoneRemove : IIncomingPacket
+    [Packet(PacketId.GEMSTONEREMOVE)]
+    public partial record GemstoneRemove : IIncomingPacket
     {
         public byte Slot;
         public byte GemSlot;
@@ -28,21 +28,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
 
             var player = user.GameInfo.Player;
             player.Inventory.RemoveGemstones(Slot, GemSlot, InvSlot);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(GemstoneRemove);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

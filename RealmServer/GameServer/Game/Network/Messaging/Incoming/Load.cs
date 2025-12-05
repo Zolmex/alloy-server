@@ -10,7 +10,7 @@ using GameServer.Game.Network.Messaging.Outgoing;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.LOAD)]
-    public class Load : IIncomingPacket
+    public partial record Load : IIncomingPacket
     {
         public int CharId;
 
@@ -58,21 +58,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
             }
 
             user.Load(chr, world);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(Load);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

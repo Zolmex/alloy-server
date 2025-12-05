@@ -9,7 +9,7 @@ using GameServer.Game.Entities;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.PLAYERHIT)]
-    public class PlayerHit : IIncomingPacket
+    public partial record PlayerHit : IIncomingPacket
     {
         private static readonly Logger _log = new(typeof(PlayerHit));
 
@@ -40,21 +40,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
             }
 
             proj.TryHitEntity(user.GameInfo.Player);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(PlayerHit);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

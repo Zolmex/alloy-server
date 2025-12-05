@@ -8,7 +8,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.GOTOACK)]
-    public class GotoAck : IIncomingPacket
+    public partial record GotoAck : IIncomingPacket
     {
         public void Read(NetworkReader rdr)
         { }
@@ -23,21 +23,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
                 return;
 
             plr.FinishTeleport();
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(GuildRemove);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

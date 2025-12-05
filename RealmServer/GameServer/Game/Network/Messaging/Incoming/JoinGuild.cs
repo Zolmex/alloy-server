@@ -8,7 +8,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.JOINGUILD)]
-    public class JoinGuild : IIncomingPacket
+    public partial record JoinGuild : IIncomingPacket
     {
         public string GuildName;
 
@@ -28,21 +28,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
 
             var player = user.GameInfo.Player;
             player.JoinGuild(GuildName);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(JoinGuild);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

@@ -11,7 +11,7 @@ using static GameServer.Game.Entities.Inventory.EntityInventory;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.INVDROP)]
-    public class InvDrop : IIncomingPacket
+    public partial record InvDrop : IIncomingPacket
     {
         public byte SlotId;
 
@@ -28,21 +28,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
                 return;
 
             user.GameInfo.World.CreateContainerAt(player.Position.X, player.Position.Y, new Item[1] { itemToDrop }, BagType.Purple, player.User.Account.AccountId);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(InvDrop);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

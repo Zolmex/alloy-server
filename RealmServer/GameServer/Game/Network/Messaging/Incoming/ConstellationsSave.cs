@@ -8,7 +8,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.CONSTELLATIONSSAVE)]
-    public class ConstellationsSave : IIncomingPacket
+    public partial record ConstellationsSave : IIncomingPacket
     {
         public int SavedPrimaries;
         public int SavedSecondaries;
@@ -36,21 +36,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
             player.SecondaryNodes = secondaries;
 
             player.ReloadConstellationMods();
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(ConstellationsSave);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

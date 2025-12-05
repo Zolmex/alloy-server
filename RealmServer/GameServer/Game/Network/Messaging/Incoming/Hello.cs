@@ -15,7 +15,7 @@ using System.Text;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.HELLO)]
-public class Hello : IIncomingPacket
+public partial record Hello : IIncomingPacket
 {
     public string BuildVersion;
     public int GameId;
@@ -121,20 +121,5 @@ public class Hello : IIncomingPacket
             world.Config.AllowTeleport,
             world.Music,
             world.Config.Difficulty));
-    }
-
-    public override string ToString()
-    {
-        var type = typeof(Hello);
-        var props = type.GetProperties();
-        var ret = $"\n";
-        foreach (var prop in props)
-        {
-            ret += $"{prop.Name}:{prop.GetValue(this)}";
-            if (!(props.IndexOf(prop) == props.Length - 1))
-                ret += "\n";
-        }
-
-        return ret;
     }
 }

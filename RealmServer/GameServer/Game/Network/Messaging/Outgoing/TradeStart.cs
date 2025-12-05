@@ -14,7 +14,7 @@ public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[
         wtr.Write((byte)MyItems.Length);
         foreach (var item in MyItems)
             item.Write(wtr);
-        wtr.WriteUTF(Name);
+        wtr.Write(Name);
         wtr.Write((byte)TheirItems.Length);
         foreach (var item in TheirItems)
             item.Write(wtr);
