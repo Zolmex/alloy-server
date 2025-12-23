@@ -625,7 +625,7 @@ namespace Common.Database
                 .ToDictionary(i => (StatType)statsArray[i * 2], i => statsArray[(i * 2) + 1]);
 
             //gets the array (key, value, key, value..etc) then converts it to dictionary
-            var baseStatsArray = _reader.ReadFloatArray(hashes[31]) ?? [];
+            var baseStatsArray = _reader.ReadFloatArray(hashes[27]) ?? [];
             BaseStats = Enumerable.Range(0, baseStatsArray.Length / 2)
                 .ToDictionary(i => (StatType)baseStatsArray[i * 2], i => baseStatsArray[(i * 2) + 1]);
 
