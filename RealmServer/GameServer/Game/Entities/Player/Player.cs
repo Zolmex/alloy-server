@@ -70,14 +70,6 @@ public partial class Player : Character
 
         InitPlayerSight();
 
-        // Load constellation data
-        PrimaryConstellation = Char.PrimaryConstellation;
-        SecondaryConstellation = Char.SecondaryConstellation;
-        PrimaryNodeData = Char.PrimaryNodeData;
-        SecondaryNodeData = Char.SecondaryNodeData;
-        PrimaryNodes = ConvertNodeData(PrimaryNodeData);
-        SecondaryNodes = ConvertNodeData(SecondaryNodeData);
-
         if (User.Account.Stats.ClassStats.Length <= 0) //if player doesnt have any classstats for some reason
             User.Account.Stats.ClassStats = NewAccountsConfig.CreateClassStats();
 
@@ -160,21 +152,6 @@ public partial class Player : Character
         Stats.Initializing = false;
     }
 
-    public int[]
-        ConvertNodeData(int data) //turns 4 digit number into array with 4 digits (2312) into [0] = 2 [1] = 3, etc
-    {
-        if (data == -1)
-            return new int[4] { -1, -1, -1, -1 };
-
-        var array = new int[4];
-        var newStr = data.ToString();
-
-        for (var i = 0; i < newStr.Length; i++)
-            array[i] = int.Parse(newStr[i].ToString());
-
-        return array;
-    }
-
     public void SaveCharacter(bool saveToDb = false)
     {
         if (!Initialized) // Make sure we don't fuck up our character
@@ -205,10 +182,6 @@ public partial class Player : Character
         Char.SecondaryStats[StatType.DamageMultiplier] = DamageMultiplier;
         Char.SecondaryStats[StatType.Armor] = Armor;
         Char.SecondaryStats[StatType.AttackSpeed] = AttackSpeed;
-        Char.PrimaryConstellation = PrimaryConstellation;
-        Char.SecondaryConstellation = SecondaryConstellation;
-        Char.PrimaryNodeData = PrimaryNodeData;
-        Char.SecondaryNodeData = SecondaryNodeData;
         Inventory.Save(Char);
 
         if (saveToDb)

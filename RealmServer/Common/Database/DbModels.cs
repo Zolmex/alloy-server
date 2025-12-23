@@ -584,10 +584,6 @@ namespace Common.Database
         public int DeathTime { get; set; }
         public bool HasBackpack { get; set; }
         public DbFameStats FameStats { get; set; }
-        public int PrimaryConstellation { get; set; }
-        public int SecondaryConstellation { get; set; }
-        public int PrimaryNodeData { get; set; }
-        public int SecondaryNodeData { get; set; }
         public int PetId { get; set; }
 
         public DbChar(int accId, int charId)
@@ -610,8 +606,7 @@ namespace Common.Database
                 "experience", "level", "statPoints", "charFame", "nextLevelXp", "nextClassQuestFame", "classType", "hp",
                 "mp", "ms", "stats", "baseStats", "itemTypes", "itemDatas", "fame", "tex1", "tex2", "skinType",
                 "healthPotions", "magicPotions", "creationTime", "deleted", "dead", "deathFame", "deathTime",
-                "hasBackpack", "petId", "primaryConstellation", "secondaryConstellation", "primaryNodeData",
-                "secondaryNodeData", "overrideStats"
+                "hasBackpack", "petId", "overrideStats"
             ]);
             Experience = (int)hashes[0];
             Level = (int)hashes[1];
@@ -659,10 +654,6 @@ namespace Common.Database
             DeathTime = (int)hashes[24];
             HasBackpack = (bool)hashes[25];
             PetId = (int)hashes[26];
-            PrimaryConstellation = (int)hashes[27];
-            SecondaryConstellation = (int)hashes[28];
-            PrimaryNodeData = (int)hashes[29];
-            SecondaryNodeData = (int)hashes[30];
         }
 
         public override void SaveAll(ITransaction trans)
@@ -701,10 +692,6 @@ namespace Common.Database
             trans.HashSetAsync(_key, "deathTime", DeathTime);
             trans.HashSetAsync(_key, "hasBackpack", HasBackpack);
             trans.HashSetAsync(_key, "petId", PetId);
-            trans.HashSetAsync(_key, "primaryConstellation", PrimaryConstellation);
-            trans.HashSetAsync(_key, "secondaryConstellation", SecondaryConstellation);
-            trans.HashSetAsync(_key, "primaryNodeData", PrimaryNodeData);
-            trans.HashSetAsync(_key, "secondaryNodeData", SecondaryNodeData);
         }
 
         public XElement ToXml()
@@ -743,11 +730,7 @@ namespace Common.Database
                 new("AttackSpeed", SecondaryStats[StatType.AttackSpeed]),
                 new("Tex1", Tex1),
                 new("Tex2", Tex2),
-                new("Texture", SkinType),
-                new("PrimaryConstellation", PrimaryConstellation),
-                new("SecondaryConstellation", SecondaryConstellation),
-                new("PrimaryNodeData", PrimaryNodeData),
-                new("SecondaryNodeData", SecondaryNodeData)
+                new("Texture", SkinType)
             };
             return new XElement("Char", new XAttribute("id", CharId), elements);
         }

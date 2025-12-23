@@ -235,47 +235,6 @@ public class DropLootCommand : Command
     }
 }
 
-[Command("constellation", CommandPermissionLevel.Creative)]
-public class ConstellationTestCommand : Command
-{
-    public override void Execute(Player player, string args)
-    {
-        if (string.IsNullOrWhiteSpace(args))
-        {
-            player.SendHelp("Constellations Reset!");
-            player.PrimaryConstellation = -1;
-            player.SecondaryConstellation = -1;
-            player.PrimaryNodeData = -1;
-            player.SecondaryNodeData = -1;
-            player.PrimaryNodes = new int[] { -1, -1, -1, -1 };
-            player.SecondaryNodes = new int[] { -1, -1, -1, -1 };
-            player.ReloadConstellationMods();
-            return;
-        }
-
-        if (args != "0" && args != "1" && args != "2" && args != "3" && args != "4")
-        {
-            player.SendError("Invalid Constellation! 0 = Indus 1 = Apus 2 = Cygnus 3 = Grus 4 = Pyxis");
-            return;
-        }
-
-        if (player.PrimaryConstellation == -1)
-        {
-            player.PrimaryConstellation = int.Parse(args);
-            //player.PrimaryNodeData = 1111;
-            player.PrimaryNodes = player.ConvertNodeData(player.PrimaryNodeData);
-            player.SendInfo("Set Primary Constellation To " + args);
-        }
-        else if (player.SecondaryConstellation == -1)
-        {
-            player.SecondaryConstellation = int.Parse(args);
-            //player.SecondaryNodeData = 1111;
-            player.SecondaryNodes = player.ConvertNodeData(player.SecondaryNodeData);
-            player.SendInfo("Set Secondary Constellation To " + args);
-        }
-    }
-}
-
 [Command("give", CommandPermissionLevel.Creative)]
 public class GiveCommand : Command
 {

@@ -17,9 +17,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\..\RealmClient\src\com\company\assembleegameclient\ui\constellations\xml\constellationsData.xml" Link="FeatureData\constellationsData.xml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
         <Content Include="..\..\RealmClient\src\kabam\rotmg\assets\prod\spritesheets\EmbeddedAssets_alienInvasionChars16x16.png">
             <Link>Resources\Sprites\Data\spritesheets\EmbeddedAssets_alienInvasionChars16x16.png</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

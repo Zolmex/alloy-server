@@ -317,11 +317,7 @@ namespace Common.Database
                 HealthPotions = NewCharsConfig.Config.HealthPotions,
                 MagicPotions = NewCharsConfig.Config.MagicPotions,
                 CreationTime = DateTime.Now.ToUnixTimestamp(),
-                HasBackpack = NewCharsConfig.Config.HasBackpack,
-                PrimaryConstellation = -1,
-                SecondaryConstellation = -1,
-                PrimaryNodeData = -1,
-                SecondaryNodeData = -1
+                HasBackpack = NewCharsConfig.Config.HasBackpack
             };
             chr.MainStats[StatType.Attack] = (int)classDesc.Stats[StatType.Attack];
             chr.MainStats[StatType.Defense] = (int)classDesc.Stats[StatType.Defense];
