@@ -4,9 +4,8 @@
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct Failure(int ErrorId, string ErrorDescription) : IOutgoingPacket
+public readonly partial record struct Failure(int ErrorId, string ErrorDescription) : IOutgoingPacket<Failure>
 {
-    static PacketId IOutgoingPacket.PacketId => PacketId.FAILURE;
 
     public const string DEFAULT_MESSAGE = "An error occured while processing data from your client.";
     public const int DEFAULT = 0;

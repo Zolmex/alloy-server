@@ -2,7 +2,7 @@
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct TradeAccepted(bool[] MyOffer, bool[] TheirOffer) : IOutgoingPacket
+public readonly partial record struct TradeAccepted(bool[] MyOffer, bool[] TheirOffer) : IOutgoingPacket<TradeAccepted>
 {
     public void Write(NetworkWriter wtr)
     {
@@ -12,5 +12,9 @@ public readonly partial record struct TradeAccepted(bool[] MyOffer, bool[] Their
         wtr.Write((byte)TheirOffer.Length);
         foreach (var item in TheirOffer)
             wtr.Write(item);
+    }
+    public static TradeAccepted Read(NetworkReader rdr)
+    {
+        return new();
     }
 }

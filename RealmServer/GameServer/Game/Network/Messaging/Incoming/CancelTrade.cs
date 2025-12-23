@@ -8,7 +8,7 @@ using GameServer.Game.Entities;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.CANCELTRADE)]
-    public class CancelTrade : IIncomingPacket
+    public partial record CancelTrade : IIncomingPacket
     {
         public void Read(NetworkReader rdr)
         { }

@@ -4,7 +4,6 @@
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct CreateSuccess(int ObjectId, int CharId) : IOutgoingPacket
+public readonly partial record struct CreateSuccess(int ObjectId, int CharId) : IOutgoingPacket<CreateSuccess>
 {
-    static PacketId IOutgoingPacket.PacketId => PacketId.CREATESUCCESS;
 }

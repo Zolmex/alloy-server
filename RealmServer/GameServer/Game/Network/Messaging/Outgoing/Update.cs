@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectData> NewEntities, List<ObjectDropData> OldEntities, Dictionary<int, ObjectStatusData> Updates) : IOutgoingPacket
+public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectData> NewEntities, List<ObjectDropData> OldEntities, Dictionary<int, ObjectStatusData> Updates) : IOutgoingPacket<Update>
 {
     public void Write(NetworkWriter wtr)
     {
@@ -27,5 +27,9 @@ public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectD
             using (TimedLock.Lock(Updates))
                 Updates.Remove(OldEntities[i].ObjectId);
         }
+    }
+    public static Update Read(NetworkReader rdr)
+    {
+        return new();
     }
 }

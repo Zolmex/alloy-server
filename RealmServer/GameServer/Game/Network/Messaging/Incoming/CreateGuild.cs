@@ -10,7 +10,7 @@ using GameServer.Game.Network.Messaging.Outgoing;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.CREATEGUILD)]
-public class CreateGuild : IIncomingPacket
+public partial record CreateGuild : IIncomingPacket
 {
     public string Name;
 
@@ -30,20 +30,5 @@ public class CreateGuild : IIncomingPacket
         player.GuildRank = user.Account.GuildRank;
 
         user.SendPacket(new GuildResult(result == GuildResult.SUCCESS, result));
-    }
-
-    public override string ToString()
-    {
-        var type = typeof(CreateGuild);
-        var props = type.GetProperties();
-        var ret = $"\n";
-        foreach (var prop in props)
-        {
-            ret += $"{prop.Name}:{prop.GetValue(this)}";
-            if (!(props.IndexOf(prop) == props.Length - 1))
-                ret += "\n";
-        }
-
-        return ret;
     }
 }

@@ -10,7 +10,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.GUILDREMOVE)]
-    public class GuildRemove : IIncomingPacket
+    public partial record GuildRemove : IIncomingPacket
     {
         public string TargetName;
 
@@ -43,21 +43,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
 
             if (target.World.DisplayName == "Guild Hall") // If player is in ghall, reconnect them to nexus
                 target.User.ReconnectTo(RealmManager.NexusInstance);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(GuildRemove);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

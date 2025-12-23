@@ -10,7 +10,7 @@ using GameServer.Game.Network.Messaging.Outgoing;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.USEPORTAL)]
-    public class UsePortal : IIncomingPacket
+    public partial record UsePortal : IIncomingPacket
     {
         public int ObjectId;
 
@@ -39,21 +39,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
                 user.SendFailure(Failure.PORTAL_DISABLED, "Portal disabled.", false);
             else
                 user.ReconnectTo(portal.PortalWorld);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(UsePortal);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

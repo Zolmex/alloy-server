@@ -1,14 +1,16 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
+
 namespace PacketSourceGenerator;
 
-
 [Generator(LanguageNames.CSharp)]
-public class OutgoingPacketGenerator : IIncrementalGenerator
+internal class IncomingPacketGenerator : IIncrementalGenerator
 {
+    private const string FolderPrefix = "Incoming";
     static readonly Dictionary<string, string> types = new()
 {
     { "string", "String" },
@@ -42,76 +44,79 @@ public class OutgoingPacketGenerator : IIncrementalGenerator
         }
         return str.ToString();
     }
-    private string GenerateWriteImpl(ITypeSymbol typeSymbol, ParameterListSyntax paramListSyntax)
+
+    private string GenerateWriteImpl(ITypeSymbol symbol, ImmutableArray<FieldDeclarationSyntax> members)
     {
         return $@"using Common.Utilities.Net;
 using Common;
-namespace {typeSymbol.ContainingNamespace};
-partial record struct {typeSymbol.Name}
+namespace {symbol.ContainingNamespace};
+partial record {symbol.Name}
 {{
-    public readonly void Write(NetworkWriter wtr)
+    public void Write(NetworkWriter wtr)
     {{
-{GenerateWriteMethods(paramListSyntax)}
-/*{debugStuff}*/
+{GenerateWriteMethods(members)}
     }}
 }}";
     }
-    private string GenerateReadImpl(ITypeSymbol typeSymbol, ParameterListSyntax paramListSyntax)
+
+    private string GenerateReadImpl(ITypeSymbol typeSymbol, ImmutableArray<FieldDeclarationSyntax> paramListSyntax)
     {
         return $@"using Common.Utilities.Net;
 using Common;
 namespace {typeSymbol.ContainingNamespace};
-partial record struct {typeSymbol.Name}
+partial record {typeSymbol.Name}
 {{
-    public static {typeSymbol.Name} Read(NetworkReader r)
+    public void Read(NetworkReader r)
     {{
-        return new {typeSymbol.Name}({GenerateReadMethods(paramListSyntax)});
+{GenerateReadMethods(paramListSyntax)}
     }}
 }}";
     }
     private string GeneratePacketIdImpl(ITypeSymbol typeSymbol)
     {
         return $@"namespace {typeSymbol.ContainingNamespace};
-partial record struct {typeSymbol.Name}
+partial record {typeSymbol.Name}
 {{
     public static PacketId PacketId => PacketId.{typeSymbol.Name.ToUpper()};
 }}";
     }
 
-    private static string GenerateWriteMethods(ParameterListSyntax typeSymbol)
+    private static string GenerateWriteMethods(ImmutableArray<FieldDeclarationSyntax> members)
     {
         var sb = new StringBuilder();
 
-        foreach (var fieldSymbol in typeSymbol.Parameters)
+        foreach (var fieldSymbol in members)
         {
-            var propName = fieldSymbol.Identifier.Text;
-            sb.AppendLine($"\t\twtr.Write({propName});");
+            foreach (var propName in fieldSymbol.Declaration.Variables)
+                sb.AppendLine($"\t\twtr.Write({propName.Identifier.Text});");
         }
         return sb.ToString().TrimEnd();
     }
-    private static string GenerateReadMethods(ParameterListSyntax typeSymbol)
+    private static string GenerateReadMethods(ImmutableArray<FieldDeclarationSyntax> typeSymbol)
     {
         var sb = new StringBuilder();
 
-        for (var i = 0; i < typeSymbol.Parameters.Count; i++)
+        foreach (var fieldSymbol in typeSymbol)
         {
-            var fieldSymbol = typeSymbol.Parameters[i];
-            var type = fieldSymbol.Type.ToString();
-            string str = $"<{type.Replace("[]", null)}>";
-            if (types.TryGetValue(type, out var fullName))
+            var type = fieldSymbol.Declaration.Type.ToString();
+            foreach (var propName in fieldSymbol.Declaration.Variables)
             {
-                str = char.ToUpper(fullName[0]) + fullName.Substring(1);
+                var name = propName.Identifier.Text.ToString();
+                string str = $"<{type.Replace("[]", null)}>";
+                if (types.TryGetValue(type, out var fullName))
+                {
+                    str = char.ToUpper(fullName[0]) + fullName.Substring(1);
+                }
+                else if (!type.Contains("[]"))
+                {
+                    str = char.ToUpper(type[0]) + type.Substring(1);
+                }
+                sb.AppendLine($"\t\t{name} = r.Read{str}();");
             }
-            else if (!type.Contains("[]"))
-            {
-                str = char.ToUpper(type[0]) + type.Substring(1);
-            }
-            sb.Append($"r.Read{str}()");
-            if (i != typeSymbol.Parameters.Count - 1)
-                sb.Append(", ");
         }
         return sb.ToString().TrimEnd();
     }
+
     public void Execute(SourceProductionContext context,
       ImmutableArray<TargetData> source)
     {
@@ -122,29 +127,29 @@ partial record struct {typeSymbol.Name}
         {
             if (!item.HasWrite)
             {
-                var code = GenerateWriteImpl(item.Symbol, item.Syntax.ParameterList);
-                context.AddSource($"OutgoingWrites/{item.Symbol.Name}.Write.cs", SourceText.From(code, Encoding.UTF8));
+                var code = GenerateWriteImpl(item.Symbol, item.Fields);
+                context.AddSource($"{FolderPrefix}Writes/{item.Symbol.Name}.Write.cs", SourceText.From(code, Encoding.UTF8));
             }
             if (!item.HasRead)
             {
-                var code = GenerateReadImpl(item.Symbol, item.Syntax.ParameterList);
-                context.AddSource($"OutgoingReads/{item.Symbol.Name}.Read.cs", SourceText.From(code, Encoding.UTF8));
+                var code = GenerateReadImpl(item.Symbol, item.Fields);
+                context.AddSource($"{FolderPrefix}Reads/{item.Symbol.Name}.Read.cs", SourceText.From(code, Encoding.UTF8));
             }
             if (!item.HasPacketId)
             {
                 var code = GeneratePacketIdImpl(item.Symbol);
-                context.AddSource($"OutgoingPacketIds/{item.Symbol.Name}.PacketId.cs", SourceText.From(code, Encoding.UTF8));
+                context.AddSource($"{FolderPrefix}PacketIds/{item.Symbol.Name}.PacketId.cs", SourceText.From(code, Encoding.UTF8));
             }
         }
     }
+
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         debugStuff = new();
         var pipeline =
             context.SyntaxProvider.CreateSyntaxProvider( // A
-                (node, _) => node is RecordDeclarationSyntax rec &&
-                rec.ParameterList?.Parameters.Count > 0, // B
+                (node, _) => node is RecordDeclarationSyntax rec, // B
                 (syntax, _) => GetSemanticTargetForGeneration(syntax)) // C
                 .Where(n => n is not null).Collect();
 
@@ -161,7 +166,7 @@ partial record struct {typeSymbol.Name}
             // weird, we couldn't get the symbol, ignore it
             return null;
         }
-        var inter = context.SemanticModel.Compilation.GetTypeByMetadataName("GameServer.Game.Network.Messaging.IOutgoingPacket`1");
+        var inter = context.SemanticModel.Compilation.GetTypeByMetadataName("GameServer.Game.Network.Messaging.IIncomingPacket");
         //foreach(var i in symbol.Interfaces)
         //{
         //    debugStuff.AppendLine(i.MetadataName);
@@ -171,11 +176,11 @@ partial record struct {typeSymbol.Name}
         //debugStuff.AppendLine("");
         //return new(syn, symbol, true, true);
 
-        if (symbol.Interfaces.Any(n => n.MetadataName == "IOutgoingPacket`1"))
+        if (symbol.Interfaces.Contains(inter))
         {
             var write = symbol.GetMembers("Write");
             var read = symbol.GetMembers("Read");
-            var packetIdImpl = symbol.GetMembers("GameServer.Game.Network.Messaging.IOutgoingPacket.PacketId");
+            var packetIdImpl = symbol.GetMembers("GameServer.Game.Network.Messaging.IIncomingPacket.PacketId");
             //
             //static PacketId IOutgoingPacket.PacketId => ;
             //foreach (var item in bonus)
@@ -189,12 +194,13 @@ partial record struct {typeSymbol.Name}
         return null;
     }
 
-}
-public class TargetData(RecordDeclarationSyntax syntax, ITypeSymbol symbol, bool hasWriteImpl, bool hasReadImpl, bool hasPacketIdImpl)
-{
-    public readonly RecordDeclarationSyntax Syntax = syntax;
-    public readonly ITypeSymbol Symbol = symbol;
-    public readonly bool HasWrite = hasWriteImpl;
-    public readonly bool HasRead = hasReadImpl;
-    public readonly bool HasPacketId = hasPacketIdImpl;
+    public class TargetData(RecordDeclarationSyntax syntax, ITypeSymbol symbol, bool hasWriteImpl, bool hasReadImpl, bool hasPacketIdImpl)
+    {
+        public readonly RecordDeclarationSyntax Syntax = syntax;
+        public readonly ImmutableArray<FieldDeclarationSyntax> Fields = syntax.Members.Where(n => n.Modifiers.FirstOrDefault().Text == "public").OfType<FieldDeclarationSyntax>().ToImmutableArray();
+        public readonly ITypeSymbol Symbol = symbol;
+        public readonly bool HasWrite = hasWriteImpl;
+        public readonly bool HasRead = hasReadImpl;
+        public readonly bool HasPacketId = hasPacketIdImpl;
+    }
 }

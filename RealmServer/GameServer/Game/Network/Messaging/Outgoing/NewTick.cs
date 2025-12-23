@@ -10,7 +10,7 @@ using System.IO;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> Statuses) : IOutgoingPacket
+public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> Statuses) : IOutgoingPacket<NewTick>
 {
     public void Write(NetworkWriter wtr)
     {
@@ -40,5 +40,9 @@ public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> 
         wtr.BaseStream.Seek(begin, SeekOrigin.Begin); // Go back to beginning (+ 5 bytes cus of header) and write the actual update count
         wtr.Write((short)updateCount);
         wtr.BaseStream.Seek(end, SeekOrigin.Begin); // Go to the end of the packet body
+    }
+    public static NewTick Read(NetworkReader wtr)
+    {
+        return new();
     }
 }

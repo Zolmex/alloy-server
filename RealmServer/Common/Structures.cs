@@ -5,6 +5,7 @@ using Common.Utilities.Net;
 using System;
 using System.IO;
 using System.Numerics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 #endregion
 
@@ -171,6 +172,13 @@ public struct WorldPosData : IEquatable<WorldPosData>
 
 public static class WorldPosDataExtensions
 {
+    extension(NetworkReader rdr)
+    {
+        public WorldPosData ReadWorldPosData()
+        {
+            return new WorldPosData(rdr.ReadSingle(), rdr.ReadSingle());
+        }
+    }
     public static Vector2 ToVec2(this WorldPosData data)
     {
         return new Vector2(data.X, data.Y);
@@ -298,7 +306,7 @@ public struct StatData
     {
         wtr.Write((byte)Type);
         if (IsStringStat(Type))
-            wtr.WriteUTF(TextValue);
+            wtr.Write(TextValue);
         else if (IsFloatStat(Type))
             wtr.Write(FloatValue);
         else
@@ -309,7 +317,7 @@ public struct StatData
     {
         wtr.Write((byte)type);
         if (IsStringStat(type))
-            wtr.WriteUTF((string)value);
+            wtr.Write((string)value);
         else if (IsFloatStat(type))
         {
             var floatValue = value is int intValue ? intValue : (float)value;
@@ -377,15 +385,21 @@ public struct SlotObjectData
 {
     public int ObjectId;
     public byte SlotId;
-
-    public static SlotObjectData Read(NetworkReader rdr)
+}
+public static class SlotObjectDataExtensions{
+    extension(NetworkReader rdr)
     {
-        return new SlotObjectData { ObjectId = rdr.ReadInt32(), SlotId = rdr.ReadByte() };
+        public SlotObjectData ReadSlotObjectData()
+        {
+            return new SlotObjectData { ObjectId = rdr.ReadInt32(), SlotId = rdr.ReadByte() };
+        }
     }
-
-    public void Write(NetworkWriter wtr)
+    extension(NetworkWriter wtr)
     {
-        wtr.Write(ObjectId);
-        wtr.Write(SlotId);
+        public void Write(SlotObjectData data)
+        {
+            wtr.Write(data.ObjectId);
+            wtr.Write(data.SlotId);
+        }
     }
 }

@@ -7,7 +7,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.CHANGETRADE)]
-    public class ChangeTrade : IIncomingPacket
+    public partial record ChangeTrade : IIncomingPacket
     {
         public bool[] Offer;
 

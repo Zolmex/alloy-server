@@ -9,7 +9,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.USEITEM)]
-    public class UseItem : IIncomingPacket
+    public partial record UseItem : IIncomingPacket
     {
         public SlotObjectData Slot;
         public WorldPosData UsePos;
@@ -17,7 +17,7 @@ namespace GameServer.Game.Network.Messaging.Incoming
 
         public void Read(NetworkReader rdr)
         {
-            Slot = SlotObjectData.Read(rdr);
+            Slot = rdr.ReadSlotObjectData();
             UsePos = WorldPosData.Read(rdr);
             Time = rdr.ReadInt32();
         }
@@ -28,21 +28,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
                 return;
 
             user.GameInfo.Player.UseItem(Slot, UsePos, Time);
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(UseItem);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }

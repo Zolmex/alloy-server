@@ -4,7 +4,6 @@
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct InvitedToGuild(string PlayerName, string GuildName) : IOutgoingPacket
+public readonly partial record struct InvitedToGuild(string PlayerName, string GuildName) : IOutgoingPacket<InvitedToGuild>
 {
-    static PacketId IOutgoingPacket.PacketId => PacketId.INVITEDTOGUILD;
 }

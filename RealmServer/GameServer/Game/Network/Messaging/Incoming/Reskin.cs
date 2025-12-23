@@ -8,7 +8,7 @@ using Common.Utilities.Net;
 namespace GameServer.Game.Network.Messaging.Incoming
 {
     [Packet(PacketId.RESKIN)]
-    public class Reskin : IIncomingPacket
+    public partial record Reskin : IIncomingPacket
     {
         public int SkinType;
 
@@ -23,21 +23,6 @@ namespace GameServer.Game.Network.Messaging.Incoming
                 return;
 
             user.GameInfo.Player.Skin = SkinType;
-        }
-
-        public override string ToString()
-        {
-            var type = typeof(Reskin);
-            var props = type.GetProperties();
-            var ret = $"\n";
-            foreach (var prop in props)
-            {
-                ret += $"{prop.Name}:{prop.GetValue(this)}";
-                if (!(props.IndexOf(prop) == props.Length - 1))
-                    ret += "\n";
-            }
-
-            return ret;
         }
     }
 }
