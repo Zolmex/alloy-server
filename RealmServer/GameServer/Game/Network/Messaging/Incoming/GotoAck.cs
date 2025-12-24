@@ -1,28 +1,26 @@
 ﻿#region
 
-using Common.Utilities;
-using Common.Utilities.Net;
-
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Incoming
+using Common.Network;
+
+namespace GameServer.Game.Network.Messaging.Incoming;
+
+[Packet(PacketId.GOTOACK)]
+public partial record GotoAck : IIncomingPacket
 {
-    [Packet(PacketId.GOTOACK)]
-    public partial record GotoAck : IIncomingPacket
+    public void Handle(User user)
     {
-        public void Read(NetworkReader rdr)
-        { }
+        if (user.GameInfo.State != GameState.Playing)
+            return;
 
-        public void Handle(User user)
-        {
-            if (user.GameInfo.State != GameState.Playing)
-                return;
+        var plr = user.GameInfo.Player;
+        if (!plr.Teleporting)
+            return;
 
-            var plr = user.GameInfo.Player;
-            if (!plr.Teleporting)
-                return;
-
-            plr.FinishTeleport();
-        }
+        plr.FinishTeleport();
     }
+
+    public void Read(NetworkReader rdr)
+    { }
 }

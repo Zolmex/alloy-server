@@ -9,9 +9,60 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class ProjectileDesc : ItemData
 {
-    public override Type FieldsEnum => typeof(ProjectileField);
-
     public readonly XElement Root;
+
+    public ProjectileDesc(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        Root = e;
+        BulletId = (byte)e.GetAttribute<int>("id");
+        ObjectId = e.GetValue<string>("ObjectId");
+        LifetimeMS = (int)e.GetValue<float>("LifetimeMS");
+        Speed = e.GetValue<float>("Speed") / 10;
+        Damage = e.GetValue<int>("Damage");
+        MinDamage = e.GetValue("MinDamage", Damage);
+        MaxDamage = e.GetValue("MaxDamage", Damage);
+
+        var effects = new List<ConditionEffectDesc>();
+        foreach (var k in e.Elements("ConditionEffect"))
+            effects.Add(new ConditionEffectDesc(k));
+        Effects = effects.ToArray();
+
+        MultiHit = e.HasElement("MultiHit");
+        PassesCover = e.HasElement("PassesCover");
+        ArmorPiercing = e.HasElement("ArmorPiercing");
+        Size = e.GetValue<int>("Size");
+        Wavy = e.HasElement("Wavy");
+        Parametric = e.HasElement("Parametric");
+        Boomerang = e.HasElement("Boomerang");
+
+        Amplitude = e.GetValue<float>("Amplitude");
+        Frequency = e.GetValue<float>("Frequency", 1);
+        Magnitude = e.GetValue<float>("Magnitude", 3);
+
+        LevelIncreases = e.Elements("LevelIncrease")
+            .Select(i => new LevelIncreaseDesc(i, this, (byte)ProjectileField.LevelIncreases))
+            .ToArray();
+
+        if (e.Element("Path") != null)
+        {
+            Path = new ProjectilePath();
+            foreach (var elem in e.Elements("Path"))
+                Path.RegisterSegment(ProjectilePathSegment.ParsePath(elem));
+        }
+        else
+            Path = ProjectilePathSegment.ParsePath(this).ToPath();
+
+        _initialized = true;
+    }
+
+    public override Type FieldsEnum => typeof(ProjectileField);
     public ushort ContainerType { get; private set; }
 
     public byte BulletId
@@ -129,57 +180,6 @@ public class ProjectileDesc : ItemData
     }
 
     public ProjectilePath Path { get; set; }
-
-    public ProjectileDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        Root = e;
-        BulletId = (byte)e.GetAttribute<int>("id");
-        ObjectId = e.GetValue<string>("ObjectId");
-        LifetimeMS = (int)e.GetValue<float>("LifetimeMS");
-        Speed = e.GetValue<float>("Speed") / 10;
-        Damage = e.GetValue<int>("Damage");
-        MinDamage = e.GetValue<int>("MinDamage", Damage);
-        MaxDamage = e.GetValue<int>("MaxDamage", Damage);
-
-        var effects = new List<ConditionEffectDesc>();
-        foreach (var k in e.Elements("ConditionEffect"))
-            effects.Add(new ConditionEffectDesc(k));
-        Effects = effects.ToArray();
-
-        MultiHit = e.HasElement("MultiHit");
-        PassesCover = e.HasElement("PassesCover");
-        ArmorPiercing = e.HasElement("ArmorPiercing");
-        Size = e.GetValue<int>("Size", 0);
-        Wavy = e.HasElement("Wavy");
-        Parametric = e.HasElement("Parametric");
-        Boomerang = e.HasElement("Boomerang");
-
-        Amplitude = e.GetValue<float>("Amplitude", 0);
-        Frequency = e.GetValue<float>("Frequency", 1);
-        Magnitude = e.GetValue<float>("Magnitude", 3);
-
-        LevelIncreases = e.Elements("LevelIncrease")
-            .Select(i => new LevelIncreaseDesc(i, this, (byte)ProjectileField.LevelIncreases))
-            .ToArray();
-
-        if (e.Element("Path") != null)
-        {
-            Path = new ProjectilePath();
-            foreach (var elem in e.Elements("Path"))
-                Path.RegisterSegment(ProjectilePathSegment.ParsePath(elem));
-        }
-        else
-            Path = ProjectilePathSegment.ParsePath(this).ToPath();
-
-        _initialized = true;
-    }
 
     public void SetContainer(ushort containerType)
     {

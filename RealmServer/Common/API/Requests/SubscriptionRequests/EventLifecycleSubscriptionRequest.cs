@@ -5,16 +5,15 @@ using Common.Enums;
 
 #endregion
 
-namespace Common.API.Requests.SubscriptionRequests
+namespace Common.API.Requests.SubscriptionRequests;
+
+/// <summary>
+///     Generic class for all event lifecycle subscription requests
+/// </summary>
+public class EventLifecycleSubscriptionRequest : APISubscription
 {
     /// <summary>
-    /// Generic class for all event lifecycle subscription requests
+    ///     Gets or sets the event lifecycle to subscribe to.
     /// </summary>
-    public class EventLifecycleSubscriptionRequest : APISubscription
-    {
-        /// <summary>
-        /// Gets or sets the event lifecycle to subscribe to.
-        /// </summary>
-        public SubscribableEvent Event { get; set; }
-    }
+    public SubscribableEvent Event { get; set; }
 }

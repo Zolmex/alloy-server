@@ -463,7 +463,6 @@ public class ModifyCommand : Command
     }
 }
 
-
 [Command("reloadbehaviors", CommandPermissionLevel.Developer)]
 public class ReloadBehaviorsCommand : Command
 {

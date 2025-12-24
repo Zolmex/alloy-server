@@ -5,10 +5,10 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class SpawnDesc
 {
+    public readonly int Deviation;
     public readonly int Max;
     public readonly int Mean;
     public readonly int Min;
-    public readonly int Deviation;
 
     public SpawnDesc(XElement e)
     {

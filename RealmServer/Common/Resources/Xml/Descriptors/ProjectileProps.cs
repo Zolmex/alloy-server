@@ -7,27 +7,27 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class ProjectileProps
 {
-    public readonly XElement Root;
-    public readonly byte BulletId;
-    public readonly string ObjectId;
-    public readonly int LifetimeMS;
-    public readonly float Speed;
-    public readonly int Damage;
-    public readonly int MinDamage;
-    public readonly int MaxDamage;
-    public readonly (ConditionEffectIndex, int)[] Effects;
-    public readonly bool MultiHit;
-    public readonly bool PassesCover;
-    public readonly bool ArmorPiercing;
-    public readonly bool Wavy;
-    public readonly bool Parametric;
-    public readonly bool Boomerang;
     public readonly float Amplitude;
+    public readonly bool ArmorPiercing;
+    public readonly bool Boomerang;
+    public readonly byte BulletId;
+    public readonly int Damage;
+    public readonly (ConditionEffectIndex, int)[] Effects;
     public readonly float Frequency;
+    public readonly int LifetimeMS;
     public readonly float Magnitude;
-    public readonly int Size;
-    public readonly XElement PathXML;
+    public readonly int MaxDamage;
+    public readonly int MinDamage;
+    public readonly bool MultiHit;
+    public readonly string ObjectId;
+    public readonly bool Parametric;
+    public readonly bool PassesCover;
     public readonly PathType PathType;
+    public readonly XElement PathXML;
+    public readonly XElement Root;
+    public readonly int Size;
+    public readonly float Speed;
+    public readonly bool Wavy;
 
     public ushort ObjectType; // To be set by Shoot behavior
 
@@ -39,8 +39,8 @@ public class ProjectileProps
         LifetimeMS = (int)e.GetValue<float>("LifetimeMS");
         Speed = e.GetValue<float>("Speed") / 10;
         Damage = e.GetValue<int>("Damage");
-        MinDamage = e.GetValue<int>("MinDamage", Damage);
-        MaxDamage = e.GetValue<int>("MaxDamage", Damage);
+        MinDamage = e.GetValue("MinDamage", Damage);
+        MaxDamage = e.GetValue("MaxDamage", Damage);
 
         Effects = e.Elements("ConditionEffect")
             .Select(i => ((ConditionEffectIndex)Enum.Parse(typeof(ConditionEffectIndex), i.Value.Replace(" ", "")),
@@ -50,12 +50,12 @@ public class ProjectileProps
         MultiHit = e.HasElement("MultiHit");
         PassesCover = e.HasElement("PassesCover");
         ArmorPiercing = e.HasElement("ArmorPiercing");
-        Size = e.GetValue<int>("Size", 0);
+        Size = e.GetValue<int>("Size");
         Wavy = e.HasElement("Wavy");
         Parametric = e.HasElement("Parametric");
         Boomerang = e.HasElement("Boomerang");
 
-        Amplitude = e.GetValue<float>("Amplitude", 0);
+        Amplitude = e.GetValue<float>("Amplitude");
         Frequency = e.GetValue<float>("Frequency", 1);
         Magnitude = e.GetValue<float>("Magnitude", 3);
 

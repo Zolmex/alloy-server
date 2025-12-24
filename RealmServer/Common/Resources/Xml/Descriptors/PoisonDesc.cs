@@ -7,6 +7,31 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class PoisonDesc : ItemData
 {
+    public PoisonDesc(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        MpCost = e.GetValue<short>("MpCost");
+        Effects = e.Elements("ConditionEffect").Select(i => new ConditionEffectDesc(i)).ToArray();
+        Damage = e.GetValue<short>("Damage");
+        TickSpeed = e.GetValue<short>("TickSpeed");
+        Duration = e.GetValue<int>("Duration");
+        ThrowRange = e.GetValue<float>("ThrowRange");
+        ThrowTravelTime = e.GetValue<short>("ThrowTravelTime");
+        PoisonRange = e.GetValue<float>("PoisonRange");
+        SpreadRange = e.GetValue<float>("SpreadRange");
+        SpreadTargetsNum = e.GetValue<short>("SpreadTargetsNum");
+        SpreadEfficiency = e.GetValue<float>("SpreadEfficiency");
+        ImpactDamage = e.GetValue<short>("ImpactDamage");
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(PoisonDescField);
 
     public short MpCost
@@ -79,30 +104,5 @@ public class PoisonDesc : ItemData
     {
         get => GetValue<short>(11);
         set => SetValue(11, value);
-    }
-
-    public PoisonDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        MpCost = e.GetValue<short>("MpCost", 0);
-        Effects = e.Elements("ConditionEffect").Select(i => new ConditionEffectDesc(i)).ToArray();
-        Damage = e.GetValue<short>("Damage", 0);
-        TickSpeed = e.GetValue<short>("TickSpeed", 0);
-        Duration = e.GetValue<int>("Duration", 0);
-        ThrowRange = e.GetValue<float>("ThrowRange", 0);
-        ThrowTravelTime = e.GetValue<short>("ThrowTravelTime", 0);
-        PoisonRange = e.GetValue<float>("PoisonRange", 0);
-        SpreadRange = e.GetValue<float>("SpreadRange", 0);
-        SpreadTargetsNum = e.GetValue<short>("SpreadTargetsNum", 0);
-        SpreadEfficiency = e.GetValue<float>("SpreadEfficiency", 0);
-        ImpactDamage = e.GetValue<short>("ImpactDamage", 0);
-
-        _initialized = true;
     }
 }

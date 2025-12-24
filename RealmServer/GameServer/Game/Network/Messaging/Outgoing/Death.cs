@@ -1,9 +1,4 @@
-﻿#region
-
-#endregion
-
-namespace GameServer.Game.Network.Messaging.Outgoing;
+﻿namespace GameServer.Game.Network.Messaging.Outgoing;
 
 public readonly partial record struct Death(int AccountId, int CharId, string Killer) : IOutgoingPacket<Death>
-{
-}
+{ }

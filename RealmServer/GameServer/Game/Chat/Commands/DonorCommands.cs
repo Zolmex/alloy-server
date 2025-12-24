@@ -1,2 +1,1 @@
-namespace GameServer.Game.Chat.Commands
-{ }
+namespace GameServer.Game.Chat.Commands;

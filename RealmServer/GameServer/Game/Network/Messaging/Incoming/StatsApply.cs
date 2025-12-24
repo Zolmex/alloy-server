@@ -1,8 +1,7 @@
 ﻿#region
 
 using Common;
-using Common.Utilities;
-using Common.Utilities.Net;
+using Common.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 
 #endregion
@@ -14,19 +13,6 @@ public partial record StatsApply : IIncomingPacket
 {
     public int[] AllocatedPoints;
     public int SpentPoints;
-
-    public void Read(NetworkReader rdr)
-    {
-        AllocatedPoints = new int[4];
-        var spentPoints = 0;
-        for (var i = 0; i < 4; i++)
-        {
-            AllocatedPoints[i] = rdr.ReadInt32();
-            spentPoints += AllocatedPoints[i];
-        }
-
-        SpentPoints = spentPoints;
-    }
 
     public void Handle(User user)
     {
@@ -55,5 +41,18 @@ public partial record StatsApply : IIncomingPacket
 
             user.SendPacket(new StatsApplyResult(true));
         }
+    }
+
+    public void Read(NetworkReader rdr)
+    {
+        AllocatedPoints = new int[4];
+        var spentPoints = 0;
+        for (var i = 0; i < 4; i++)
+        {
+            AllocatedPoints[i] = rdr.ReadInt32();
+            spentPoints += AllocatedPoints[i];
+        }
+
+        SpentPoints = spentPoints;
     }
 }

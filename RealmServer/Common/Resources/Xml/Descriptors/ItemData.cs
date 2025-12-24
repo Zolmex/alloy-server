@@ -9,8 +9,6 @@ namespace Common.Resources.Xml.Descriptors;
 
 public abstract class ItemData
 {
-    public abstract Type FieldsEnum { get; }
-
     private readonly ConcurrentDictionary<byte, object> _fields = new();
     private readonly Dictionary<byte, Type> _fieldTypes = new();
     protected readonly HashSet<byte> _fieldUpdates = new();
@@ -18,6 +16,7 @@ public abstract class ItemData
 
     public ItemData Parent;
     public byte ParentField;
+    public abstract Type FieldsEnum { get; }
 
     public void ForceFieldUpdate(byte key)
     {

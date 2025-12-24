@@ -1,41 +1,34 @@
 ﻿#region
 
-using GameServer.Game.Entities.Behaviors.Actions;
-
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors.Library
+namespace GameServer.Game.Entities.Behaviors.Library;
+
+public class HealthLockDemo : EntityBehavior
 {
-    public class HealthLockDemo : EntityBehavior
+    public enum DemoState
     {
-        public override void RegisterStates()
-        {
-            StateManager.RegisterState(DemoState.Tick, TestTick);
-        }
+        Tick
+    }
 
-        public override void Initialize(Character owner)
-        {
-            StateManager.SetCurrentState(owner, DemoState.Tick);
-            HealthLock healthLock = new HealthLock()
-            {
-                LockAtPerc = 0.5f,
-                LockDurationMs = int.MaxValue,
-            };
-            owner.ApplyHealthLock(healthLock);
-            base.Initialize(owner);
-        }
+    public override void RegisterStates()
+    {
+        StateManager.RegisterState(DemoState.Tick, TestTick);
+    }
 
-        public void TestTick(RealmTime time, Character owner, StateTick state)
-        {
-            if (owner.GetNearestOtherEnemyByName("HealthLockDemo", 10f) != null)
-            {
-                owner.ReleaseHealthLock();
-            }
-        }
+    public override void Initialize(Character owner)
+    {
+        StateManager.SetCurrentState(owner, DemoState.Tick);
+        var healthLock = new HealthLock { LockAtPerc = 0.5f, LockDurationMs = int.MaxValue };
+        owner.ApplyHealthLock(healthLock);
+        base.Initialize(owner);
+    }
 
-        public enum DemoState
+    public void TestTick(RealmTime time, Character owner, StateTick state)
+    {
+        if (owner.GetNearestOtherEnemyByName("HealthLockDemo", 10f) != null)
         {
-            Tick,
+            owner.ReleaseHealthLock();
         }
     }
 }

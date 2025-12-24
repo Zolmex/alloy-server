@@ -23,23 +23,23 @@ public partial class Player
     public const int SIGHT_RADIUS_SQR = SIGHT_RADIUS * SIGHT_RADIUS;
     public const int ACTIVE_RADIUS = 2; // Activate surrounding chunks
 
-    private readonly HashSet<WorldTile> _visibleTiles = new();
-    private readonly HashSet<WorldTile> _tilesDiscovered = new();
-    private readonly List<WorldTile> _newTiles = new();
-
     private readonly ConcurrentQueue<Entity> _deadEntities = new();
-    private readonly LazyCollection<Entity> _visibleEntities = new();
-    private readonly LazyCollection<Entity> _visibleStaticEntities = new();
+    private readonly Action<Entity, StatType, object> _entityStatChangedHandler;
     private readonly List<ObjectData> _newEntities = new();
+    private readonly List<WorldTile> _newTiles = new();
     private readonly List<ObjectDropData> _oldEntities = new();
-    private readonly object _updateLock = new();
 
     private readonly Action<Entity> _onDeathHandler;
-    private readonly Action<Entity, StatType, object> _entityStatChangedHandler;
+    private readonly HashSet<WorldTile> _tilesDiscovered = new();
+    private readonly object _updateLock = new();
+    private readonly LazyCollection<Entity> _visibleEntities = new();
+    private readonly LazyCollection<Entity> _visibleStaticEntities = new();
+
+    private readonly HashSet<WorldTile> _visibleTiles = new();
+    private WorldPosData _tpPos;
 
     public bool Teleporting;
     public int TPCooldownLeft;
-    private WorldPosData _tpPos;
 
     private void InitPlayerSight()
     {

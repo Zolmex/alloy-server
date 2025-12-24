@@ -7,5 +7,7 @@
   "MaxPlayers": -1,
   "Blocksight": 0,
   "LongLasting": false,
-  "Maps": [ "SnakePit.jm" ]
+  "Maps": [
+    "SnakePit.jm"
+  ]
 }

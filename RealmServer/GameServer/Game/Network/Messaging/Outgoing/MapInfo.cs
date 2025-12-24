@@ -1,10 +1,7 @@
-﻿#region
+﻿namespace GameServer.Game.Network.Messaging.Outgoing;
 
-#endregion
-
-namespace GameServer.Game.Network.Messaging.Outgoing;
-
-public readonly partial record struct MapInfo(int MapWidth,
+public readonly partial record struct MapInfo(
+    int MapWidth,
     int MapHeight,
     string Name,
     string DisplayName,
@@ -14,6 +11,4 @@ public readonly partial record struct MapInfo(int MapWidth,
     bool AllowPlayerTeleport,
     string Music,
     int Difficulty) : IOutgoingPacket<MapInfo>
-{
-
-}
+{ }

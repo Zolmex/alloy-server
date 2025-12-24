@@ -6,6 +6,26 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class GemstoneBoost : ItemData
 {
+    public GemstoneBoost(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        Stat = e.GetAttribute<string>("stat");
+
+        var amt = e.GetAttribute<string>("amount");
+        var percentIndex = amt.IndexOf('%');
+        Amount = float.Parse(amt.Substring(0, percentIndex == -1 ? amt.Length : percentIndex));
+        BoostType = percentIndex == -1 ? "Static" : "Percentage";
+        BoostTarget = e.Value;
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(GemstoneBoostField);
 
     public string BoostType
@@ -30,25 +50,5 @@ public class GemstoneBoost : ItemData
     {
         get => GetValue<string>(3);
         set => SetValue(3, value);
-    }
-
-    public GemstoneBoost(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        Stat = e.GetAttribute<string>("stat");
-
-        var amt = e.GetAttribute<string>("amount");
-        var percentIndex = amt.IndexOf('%');
-        Amount = float.Parse(amt.Substring(0, percentIndex == -1 ? amt.Length : percentIndex));
-        BoostType = percentIndex == -1 ? "Static" : "Percentage";
-        BoostTarget = e.Value;
-
-        _initialized = true;
     }
 }

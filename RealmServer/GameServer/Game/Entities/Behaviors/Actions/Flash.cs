@@ -25,14 +25,14 @@ public record Flash : BehaviorScript
         host.World.BroadcastAll(p =>
         {
             p.User.SendPacket(new
-            ShowEffect(
-                (byte)ShowEffectIndex.Flash,
-                host.Id,
-                _color,
-                0,
-                new WorldPosData(_flashPeriod, _flashRepeats),
-                new WorldPosData()
-            ));
+                ShowEffect(
+                    (byte)ShowEffectIndex.Flash,
+                    host.Id,
+                    _color,
+                    0,
+                    new WorldPosData(_flashPeriod, _flashRepeats),
+                    new WorldPosData()
+                ));
         });
     }
 }

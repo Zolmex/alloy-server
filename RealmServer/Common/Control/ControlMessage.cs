@@ -1,22 +1,21 @@
-﻿namespace Common.Control
+﻿namespace Common.Control;
+
+public enum ControlChannel
 {
-    public enum ControlChannel
-    {
-        MemberEnter,
-        MemberLeave,
-        KeepAlive,
+    MemberEnter,
+    MemberLeave,
+    KeepAlive,
 
-        DbRestore,
-        DbBackup,
-        DbWipe,
+    DbRestore,
+    DbBackup,
+    DbWipe,
 
-        Shutdown
-    }
+    Shutdown
+}
 
-    public class ControlMessage<T>
-    {
-        public string InstanceID { get; set; }
-        public string TargetID { get; set; }
-        public T Content { get; set; }
-    }
+public class ControlMessage<T>
+{
+    public string InstanceID { get; set; }
+    public string TargetID { get; set; }
+    public T Content { get; set; }
 }

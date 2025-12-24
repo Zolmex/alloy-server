@@ -8,57 +8,57 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class ObjectDesc
 {
-    public readonly XElement XML;
-    public readonly string ObjectId;
-    public readonly ushort ObjectType;
+    public readonly bool BlocksSight;
+    public readonly bool CaveWall;
+    public readonly string Class;
+    public readonly bool ConnectedWall;
+    public readonly bool Cube;
+    public readonly int Defense;
 
     public readonly string DisplayId;
     public readonly string DisplayName;
-    public readonly string Class;
-    public readonly string Group;
 
-    public readonly bool Static;
-    public readonly bool CaveWall;
-    public readonly bool ConnectedWall;
-    public readonly bool BlocksSight;
+    public readonly string DungeonName;
+    public readonly bool Enemy;
+    public readonly bool EnemyOccupySquare;
+    public readonly bool FullOccupy;
+
+    public readonly bool God;
+    public readonly string Group;
+    public readonly bool Hero;
+    public readonly bool KeepInSight;
+    public readonly int Level;
+
+    public readonly int MaxHP;
+    public readonly int MaxLevel;
+    public readonly int MaxSize;
+    public readonly int MinLevel;
+    public readonly int MinSize;
+    public readonly string ObjectId;
+    public readonly ushort ObjectType;
 
     public readonly bool OccupySquare;
-    public readonly bool FullOccupy;
-    public readonly bool EnemyOccupySquare;
+    public readonly bool Oryx;
+
+    public readonly bool Player;
+
+    public readonly Dictionary<byte, ProjectileProps> Projectiles;
 
     public readonly bool ProtectFromGroundDamage;
     public readonly bool ProtectFromSink;
-
-    public readonly bool Player;
-    public readonly bool Enemy;
-
-    public readonly bool God;
-    public readonly bool Cube;
     public readonly bool Quest;
-    public readonly bool Hero;
-    public readonly int Level;
-    public readonly bool Oryx;
-    public readonly float XpMult;
-    public readonly int MinLevel;
-    public readonly int MaxLevel;
+    public readonly bool RealmPortal;
 
     public readonly int Size;
-    public readonly int MinSize;
-    public readonly int MaxSize;
-
-    public readonly int MaxHP;
-    public readonly int Defense;
-
-    public readonly string DungeonName;
-    public readonly bool RealmPortal;
-    public readonly bool KeepInSight;
+    public readonly SpawnDesc Spawn;
 
     public readonly float SpawnProb;
-    public readonly SpawnDesc Spawn;
-    public readonly TextureDesc Texture;
-    public readonly TerrainType Terrain;
 
-    public readonly Dictionary<byte, ProjectileProps> Projectiles;
+    public readonly bool Static;
+    public readonly TerrainType Terrain;
+    public readonly TextureDesc Texture;
+    public readonly XElement XML;
+    public readonly float XpMult;
 
     public ObjectDesc(XElement e, string id, ushort type)
     {
@@ -66,7 +66,7 @@ public class ObjectDesc
         ObjectId = id;
         ObjectType = type;
 
-        DisplayId = e.GetValue<string>("DisplayId", ObjectId);
+        DisplayId = e.GetValue("DisplayId", ObjectId);
         DisplayName = DisplayId ?? ObjectId;
         Class = e.GetValue<string>("Class");
         Group = e.GetValue<string>("Group");
@@ -90,17 +90,17 @@ public class ObjectDesc
         Cube = e.HasElement("Cube");
         Quest = e.HasElement("Quest");
         Hero = e.HasElement("Hero");
-        Level = e.GetValue<int>("Level", -1);
+        Level = e.GetValue("Level", -1);
         Oryx = e.HasElement("Oryx");
         XpMult = e.GetValue<float>("XpMult", 1);
         MinLevel = e.GetValue<int>("MinLevel");
         MaxLevel = e.GetValue<int>("MaxLevel");
 
-        Size = e.GetValue<int>("Size", 100);
-        MinSize = e.GetValue<int>("MinSize", Size);
-        MaxSize = e.GetValue<int>("MaxSize", Size);
+        Size = e.GetValue("Size", 100);
+        MinSize = e.GetValue("MinSize", Size);
+        MaxSize = e.GetValue("MaxSize", Size);
 
-        MaxHP = e.GetValue<int>("MaxHitPoints", 100);
+        MaxHP = e.GetValue("MaxHitPoints", 100);
         Defense = e.GetValue<int>("Defense");
 
         DungeonName = e.GetValue<string>("DungeonName");

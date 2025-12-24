@@ -6,9 +6,8 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace GameServer.Game
-{
-    public readonly record struct SearchQuery(string EntityName, IntPoint Pos, float MaxRadius, float MinRadius);
+namespace GameServer.Game;
 
-    public readonly record struct SearchQueryResult(IEnumerable<Character> Entities, Character NearestEntity);
-}
+public readonly record struct SearchQuery(string EntityName, IntPoint Pos, float MaxRadius, float MinRadius);
+
+public readonly record struct SearchQueryResult(IEnumerable<Character> Entities, Character NearestEntity);

@@ -1,17 +1,16 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Actions
+﻿namespace GameServer.Game.Entities.Behaviors.Actions;
+
+public record Suicide : BehaviorScript
 {
-    public record Suicide : BehaviorScript
+    private readonly int _delay;
+
+    public Suicide(int delay = 300)
     {
-        private readonly int _delay;
+        _delay = delay;
+    }
 
-        public Suicide(int delay = 300)
-        {
-            _delay = delay;
-        }
-
-        public override void Start(Character host)
-        {
-            host.World.AddTimedAction(_delay, () => host.TryLeaveWorld());
-        }
+    public override void Start(Character host)
+    {
+        host.World.AddTimedAction(_delay, () => host.TryLeaveWorld());
     }
 }

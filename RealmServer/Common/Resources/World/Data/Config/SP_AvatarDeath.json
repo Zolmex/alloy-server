@@ -1,5 +1,7 @@
 {
   "Name": "AvatarDeath",
   "Setpiece": true,
-  "Maps": [ "SP_AvatarDeath.jm" ]
+  "Maps": [
+    "SP_AvatarDeath.jm"
+  ]
 }

@@ -10,8 +10,7 @@ public class WizardSpellAbility : Ability
     private static readonly Logger _log = new(typeof(WizardSpellAbility));
 
     public WizardSpellAbility(Player player) : base(player)
-    {
-    }
+    { }
 
     public override bool Validate(Item item, Entity en)
     {

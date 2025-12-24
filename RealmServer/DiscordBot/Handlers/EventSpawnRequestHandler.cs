@@ -5,16 +5,15 @@ using Newtonsoft.Json;
 
 #endregion
 
-namespace DiscordBot.Handlers
+namespace DiscordBot.Handlers;
+
+[Request("eventspawn")]
+public class EventSpawnRequestHandler : IRequestHandler
 {
-    [Request("eventspawn")]
-    public class EventSpawnRequestHandler : IRequestHandler
+    public bool Handle(string requestJson)
     {
-        public bool Handle(string requestJson)
-        {
-            var eventSpawn = JsonConvert.DeserializeObject<EventSpawnRequest>(requestJson);
-            DiscordBotOutput.SendMessage($"{eventSpawn.EventName} has spawned!");
-            return true;
-        }
+        var eventSpawn = JsonConvert.DeserializeObject<EventSpawnRequest>(requestJson);
+        DiscordBotOutput.SendMessage($"{eventSpawn.EventName} has spawned!");
+        return true;
     }
 }

@@ -1,47 +1,46 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Transitions
-{
-    public class DamageTakenRecord
-    {
-        public int DamageTaken;
+﻿namespace GameServer.Game.Entities.Behaviors.Transitions;
 
-        public void OnEntityDamaged(Character en, Character from, int dmgTaken)
-        {
-            DamageTaken += dmgTaken;
-        }
+public class DamageTakenRecord
+{
+    public int DamageTaken;
+
+    public void OnEntityDamaged(Character en, Character from, int dmgTaken)
+    {
+        DamageTaken += dmgTaken;
+    }
+}
+
+public class DamageTakenTransition : BehaviorTransition
+{
+    private readonly int _damage;
+
+    public DamageTakenTransition(int damage, string targetState)
+        : base()
+    {
+        RegisterTargetStates(targetState);
+        _damage = damage;
     }
 
-    public class DamageTakenTransition : BehaviorTransition
+    public override void Start(Character host)
     {
-        private readonly int _damage;
+        var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
+        host.OnDamagedBy += dmgTakenInfo.OnEntityDamaged;
+    }
 
-        public DamageTakenTransition(int damage, string targetState)
-            : base(TransitionType.Random)
+    public override string Tick(Character host, RealmTime time)
+    {
+        var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
+        if (dmgTakenInfo.DamageTaken >= _damage)
         {
-            RegisterTargetStates(targetState);
-            _damage = damage;
+            return GetTargetState();
         }
 
-        public override void Start(Character host)
-        {
-            var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
-            host.OnDamagedBy += dmgTakenInfo.OnEntityDamaged;
-        }
+        return null;
+    }
 
-        public override string Tick(Character host, RealmTime time)
-        {
-            var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
-            if (dmgTakenInfo.DamageTaken >= _damage)
-            {
-                return GetTargetState();
-            }
-
-            return null;
-        }
-
-        public override void End(Character host, RealmTime time)
-        {
-            var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
-            host.OnDamagedBy -= dmgTakenInfo.OnEntityDamaged;
-        }
+    public override void End(Character host, RealmTime time)
+    {
+        var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
+        host.OnDamagedBy -= dmgTakenInfo.OnEntityDamaged;
     }
 }

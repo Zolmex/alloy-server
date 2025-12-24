@@ -1,9 +1,9 @@
 ﻿#region
 
 using Common.Database;
+using Common.Network;
 using Common.Resources.Config;
 using Common.Utilities;
-using Common.Utilities.Net;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using System;
@@ -19,20 +19,10 @@ public partial record Hello : IIncomingPacket
 {
     public string BuildVersion;
     public int GameId;
-    public string Username;
-    public string Password;
-    public int MapJSONLength;
     public string MapJSON;
-
-    public void Read(NetworkReader rdr)
-    {
-        BuildVersion = rdr.ReadUTF();
-        GameId = rdr.ReadInt32();
-        Username = rdr.ReadUTF();
-        Password = rdr.ReadUTF();
-        MapJSONLength = rdr.ReadInt32();
-        MapJSON = Encoding.UTF8.GetString(rdr.ReadBytes(MapJSONLength));
-    }
+    public int MapJSONLength;
+    public string Password;
+    public string Username;
 
     public async void Handle(User user)
     {
@@ -121,5 +111,15 @@ public partial record Hello : IIncomingPacket
             world.Config.AllowTeleport,
             world.Music,
             world.Config.Difficulty));
+    }
+
+    public void Read(NetworkReader rdr)
+    {
+        BuildVersion = rdr.ReadUTF();
+        GameId = rdr.ReadInt32();
+        Username = rdr.ReadUTF();
+        Password = rdr.ReadUTF();
+        MapJSONLength = rdr.ReadInt32();
+        MapJSON = Encoding.UTF8.GetString(rdr.ReadBytes(MapJSONLength));
     }
 }

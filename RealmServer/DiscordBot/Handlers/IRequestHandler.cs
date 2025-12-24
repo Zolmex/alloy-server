@@ -1,20 +1,17 @@
-﻿namespace DiscordBot.Handlers
+﻿namespace DiscordBot.Handlers;
+
+public interface IRequestHandler
 {
-    public interface IRequestHandler
+    bool Handle(string requestJson);
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+public class RequestAttribute : Attribute
+{
+    public RequestAttribute(string uri)
     {
-        public bool Handle(string requestJson);
+        Uri = uri;
     }
 
-
-    [AttributeUsage(AttributeTargets.Class)]
-    public class RequestAttribute : Attribute
-    {
-        private string _uri;
-        public string Uri => _uri;
-
-        public RequestAttribute(string uri)
-        {
-            _uri = uri;
-        }
-    }
+    public string Uri { get; }
 }

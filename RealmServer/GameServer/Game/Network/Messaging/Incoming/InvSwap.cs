@@ -1,8 +1,7 @@
 ﻿#region
 
 using Common;
-using Common.Utilities;
-using Common.Utilities.Net;
+using Common.Network;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Inventory;
 using GameServer.Game.Network.Messaging.Outgoing;
@@ -16,12 +15,6 @@ public partial record InvSwap : IIncomingPacket
 {
     public SlotObjectData SlotObject1;
     public SlotObjectData SlotObject2;
-
-    public void Read(NetworkReader rdr)
-    {
-        SlotObject1 = rdr.ReadSlotObjectData();
-        SlotObject2 = rdr.ReadSlotObjectData();
-    }
 
     public void Handle(User user)
     {
@@ -42,6 +35,12 @@ public partial record InvSwap : IIncomingPacket
             success = DoPlayerContainerInvSwap(user);
 
         user.SendPacket(new InvResult(success ? 0 : 1));
+    }
+
+    public void Read(NetworkReader rdr)
+    {
+        SlotObject1 = rdr.ReadSlotObjectData();
+        SlotObject2 = rdr.ReadSlotObjectData();
     }
 
     public bool DoPlayerInvSwap(User user)
@@ -152,7 +151,7 @@ public partial record InvSwap : IIncomingPacket
         var p2 = ent2 as Player;
         if (p != null && p2 != null)
             return null;
-        else if (p == null && p2 == null)
+        if (p == null && p2 == null)
             return null;
 
         return p ?? p2;
@@ -164,7 +163,7 @@ public partial record InvSwap : IIncomingPacket
         var c2 = ent2 as Container;
         if (c != null && c2 != null)
             return null;
-        else if (c == null && c2 == null)
+        if (c == null && c2 == null)
             return null;
 
         return c ?? c2;

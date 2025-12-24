@@ -138,7 +138,7 @@ public enum SpellDescField : byte
     MpCost,
     NumProjectiles,
     ProjectileId,
-    MpRefundPerHit,
+    MpRefundPerHit
 }
 
 public enum QuiverDescField : byte
@@ -148,7 +148,7 @@ public enum QuiverDescField : byte
     ArrowChance,
     MaxArrows,
     UseMpArrows,
-    MpProjectileId,
+    MpProjectileId
 }
 
 public enum PoisonDescField : byte
@@ -164,7 +164,7 @@ public enum PoisonDescField : byte
     SpreadRange,
     SpreadTargetsNum,
     SpreadEfficiency,
-    ImpactDamage,
+    ImpactDamage
 }
 
 public enum HelmDescField : byte
@@ -175,7 +175,7 @@ public enum HelmDescField : byte
     StacksLost,
     StatsModifier,
     HoldEffects,
-    MpDrain,
+    MpDrain
 }
 
 public enum CloakDescField : byte
@@ -184,7 +184,7 @@ public enum CloakDescField : byte
     Duration,
     StatsModifier,
     MinStatEfficiency,
-    BoostDuration,
+    BoostDuration
 }
 
 public enum SealDescField : byte
@@ -198,7 +198,7 @@ public enum SealDescField : byte
     MaxAllies,
     EfficiencyReductionPerPlayer,
     StatsModifier,
-    BoostDuration,
+    BoostDuration
 }
 
 public enum FieldBoostType

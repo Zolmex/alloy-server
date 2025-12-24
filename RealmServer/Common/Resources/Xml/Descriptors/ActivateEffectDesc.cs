@@ -7,6 +7,39 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class ActivateEffectDesc : ItemData
 {
+    public ActivateEffectDesc(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null)
+        {
+            _initialized = true;
+            return;
+        }
+
+        AEIndex = (ActivateEffectIndex)Enum.Parse(typeof(ActivateEffectIndex), e.Value.Replace(" ", ""));
+        DurationMS = (int)(e.GetAttribute<float>("duration") * 1000);
+        Range = e.GetAttribute<float>("range");
+        Amount = e.GetAttribute<int>("amount");
+        TotalDamage = e.GetAttribute<int>("totalDamage");
+        Radius = e.GetAttribute<float>("radius");
+        MaxTargets = e.GetAttribute<int>("maxTargets");
+
+        EffectDesc = new ConditionEffectDesc(
+            Utils.GetEnumValue<ConditionEffectIndex>(e.GetAttribute<string>("effect")),
+            (int)(e.GetAttribute<float>("condDuration") * 1000));
+
+        Color = e.GetAttribute<uint>("color");
+        ObjectId = e.GetAttribute<string>("id");
+
+        NumShots = e.GetAttribute<byte>("numShots", 20);
+
+        LevelIncreases = e.Elements("LevelIncrease")
+            .Select(i => new LevelIncreaseDesc(i, this, (byte)ActivateEffectField.LevelIncreases))
+            .ToArray();
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(ActivateEffectField);
 
     public ActivateEffectIndex AEIndex
@@ -79,38 +112,5 @@ public class ActivateEffectDesc : ItemData
     {
         get => GetValue<byte>(11);
         set => SetValue(11, value);
-    }
-
-    public ActivateEffectDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null)
-        {
-            _initialized = true;
-            return;
-        }
-
-        AEIndex = (ActivateEffectIndex)Enum.Parse(typeof(ActivateEffectIndex), e.Value.Replace(" ", ""));
-        DurationMS = (int)(e.GetAttribute<float>("duration", 0) * 1000);
-        Range = e.GetAttribute<float>("range");
-        Amount = e.GetAttribute<int>("amount");
-        TotalDamage = e.GetAttribute<int>("totalDamage");
-        Radius = e.GetAttribute<float>("radius");
-        MaxTargets = e.GetAttribute<int>("maxTargets");
-
-        EffectDesc = new ConditionEffectDesc(
-            Utils.GetEnumValue<ConditionEffectIndex>(e.GetAttribute<string>("effect")),
-            (int)(e.GetAttribute<float>("condDuration") * 1000));
-
-        Color = e.GetAttribute<uint>("color");
-        ObjectId = e.GetAttribute<string>("id");
-
-        NumShots = e.GetAttribute<byte>("numShots", 20);
-
-        LevelIncreases = e.Elements("LevelIncrease")
-            .Select(i => new LevelIncreaseDesc(i, this, (byte)ActivateEffectField.LevelIncreases))
-            .ToArray();
-
-        _initialized = true;
     }
 }

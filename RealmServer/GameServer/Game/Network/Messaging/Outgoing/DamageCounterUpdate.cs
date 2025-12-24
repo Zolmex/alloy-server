@@ -1,13 +1,12 @@
 #region
 
-using Common.Utilities.Net;
+using Common.Network;
 using GameServer.Game.Entities;
 using System.Collections.Generic;
 
 #endregion
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
-
 
 public readonly partial record struct DamageCounterUpdate(int TargetId, int PlayerDamage, List<KeyValuePair<Player, int>> TopDamagers) : IOutgoingPacket<DamageCounterUpdate>
 {
@@ -29,8 +28,9 @@ public readonly partial record struct DamageCounterUpdate(int TargetId, int Play
             wtr.Write((uint)damage);
         }
     }
+
     public static DamageCounterUpdate Read(NetworkReader wtr)
     {
-        return new();
+        return new DamageCounterUpdate();
     }
 }

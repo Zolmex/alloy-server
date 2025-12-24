@@ -6,8 +6,30 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class PlayerDesc : ObjectDesc
 {
-    public readonly int[] SlotTypes;
+    public enum PlayerStatType
+    {
+        // Secondary stats
+        MaxHP = StatType.MaxHP,
+        MaxMP = StatType.MaxMP,
+        MaxMS = StatType.MaxMS,
+        Attack = StatType.Attack,
+        Defense = StatType.Defense,
+        Dexterity = StatType.Dexterity,
+        Wisdom = StatType.Wisdom,
+        MovementSpeed = StatType.MovementSpeed,
+        LifeRegeneration = StatType.LifeRegeneration,
+        DodgeChance = StatType.DodgeChance,
+        CriticalChance = StatType.CriticalChance,
+        CriticalDamage = StatType.CriticalDamage,
+        ManaRegeneration = StatType.ManaRegeneration,
+        MSRegenRate = StatType.MSRegenRate,
+        DamageMultiplier = StatType.DamageMultiplier,
+        Armor = StatType.Armor,
+        AttackSpeed = StatType.AttackSpeed
+    }
+
     public readonly int[] Equipment;
+    public readonly int[] SlotTypes;
     public Dictionary<StatType, float> Stats;
 
     public PlayerDesc(XElement e, string id, ushort type)
@@ -16,7 +38,7 @@ public class PlayerDesc : ObjectDesc
         SlotTypes = e.GetValue<string>("SlotTypes")?.CommaToArray<int>();
         Equipment = e.GetValue<string>("Equipment")?.CommaToArray<int>();
 
-        Stats = new Dictionary<StatType, float>()
+        Stats = new Dictionary<StatType, float>
         {
             { StatType.MaxHP, GetDefaultStatValue(StatType.MaxHP) },
             { StatType.MaxMP, GetDefaultStatValue(StatType.MaxMP) },
@@ -61,27 +83,5 @@ public class PlayerDesc : ObjectDesc
             StatType.AttackSpeed => 3f,
             _ => 0
         };
-    }
-
-    public enum PlayerStatType
-    {
-        // Secondary stats
-        MaxHP = StatType.MaxHP,
-        MaxMP = StatType.MaxMP,
-        MaxMS = StatType.MaxMS,
-        Attack = StatType.Attack,
-        Defense = StatType.Defense,
-        Dexterity = StatType.Dexterity,
-        Wisdom = StatType.Wisdom,
-        MovementSpeed = StatType.MovementSpeed,
-        LifeRegeneration = StatType.LifeRegeneration,
-        DodgeChance = StatType.DodgeChance,
-        CriticalChance = StatType.CriticalChance,
-        CriticalDamage = StatType.CriticalDamage,
-        ManaRegeneration = StatType.ManaRegeneration,
-        MSRegenRate = StatType.MSRegenRate,
-        DamageMultiplier = StatType.DamageMultiplier,
-        Armor = StatType.Armor,
-        AttackSpeed = StatType.AttackSpeed
     }
 }

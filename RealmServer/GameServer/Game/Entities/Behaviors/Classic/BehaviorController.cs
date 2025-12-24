@@ -6,63 +6,62 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors
+namespace GameServer.Game.Entities.Behaviors;
+
+public class BehaviorController
 {
-    public class BehaviorController
+    private static readonly Logger _log = new(typeof(BehaviorController));
+
+    private readonly Character _host;
+    private State _currentState;
+
+    public BehaviorController(Character host, State rootState)
     {
-        private static readonly Logger _log = new(typeof(BehaviorController));
+        _host = host;
+        ActiveStates = new HashSet<State>();
 
-        public State RootState { get; }
-        public HashSet<State> ActiveStates { get; } // List of states that are currently active (includes root state)
-        public HashSet<BehaviorTransition> PastTransitions { get; } = []; // List of states the parent state has transitioned to, child state transitions are cleared on exit
+        RootState = rootState;
+        RootState.RegisterLoot(host);
+    }
 
-        private readonly Character _host;
-        private State _currentState;
+    public State RootState { get; }
+    public HashSet<State> ActiveStates { get; } // List of states that are currently active (includes root state)
+    public HashSet<BehaviorTransition> PastTransitions { get; } = []; // List of states the parent state has transitioned to, child state transitions are cleared on exit
 
-        public BehaviorController(Character host, State rootState)
+    public void Initialize()
+    {
+        _currentState = RootState.GetDeepState();
+        _currentState.Enter(_host);
+    }
+
+    public void TransitionTo(string targetState, RealmTime time)
+    {
+        if (_currentState == null)
+            return;
+
+        _currentState.Exit(_host, time);
+
+        if (RootState.States.TryGetValue(targetState, out var newState))
         {
-            _host = host;
-            ActiveStates = new HashSet<State>();
+            _currentState.ExitInactiveParent(_host, time, newState); // Calls parent's Exit method if it's not parent of the new State
 
-            RootState = rootState;
-            RootState.RegisterLoot(host);
-        }
-
-        public void Initialize()
-        {
-            _currentState = RootState.GetDeepState();
+            _currentState = newState.GetDeepState();
             _currentState.Enter(_host);
         }
-
-        public void TransitionTo(string targetState, RealmTime time)
+        else
         {
-            if (_currentState == null)
-                return;
-
-            _currentState.Exit(_host, time);
-
-            if (RootState.States.TryGetValue(targetState, out var newState))
-            {
-                _currentState.ExitInactiveParent(_host, time, newState); // Calls parent's Exit method if it's not parent of the new State
-
-                _currentState = newState.GetDeepState();
-                _currentState.Enter(_host);
-            }
-            else
-            {
-                _log.Error($"{_host.Name}: State {targetState} not found.");
-                _currentState = null;
-            }
+            _log.Error($"{_host.Name}: State {targetState} not found.");
+            _currentState = null;
         }
+    }
 
-        public void Tick(RealmTime time)
-        {
-            if (_currentState == null)
-                return;
+    public void Tick(RealmTime time)
+    {
+        if (_currentState == null)
+            return;
 
-            var targetState = _currentState.Tick(_host, time); // If this returns something that means a transition has occured
-            if (targetState != null)
-                TransitionTo(targetState, time);
-        }
+        var targetState = _currentState.Tick(_host, time); // If this returns something that means a transition has occured
+        if (targetState != null)
+            TransitionTo(targetState, time);
     }
 }

@@ -1,14 +1,13 @@
 ﻿#region
 
-using Common.Utilities.Net;
+using Common.Network;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging
+namespace GameServer.Game.Network.Messaging;
+
+public interface IIncomingPacket
 {
-    public interface IIncomingPacket
-    {
-        public void Read(NetworkReader rdr);
-        public void Handle(User user);
-    }
+    void Read(NetworkReader rdr);
+    void Handle(User user);
 }

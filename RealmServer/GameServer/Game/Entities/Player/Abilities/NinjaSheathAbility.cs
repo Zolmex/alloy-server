@@ -10,19 +10,19 @@ public class NinjaSheathAbility : Ability
 {
     private static readonly Logger _log = new(typeof(NinjaSheathAbility));
 
-    public bool InStance { get; private set; }
-
     private long _cooldownReset;
-    private int _wellDamage;
-    private int _stanceLifetime;
 
     private long _nextSlashAt;
+    private int _stanceLifetime;
+    private int _wellDamage;
 
     public NinjaSheathAbility(Player player) : base(player)
     {
         _player.OnDamageDealt += OnDamageDealt;
         _player.OnInvChanged += OnInvChanged;
     }
+
+    public bool InStance { get; private set; }
 
     public override void Use(Item item, WorldPosData usePos, int clientTime) // Ability use is validated before this is called
     {
@@ -69,7 +69,7 @@ public class NinjaSheathAbility : Ability
         if (_item.Sheath.Effects != null)
             target.ApplyConditionEffects(_item.Sheath.Effects);
 
-        _player.User.SendPacket(new Notification(// Enemy damage notif
+        _player.User.SendPacket(new Notification( // Enemy damage notif
             target.Id,
             dmgDealt.ToString(),
             0,

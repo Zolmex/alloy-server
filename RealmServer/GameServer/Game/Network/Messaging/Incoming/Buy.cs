@@ -1,7 +1,5 @@
 ﻿#region
 
-using Common.Utilities;
-using Common.Utilities.Net;
 using GameServer.Game.Entities;
 using GameServer.Game.Network.Messaging.Outgoing;
 

@@ -20,23 +20,23 @@ public class TossObjectInfo
 
 public record TossObject : BehaviorScript
 {
-    private readonly float _range;
     private readonly float _angle;
+    private readonly string[] _children;
     private readonly int _cooldownMS;
     private readonly int _cooldownOffsetMS;
-    private readonly bool _tossInvis;
-    private readonly float _probability;
-    private readonly string[] _children;
-    private readonly float _minRange;
+    private readonly float _densityRange;
+    private readonly string _group;
+    private readonly float _maxAngle;
+    private readonly int _maxDensity;
     private readonly float _maxRange;
     private readonly float _minAngle;
-    private readonly float _maxAngle;
-    private readonly float _densityRange;
-    private readonly int _maxDensity;
-    private readonly string _group;
+    private readonly float _minRange;
+    private readonly float _probability;
+    private readonly float _range;
     private readonly TileRegion _region;
     private readonly double _regionRange;
     private readonly bool _targeted;
+    private readonly bool _tossInvis;
     private List<IntPoint> _reproduceRegions;
 
     public TossObject(string child, float range = 5, float angle = 0,
@@ -49,7 +49,7 @@ public record TossObject : BehaviorScript
         bool targeted = false)
     {
         if (group == null)
-            _children = new string[] { child };
+            _children = new[] { child };
         else
             _children = XmlLibrary.ObjectDescs.Values
                 .Where(x => x.Group == group)
@@ -138,9 +138,9 @@ public record TossObject : BehaviorScript
 
             WorldPosData target;
             if (player == null)
-                target = new WorldPosData() { X = host.Position.X + (float)(r * Math.Cos(a)), Y = host.Position.Y + (float)(r * Math.Sin(a)) };
+                target = new WorldPosData { X = host.Position.X + (float)(r * Math.Cos(a)), Y = host.Position.Y + (float)(r * Math.Sin(a)) };
             else
-                target = new WorldPosData() { X = player.Position.X, Y = player.Position.Y };
+                target = new WorldPosData { X = player.Position.X, Y = player.Position.Y };
 
             if (_reproduceRegions != null && _reproduceRegions.Count > 0)
             {
@@ -150,12 +150,12 @@ public record TossObject : BehaviorScript
                     .Where(p => Math.Abs(sx - p.X) <= _regionRange &&
                                 Math.Abs(sy - p.Y) <= _regionRange).ToList();
                 var tile = regions[Random.Shared.Next(regions.Count)];
-                target = new WorldPosData() { X = tile.X, Y = tile.Y };
+                target = new WorldPosData { X = tile.X, Y = tile.Y };
             }
 
             if (!_tossInvis)
                 host.World.BroadcastAll(p =>
-                p.User.SendPacket(new ShowEffect(
+                    p.User.SendPacket(new ShowEffect(
                         (byte)ShowEffectIndex.Throw,
                         host.Id,
                         0xFFBF00,

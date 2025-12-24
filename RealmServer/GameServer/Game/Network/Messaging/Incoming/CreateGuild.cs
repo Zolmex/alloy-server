@@ -1,8 +1,7 @@
 ﻿#region
 
 using Common.Database;
-using Common.Utilities;
-using Common.Utilities.Net;
+using Common.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 
 #endregion
@@ -13,11 +12,6 @@ namespace GameServer.Game.Network.Messaging.Incoming;
 public partial record CreateGuild : IIncomingPacket
 {
     public string Name;
-
-    public void Read(NetworkReader rdr)
-    {
-        Name = rdr.ReadUTF();
-    }
 
     public void Handle(User user)
     {
@@ -30,5 +24,10 @@ public partial record CreateGuild : IIncomingPacket
         player.GuildRank = user.Account.GuildRank;
 
         user.SendPacket(new GuildResult(result == GuildResult.SUCCESS, result));
+    }
+
+    public void Read(NetworkReader rdr)
+    {
+        Name = rdr.ReadUTF();
     }
 }

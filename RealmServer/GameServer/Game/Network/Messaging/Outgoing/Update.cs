@@ -1,8 +1,8 @@
 ﻿#region
 
 using Common;
+using Common.Network;
 using Common.Utilities;
-using Common.Utilities.Net;
 using GameServer.Game.Worlds;
 using System.Collections.Generic;
 
@@ -28,8 +28,9 @@ public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectD
                 Updates.Remove(OldEntities[i].ObjectId);
         }
     }
+
     public static Update Read(NetworkReader rdr)
     {
-        return new();
+        return new Update();
     }
 }

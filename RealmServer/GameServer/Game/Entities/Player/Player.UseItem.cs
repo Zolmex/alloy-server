@@ -183,7 +183,7 @@ public partial class Player
         ApplyConditionEffect(ae.EffectDesc.Effect, ae.DurationMS);
         User.SendPacket(new ShowEffect((byte)ShowEffectIndex.Nova,
             Id,
-            (int)color,
+            color,
             1,
             new WorldPosData(Position.X, Position.Y),
             new WorldPosData()));

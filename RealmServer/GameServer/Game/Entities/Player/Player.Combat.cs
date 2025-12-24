@@ -16,9 +16,9 @@ public partial class Player
 {
     private const float MIN_ATTACK_MULT = 0.5f;
     private const float MAX_ATTACK_MULT = 2f;
+    public Character DamageCounterTarget;
 
     public Character LastHitTarget;
-    public Character DamageCounterTarget;
 
     public bool ShotsVisible(Player player)
     {
@@ -116,7 +116,7 @@ public partial class Player
         var critMult = GetCritMultiplier(normalRandom, forceCrit);
         damage *= critMult;
 
-        return new float[] { damage, critMult };
+        return new[] { damage, critMult };
     }
 
     public float GetAttackFrequency()
@@ -149,7 +149,7 @@ public partial class Player
         var topDealers = User.GameInfo.DamageCounter switch
         {
             < 3 => DamageCounterTarget.DamageStorage.GetTopDamageDealers(5),
-            _ => new List<KeyValuePair<Player, int>>(),
+            _ => new List<KeyValuePair<Player, int>>()
         };
         User.SendPacket(new DamageCounterUpdate(targetId, plrDamage, topDealers));
     }

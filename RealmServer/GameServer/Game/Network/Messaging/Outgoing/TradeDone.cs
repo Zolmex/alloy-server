@@ -1,6 +1,6 @@
 ﻿#region
 
-using Common.Utilities.Net;
+using Common.Network;
 using GameServer.Game.Entities;
 
 #endregion
@@ -13,8 +13,9 @@ public readonly partial record struct TradeDone(Player.TradeResult Result) : IOu
     {
         wtr.Write((byte)Result);
     }
+
     public static TradeDone Read(NetworkReader rdr)
     {
-        return new();
+        return new TradeDone();
     }
 }

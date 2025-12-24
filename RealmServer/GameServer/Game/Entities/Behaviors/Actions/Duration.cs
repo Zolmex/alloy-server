@@ -1,40 +1,39 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Actions
+﻿namespace GameServer.Game.Entities.Behaviors.Actions;
+
+public class DurationInfo
 {
-    public class DurationInfo
+    public int TimeLeft;
+}
+
+public record Duration : BehaviorScript
+{
+    private readonly BehaviorScript _behavior;
+    private readonly int _duration;
+
+    public Duration(BehaviorScript behavior, int duration)
     {
-        public int TimeLeft;
+        _behavior = behavior;
+        _duration = duration;
     }
 
-    public record Duration : BehaviorScript
+    public override void Start(Character host)
     {
-        private readonly BehaviorScript _behavior;
-        private readonly int _duration;
+        var state = host.ResolveResource<DurationInfo>(this);
+        state.TimeLeft = _duration;
+        _behavior.Start(host);
+    }
 
-        public Duration(BehaviorScript behavior, int duration)
+    public override BehaviorTickState Tick(Character host, RealmTime time)
+    {
+        var state = host.ResolveResource<DurationInfo>(this);
+
+        if (state.TimeLeft <= 0)
         {
-            _behavior = behavior;
-            _duration = duration;
+            return BehaviorTickState.BehaviorFailed;
         }
 
-        public override void Start(Character host)
-        {
-            var state = host.ResolveResource<DurationInfo>(this);
-            state.TimeLeft = _duration;
-            _behavior.Start(host);
-        }
-
-        public override BehaviorTickState Tick(Character host, RealmTime time)
-        {
-            var state = host.ResolveResource<DurationInfo>(this);
-
-            if (state.TimeLeft <= 0)
-            {
-                return BehaviorTickState.BehaviorFailed;
-            }
-
-            _behavior.Tick(host, time);
-            state.TimeLeft -= time.ElapsedMsDelta;
-            return BehaviorTickState.BehaviorActive;
-        }
+        _behavior.Tick(host, time);
+        state.TimeLeft -= time.ElapsedMsDelta;
+        return BehaviorTickState.BehaviorActive;
     }
 }

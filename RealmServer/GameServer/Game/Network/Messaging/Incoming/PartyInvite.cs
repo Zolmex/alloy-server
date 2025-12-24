@@ -1,35 +1,33 @@
 ﻿#region
 
-using Common.Utilities;
-using Common.Utilities.Net;
-
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Incoming
+using Common.Network;
+
+namespace GameServer.Game.Network.Messaging.Incoming;
+
+[Packet(PacketId.PARTYINVITE)]
+public partial record PartyInvite : IIncomingPacket
 {
-    [Packet(PacketId.PARTYINVITE)]
-    public partial record PartyInvite : IIncomingPacket
+    private int _objId;
+
+    public void Handle(User user)
     {
-        private int _objId;
+        if (user.GameInfo.State != GameState.Playing)
+            return;
 
-        public void Read(NetworkReader rdr)
-        {
-            _objId = rdr.ReadInt32();
-        }
+        var acc = user.Account;
 
-        public void Handle(User user)
-        {
-            if (user.GameInfo.State != GameState.Playing)
-                return;
+        // Shouldn't happen but make sure player is in party before inviting
+        if (acc.PartyId == -1)
+            return;
 
-            var acc = user.Account;
+        var target = user.GameInfo.Player.World.GetPlayerById(_objId);
+        target?.InviteToParty(user.GameInfo.Player);
+    }
 
-            // Shouldn't happen but make sure player is in party before inviting
-            if (acc.PartyId == -1)
-                return;
-
-            var target = user.GameInfo.Player.World.GetPlayerById(_objId);
-            target?.InviteToParty(user.GameInfo.Player);
-        }
+    public void Read(NetworkReader rdr)
+    {
+        _objId = rdr.ReadInt32();
     }
 }

@@ -9,11 +9,11 @@ namespace GameServer.Game.Entities;
 public class PaladinSealAbility : Ability
 {
     private static readonly Logger _log = new(typeof(PaladinSealAbility));
+    private Entity _banner;
+    private short _bannerCount;
+    private PaladinBanner _behavior;
 
     private long _cooldownReset;
-    private Entity _banner;
-    private PaladinBanner _behavior;
-    private short _bannerCount;
 
     public PaladinSealAbility(Player player) : base(player)
     {

@@ -1,8 +1,8 @@
 ﻿#region
 
 using Common;
+using Common.Network;
 using Common.Utilities;
-using Common.Utilities.Net;
 using System.Collections.Generic;
 using System.IO;
 
@@ -41,8 +41,9 @@ public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> 
         wtr.Write((short)updateCount);
         wtr.BaseStream.Seek(end, SeekOrigin.Begin); // Go to the end of the packet body
     }
+
     public static NewTick Read(NetworkReader wtr)
     {
-        return new();
+        return new NewTick();
     }
 }

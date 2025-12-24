@@ -1,40 +1,38 @@
 ﻿#region
 
 using Common;
-using Common.Utilities;
-using Common.Utilities.Net;
+using Common.Network;
 
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Incoming
+namespace GameServer.Game.Network.Messaging.Incoming;
+
+[Packet(PacketId.GUILDINVITE)]
+public partial record GuildInvite : IIncomingPacket
 {
-    [Packet(PacketId.GUILDINVITE)]
-    public partial record GuildInvite : IIncomingPacket
+    public string TargetName;
+
+    public void Handle(User user)
     {
-        public string TargetName;
+        if (user.GameInfo.State != GameState.Playing)
+            return;
 
-        public void Read(NetworkReader rdr)
-        {
-            TargetName = rdr.ReadUTF();
-        }
+        var acc = user.Account;
+        if (acc.GuildRank < (int)GuildRank.Officer) // Make sure we can invite members
+            return;
 
-        public void Handle(User user)
-        {
-            if (user.GameInfo.State != GameState.Playing)
-                return;
+        var target = user.GameInfo.Player.World.GetPlayerByName(TargetName);
+        if (target == null)
+            return;
 
-            var acc = user.Account;
-            if (acc.GuildRank < (int)GuildRank.Officer) // Make sure we can invite members
-                return;
+        if (target.GuildName != null) // Make sure we don't invite players from other guilds or from our own
+            return;
 
-            var target = user.GameInfo.Player.World.GetPlayerByName(TargetName);
-            if (target == null)
-                return;
+        target.GuildInvite(user, acc.GuildName);
+    }
 
-            if (target.GuildName != null) // Make sure we don't invite players from other guilds or from our own
-                return;
-
-            target.GuildInvite(user, acc.GuildName);
-        }
+    public void Read(NetworkReader rdr)
+    {
+        TargetName = rdr.ReadUTF();
     }
 }

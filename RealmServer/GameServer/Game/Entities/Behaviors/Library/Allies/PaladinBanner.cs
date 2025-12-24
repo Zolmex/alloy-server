@@ -1,108 +1,102 @@
 ﻿#region
 
 using Common;
-using Common.ProjectilePaths;
-using Common.Resources.Config;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Entities.Behaviors.Actions;
-using GameServer.Game.Entities.Behaviors.Transitions;
 using System;
 using System.Linq;
-using static GameServer.Game.Entities.Behaviors.BehaviorScript;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors
+namespace GameServer.Game.Entities.Behaviors;
+
+public class PaladinBanner : EntityBehavior
 {
-    public class PaladinBanner : EntityBehavior
+    public enum PaladinBannerState
     {
-        private static readonly Logger _log = new Logger(typeof(PaladinBanner));
-        public SealDesc Seal;
-        public Player Player;
-        private bool lifetimeSet = false;
-        private Follow Follow;
-        private long nextBuffTime;
+        Buff
+    }
 
-        public override void RegisterStates()
+    private static readonly Logger _log = new(typeof(PaladinBanner));
+    private Follow Follow;
+    private bool lifetimeSet;
+    private long nextBuffTime;
+    public Player Player;
+    public SealDesc Seal;
+
+    public override void RegisterStates()
+    {
+        StateManager.RegisterState(PaladinBannerState.Buff, BuffTick);
+    }
+
+    public override void RegisterBehaviors()
+    { }
+
+    public override void Initialize(Character owner)
+    {
+        StateManager.SetCurrentState(owner, PaladinBannerState.Buff);
+        base.Initialize(owner);
+    }
+
+    private void BuffTick(RealmTime time, Character owner, StateTick state)
+    {
+        if (Seal == null)
+            return;
+        if (!lifetimeSet)
         {
-            StateManager.RegisterState(PaladinBannerState.Buff, BuffTick);
+            owner.Lifetime = Seal.Duration;
+            lifetimeSet = true;
+            Follow = new Follow(Player.GetSpeed(Player.MovementSpeed) * (Seal.BannerSpeed / 100), 1.5f, 15, target: Player.Name);
+            nextBuffTime = time.TotalElapsedMs;
         }
 
-        public override void RegisterBehaviors()
-        {
-        }
+        Follow.Tick(owner, time);
 
-        public override void Initialize(Character owner)
+        if (nextBuffTime > time.TotalElapsedMs)
+            return;
+        nextBuffTime += Seal.BoostDuration;
+
+        var playerCount = 0;
+        var playerWithin = owner.GetPlayersWithin(Seal.Radius);
+        var enumerable = playerWithin.ToList();
+        var stack = enumerable.Count > Seal.MaxStack ? Seal.MaxStack : enumerable.Count;
+        foreach (var player in enumerable)
         {
-            StateManager.SetCurrentState(owner, PaladinBannerState.Buff);
-            base.Initialize(owner);
-        }
-        
-        private void BuffTick(RealmTime time, Character owner, StateTick state)
-        {
-            if (Seal == null)
-                return;
-            if (!lifetimeSet)
+            playerCount++;
+            foreach (var modifier in Seal.StatsModifier)
             {
-                owner.Lifetime = Seal.Duration;
-                lifetimeSet = true;
-                Follow = new Follow(Player.GetSpeed(Player.MovementSpeed) * (Seal.BannerSpeed / 100), 1.5f, 15, target: Player.Name);
-                nextBuffTime = time.TotalElapsedMs;
+                var stat = Enum.Parse<StatType>(modifier.Stat);
+                if (modifier.BoostType == "Percentage")
+                    player.AddIncreasedBonus(stat, modifier.Amount * stack);
+                else if (modifier.BoostType == "Static")
+                    player.AddFlatBonus(stat, modifier.Amount * stack);
             }
 
-            Follow.Tick(owner, time);
+            if (playerCount == Seal.MaxAllies)
+                break;
+        }
 
-            if (nextBuffTime > time.TotalElapsedMs)
-                return;
-            nextBuffTime += Seal.BoostDuration;
-
-            var playerCount = 0;
-            var playerWithin = owner.GetPlayersWithin(Seal.Radius);
-            var enumerable = playerWithin.ToList();
-            var stack = enumerable.Count > Seal.MaxStack ? Seal.MaxStack : enumerable.Count;
+        owner.World.AddTimedAction(Seal.BoostDuration, () =>
+        {
+            playerCount = 0;
             foreach (var player in enumerable)
             {
                 playerCount++;
+                if (player.World != owner.World)
+                    continue;
                 foreach (var modifier in Seal.StatsModifier)
                 {
                     var stat = Enum.Parse<StatType>(modifier.Stat);
                     if (modifier.BoostType == "Percentage")
-                        player.AddIncreasedBonus(stat, modifier.Amount * stack);
+                        player.RemoveIncreasedBonus(stat, modifier.Amount * stack);
                     else if (modifier.BoostType == "Static")
-                        player.AddFlatBonus(stat, modifier.Amount * stack);
+                        player.RemoveFlatBonus(stat, modifier.Amount * stack);
                 }
 
                 if (playerCount == Seal.MaxAllies)
                     break;
             }
-            
-            owner.World.AddTimedAction(Seal.BoostDuration, () =>
-            {
-                playerCount = 0;
-                foreach (var player in enumerable)
-                {
-                    playerCount++;
-                    if (player.World != owner.World)
-                        continue;
-                    foreach (var modifier in Seal.StatsModifier)
-                    {
-                        var stat = Enum.Parse<StatType>(modifier.Stat);
-                        if (modifier.BoostType == "Percentage")
-                            player.RemoveIncreasedBonus(stat, modifier.Amount * stack);
-                        else if (modifier.BoostType == "Static")
-                            player.RemoveFlatBonus(stat, modifier.Amount * stack);
-                    }
-
-                    if (playerCount == Seal.MaxAllies)
-                        break;
-                }
-            });
-        }
-        
-        public enum PaladinBannerState
-        {
-            Buff,
-        }
+        });
     }
 }

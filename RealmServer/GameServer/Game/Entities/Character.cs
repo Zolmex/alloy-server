@@ -28,6 +28,44 @@ namespace GameServer.Game.Entities;
 
 public class Character : Entity
 {
+    public static readonly int PROJECTILE_DAMAGE_RANGE = 32;
+
+
+    protected readonly ConditionEffectStack _condEffects;
+
+    protected readonly object _dmgLock = new();
+    private readonly List<ItemLoot> _lootInfo = new();
+    private readonly Dictionary<int, LootCache> _playerLootCaches = new();
+
+    protected readonly object _projIdLock = new();
+    private readonly Dictionary<ProjectileTargetType, IEnumerable<Character>> _targetCache = new();
+
+    public readonly DamageStorage DamageStorage = new();
+
+    public readonly Random Rand = new();
+    public readonly StackController Stacks;
+    protected List<Entity> _hitEntities = new();
+    protected ushort _nextProjectileId;
+    public EntityBehavior Behavior;
+    public BehaviorController ClassicBehavior;
+
+    private HealthLock? healthLock;
+
+    public LazyCollection<Projectile> Projectiles = new();
+
+    public Character(ushort objType) : base(objType)
+    {
+        LoadBehavior();
+
+        Stacks = new StackController(this);
+        Stacks.AddStack(ModStacks.ConditionEffect, -1); // Condition effect stack needs to be permanent
+        _condEffects = (ConditionEffectStack)Stacks.GetStack(ModStacks.ConditionEffect);
+
+        Name = Desc.DisplayName;
+
+        DeathEvent += CloseDamageCounterForAttackers;
+    }
+
     public int Condition1
     {
         get => Stats.Get<int>(StatType.Condition1);
@@ -46,46 +84,11 @@ public class Character : Entity
         set => Stats.Set(StatType.AltTexture, value);
     }
 
-    public LazyCollection<Projectile> Projectiles = new();
     public StateResourceController StateResources { get; } = new();
     public string Killer { get; private set; }
-    public EntityBehavior Behavior;
-    public BehaviorController ClassicBehavior;
-
-    public readonly Random Rand = new();
-    public readonly StackController Stacks;
-
-    public readonly DamageStorage DamageStorage = new();
 
     public event Action<Character, Character, int> OnDamagedBy; // <This, From, DamageDealt>
     public event Action<Character, Player, string> OnPlayerText; // <This, From, text>
-
-    private HealthLock? healthLock;
-    private readonly Dictionary<ProjectileTargetType, IEnumerable<Character>> _targetCache = new();
-    private readonly List<ItemLoot> _lootInfo = new();
-    private readonly Dictionary<int, LootCache> _playerLootCaches = new();
-
-    protected readonly object _dmgLock = new();
-    protected List<Entity> _hitEntities = new();
-
-
-    protected readonly ConditionEffectStack _condEffects;
-
-    protected readonly object _projIdLock = new();
-    protected ushort _nextProjectileId;
-
-    public Character(ushort objType) : base(objType)
-    {
-        LoadBehavior();
-
-        Stacks = new StackController(this);
-        Stacks.AddStack(ModStacks.ConditionEffect, -1); // Condition effect stack needs to be permanent
-        _condEffects = (ConditionEffectStack)Stacks.GetStack(ModStacks.ConditionEffect);
-
-        Name = Desc.DisplayName;
-
-        DeathEvent += CloseDamageCounterForAttackers;
-    }
 
     private void CloseDamageCounterForAttackers(Entity en)
     {
@@ -161,8 +164,6 @@ public class Character : Entity
 
         cache.UpdateLootBoost(p.LootBoost);
     }
-
-    public static readonly int PROJECTILE_DAMAGE_RANGE = 32;
 
     public override bool Tick(RealmTime time)
     {
@@ -374,7 +375,7 @@ public class Character : Entity
         for (var i = 0; i < numShots; i++)
         {
             var proj = new Projectile(this, firstProjId + i, RealmManager.WorldTime.TotalElapsedMs,
-                angle + (angleInc * i), new Vector2(x.Value, y.Value), (int)dmg, path.Clone(),
+                angle + (angleInc * i), new Vector2(x.Value, y.Value), dmg, path.Clone(),
                 path.LifetimeMs, multiHit, passesCover, armorPiercing, ProjectileTargetType.Player,
                 onHitEvent, effects);
             projectiles.Add(proj);
@@ -534,10 +535,10 @@ public class Character : Entity
 
     public virtual void OnHitBy(Character from, DamageSource damageSource)
     {
-        int damage = damageSource.GetTotalDamage();
+        var damage = damageSource.GetTotalDamage();
         if (from.IsPlayer)
         {
-            Player p = (Player)from;
+            var p = (Player)from;
             if (DamageStorage.RegisterDamage(p, damage))
                 UpdateLootRollCache(p);
         }
@@ -589,8 +590,8 @@ public class Character : Entity
     {
         using (TimedLock.Lock(_dmgLock))
         {
-            int msAfterDmg = MS - damage;
-            int hpDmg = msAfterDmg < 0 ? Math.Abs(msAfterDmg) : 0;
+            var msAfterDmg = MS - damage;
+            var hpDmg = msAfterDmg < 0 ? Math.Abs(msAfterDmg) : 0;
             var dmgDealt = hpDmg > HP ? HP : hpDmg;
 
             MS = Math.Max(0, msAfterDmg);
@@ -667,7 +668,7 @@ public class Character : Entity
     }
 
     /// <summary>
-    /// Apply a health lock to this character, preventing it from dying.
+    ///     Apply a health lock to this character, preventing it from dying.
     /// </summary>
     /// <param name="healthLock">Health lock.</param>
     public void ApplyHealthLock(HealthLock healthLock)
@@ -676,7 +677,7 @@ public class Character : Entity
     }
 
     /// <summary>
-    /// Release a health lock from this character, allowing it to die.
+    ///     Release a health lock from this character, allowing it to die.
     /// </summary>
     public void ReleaseHealthLock()
     {

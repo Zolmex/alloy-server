@@ -1,9 +1,8 @@
-﻿namespace Common.Enums
+﻿namespace Common.Enums;
+
+public enum LootDropRarity
 {
-    public enum LootDropRarity
-    {
-        All,
-        Legendary,
-        Primal
-    }
+    All,
+    Legendary,
+    Primal
 }

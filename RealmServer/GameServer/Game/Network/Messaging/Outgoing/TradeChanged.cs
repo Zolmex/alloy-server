@@ -1,4 +1,4 @@
-﻿using Common.Utilities.Net;
+﻿using Common.Network;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
@@ -10,8 +10,9 @@ public readonly partial record struct TradeChanged(bool[] Offer) : IOutgoingPack
         foreach (var item in Offer)
             wtr.Write(item);
     }
+
     public static TradeChanged Read(NetworkReader rdr)
     {
-        return new();
+        return new TradeChanged();
     }
 }

@@ -16,14 +16,14 @@ public class HealSelfInfo
 public record HealSelf : BehaviorScript
 {
     private readonly int _amount;
-    private readonly bool _percentage;
     private readonly int _coolDown;
 
     // New field for the initial one-time cooldown offset
     private readonly int _cooldownOffset;
+    private readonly bool _percentage;
 
     /// <summary>
-    /// Heals the host after an optional initial offset, then repeats based on the specified cooldown.
+    ///     Heals the host after an optional initial offset, then repeats based on the specified cooldown.
     /// </summary>
     /// <param name="coolDown">Cooldown between heals after the first heal fires.</param>
     /// <param name="amount">Amount to heal (absolute or percentage).</param>
@@ -60,7 +60,7 @@ public record HealSelf : BehaviorScript
             return BehaviorTickState.BehaviorFailed;
 
         // Calculate the potential heal amount
-        int healValue = 0;
+        var healValue = 0;
         if (_amount != 0)
         {
             healValue = _amount;
@@ -71,9 +71,9 @@ public record HealSelf : BehaviorScript
         }
 
         // Calculate the actual heal amount (capped by MaxHP)
-        int currentHp = host.HP;
-        int maxHp = host.MaxHP;
-        int actualHeal = Math.Min(healValue, maxHp - currentHp);
+        var currentHp = host.HP;
+        var maxHp = host.MaxHP;
+        var actualHeal = Math.Min(healValue, maxHp - currentHp);
 
         // Apply the heal if there's a positive difference
         if (actualHeal > 0)
@@ -89,7 +89,7 @@ public record HealSelf : BehaviorScript
             {
                 if (p.DistSqr(host) <= Player.SIGHT_RADIUS_SQR)
                     p.User.SendPacket(new ShowEffect(
-                                                (byte)ShowEffectIndex.Heal,
+                        (byte)ShowEffectIndex.Heal,
                         host.Id,
                         0xFFFFFF,
                         0,
@@ -111,7 +111,7 @@ public record HealSelf : BehaviorScript
             {
                 if (p.DistSqr(host) <= Player.SIGHT_RADIUS_SQR)
                     p.User.SendPacket(new Notification(
-                    host.Id,
+                        host.Id,
                         "+" + actualHeal, // Display the actual health restored
                         0x00FF00));
             });
@@ -122,5 +122,4 @@ public record HealSelf : BehaviorScript
 
         return BehaviorTickState.BehaviorActive;
     }
-
 }

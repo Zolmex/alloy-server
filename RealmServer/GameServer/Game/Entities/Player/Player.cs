@@ -23,20 +23,9 @@ namespace GameServer.Game.Entities;
 public partial class Player : Character
 {
     public static Action<Player, string> OnDeath;
+    private readonly List<string> _guildInvites = new();
 
-    public User User { get; }
-    public DbChar Char { get; }
-    public PlayerInventory Inventory { get; }
-    public Dictionary<ModTypes, Modifier> ActiveModifiers { get; set; }
-    public double LootBoost { get; private set; } // todo: loot boost implementation.
-
-    public int AccountId => User.Account.AccountId;
-    public bool IsTargetable => !HasConditionEffect(ConditionEffectIndex.Invisible);
-
-    public event Action<RealmTime> OnTick;
-
-    private HashSet<Projectile> _unconfirmedHits = new();
-    private List<string> _guildInvites = new();
+    private readonly HashSet<Projectile> _unconfirmedHits = new();
 
     public Player(User user, DbChar chr) : base((ushort)chr.ClassType)
     {
@@ -54,6 +43,17 @@ public partial class Player : Character
 
         SetLootBoost(1d);
     }
+
+    public User User { get; }
+    public DbChar Char { get; }
+    public PlayerInventory Inventory { get; }
+    public Dictionary<ModTypes, Modifier> ActiveModifiers { get; set; }
+    public double LootBoost { get; private set; } // todo: loot boost implementation.
+
+    public int AccountId => User.Account.AccountId;
+    public bool IsTargetable => !HasConditionEffect(ConditionEffectIndex.Invisible);
+
+    public event Action<RealmTime> OnTick;
 
     private void Reset()
     {

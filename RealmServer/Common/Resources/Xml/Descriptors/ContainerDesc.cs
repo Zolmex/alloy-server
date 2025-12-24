@@ -5,8 +5,8 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class ContainerDesc : ObjectDesc
 {
-    public readonly int[] SlotTypes;
     public readonly int[] Equipment;
+    public readonly int[] SlotTypes;
 
     public ContainerDesc(XElement e, string id, ushort type)
         : base(e, id, type)

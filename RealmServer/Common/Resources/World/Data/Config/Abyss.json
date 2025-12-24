@@ -7,5 +7,9 @@
   "MaxPlayers": -1,
   "Blocksight": 0,
   "LongLasting": false,
-  "Maps": [ "Abyss1.jm", "Abyss2.jm", "Abyss3.jm" ]
+  "Maps": [
+    "Abyss1.jm",
+    "Abyss2.jm",
+    "Abyss3.jm"
+  ]
 }

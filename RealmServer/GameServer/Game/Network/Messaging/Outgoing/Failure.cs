@@ -1,12 +1,7 @@
-﻿#region
-
-#endregion
-
-namespace GameServer.Game.Network.Messaging.Outgoing;
+﻿namespace GameServer.Game.Network.Messaging.Outgoing;
 
 public readonly partial record struct Failure(int ErrorId, string ErrorDescription) : IOutgoingPacket<Failure>
 {
-
     public const string DEFAULT_MESSAGE = "An error occured while processing data from your client.";
     public const int DEFAULT = 0;
     public const int INCORRECT_VERSION = 1;

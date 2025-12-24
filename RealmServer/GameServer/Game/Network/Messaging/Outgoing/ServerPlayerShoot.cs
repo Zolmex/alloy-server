@@ -1,17 +1,20 @@
 ﻿#region
 
 using Common;
-using Common.Utilities.Net;
-using GameServer.Game.Entities.Behaviors;
+using Common.Network;
 
 #endregion
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct ServerPlayerShoot(WorldPosData StartPos,
-        float Angle, float AngleInc, int[] DamageList, float[] CritList, int ItemType = -1) : IOutgoingPacket<ServerPlayerShoot>
+public readonly partial record struct ServerPlayerShoot(
+    WorldPosData StartPos,
+    float Angle,
+    float AngleInc,
+    int[] DamageList,
+    float[] CritList,
+    int ItemType = -1) : IOutgoingPacket<ServerPlayerShoot>
 {
-
     public void Write(NetworkWriter wtr)
     {
         wtr.Write(StartPos);
@@ -28,8 +31,9 @@ public readonly partial record struct ServerPlayerShoot(WorldPosData StartPos,
 
         wtr.Write((short)ItemType);
     }
+
     public static ServerPlayerShoot Read(NetworkReader rdr)
     {
-        return new();
+        return new ServerPlayerShoot();
     }
 }

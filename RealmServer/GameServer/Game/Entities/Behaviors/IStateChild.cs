@@ -1,7 +1,6 @@
-﻿namespace GameServer.Game.Entities.Behaviors
+﻿namespace GameServer.Game.Entities.Behaviors;
+
+public interface IStateChild
 {
-    public interface IStateChild
-    {
-        // Empty
-    }
+    // Empty
 }

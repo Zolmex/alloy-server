@@ -5,12 +5,96 @@ using System.Linq;
 using System.Xml.Linq;
 
 namespace Common.Resources.Xml.Descriptors;
+
 public class Item : ItemData
 {
     private static readonly Logger _log = new(typeof(Item));
 
-    public string DisplayName => DisplayId ?? ObjectId;
+    private readonly Dictionary<FieldBoostType, Dictionary<string, ItemFieldBoost>>
+        _fieldBoosts = new(); // This contains all types of boosts. Field is a string (to allow for deepfields)
+
+    private readonly List<FieldBoostType> _fieldBoostUpdates = new();
+    public readonly bool MultiPhase;
     public readonly XElement Root;
+
+    public readonly TextureDesc Texture;
+
+    public Item(XElement e)
+    {
+        if (e == null) // Null when instanced by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        Root = e;
+        ObjectType = e.GetAttribute<ushort>("type");
+        ObjectId = e.GetAttribute<string>("id");
+        SlotType = e.GetValue<int>("SlotType");
+        Usable = e.HasElement("Usable");
+        BagType = e.GetValue<int>("BagType");
+        Consumable = e.HasElement("Consumable") || e.HasElement("InvUse");
+        Potion = e.HasElement("Potion");
+        Soulbound = e.HasElement("Soulbound");
+        Tex1 = (int)e.GetValue<uint>("Tex1");
+        Tex2 = (int)e.GetValue<uint>("Tex2");
+        Tier = e.GetValue("Tier", -1);
+        Description = e.GetValue<string>("Description");
+        RateOfFire = e.GetValue<float>("RateOfFire", 1);
+        MpCost = e.GetValue<int>("MpCost");
+        MpEndCost = e.GetValue<int>("MpEndCost");
+        FameBonus = e.GetValue<int>("FameBonus");
+        NumProjectiles = e.GetValue("NumProjectiles", (byte)(SlotType == 25 ? 3 : 1)); // Shurikens have 3 shots as a base
+        ArcGap = e.GetValue("ArcGap", 11.25f);
+        DisplayId = e.GetValue<string>("DisplayId");
+        Doses = e.GetValue<int>("Doses");
+        Cooldown = (int)(e.GetValue("Cooldown", 0.5f) * 1000);
+        Resurrects = e.HasElement("Resurrects");
+        MaxDoses = e.GetValue<int>("Doses");
+        Rarity = e.GetValue("Rarity", "Common");
+        GemstoneLimit = e.GetValue<int>("GemstoneLimit");
+        ItemLevel = e.GetValue("ItemLevel", -1);
+        UpgradeLevels = e.GetValue<int>("UpgradeLevels");
+
+        StatBoosts = e.Elements("ActivateOnEquip")
+            .Select(i => new EquipmentBoost(i, this, (byte)ItemField.EquipmentBoosts))
+            .ToArray();
+        ActivateEffects = e.Elements("Activate")
+            .Select(i => new ActivateEffectDesc(i, this, (byte)ItemField.ActivateEffects))
+            .ToArray();
+        Projectiles = e.Elements("Projectile")
+            .Select(i =>
+            {
+                var proj = new ProjectileDesc(i, this, (byte)ItemField.Projectile);
+                proj.SetContainer(ObjectType);
+                return proj;
+            }).ToArray();
+        Gemstone = e.HasElement("Gemstone")
+            ? new GemstoneDesc(e.Element("Gemstone"), this, (byte)ItemField.Gemstone)
+            : null;
+        Gemstones = null; // Necessary for item data to work properly...
+        LevelIncreases = e.Elements("LevelIncrease")
+            .Select(i => new LevelIncreaseDesc(i, this, (byte)ItemField.LevelIncreases))
+            .ToArray();
+
+        Texture = e.HasElement("Texture") ? new TextureDesc(e.Element("Texture")) : null;
+
+        MultiPhase = e.HasElement("MultiPhase");
+        MaxCharge = e.GetValue("MaxCharge", 1000);
+        MpCostPerSecond = e.GetValue("MpCostPerSecond", 50);
+
+        Sheath = e.HasElement("Sheath") ? new SheathDesc(e.Element("Sheath")) : null;
+        Spell = e.HasElement("Spell") ? new SpellDesc(e.Element("Spell")) : null;
+        Quiver = e.HasElement("Quiver") ? new QuiverDesc(e.Element("Quiver")) : null;
+        Poison = e.HasElement("Poison") ? new PoisonDesc(e.Element("Poison")) : null;
+        Helm = e.HasElement("Helm") ? new HelmDesc(e.Element("Helm")) : null;
+        Cloak = e.HasElement("Cloak") ? new CloakDesc(e.Element("Cloak")) : null;
+        Seal = e.HasElement("Seal") ? new SealDesc(e.Element("Seal")) : null;
+
+        _initialized = true;
+    }
+
+    public string DisplayName => DisplayId ?? ObjectId;
 
     public override Type FieldsEnum => typeof(ItemField);
 
@@ -235,118 +319,35 @@ public class Item : ItemData
         get => GetValue<SpellDesc>(36);
         set => SetValue(36, value);
     }
-    
+
     public QuiverDesc Quiver
     {
         get => GetValue<QuiverDesc>(37);
         set => SetValue(37, value);
     }
-    
+
     public PoisonDesc Poison
     {
         get => GetValue<PoisonDesc>(38);
         set => SetValue(38, value);
     }
-    
+
     public HelmDesc Helm
     {
         get => GetValue<HelmDesc>(39);
         set => SetValue(39, value);
     }
-    
+
     public CloakDesc Cloak
     {
         get => GetValue<CloakDesc>(40);
         set => SetValue(40, value);
     }
-    
+
     public SealDesc Seal
     {
         get => GetValue<SealDesc>(41);
         set => SetValue(41, value);
-    }
-
-    public readonly TextureDesc Texture;
-    public readonly bool MultiPhase;
-
-    private readonly Dictionary<FieldBoostType, Dictionary<string, ItemFieldBoost>>
-        _fieldBoosts = new(); // This contains all types of boosts. Field is a string (to allow for deepfields)
-
-    private readonly List<FieldBoostType> _fieldBoostUpdates = new();
-
-    public Item(XElement e)
-    {
-        if (e == null) // Null when instanced by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        Root = e;
-        ObjectType = e.GetAttribute<ushort>("type");
-        ObjectId = e.GetAttribute<string>("id");
-        SlotType = e.GetValue<int>("SlotType");
-        Usable = e.HasElement("Usable");
-        BagType = e.GetValue<int>("BagType");
-        Consumable = e.HasElement("Consumable") || e.HasElement("InvUse");
-        Potion = e.HasElement("Potion");
-        Soulbound = e.HasElement("Soulbound");
-        Tex1 = (int)e.GetValue<uint>("Tex1", 0);
-        Tex2 = (int)e.GetValue<uint>("Tex2", 0);
-        Tier = e.GetValue<int>("Tier", -1);
-        Description = e.GetValue<string>("Description");
-        RateOfFire = e.GetValue<float>("RateOfFire", 1);
-        MpCost = e.GetValue<int>("MpCost");
-        MpEndCost = e.GetValue<int>("MpEndCost");
-        FameBonus = e.GetValue<int>("FameBonus");
-        NumProjectiles = e.GetValue<byte>("NumProjectiles", (byte)(SlotType == 25 ? 3 : 1)); // Shurikens have 3 shots as a base
-        ArcGap = e.GetValue<float>("ArcGap", 11.25f);
-        DisplayId = e.GetValue<string>("DisplayId");
-        Doses = e.GetValue<int>("Doses");
-        Cooldown = (int)(e.GetValue<float>("Cooldown", 0.5f) * 1000);
-        Resurrects = e.HasElement("Resurrects");
-        MaxDoses = e.GetValue<int>("Doses");
-        Rarity = e.GetValue<string>("Rarity", "Common");
-        GemstoneLimit = e.GetValue<int>("GemstoneLimit");
-        ItemLevel = e.GetValue<int>("ItemLevel", -1);
-        UpgradeLevels = e.GetValue<int>("UpgradeLevels", 0);
-
-        StatBoosts = e.Elements("ActivateOnEquip")
-            .Select(i => new EquipmentBoost(i, this, (byte)ItemField.EquipmentBoosts))
-            .ToArray();
-        ActivateEffects = e.Elements("Activate")
-            .Select(i => new ActivateEffectDesc(i, this, (byte)ItemField.ActivateEffects))
-            .ToArray();
-        Projectiles = e.Elements("Projectile")
-            .Select(i =>
-            {
-                var proj = new ProjectileDesc(i, this, (byte)ItemField.Projectile);
-                proj.SetContainer(ObjectType);
-                return proj;
-            }).ToArray();
-        Gemstone = e.HasElement("Gemstone")
-            ? new GemstoneDesc(e.Element("Gemstone"), this, (byte)ItemField.Gemstone)
-            : null;
-        Gemstones = null; // Necessary for item data to work properly...
-        LevelIncreases = e.Elements("LevelIncrease")
-            .Select(i => new LevelIncreaseDesc(i, this, (byte)ItemField.LevelIncreases))
-            .ToArray();
-
-        Texture = e.HasElement("Texture") ? new TextureDesc(e.Element("Texture")) : null;
-
-        MultiPhase = e.HasElement("MultiPhase");
-        MaxCharge = e.GetValue<int>("MaxCharge", 1000);
-        MpCostPerSecond = e.GetValue<int>("MpCostPerSecond", 50);
-
-        Sheath = e.HasElement("Sheath") ? new SheathDesc(e.Element("Sheath")) : null;
-        Spell = e.HasElement("Spell") ? new SpellDesc(e.Element("Spell")) : null;
-        Quiver = e.HasElement("Quiver") ? new QuiverDesc(e.Element("Quiver")) : null;
-        Poison = e.HasElement("Poison") ? new PoisonDesc(e.Element("Poison")) : null;
-        Helm = e.HasElement("Helm") ? new HelmDesc(e.Element("Helm")) : null;
-        Cloak = e.HasElement("Cloak") ? new CloakDesc(e.Element("Cloak")) : null;
-        Seal = e.HasElement("Seal") ? new SealDesc(e.Element("Seal")) : null;
-
-        _initialized = true;
     }
 
     public override List<byte>
@@ -423,7 +424,7 @@ public class Item : ItemData
                         inc.Amount * (ItemLevel / inc.Rate));
 
         foreach (var Projectile in Projectiles) // Projectile increases
-            if (Projectile is { LevelIncreases: not null }) 
+            if (Projectile is { LevelIncreases: not null })
                 foreach (var inc in Projectile.LevelIncreases)
                     AddFieldBoost(FieldBoostType.ItemLevel, GetFullFieldStr(inc.Field, Projectile), true,
                         inc.Amount * (ItemLevel / inc.Rate));

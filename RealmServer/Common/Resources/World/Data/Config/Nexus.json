@@ -8,5 +8,7 @@
   "Blocksight": 0,
   "LongLasting": true,
   "ShowDisplays": true,
-  "Maps": [ "Nexus.jm" ]
+  "Maps": [
+    "Nexus.jm"
+  ]
 }

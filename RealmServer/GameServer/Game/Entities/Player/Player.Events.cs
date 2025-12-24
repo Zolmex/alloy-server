@@ -1,5 +1,4 @@
 using Common;
-using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using GameServer.Game.DamageSources;
 using GameServer.Game.DamageSources.Projectiles;
@@ -21,7 +20,7 @@ public partial class Player
     public event Action<int, Item> OnInvChanged; // slot, item
     public event Action<ProjectileDesc, float, Vector2> OnDoShoot; // Triggers every time the weapon is fired
     public event Action<Projectile> OnShoot; // Triggers for every projectile
-    
+
     public void StacksLostInvoke(ModStacks type, int amount)
     {
         StacksLost?.Invoke(type, amount);

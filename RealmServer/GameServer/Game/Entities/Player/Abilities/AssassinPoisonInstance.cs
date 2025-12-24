@@ -10,15 +10,6 @@ public class PoisonInstance
 {
     private static readonly Logger _log = new(typeof(PoisonInstance));
 
-    public Item Item { get; private set; }
-    public Character Target { get; private set; }
-    public Player Caster { get; private set; }
-    public long NextTickTime { get; private set; }
-    public long StartTime { get; private set; }
-    public int DamageLeft { get; private set; }
-    public float Efficiency { get; private set; }
-    public bool Active { get; private set; }
-
     public PoisonInstance(Item item, Character target, Player caster, long startTime, float efficiency)
     {
         if (target.Dead)
@@ -45,12 +36,21 @@ public class PoisonInstance
 
         if (poison.ImpactDamage > 0)
         {
-            int impactDamage = (int)Math.Floor(poison.ImpactDamage * (efficiency / 100));
+            var impactDamage = (int)Math.Floor(poison.ImpactDamage * (efficiency / 100));
             target.DamageWithText(impactDamage, from: caster, prefix: "Poison Impact: ", ignoreInvincible: true);
         }
 
         caster.OnTick += Tick;
     }
+
+    public Item Item { get; }
+    public Character Target { get; }
+    public Player Caster { get; }
+    public long NextTickTime { get; private set; }
+    public long StartTime { get; }
+    public int DamageLeft { get; private set; }
+    public float Efficiency { get; }
+    public bool Active { get; private set; }
 
     private void Tick(RealmTime time)
     {
@@ -101,20 +101,20 @@ public class PoisonInstance
 
             // Visual effect per enemy when poison spreads
             Caster.User.SendPacket(new
-            ShowEffect(
-                (byte)ShowEffectIndex.Nova,
-                Caster.Id,
-                0xFFFFFF,
-                1,
-                new WorldPosData(enemy.Position.X, enemy.Position.Y),
-                new WorldPosData()));
+                ShowEffect(
+                    (byte)ShowEffectIndex.Nova,
+                    Caster.Id,
+                    0xFFFFFF,
+                    1,
+                    new WorldPosData(enemy.Position.X, enemy.Position.Y),
+                    new WorldPosData()));
 
             spreadTargetNum++;
         }
 
         // Visual effect at spread origin
         Caster.User.SendPacket(new ShowEffect(
-        (byte)ShowEffectIndex.Nova,
+            (byte)ShowEffectIndex.Nova,
             Caster.Id,
             0xFF0000,
             poison.SpreadRange,

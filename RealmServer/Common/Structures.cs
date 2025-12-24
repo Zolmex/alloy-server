@@ -1,11 +1,10 @@
 ﻿#region
 
+using Common.Network;
 using Common.Utilities;
-using Common.Utilities.Net;
 using System;
 using System.IO;
 using System.Numerics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 #endregion
 
@@ -140,7 +139,6 @@ public struct WorldPosData : IEquatable<WorldPosData>
     }
 
 
-
     public override int GetHashCode()
     {
         return (X, Y).GetHashCode();
@@ -167,18 +165,14 @@ public struct WorldPosData : IEquatable<WorldPosData>
         return !pos1.Equals(pos2);
     }
 
-    public static implicit operator Vector2(WorldPosData pos) => new(pos.X, pos.Y);
+    public static implicit operator Vector2(WorldPosData pos)
+    {
+        return new Vector2(pos.X, pos.Y);
+    }
 }
 
 public static class WorldPosDataExtensions
 {
-    extension(NetworkReader rdr)
-    {
-        public WorldPosData ReadWorldPosData()
-        {
-            return new WorldPosData(rdr.ReadSingle(), rdr.ReadSingle());
-        }
-    }
     public static Vector2 ToVec2(this WorldPosData data)
     {
         return new Vector2(data.X, data.Y);
@@ -193,12 +187,20 @@ public static class WorldPosDataExtensions
 
     public static float AngleDegrees(this WorldPosData pos1, WorldPosData pos2)
     {
-        return AngleRadians(pos1, pos2) * 180f / (float)Math.PI;
+        return pos1.AngleRadians(pos2) * 180f / (float)Math.PI;
     }
 
     public static float AngleRadians(this WorldPosData pos1, WorldPosData pos2)
     {
         return (float)Math.Atan2(pos2.Y - pos1.Y, pos2.X - pos1.X);
+    }
+
+    extension(NetworkReader rdr)
+    {
+        public WorldPosData ReadWorldPosData()
+        {
+            return new WorldPosData(rdr.ReadSingle(), rdr.ReadSingle());
+        }
     }
 }
 
@@ -386,7 +388,9 @@ public struct SlotObjectData
     public int ObjectId;
     public byte SlotId;
 }
-public static class SlotObjectDataExtensions{
+
+public static class SlotObjectDataExtensions
+{
     extension(NetworkReader rdr)
     {
         public SlotObjectData ReadSlotObjectData()
@@ -394,6 +398,7 @@ public static class SlotObjectDataExtensions{
             return new SlotObjectData { ObjectId = rdr.ReadInt32(), SlotId = rdr.ReadByte() };
         }
     }
+
     extension(NetworkWriter wtr)
     {
         public void Write(SlotObjectData data)

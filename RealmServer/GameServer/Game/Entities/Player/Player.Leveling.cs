@@ -14,8 +14,10 @@ public partial class Player
 {
     public const int LevelCap = 50; //for testing
     public const int XPPerFame = 500;
-    public static readonly int[] Stars = [20, 150, 400, 800, 2000];
     private const int FIND_QUEST_COOLDOWN = 5000; // Find new quest every 10 seconds
+    public static readonly int[] Stars = [20, 150, 400, 800, 2000];
+
+    private long _findNewQuestTime;
 
     public Enemy Quest { get; private set; }
 
@@ -66,8 +68,6 @@ public partial class Player
         get => Stats.Get<int>(StatType.NumStars);
         set => Stats.Set(StatType.NumStars, value);
     }
-
-    private long _findNewQuestTime;
 
     public void FindNewQuest(RealmTime time)
     {
@@ -146,7 +146,7 @@ public partial class Player
 
             if (Level == LevelCap)
             {
-                ChatManager.Announce($"{Name} has reached the maximum level!", false, World.Id, false);
+                ChatManager.Announce($"{Name} has reached the maximum level!", false, World.Id);
                 break;
             }
         }

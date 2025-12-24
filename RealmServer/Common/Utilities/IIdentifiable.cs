@@ -1,7 +1,6 @@
-﻿namespace Common.Utilities
+﻿namespace Common.Utilities;
+
+public interface IIdentifiable // ...yes
 {
-    public interface IIdentifiable // ...yes
-    {
-        public int Id { get; set; }
-    }
+    int Id { get; set; }
 }

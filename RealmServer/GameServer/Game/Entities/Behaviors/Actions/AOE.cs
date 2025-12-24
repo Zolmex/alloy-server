@@ -15,30 +15,30 @@ namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class AOEInfo
 {
+    public float AngleOffset;
     public List<AOEDamager> AoeDamagerList = new();
     public int CooldownLeft;
-    public float AngleOffset;
 }
 
 public record AOE : BehaviorScript
 {
-    private readonly float _range;
-    private readonly float _rangeSqr;
-    private readonly float _radius;
-    private readonly int _minDamage;
-    private readonly int _maxDamage;
-    private readonly float _fixedAngle;
+    private readonly int _activateCount;
     private readonly float _angleOffsetDefault;
+    private readonly int _color;
     private readonly int _cooldownMS;
     private readonly int _cooldownOffset;
-    private readonly int _color;
-    private readonly TargetType _targetType;
-    private readonly int _activateCount;
-    private readonly int _throwTime;
-    private readonly int _damageCooldown;
     private readonly int _damageColor;
-    private readonly float _rotateAngle;
+    private readonly int _damageCooldown;
     private readonly (ConditionEffectIndex, int)[] _effects;
+    private readonly float _fixedAngle;
+    private readonly int _maxDamage;
+    private readonly int _minDamage;
+    private readonly float _radius;
+    private readonly float _range;
+    private readonly float _rangeSqr;
+    private readonly float _rotateAngle;
+    private readonly TargetType _targetType;
+    private readonly int _throwTime;
 
     public AOE(float radius, int damage, int cooldownMs, float range = 12f, int cooldownOffset = 0, int color = 0xFF0000, TargetType targetType = TargetType.ClosestPlayer,
         float fixedAngle = 0, float angleOffset = 0, int activateCount = 1, int throwTime = 1500, int damageCooldown = 1000, int damageColor = 0xFF0000, float rotateAngle = 0f,
@@ -106,15 +106,14 @@ public record AOE : BehaviorScript
         var aoeY = host.Position.Y + (MathF.Sin(startAngle) * throwDist);
         foreach (var plr in host.World.GetAllPlayersWithin(host.Position.X, host.Position.Y, 32f))
         {
-
             plr.User.SendPacket(new
-            ShowEffect(
-                (byte)ShowEffectIndex.Throw,
-                host.Id,
-                _color,
-                _throwTime,
-                new WorldPosData(aoeX, aoeY),
-                new WorldPosData()));
+                ShowEffect(
+                    (byte)ShowEffectIndex.Throw,
+                    host.Id,
+                    _color,
+                    _throwTime,
+                    new WorldPosData(aoeX, aoeY),
+                    new WorldPosData()));
         }
 
         var dmg = (short)host.Rand.Next(_minDamage, _maxDamage);
@@ -126,16 +125,16 @@ public record AOE : BehaviorScript
 
 public class AOEDamager
 {
-    public World World;
-    public short Damage;
-    public int CooldownMS;
-    public int ActivateCount;
     private int _activateCount;
+    public int ActivateCount;
     public int? Color;
-    public Vector2 Pos;
-    public float Radius;
+    public int CooldownMS;
+    public short Damage;
     public (ConditionEffectIndex, int)[] Effects;
     public bool IsActive = true;
+    public Vector2 Pos;
+    public float Radius;
+    public World World;
 
     public AOEDamager(World world, short damage, int cooldown, int damageCooldown, int activateCount, int? color, Vector2 pos, float radius,
         (ConditionEffectIndex, int)[] effects = null)

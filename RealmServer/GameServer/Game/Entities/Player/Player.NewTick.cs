@@ -26,7 +26,7 @@ public partial class Player
         using (TimedLock.Lock(_entityStatUpdates))
         {
             if (!_entityStatUpdates.TryGetValue(en.Id, out var status))
-                status = new ObjectStatusData() { ObjectId = en.Id, Pos = en.Position, Stats = ArrayPool<object>.Shared.Rent((int)StatType.StatTypeCount), Update = true };
+                status = new ObjectStatusData { ObjectId = en.Id, Pos = en.Position, Stats = ArrayPool<object>.Shared.Rent((int)StatType.StatTypeCount), Update = true };
 
             status.SetPos(en.Position);
             status.SetStat(type, value);

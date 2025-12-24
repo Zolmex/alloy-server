@@ -13,8 +13,7 @@ public class AssassinPoisonAbility : Ability
     private long _cooldownReset;
 
     public AssassinPoisonAbility(Player player) : base(player)
-    {
-    }
+    { }
 
     public override void Use(Item item, WorldPosData usePos, int clientTime)
     {
@@ -22,7 +21,7 @@ public class AssassinPoisonAbility : Ability
 
         var dx = usePos.X - _player.Position.X;
         var dy = usePos.Y - _player.Position.Y;
-        var distance = (float)Math.Sqrt(dx * dx + dy * dy);
+        var distance = (float)Math.Sqrt((dx * dx) + (dy * dy));
 
         // Change usePos to not go over max range
         if (distance > item.Poison.ThrowRange)
@@ -53,7 +52,7 @@ public class AssassinPoisonAbility : Ability
         var poison = item.Poison;
 
         _player.User.SendPacket(new ShowEffect(
-(byte)ShowEffectIndex.Throw,
+            (byte)ShowEffectIndex.Throw,
             _player.Id,
             0,
             poison.ThrowTravelTime,
@@ -78,7 +77,7 @@ public class AssassinPoisonAbility : Ability
         }
 
         _player.User.SendPacket(new ShowEffect(
-(byte)ShowEffectIndex.Nova,
+            (byte)ShowEffectIndex.Nova,
             _player.Id,
             0,
             poison.PoisonRange,

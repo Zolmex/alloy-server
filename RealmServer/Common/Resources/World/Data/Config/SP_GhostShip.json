@@ -1,5 +1,7 @@
 {
   "Name": "GhostShip",
   "Setpiece": true,
-  "Maps": [ "SP_GhostShip.jm" ]
+  "Maps": [
+    "SP_GhostShip.jm"
+  ]
 }

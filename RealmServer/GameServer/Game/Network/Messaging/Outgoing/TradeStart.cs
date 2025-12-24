@@ -1,7 +1,7 @@
 ﻿#region
 
 using Common;
-using Common.Utilities.Net;
+using Common.Network;
 
 #endregion
 
@@ -19,8 +19,9 @@ public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[
         foreach (var item in TheirItems)
             item.Write(wtr);
     }
+
     public static TradeStart Read(NetworkReader rdr)
     {
-        return new();
+        return new TradeStart();
     }
 }

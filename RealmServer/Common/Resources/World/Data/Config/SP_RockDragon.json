@@ -1,5 +1,7 @@
 {
   "Name": "RockDragon",
   "Setpiece": true,
-  "Maps": [ "SP_RockDragon.jm" ]
+  "Maps": [
+    "SP_RockDragon.jm"
+  ]
 }

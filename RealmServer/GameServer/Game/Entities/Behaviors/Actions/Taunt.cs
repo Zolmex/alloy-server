@@ -5,50 +5,49 @@ using System;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors.Actions
+namespace GameServer.Game.Entities.Behaviors.Actions;
+
+public class TauntInfo
 {
-    public class TauntInfo
+    public int CooldownLeft;
+}
+
+public record Taunt : BehaviorScript
+{
+    private static readonly Random _rand = new();
+    private readonly int _cooldownMS;
+    private readonly float _probability;
+
+    private readonly string[] _text;
+
+    public Taunt(string text, int coolDownMS = 0, float probability = 1f)
     {
-        public int CooldownLeft;
+        _text = text.Split("||");
+        _cooldownMS = coolDownMS;
+        _probability = probability;
     }
 
-    public record Taunt : BehaviorScript
+    public override void Start(Character host)
     {
-        private static readonly Random _rand = new();
+        if (_cooldownMS == 0 && _rand.NextDouble() < _probability)
+            host.World.Taunt(host, _text.RandomElement());
+    }
 
-        private readonly string[] _text;
-        private readonly int _cooldownMS;
-        private readonly float _probability;
+    public override BehaviorTickState Tick(Character host, RealmTime time)
+    {
+        if (_cooldownMS == 0)
+            return BehaviorTickState.BehaviorFailed; // IDK ??!??!
 
-        public Taunt(string text, int coolDownMS = 0, float probability = 1f)
+        var tauntInfo = host.ResolveResource<TauntInfo>(this);
+        if (tauntInfo.CooldownLeft > 0)
         {
-            _text = text.Split("||");
-            _cooldownMS = coolDownMS;
-            _probability = probability;
+            tauntInfo.CooldownLeft -= time.ElapsedMsDelta;
+            return BehaviorTickState.OnCooldown;
         }
 
-        public override void Start(Character host)
-        {
-            if (_cooldownMS == 0 && _rand.NextDouble() < _probability)
-                host.World.Taunt(host, _text.RandomElement());
-        }
-
-        public override BehaviorTickState Tick(Character host, RealmTime time)
-        {
-            if (_cooldownMS == 0)
-                return BehaviorTickState.BehaviorFailed; // IDK ??!??!
-
-            var tauntInfo = host.ResolveResource<TauntInfo>(this);
-            if (tauntInfo.CooldownLeft > 0)
-            {
-                tauntInfo.CooldownLeft -= time.ElapsedMsDelta;
-                return BehaviorTickState.OnCooldown;
-            }
-
-            tauntInfo.CooldownLeft = _cooldownMS;
-            if (_rand.NextDouble() < _probability)
-                host.World.Taunt(host, _text.RandomElement());
-            return BehaviorTickState.BehaviorActive;
-        }
+        tauntInfo.CooldownLeft = _cooldownMS;
+        if (_rand.NextDouble() < _probability)
+            host.World.Taunt(host, _text.RandomElement());
+        return BehaviorTickState.BehaviorActive;
     }
 }

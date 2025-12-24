@@ -14,10 +14,10 @@ public class HealGroupInfo
 
 public record HealGroup : BehaviorScript
 {
-    private readonly float _range;
-    private readonly string _group;
     private readonly int _cooldownMS;
+    private readonly string _group;
     private readonly int _healAmount;
+    private readonly float _range;
 
     public HealGroup(float range, string group, int cooldownMS = 1000, int healAmount = 0)
     {
@@ -80,7 +80,7 @@ public record HealGroup : BehaviorScript
                             entity.Id,
                             "+" + n,
                             0x00FF00)
-                    ));
+                        ));
                 }
             }
 

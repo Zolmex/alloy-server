@@ -1,33 +1,31 @@
 ﻿#region
 
-using Common.Utilities;
-using Common.Utilities.Net;
-
 #endregion
 
-namespace GameServer.Game.Network.Messaging.Incoming
+using Common.Network;
+
+namespace GameServer.Game.Network.Messaging.Incoming;
+
+[Packet(PacketId.JOINGUILD)]
+public partial record JoinGuild : IIncomingPacket
 {
-    [Packet(PacketId.JOINGUILD)]
-    public partial record JoinGuild : IIncomingPacket
+    public string GuildName;
+
+    public void Handle(User user)
     {
-        public string GuildName;
+        if (user.GameInfo.State != GameState.Playing)
+            return;
 
-        public void Read(NetworkReader rdr)
-        {
-            GuildName = rdr.ReadUTF();
-        }
+        var acc = user.Account;
+        if (acc.GuildId != 0)
+            return;
 
-        public void Handle(User user)
-        {
-            if (user.GameInfo.State != GameState.Playing)
-                return;
+        var player = user.GameInfo.Player;
+        player.JoinGuild(GuildName);
+    }
 
-            var acc = user.Account;
-            if (acc.GuildId != 0)
-                return;
-
-            var player = user.GameInfo.Player;
-            player.JoinGuild(GuildName);
-        }
+    public void Read(NetworkReader rdr)
+    {
+        GuildName = rdr.ReadUTF();
     }
 }

@@ -11,28 +11,44 @@ namespace PacketSourceGenerator;
 internal class IncomingPacketGenerator : IIncrementalGenerator
 {
     private const string FolderPrefix = "Incoming";
-    static readonly Dictionary<string, string> types = new()
-{
-    { "string", "String" },
-    { "sbyte", "SByte" },
-    { "byte", "Byte" },
-    { "short", "Int16" },
-    { "ushort", "UInt16" },
-    { "int", "Int32" },
-    { "uint", "UInt32" },
-    { "long", "Int64" },
-    { "ulong", "UInt64" },
-    { "char", "Char" },
-    { "float", "Single" },
-    { "double", "Double" },
-    { "bool", "Boolean" },
-    { "decimal", "Decimal" }
-};
+
+    private static readonly Dictionary<string, string> types = new()
+    {
+        { "string", "String" },
+        { "sbyte", "SByte" },
+        { "byte", "Byte" },
+        { "short", "Int16" },
+        { "ushort", "UInt16" },
+        { "int", "Int32" },
+        { "uint", "UInt32" },
+        { "long", "Int64" },
+        { "ulong", "UInt64" },
+        { "char", "Char" },
+        { "float", "Single" },
+        { "double", "Double" },
+        { "bool", "Boolean" },
+        { "decimal", "Decimal" }
+    };
+
+    private static StringBuilder debugStuff = new();
+
+
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        debugStuff = new StringBuilder();
+        var pipeline =
+            context.SyntaxProvider.CreateSyntaxProvider( // A
+                    (node, _) => node is RecordDeclarationSyntax rec, // B
+                    (syntax, _) => GetSemanticTargetForGeneration(syntax)) // C
+                .Where(n => n is not null).Collect();
+
+        context.RegisterSourceOutput(pipeline, Execute);
+    }
 
     private static string GenerateShit(ImmutableArray<TargetData> stuff)
     {
         var str = new StringBuilder();
-        str.Append(debugStuff.ToString());
+        str.Append(debugStuff);
         //foreach (var item in stuff)
         //{
         //    var nod = item.Syntax;
@@ -42,13 +58,15 @@ internal class IncomingPacketGenerator : IIncrementalGenerator
         {
             str.AppendLine("Stuff length is 0 dawg.");
         }
+
         return str.ToString();
     }
 
     private string GenerateWriteImpl(ITypeSymbol symbol, ImmutableArray<FieldDeclarationSyntax> members)
     {
-        return $@"using Common.Utilities.Net;
+        return $@"
 using Common;
+using Common.Network;
 namespace {symbol.ContainingNamespace};
 partial record {symbol.Name}
 {{
@@ -61,8 +79,9 @@ partial record {symbol.Name}
 
     private string GenerateReadImpl(ITypeSymbol typeSymbol, ImmutableArray<FieldDeclarationSyntax> paramListSyntax)
     {
-        return $@"using Common.Utilities.Net;
+        return $@"
 using Common;
+using Common.Network;
 namespace {typeSymbol.ContainingNamespace};
 partial record {typeSymbol.Name}
 {{
@@ -72,6 +91,7 @@ partial record {typeSymbol.Name}
     }}
 }}";
     }
+
     private string GeneratePacketIdImpl(ITypeSymbol typeSymbol)
     {
         return $@"namespace {typeSymbol.ContainingNamespace};
@@ -90,8 +110,10 @@ partial record {typeSymbol.Name}
             foreach (var propName in fieldSymbol.Declaration.Variables)
                 sb.AppendLine($"\t\twtr.Write({propName.Identifier.Text});");
         }
+
         return sb.ToString().TrimEnd();
     }
+
     private static string GenerateReadMethods(ImmutableArray<FieldDeclarationSyntax> typeSymbol)
     {
         var sb = new StringBuilder();
@@ -101,8 +123,8 @@ partial record {typeSymbol.Name}
             var type = fieldSymbol.Declaration.Type.ToString();
             foreach (var propName in fieldSymbol.Declaration.Variables)
             {
-                var name = propName.Identifier.Text.ToString();
-                string str = $"<{type.Replace("[]", null)}>";
+                var name = propName.Identifier.Text;
+                var str = $"<{type.Replace("[]", null)}>";
                 if (types.TryGetValue(type, out var fullName))
                 {
                     str = char.ToUpper(fullName[0]) + fullName.Substring(1);
@@ -111,14 +133,16 @@ partial record {typeSymbol.Name}
                 {
                     str = char.ToUpper(type[0]) + type.Substring(1);
                 }
+
                 sb.AppendLine($"\t\t{name} = r.Read{str}();");
             }
         }
+
         return sb.ToString().TrimEnd();
     }
 
     public void Execute(SourceProductionContext context,
-      ImmutableArray<TargetData> source)
+        ImmutableArray<TargetData> source)
     {
         /*        var debugCode = GenerateShit(source);
                 context.AddSource("DebugStuff.txt", SourceText.From(debugCode, Encoding.UTF8));
@@ -130,11 +154,13 @@ partial record {typeSymbol.Name}
                 var code = GenerateWriteImpl(item.Symbol, item.Fields);
                 context.AddSource($"{FolderPrefix}Writes/{item.Symbol.Name}.Write.cs", SourceText.From(code, Encoding.UTF8));
             }
+
             if (!item.HasRead)
             {
                 var code = GenerateReadImpl(item.Symbol, item.Fields);
                 context.AddSource($"{FolderPrefix}Reads/{item.Symbol.Name}.Read.cs", SourceText.From(code, Encoding.UTF8));
             }
+
             if (!item.HasPacketId)
             {
                 var code = GeneratePacketIdImpl(item.Symbol);
@@ -143,20 +169,7 @@ partial record {typeSymbol.Name}
         }
     }
 
-
-    public void Initialize(IncrementalGeneratorInitializationContext context)
-    {
-        debugStuff = new();
-        var pipeline =
-            context.SyntaxProvider.CreateSyntaxProvider( // A
-                (node, _) => node is RecordDeclarationSyntax rec, // B
-                (syntax, _) => GetSemanticTargetForGeneration(syntax)) // C
-                .Where(n => n is not null).Collect();
-
-        context.RegisterSourceOutput(pipeline, Execute);
-    }
-    static StringBuilder debugStuff = new();
-    static TargetData GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    private static TargetData GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         var syn = (RecordDeclarationSyntax)context.Node;
 
@@ -166,6 +179,7 @@ partial record {typeSymbol.Name}
             // weird, we couldn't get the symbol, ignore it
             return null;
         }
+
         var inter = context.SemanticModel.Compilation.GetTypeByMetadataName("GameServer.Game.Network.Messaging.IIncomingPacket");
         //foreach(var i in symbol.Interfaces)
         //{
@@ -188,7 +202,7 @@ partial record {typeSymbol.Name}
             //    debugStuff.AppendLine(item.Name);
             //}
 
-            return new(syn, symbol, write.Length > 0, read.Length > 0, packetIdImpl.Length > 0);
+            return new TargetData(syn, symbol, write.Length > 0, read.Length > 0, packetIdImpl.Length > 0);
         }
 
         return null;
@@ -196,11 +210,11 @@ partial record {typeSymbol.Name}
 
     public class TargetData(RecordDeclarationSyntax syntax, ITypeSymbol symbol, bool hasWriteImpl, bool hasReadImpl, bool hasPacketIdImpl)
     {
-        public readonly RecordDeclarationSyntax Syntax = syntax;
         public readonly ImmutableArray<FieldDeclarationSyntax> Fields = syntax.Members.Where(n => n.Modifiers.FirstOrDefault().Text == "public").OfType<FieldDeclarationSyntax>().ToImmutableArray();
-        public readonly ITypeSymbol Symbol = symbol;
-        public readonly bool HasWrite = hasWriteImpl;
-        public readonly bool HasRead = hasReadImpl;
         public readonly bool HasPacketId = hasPacketIdImpl;
+        public readonly bool HasRead = hasReadImpl;
+        public readonly bool HasWrite = hasWriteImpl;
+        public readonly ITypeSymbol Symbol = symbol;
+        public readonly RecordDeclarationSyntax Syntax = syntax;
     }
 }

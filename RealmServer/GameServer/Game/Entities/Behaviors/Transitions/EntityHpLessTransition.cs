@@ -1,29 +1,27 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Transitions
+﻿namespace GameServer.Game.Entities.Behaviors.Transitions;
+
+public class EntityHpLessTransition : BehaviorTransition
 {
-    public class EntityHpLessTransition : BehaviorTransition
+    private readonly float _dist;
+    private readonly string _entity;
+    private readonly float _threshold;
+
+    public EntityHpLessTransition(float dist, string entity, float threshold, string targetState)
     {
-        private readonly float _threshold;
-        private readonly float _dist;
-        private readonly string _entity;
+        RegisterTargetStates(targetState);
+        _threshold = threshold;
+        _dist = dist;
+        _entity = entity;
+    }
 
-        public EntityHpLessTransition(float dist, string entity, float threshold, string targetState)
-            : base()
-        {
-            RegisterTargetStates(targetState);
-            _threshold = threshold;
-            _dist = dist;
-            _entity = entity;
-        }
+    public override string Tick(Character host, RealmTime time)
+    {
+        var entity = host.World.GetNearestEnemyByName(_entity, host.Position.X, host.Position.Y, _dist);
+        if (entity == null)
+            return null;
 
-        public override string Tick(Character host, RealmTime time)
-        {
-            var entity = host.World.GetNearestEnemyByName(_entity, host.Position.X, host.Position.Y, _dist);
-            if (entity == null)
-                return null;
-
-            var hpPerc = (float)entity.HP / entity.MaxHP;
-            var transition = hpPerc <= _threshold;
-            return transition ? GetTargetState() : null;
-        }
+        var hpPerc = (float)entity.HP / entity.MaxHP;
+        var transition = hpPerc <= _threshold;
+        return transition ? GetTargetState() : null;
     }
 }

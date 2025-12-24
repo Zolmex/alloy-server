@@ -37,15 +37,6 @@ public class User : IIdentifiable
     private static readonly Logger _log = new(typeof(User));
     private static int _nextClientId;
 
-    public int Id { get; set; }
-    public NetworkHandler Network { get; }
-    public GameInfo GameInfo { get; }
-
-    public ConnectionState State { get; private set; }
-    public DbAccount Account { get; private set; }
-    public ClientRandom Random { get; private set; }
-    public ClientRandom ServerRandom { get; private set; }
-
     private readonly object _disconnectLock = new();
 
     public User()
@@ -54,6 +45,16 @@ public class User : IIdentifiable
         Network = new NetworkHandler(this);
         GameInfo = new GameInfo(this);
     }
+
+    public NetworkHandler Network { get; }
+    public GameInfo GameInfo { get; }
+
+    public ConnectionState State { get; private set; }
+    public DbAccount Account { get; private set; }
+    public ClientRandom Random { get; private set; }
+    public ClientRandom ServerRandom { get; private set; }
+
+    public int Id { get; set; }
 
     public void Setup(string ip, Socket socket)
     {
@@ -157,6 +158,7 @@ public class User : IIdentifiable
 
         ReconnectTo(world);
     }
+
     public void SendPacket<T>(T packet)
         where T : IOutgoingPacket<T>
     {

@@ -1,9 +1,10 @@
+using System;
+using System.Diagnostics;
+using System.Threading;
+
 namespace Common.Utilities;
 
 // code from: http://www.interact-sw.co.uk/iangblog/2004/04/26/yetmoretimedlocking
-
-using System;
-using System.Threading;
 
 // Thanks to Eric Gunnerson for recommending this be a struct rather
 // than a class - avoids a heap allocation.
@@ -22,11 +23,11 @@ public struct TimedLock : IDisposable
 
     public static TimedLock Lock(object o, TimeSpan timeout)
     {
-        TimedLock tl = new TimedLock(o);
+        var tl = new TimedLock(o);
         if (!Monitor.TryEnter(o, timeout))
         {
 #if DEBUG
-            System.GC.SuppressFinalize(tl.leakDetector);
+            GC.SuppressFinalize(tl.leakDetector);
 #endif
             throw new LockTimeoutException();
         }
@@ -41,7 +42,8 @@ public struct TimedLock : IDisposable
         leakDetector = new Sentinel();
 #endif
     }
-    private object target;
+
+    private readonly object target;
 
     public void Dispose()
     {
@@ -66,16 +68,16 @@ public struct TimedLock : IDisposable
             // If this finalizer runs, someone somewhere failed to
             // call Dispose, which means we've failed to leave
             // a monitor!
-            System.Diagnostics.Debug.Fail("Undisposed lock");
+            Debug.Fail("Undisposed lock");
         }
     }
-    private Sentinel leakDetector;
-#endif
 
+    private readonly Sentinel leakDetector;
+#endif
 }
+
 public class LockTimeoutException : ApplicationException
 {
     public LockTimeoutException() : base("Timeout waiting for lock")
-    {
-    }
+    { }
 }
