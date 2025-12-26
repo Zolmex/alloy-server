@@ -2,9 +2,13 @@ Table Accounts {
   id integer [pk, increment]
   name varchar(30) [unique]
   rank smallint
+  guild_name varchar(255)
   is_admin boolean
   is_banned boolean
   created_ad datetime [default: `NOW()`]
+
+  acc_stats_id integer [ref: - Account_Stats.id]
+  login_id integer [ref: - Logins.id]
 }
 
 Table Account_Stats {
@@ -21,6 +25,8 @@ Table Class_Stats {
   object_type "unsigned smallint"
   best_level "unsigned smallint"
   best_fame "unsigned int"
+  
+  acc_stats_id integer [ref: > Account_Stats.id]
 }
 
 Table Logins {
@@ -48,6 +54,13 @@ Table Characters {
   has_backpack boolean
   created_at datetime [default: `NOW()`]
   deleted_at datetime
+
+  acc_id integer [ref: > Accounts.id]
+  char_stats_id integer [ref: - Character_Stats.id]
+  explo_stats_id integer [ref: - Exploration_Stats.id]
+  combat_stats_id integer [ref: - Combat_Stats.id]
+  kill_stats_id integer [ref: - Kill_Stats.id]
+  dungeon_stats_id integer [ref: - Dungeon_Stats.id]
 }
 
 Table Character_Stats {
@@ -65,7 +78,7 @@ Table Character_Stats {
 }
 
 Table Character_Inventory {
-  character_id integer
+  character_id integer [ref: > Characters.id]
   slot_id integer
   item_type "unsigned smallint"
   item_data blob
@@ -79,6 +92,8 @@ Table Character_Death {
   id integer [pk, increment]
   dead_at datetime [default: `NOW()`]
   death_fame "unsigned int"
+
+  char_id integer [ref: - Characters.id]
 }
 
 Table Exploration_Stats {
@@ -134,8 +149,12 @@ Table Guilds {
 }
 
 Table Guild_Members {
-  guild_id integer
-  account_id integer
+  guild_id integer [ref: > Guilds.id]
+  account_id integer [ref: - Accounts.id]
   guild_rank smallint
   last_seen_at datetime [default: `NOW()`]
+
+  indexes {
+    (guild_id, account_id) [pk]
+  }
 }
