@@ -16,8 +16,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstrumAPI", "AstrumAPI\AstrumAPI.csproj", "{050393C7-66E1-4F99-937E-8F254EA70A5E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12628FEB-82DF-4081-8F63-CCCFE2F07BC9}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Relational Model.dbml = Docs\Relational Model.dbml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketSourceGenerator", "PacketSourceGenerator\PacketSourceGenerator.csproj", "{057D215C-4555-49F0-B631-507C6B3AAF3A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{7310FAF6-B5F9-4C55-9551-C5DD4B403251}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Alloy DB Relational Model - v1.pdf = Docs\Alloy DB Relational Model - v1.pdf
+		Docs\Entity-Relationship Diagram.drawio = Docs\Entity-Relationship Diagram.drawio
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,5 +68,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DA930B06-66FB-406E-9409-C97B5A8D8838}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7310FAF6-B5F9-4C55-9551-C5DD4B403251} = {12628FEB-82DF-4081-8F63-CCCFE2F07BC9}
 	EndGlobalSection
 EndGlobal

@@ -13,18 +13,18 @@ Table Accounts {
 
 Table Account_Stats {
   id integer [pk, increment]
-  best_char_fame "unsigned int"
-  current_fame "unsigned int"
-  total_fame "unsigned int"
-  current_credits "unsigned int"
-  total_credits "unsigned int"
+  best_char_fame "int unsigned"
+  current_fame "int unsigned"
+  total_fame "int unsigned"
+  current_credits "int unsigned"
+  total_credits "int unsigned"
 }
 
 Table Class_Stats {
   id integer [pk, increment]
-  object_type "unsigned smallint"
-  best_level "unsigned smallint"
-  best_fame "unsigned int"
+  object_type "smallint unsigned"
+  best_level "smallint unsigned"
+  best_fame "int unsigned"
   
   acc_stats_id integer [ref: > Account_Stats.id]
 }
@@ -39,16 +39,16 @@ Table Logins {
 
 Table Characters {
   id integer [pk, increment]
-  object_type "unsigned smallint"
-  level "unsigned smallint"
-  current_fame "unsigned int"
-  xp_points "unsigned int"
-  skin_type "unsigned smallint"
-  texture_one "unsigned smallint"
-  texture_two "unsigned smallint"
-  pet_type "unsigned smallint"
-  health_potions "unsigned smallint"
-  magic_potions "unsigned smallint"
+  object_type "smallint unsigned"
+  level "smallint unsigned"
+  current_fame "int unsigned"
+  xp_points "int unsigned"
+  skin_type "smallint unsigned"
+  texture_one "smallint unsigned"
+  texture_two "smallint unsigned"
+  pet_type "smallint unsigned"
+  health_potions "smallint unsigned"
+  magic_potions "smallint unsigned"
   is_dead boolean
   is_deleted boolean
   has_backpack boolean
@@ -65,22 +65,22 @@ Table Characters {
 
 Table Character_Stats {
   id integer [pk, increment]
-  hp "unsigned int"
-  mp "unsigned int"
-  max_hp "unsigned int"
-  max_mp "unsigned int"
-  attack "unsigned int"
-  defense "unsigned int"
-  speed "unsigned int"
-  dexterity "unsigned int"
-  vitality "unsigned int"
-  wisdom "unsigned int"
+  hp "int unsigned"
+  mp "int unsigned"
+  max_hp "int unsigned"
+  max_mp "int unsigned"
+  attack "int unsigned"
+  defense "int unsigned"
+  speed "int unsigned"
+  dexterity "int unsigned"
+  vitality "int unsigned"
+  wisdom "int unsigned"
 }
 
 Table Character_Inventory {
   character_id integer [ref: > Characters.id]
   slot_id integer
-  item_type "unsigned smallint"
+  item_type "smallint unsigned"
   item_data blob
 
   indexes {
@@ -91,59 +91,59 @@ Table Character_Inventory {
 Table Character_Death {
   id integer [pk, increment]
   dead_at datetime [default: `NOW()`]
-  death_fame "unsigned int"
+  death_fame "int unsigned"
 
   char_id integer [ref: - Characters.id]
 }
 
 Table Exploration_Stats {
   id integer [pk, increment]
-  tiles_uncovered "unsigned int"
-  quests_completed "usigned int"
-  escapes "unsigned int"
-  near_death_escapes "unsigned int"
-  minutes_active "unsigned int"
-  teleports "unsigned int"
+  tiles_uncovered "int unsigned"
+  quests_completed "int unsigned"
+  escapes "int unsigned"
+  near_death_escapes "int unsigned"
+  minutes_active "int unsigned"
+  teleports "int unsigned"
 }
 
 Table Combat_Stats {
   id integer [pk, increment]
-  shots "unsigned bigint"
-  shots_hit "usigned int"
-  level_up_assists "unsigned int"
-  potions_drank "unsigned smallint"
-  abilities_used "unsigned smallint"
-  damage_taken "unsigned int"
-  damage_dealt "unsigned int"
+  shots "bigint unsigned"
+  shots_hit "int unsigned"
+  level_up_assists "int unsigned"
+  potions_drank "smallint unsigned"
+  abilities_used "smallint unsigned"
+  damage_taken "int unsigned"
+  damage_dealt "int unsigned"
 }
 
 Table Kill_Stats {
   id integer [pk, increment]
-  monster_kills "unsigned int"
-  monster_assists "usigned int"
-  god_kills "unsigned int"
-  god_assists "unsigned int"
-  oryx_kills "unsigned smallint"
-  oryx_assists "unsigned smallint"
-  cube_kills "unsigned smallint"
-  cube_assists "unsigned smallint"
-  blue_bags "unsigned smallint"
-  cyan_bags "unsigned smallint"
-  white_bags "unsigned smallint"
+  monster_kills "int unsigned"
+  monster_assists "int unsigned"
+  god_kills "int unsigned"
+  god_assists "int unsigned"
+  oryx_kills "smallint unsigned"
+  oryx_assists "smallint unsigned"
+  cube_kills "smallint unsigned"
+  cube_assists "smallint unsigned"
+  blue_bags "smallint unsigned"
+  cyan_bags "smallint unsigned"
+  white_bags "smallint unsigned"
 }
 
 Table Dungeon_Stats {
   id integer [pk, increment]
   dungeon_name varchar(255)
-  completed_count "unsigned smallint"
+  completed_count "smallint unsigned"
 }
 
 Table Guilds {
   id integer [pk, increment]
   name varchar(255)
   level smallint
-  current_fame "unsigned integer"
-  total_fame "unsigned integer"
+  current_fame "int unsigned"
+  total_fame "int unsigned"
   guild_board text
   created_at datetime [default: `NOW()`]
 }
