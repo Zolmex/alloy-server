@@ -8,6 +8,7 @@
         <Nullable>enable</Nullable>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <RootNamespace>DatabaseManager</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
