@@ -1,0 +1,38 @@
+services:
+  alloy-mysql:
+    image: mysql
+    container_name: alloy-db
+    environment:
+      MYSQL_DATABASE: alloy
+      MYSQL_USER: alloy-db
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - alloy-data:/var/lib/mysql
+    networks:
+      - alloy-net
+    restart: unless-stopped
+
+  mysql-gui:
+    image: phpmyadmin
+    container_name: alloy-phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: alloy-mysql
+      PMA_USER: alloy-db
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - alloy-net
+    restart: unless-stopped
+    depends_on:
+      - alloy-mysql
+
+networks:
+  alloy-net:
+    driver: bridge
+
+volumes:
+  alloy-data:
