@@ -26,7 +26,7 @@ internal class Program
             .AddUserSecrets<Program>(optional: true)
             .AddEnvironmentVariables();
 
-        builder.Services.AddDbContext<AlloyDbContext>(optionsBuilder =>
+        builder.Services.AddDbContext<AlloyContext>(optionsBuilder =>
         {
             optionsBuilder.UseMySQL(builder.Configuration.GetConnectionString("Default")!);
         });

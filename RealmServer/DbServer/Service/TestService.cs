@@ -6,9 +6,9 @@ namespace DbServer.Service;
 
 public class TestService : BackgroundService
 {
-    private readonly AlloyDbContext _dbContext;
+    private readonly AlloyContext _dbContext;
     
-    public TestService(AlloyDbContext dbContext)
+    public TestService(AlloyContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -17,7 +17,7 @@ public class TestService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            Console.WriteLine($"Test: {await _dbContext.Database.CanConnectAsync(stoppingToken)} | ConString: {_dbContext.Database.GetConnectionString()}");
+            Console.WriteLine($"Connected: {await _dbContext.Database.CanConnectAsync(stoppingToken)}");
             
             await Task.Delay(3 * 1000, stoppingToken);
         }
