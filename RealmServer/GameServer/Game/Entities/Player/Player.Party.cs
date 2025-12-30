@@ -42,7 +42,7 @@ public partial class Player
             return;
         }
 
-        if (!DbClient.TryCreateParty(User.Account, out var dbParty))
+        if (!DbClientOld.TryCreateParty(User.Account, out var dbParty))
         {
             SendError("Failed to create party.");
             return;
@@ -67,7 +67,7 @@ public partial class Player
 
         User.Account.PartyId = -1;
         PartyId = -1;
-        DbClient.Save(User.Account);
+        DbClientOld.Save(User.Account);
 
         SendInfo("You have left your current party.");
     }

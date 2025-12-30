@@ -18,19 +18,19 @@ public class SetBoard : RequestHandler
         if (string.IsNullOrWhiteSpace(board))
             return WriteError("Invalid board text.");
 
-        var verify = await DbClient.VerifyAccount(query["username"], query["password"]);
+        var verify = await DbClientOld.VerifyAccount(query["username"], query["password"]);
 
         var acc = verify.Item1;
         var status = verify.Item2;
         if (acc == null)
             return WriteError("Invalid account credentials.");
 
-        var guild = await DbClient.GetGuild(acc.GuildId);
+        var guild = await DbClientOld.GetGuild(acc.GuildId);
         if (guild == null)
             return WriteError("Invalid guild id.");
 
         guild.Board = board;
-        DbClient.Save(guild);
+        DbClientOld.Save(guild);
 
         return guild.Board;
     }

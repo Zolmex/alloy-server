@@ -2,6 +2,7 @@ using Common.Network.Messaging;
 using Common.Resources.Config;
 using Common.Utilities;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Common.Network;
@@ -15,11 +16,12 @@ public class AppConnection
     private readonly SocketAsyncEventArgs _sendSAEA;
     private readonly SocketSendState _sendState;
 
-    private readonly Socket _socket;
+    public Socket Socket { get; private set; }
+    public string HostName { get; set; }
+    public string TargetName { get; set; }
 
     public AppConnection()
     {
-        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         _sendState = new SocketSendState();
         _receiveState = new SocketReceiveState();
 
@@ -38,11 +40,32 @@ public class AppConnection
         _receiveState.Reset();
     }
 
-    public async Task Connect(DatabaseConfig config)
+    public void Setup(Socket socket)
     {
-        await _socket.ConnectAsync(config.Host, config.Port);
+        Socket = socket;
+        Socket.NoDelay = true;
+    }
 
-        StartReceive();
+    public void SetupNew()
+    {
+        Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        Socket.NoDelay = true;
+    }
+    
+    public async Task Connect(string host, int port)
+    {
+        await Socket.ConnectAsync(host, port);
+
+        Start(Assembly.GetEntryAssembly()!.GetName().Name);
+    }
+
+    public void Start(string hostName)
+    {
+        HostName = hostName;
+        _log.Info($"Started a connection with the host name: {hostName}");
+        Send(new HelloMessage() { AppName = hostName });
+
+        Task.Run(StartReceive);
         _ = StartSend();
     }
 
@@ -61,13 +84,14 @@ public class AppConnection
 
         _sendState.Lock(); // Block new write operations until the buffer is written to the socket
 
-        if (!_socket.SendAsync(_sendSAEA))
+        _sendState.SetBuffer(_sendSAEA);
+        if (!Socket.SendAsync(_sendSAEA))
             ProcessSend(null, _sendSAEA);
     }
 
     private void ProcessSend(object sender, SocketAsyncEventArgs args) // Handle errors
     {
-        if (!_socket.Connected)
+        if (!Socket.Connected)
         {
             Disconnect("Unknown");
             return;
@@ -89,13 +113,13 @@ public class AppConnection
     private void StartReceive()
     {
         _receiveState.SetBuffer(_receiveSAEA); // Prepare buffer for next batch of packets
-        if (!_socket.ReceiveAsync(_receiveSAEA))
+        if (!Socket.ReceiveAsync(_receiveSAEA))
             ProcessReceive(null, _receiveSAEA);
     }
 
     private void ProcessReceive(object sender, SocketAsyncEventArgs args)
     {
-        if (!_socket.Connected)
+        if (!Socket.Connected)
         {
             Disconnect("Unknown");
             return;
@@ -122,10 +146,11 @@ public class AppConnection
             return;
         }
 
-        while (_receiveState.ReadMessage(ref bytesReceived, out var msg)) // Returns false when it fails to read a packet
+        var bytesNotRead = bytesReceived;
+        while (_receiveState.ReadMessage(ref bytesNotRead, out var msg)) // Returns false when it fails to read a packet
         {
-            msg.Read(); // Every message defines a read method and a write method
-            msg.Handle(); // Handler is managed by each individual app
+            msg.Read(_receiveState.Reader); // Every message defines a read method and a write method
+            msg.Handle(this); // Handler is implemented by each individual app
         }
 
         StartReceive();
@@ -133,8 +158,8 @@ public class AppConnection
 
     public void Disconnect(string reason = "Shutdown")
     {
-        _log.Info($"DbServer connection shut down. Reason: {reason}");
-        _socket.Disconnect(false);
-        _socket.Close();
+        _log.Info($"Disconnected from app '{TargetName}'. Reason: {reason}");
+        Socket.Disconnect(true);
+        Reset();
     }
 }

@@ -16,7 +16,7 @@ public class Register : RequestHandler
 
     public override async Task<string> Handle(string ip, NameValueCollection query)
     {
-        var result = await DbClient.Register(query["newUsername"], query["newPassword"], ip);
+        var result = await DbClientOld.Register(query["newUsername"], query["newPassword"], ip);
         if (result != RegisterStatus.Success)
             return WriteError(result.GetDescription());
         return WriteSuccess();

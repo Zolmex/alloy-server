@@ -384,14 +384,14 @@ public class DbAccount : DbObject
             new XAttribute("charSlotCost", NewAccountsConfig.Config.CharSlotCost),
             new XElement("OwnedSkins", OwnedSkins.ToCommaSepString(",")),
             ToXml(),
-            DbClient.GetChars(AccountId, AliveChars).ToEnumerable().Select(c => c.ToXml()),
+            DbClientOld.GetChars(AccountId, AliveChars).ToEnumerable().Select(c => c.ToXml()),
             NewsConfig.Config.Models.Select(n => n.ToXml()),
             new XElement("Servers",
                 new XElement("Server",
                     new XElement("Name", GameServerConfig.Config.ServerName),
                     new XElement("DNS", GameServerConfig.Config.Address),
                     new XElement("Port", GameServerConfig.Config.Port),
-                    new XElement("Players", DbClient.GetPlayerCount()),
+                    new XElement("Players", DbClientOld.GetPlayerCount()),
                     new XElement("MaxPlayers", GameServerConfig.Config.MaxPlayers),
                     new XElement("AdminOnly", GameServerConfig.Config.AdminOnly ? "true" : "false")
                 )
@@ -1259,7 +1259,7 @@ public class DbGuild : DbObject
             new XElement("CurrentFame", Fame),
             Members.Select(async m =>
             {
-                var acc = await DbClient.GetAccount(m);
+                var acc = await DbClientOld.GetAccount(m);
                 return new XElement("Member",
                     new XElement("Name", acc.Name),
                     new XElement("Rank", acc.GuildRank),

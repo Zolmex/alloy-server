@@ -40,7 +40,7 @@ public class Party
         if (_partyCache.TryGetValue(partyId, out var party))
             return party;
 
-        var dbParty = DbClient.GetParty(partyId).Result;
+        var dbParty = DbClientOld.GetParty(partyId).Result;
 
         if (dbParty is not null)
         {
@@ -61,7 +61,7 @@ public class Party
         player.User.Account.PartyId = PartyId;
         player.PartyId = PartyId;
 
-        DbClient.Save(_data, player.User.Account);
+        DbClientOld.Save(_data, player.User.Account);
 
         _logger.Debug($"AccountId {player.AccountId} was added to party id {_data.PartyId}.");
     }
@@ -72,7 +72,7 @@ public class Party
         if (!_data.Members.Remove(accountId))
             return;
 
-        DbClient.Save(_data);
+        DbClientOld.Save(_data);
 
         _logger.Debug($"AccountId {accountId} was removed from party id {_data.PartyId}.");
     }
@@ -214,13 +214,13 @@ public class Party
 
         foreach (var accId in MembersIds)
         {
-            var acc = DbClient.GetAccount(accId).Result;
+            var acc = DbClientOld.GetAccount(accId).Result;
             acc.PartyId = -1;
-            DbClient.Save(acc);
+            DbClientOld.Save(acc);
         }
 
         _partyCache.Remove(PartyId, out _);
-        DbClient.DeleteParty(PartyId);
+        DbClientOld.DeleteParty(PartyId);
     }
 
     public void BroadcastInfo(string message)

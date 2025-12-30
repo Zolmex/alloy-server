@@ -1,5 +1,6 @@
 ﻿#region
 
+using Common.Network.Messaging;
 using DbServer.Database;
 using DbServer.Implementation;
 using DbServer.Interface;
@@ -36,7 +37,7 @@ internal class Program
 
         // builder.Services.AddHostedService<BackupService>();
 
-        builder.Services.AddHostedService<TestService>();
+        builder.Services.AddHostedService<NetworkService>();
 
         using var app = builder.Build();
         app.Run();

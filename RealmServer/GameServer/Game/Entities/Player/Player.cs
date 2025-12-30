@@ -185,7 +185,7 @@ public partial class Player : Character
         Inventory.Save(Char);
 
         if (saveToDb)
-            DbClient.Save(Char);
+            DbClientOld.Save(Char);
     }
 
     public void RemoveReferenceTo(Entity ent)
@@ -233,8 +233,8 @@ public partial class Player : Character
         OnDeath?.Invoke(this, killer);
 
         SaveCharacter(); // DbChar instance will be saved by DbClient.Death() method
-        _ = DbClient.Death(User.Account, Char, killer)
-            .ContinueWith(t => DbClient.TryAddLegend(t.Result, Char));
+        _ = DbClientOld.Death(User.Account, Char, killer)
+            .ContinueWith(t => DbClientOld.TryAddLegend(t.Result, Char));
 
         User.SendPacket(new Death(AccountId, Char.CharId, killer)); // 😭😭😭
         RealmManager.AddTimedAction(1000, () => User.Disconnect(null, DisconnectReason.Death));
@@ -290,7 +290,7 @@ public partial class Player : Character
                 break;
         }
 
-        DbClient.Save(accStats);
+        DbClientOld.Save(accStats);
     }
 
     public void SetLootBoost(double lootBoost)
@@ -325,7 +325,7 @@ public partial class Player : Character
         if (!_guildInvites.Remove(guildname))
             return;
 
-        DbClient.JoinGuild(AccountId, guildname);
+        DbClientOld.JoinGuild(AccountId, guildname);
 
         GuildName = User.Account.GuildName;
         GuildRank = User.Account.GuildRank;

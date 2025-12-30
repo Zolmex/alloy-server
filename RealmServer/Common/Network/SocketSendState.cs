@@ -1,6 +1,7 @@
 using Common.Network.Messaging;
 using Common.Utilities;
 using System.IO;
+using System.Net.Sockets;
 
 namespace Common.Network;
 
@@ -11,15 +12,20 @@ public class SocketSendState
     private readonly NetworkWriter _writer;
     private TimedLock _lock;
 
+    public byte[] Buffer { get; } = new byte[0x10000]; // 64 KB
+    public int LastValidIndex { get; set; } // End position of the packet that still fits within buffer size
+    public int Offset { get; set; }
+
     public SocketSendState()
     {
         _stream = new MemoryStream(Buffer);
         _writer = new NetworkWriter(_stream);
     }
 
-    public byte[] Buffer { get; } = new byte[0x10000]; // 64 KB
-    public int LastValidIndex { get; set; } // End position of the packet that still fits within buffer size
-    public int Offset { get; set; }
+    public void SetBuffer(SocketAsyncEventArgs args)
+    {
+        args.SetBuffer(Offset, LastValidIndex - Offset);
+    }
 
     private int PacketBegin() // Returns the start of the packet bytes in the buffer. NEVER use this without locking the SocketSendState instance
     {

@@ -15,7 +15,7 @@ public class Verify : RequestHandler
 
     public override async Task<string> Handle(string ip, NameValueCollection query)
     {
-        var verify = await DbClient.VerifyAccount(query["username"], query["password"]);
+        var verify = await DbClientOld.VerifyAccount(query["username"], query["password"]);
 
         var acc = verify.Item1;
         var status = verify.Item2;

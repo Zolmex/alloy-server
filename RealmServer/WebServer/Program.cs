@@ -3,6 +3,7 @@
 using Common.Control;
 using Common.Control.Message;
 using Common.Database;
+using Common.Network.Messaging;
 using Common.Resources.Config;
 using Common.Resources.Xml;
 using Common.Utilities;
@@ -48,12 +49,13 @@ internal class Program
             RequestHandler.Load();
             XmlLibrary.Load(config.XmlsDir);
 
-            DbClient.Connect(DatabaseConfig.Config); // Connect redis client used for communication with the database
+            //DbClient.Connect(DatabaseConfig.Config); // Connect redis client used for communication with the database
+            await DbClient.Connect(DatabaseConfig.Config);
 
-            ServerControl.Connect(MemberType.AppEngine, "WebServer",
-                new ServerInfo { Address = config.Address });
+            // ServerControl.Connect(MemberType.AppEngine, "WebServer",
+            //     new ServerInfo { Address = config.Address });
 
-            ServerControl.Subscribe<ShutdownInfo>(ControlChannel.Shutdown, OnShutdownRequested);
+            // ServerControl.Subscribe<ShutdownInfo>(ControlChannel.Shutdown, OnShutdownRequested);
 
             listener.Prefixes.Add($"http://{config.Address}:{config.Port}/"); // Start receiving HTTP requests
             listener.Start();
@@ -111,7 +113,7 @@ internal class Program
     {
         await Task.Delay(e.Content.ShutdownDelay);
 
-        ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
+        // ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
         Environment.Exit(0);
     }
 
@@ -119,12 +121,12 @@ internal class Program
     {
         Log.Fatal(args.ExceptionObject);
 
-        ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
+        // ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
     }
 
     private static void Close(object sender, ConsoleCancelEventArgs args)
     {
-        ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
+        // ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
     }
 
     private static string GetContextIP(HttpListenerContext context)

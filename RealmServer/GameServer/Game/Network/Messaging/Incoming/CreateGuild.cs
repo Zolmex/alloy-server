@@ -18,7 +18,7 @@ public partial record CreateGuild : IIncomingPacket
         if (user.GameInfo.State != GameState.Playing)
             return;
 
-        var result = DbClient.CreateGuild(user.Account, Name);
+        var result = DbClientOld.CreateGuild(user.Account, Name);
         var player = user.GameInfo.Player; // Update the values for the player
         player.GuildName = user.Account.GuildName;
         player.GuildRank = user.Account.GuildRank;

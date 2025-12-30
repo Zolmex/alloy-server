@@ -24,7 +24,7 @@ public partial record Load : IIncomingPacket
         var chr = user.GameInfo.Char;
         if (user.State != ConnectionState.Reconnecting)
         {
-            chr = await DbClient.GetChar(user.Account.AccountId, CharId);
+            chr = await DbClientOld.GetChar(user.Account.AccountId, CharId);
             if (chr == null)
             {
                 user.SendFailure(Failure.DEFAULT, $"Failed to load character #{CharId}");

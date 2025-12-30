@@ -30,7 +30,7 @@ public class ClosedVaultChest : SellableObject
         plr.AddCurrency(Currency, -Price);
         acc.VaultCount++;
         acc.Vault.AddVaultChest();
-        DbClient.Save(acc);
+        DbClientOld.Save(acc);
 
         vault.OpenChest(this);
         return SUCCESS;

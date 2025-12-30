@@ -268,7 +268,7 @@ public class PartyKickCommand : Command
             }
             else
             {
-                var acc = DbClient.GetAccountByName(targetName).Result;
+                var acc = DbClientOld.GetAccountByName(targetName).Result;
 
                 if (acc is not null)
                 {
@@ -276,7 +276,7 @@ public class PartyKickCommand : Command
                         continue;
 
                     acc.PartyId = -1;
-                    DbClient.Save(acc);
+                    DbClientOld.Save(acc);
 
                     player.Party.RemoveMember(acc.AccountId);
                     party?.BroadcastInfo($"{acc.Name} was kicked from the party.");
@@ -394,7 +394,7 @@ public class PartyListCommand : Command
             return;
         }
 
-        var members = player.Party.MembersIds.Select(id => DbClient.GetAccount(id).Result);
+        var members = player.Party.MembersIds.Select(id => DbClientOld.GetAccount(id).Result);
         var players = player.Party.GetOnlinePlayers();
 
         var membersStr = string.Join(", ", members.Select(m => m.Name));

@@ -160,7 +160,7 @@ public class Vault : World
         foreach (var giftChest in _openGiftChests)
             _user.Account.Gifts.AddGifts(giftChest.Inventory.GetItems());
 
-        DbClient.Save(_user.Account.Vault, _user.Account.Gifts);
+        DbClientOld.Save(_user.Account.Vault, _user.Account.Gifts);
     }
 
     private static List<Entity> OrderToCenter(List<Entity> containers)

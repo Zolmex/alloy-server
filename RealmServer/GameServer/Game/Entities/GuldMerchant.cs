@@ -23,7 +23,7 @@ public class GuildMerchant : SellableObject
             return "Not in guild hall.";
 
         var acc = plr.User.Account;
-        var guild = DbClient.GetGuild(acc.GuildId).SafeResult();
+        var guild = DbClientOld.GetGuild(acc.GuildId).SafeResult();
         if (guild == null)
             return "Not in guild.";
 
@@ -38,7 +38,7 @@ public class GuildMerchant : SellableObject
 
         guild.Fame -= Price; // Charge accordingly
         guild.Level++;
-        DbClient.Save(guild);
+        DbClientOld.Save(guild);
 
         RealmManager.ReloadGuildHall(guild.GuildId); // Delete old ghall and creates a new one
 

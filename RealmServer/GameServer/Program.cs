@@ -50,12 +50,12 @@ internal class Program
             WorldLibrary.Load(config.WorldsDir);
             BehaviorLibrary.Load();
 
-            DbClient.Connect(DatabaseConfig.Config);
+            DbClientOld.Connect(DatabaseConfig.Config);
 
             ServerControl.Connect(MemberType.AppEngine, "GameServer", new ServerInfo { Port = config.Port, Address = config.Address, MaxPlayers = config.MaxPlayers, AdminOnly = config.AdminOnly });
 
             ServerControl.Subscribe<ShutdownInfo>(ControlChannel.Shutdown, OnShutdownRequested);
-            ServerControl.Subscribe<bool>(ControlChannel.DbWipe, DbClient.OnWipeCompleted);
+            ServerControl.Subscribe<bool>(ControlChannel.DbWipe, DbClientOld.OnWipeCompleted);
 
             RealmManager.Init(); // Finish setting up the game logic
 

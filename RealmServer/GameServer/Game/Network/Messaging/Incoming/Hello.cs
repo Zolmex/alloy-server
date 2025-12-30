@@ -35,7 +35,7 @@ public partial record Hello : IIncomingPacket
         var acc = user.Account;
         if (user.State != ConnectionState.Reconnecting)
         {
-            var verify = await DbClient.VerifyAccount(Username, Password);
+            var verify = await DbClientOld.VerifyAccount(Username, Password);
             var status = verify.Item2;
             acc = verify.Item1;
             if (acc == null)

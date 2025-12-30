@@ -87,7 +87,7 @@ public class BanCommand : Command
             return;
         }
 
-        var ban = DbClient.BanAccount(args).Result;
+        var ban = DbClientOld.BanAccount(args).Result;
         var success = ban.Item1;
         var error = ban.Item2;
         if (success)
@@ -111,7 +111,7 @@ public class UnbanCommand : Command
             return;
         }
 
-        var unban = DbClient.UnbanAccount(args).Result;
+        var unban = DbClientOld.UnbanAccount(args).Result;
         var success = unban.Item1;
         var error = unban.Item2;
         if (success)
@@ -153,7 +153,7 @@ public class MuteCommand : Command
             return;
         }
 
-        var mute = DbClient.MuteAccount(args).Result;
+        var mute = DbClientOld.MuteAccount(args).Result;
         var success = mute.Item1;
         var error = mute.Item2;
         if (success)
@@ -174,7 +174,7 @@ public class UnmuteCommand : Command
             return;
         }
 
-        var unmute = DbClient.UnmuteAccount(args).Result;
+        var unmute = DbClientOld.UnmuteAccount(args).Result;
         var success = unmute.Item1;
         var error = unmute.Item2;
         if (success)
@@ -203,7 +203,7 @@ public class GiftCommand : Command
             return;
         }
 
-        var targetAcc = DbClient.GetAccount(accId).Result;
+        var targetAcc = DbClientOld.GetAccount(accId).Result;
         if (targetAcc == null)
         {
             player.SendError("Invalid account id.");
@@ -224,7 +224,7 @@ public class GiftCommand : Command
         }
 
         targetAcc.Gifts.AddGift(item.ObjectType, item.Export().ToArray());
-        DbClient.Save(targetAcc.Gifts);
+        DbClientOld.Save(targetAcc.Gifts);
     }
 }
 

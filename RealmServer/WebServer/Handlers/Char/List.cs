@@ -14,9 +14,9 @@ public class ListMembers : RequestHandler
 
     public override async Task<string> Handle(string ip, NameValueCollection query)
     {
-        var verify = await DbClient.VerifyAccount(query["username"], query["password"]);
+        var verify = await DbClientOld.VerifyAccount(query["username"], query["password"]);
 
-        var acc = verify.Item1 ?? DbClient.GetGuestAccount();
+        var acc = verify.Item1 ?? DbClientOld.GetGuestAccount();
         return acc.ToCharListXml().ToString();
     }
 }

@@ -29,7 +29,7 @@ public partial record GuildRemove : IIncomingPacket
         if (target.GuildName != acc.GuildName || (target.Name != acc.Name && target.GuildRank >= acc.GuildRank)) // Make sure we don't kick members of the same rank or from other guilds. Except ourselves
             return;
 
-        DbClient.RemoveFromGuild(target.AccountId, user.Account.GuildId);
+        DbClientOld.RemoveFromGuild(target.AccountId, user.Account.GuildId);
 
         // Update the values for the player
         target.GuildName = null;

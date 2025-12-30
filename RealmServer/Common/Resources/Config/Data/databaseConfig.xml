@@ -1,10 +1,10 @@
 ﻿<DatabaseConfig>
     <Host>127.0.0.1</Host>
-    <Port>6005</Port>
+    <Port>7001</Port>
     <Password></Password>
     <Redis>
         <Host>127.0.0.1</Host>
-        <Port>6005</Port>
+        <Port>6379</Port>
         <DbIndex>0</DbIndex>
         <Password></Password>
     </Redis>

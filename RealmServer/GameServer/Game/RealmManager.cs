@@ -60,8 +60,8 @@ public static class RealmManager
 
         CommandManager.Load();
 
-        DbClient.UpdateLegends(); // Update legends every day
-        AddTimedAction((int)TimeSpan.FromDays(1).TotalMilliseconds, DbClient.UpdateLegends);
+        DbClientOld.UpdateLegends(); // Update legends every day
+        AddTimedAction((int)TimeSpan.FromDays(1).TotalMilliseconds, DbClientOld.UpdateLegends);
 
         apiEventManager = new APIEventManager();
 
@@ -103,7 +103,7 @@ public static class RealmManager
 
             Parallel.ForEach(Worlds.Values, w => w.Tick(WorldTime));
 
-            DbClient.SetPlayerCount(Users.Count);
+            DbClientOld.SetPlayerCount(Users.Count);
         }
     }
 
@@ -220,7 +220,7 @@ public static class RealmManager
     {
         if (!_guildHalls.TryGetValue(guildId, out var ghall))
         {
-            var guild = DbClient.GetGuild(guildId).Result;
+            var guild = DbClientOld.GetGuild(guildId).Result;
             if (guild == null)
                 return null;
 
@@ -240,7 +240,7 @@ public static class RealmManager
 
         ghall.Delete(); // This will disconnect all players
 
-        var guild = DbClient.GetGuild(guildId).Result;
+        var guild = DbClientOld.GetGuild(guildId).Result;
         var newGhall = new World("Guild Hall", guild.Level);
         _guildHalls[guildId] = newGhall;
         AddWorld(newGhall);
