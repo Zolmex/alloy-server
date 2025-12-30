@@ -1,4 +1,5 @@
 using Common.Network.Messaging;
+using Common.Network.Messaging.Impl;
 using Common.Resources.Config;
 using Common.Utilities;
 using System.Net.Sockets;

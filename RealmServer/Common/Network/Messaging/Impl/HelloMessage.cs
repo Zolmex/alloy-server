@@ -1,7 +1,7 @@
 using Common.Utilities;
 using System;
 
-namespace Common.Network.Messaging;
+namespace Common.Network.Messaging.Impl;
 
 public record struct HelloMessage : IAppMessage
 {

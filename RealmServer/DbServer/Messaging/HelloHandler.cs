@@ -1,8 +1,9 @@
 using Common.Network;
 using Common.Network.Messaging;
+using Common.Network.Messaging.Impl;
 using Common.Utilities;
 
-namespace DbServer.Handlers;
+namespace DbServer.Messaging;
 
 public class HelloHandler : IMessageHandler
 {
