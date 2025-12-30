@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DbServer.Database;
+namespace Common.Database.Models;
 
 public partial class Character
 {
