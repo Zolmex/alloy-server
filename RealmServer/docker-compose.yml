@@ -1,7 +1,7 @@
 services:
   alloy-mysql:
     image: mysql
-    container_name: alloy-db
+    container_name: alloy-mysql
     environment:
       MYSQL_DATABASE: alloy
       MYSQL_USER: alloy-db
@@ -29,6 +29,48 @@ services:
     restart: unless-stopped
     depends_on:
       - alloy-mysql
+
+# TODO: Need to create the Dockerfile for these  
+#  alloy-dbserver:
+#    build:
+#      context: .
+#      dockerfile: dbserver.Dockerfile
+#    container_name: alloy-dbserver
+#    environment:
+#      ConnectionStrings__Default: server=localhost;database=alloy;user=alloy-db;password=${MYSQL_PASSWORD}
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - alloy-net
+#    restart: on-failure
+#    depends_on:
+#      - alloy-mysql
+#  
+#  alloy-webserver:
+#    build:
+#      context: .
+#      dockerfile: webserver.Dockerfile
+#    container_name: alloy-webserver
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - alloy-net
+#    restart: on-failure
+#    depends_on:
+#      - alloy-dbserver
+#  
+#  alloy-gameserver:
+#    build:
+#      context: .
+#      dockerfile: gameserver.Dockerfile
+#    container_name: alloy-gameserver
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - alloy-net
+#    restart: on-failure
+#    depends_on:
+#      - alloy-dbserver
 
 networks:
   alloy-net:
