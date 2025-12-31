@@ -5,7 +5,7 @@ CREATE TABLE `Accounts` (
   `guild_name` varchar(255),
   `is_admin` boolean,
   `is_banned` boolean,
-  `created_ad` datetime DEFAULT NOW(),
+  `created_at` datetime DEFAULT NOW(),
   `acc_stats_id` integer,
   `login_id` integer
 );
