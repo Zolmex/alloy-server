@@ -7,7 +7,7 @@ namespace DbServer.Messaging;
 
 public class HelloHandler : IMessageHandler
 {
-    public AppMessageId MessageId => AppMessageId.HELLO;
+    public AppMessageId MessageId => AppMessageId.Hello;
 
     public void Handle(IAppMessage msg, AppConnection con)
     {

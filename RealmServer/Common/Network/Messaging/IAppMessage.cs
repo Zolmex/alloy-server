@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace Common.Network.Messaging;
 
 public interface IAppMessage
 {
     AppMessageId MessageId { get; }
+    int Sequence { get; set; }
+    bool IsAck => this is IAppMessageAck;
 
     void Write(NetworkWriter wtr);
     void Read(NetworkReader rdr);
@@ -20,7 +23,9 @@ public interface IAppMessage
     #region Static members
 
     private static readonly Dictionary<AppMessageId, IAppMessage> _messages = new();
+    private static readonly Dictionary<AppMessageId, IAppMessageAck> _messageAcks = new();
     private static readonly Dictionary<AppMessageId, IMessageHandler> _handlers = new();
+    private static int _sequence;
 
     static IAppMessage()
     {
@@ -28,7 +33,15 @@ public interface IAppMessage
         for (var i = 0; i < types.Length; i++)
         {
             var type = types[i];
-            if (type != typeof(IAppMessage) && typeof(IAppMessage).IsAssignableFrom(type))
+            if (type.IsInterface)
+                continue;
+            
+            if (typeof(IAppMessageAck).IsAssignableFrom(type))
+            {
+                var msg = (IAppMessageAck)Activator.CreateInstance(type);
+                _messageAcks.Add(msg.MessageId, msg);
+            }
+            else if (typeof(IAppMessage).IsAssignableFrom(type))
             {
                 var msg = (IAppMessage)Activator.CreateInstance(type);
                 _messages.Add(msg.MessageId, msg);
@@ -39,7 +52,7 @@ public interface IAppMessage
         for (var i = 0; i < types.Length; i++)
         {
             var type = types[i];
-            if (!type.IsInterface && type.GetInterface("IMessageHandler") != null)
+            if (!type.IsInterface && typeof(IMessageHandler).IsAssignableFrom(type))
             {
                 var handler = (IMessageHandler)Activator.CreateInstance(type);
                 _handlers.Add(handler.MessageId, handler);
@@ -51,6 +64,21 @@ public interface IAppMessage
     {
         return _messages[id];
     }
+    
+    static IAppMessageAck RequireAck(AppMessageId id)
+    {
+        return _messageAcks[id];
+    }
+
+    static void SetSequence(IAppMessage msg)
+    {
+        msg.Sequence = Interlocked.Increment(ref _sequence);
+    }
 
     #endregion
+}
+
+public interface IAppMessageAck : IAppMessage
+{
+    // Empty
 }

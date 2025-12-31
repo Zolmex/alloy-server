@@ -1,4 +1,5 @@
 using Common.Network.Messaging;
+using Common.Utilities;
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -9,8 +10,9 @@ public class SocketReceiveState
 {
     public readonly NetworkReader Reader;
 
-    private int _bytesRead;
     public byte[] Buffer { get; } = new byte[0x10000]; // 64 KB
+    private int _bytesRead;
+    private int _lastStart;
 
     public SocketReceiveState()
     {
@@ -38,12 +40,14 @@ public class SocketReceiveState
             return false;
         }
 
-        var start = (int)Reader.BaseStream.Position;
-        Reader.BaseStream.Seek(start + _bytesRead, // In case we failed processing last packet, go to the end of the packet
-            SeekOrigin.Begin);
-        _bytesRead = 0;
+        if (_bytesRead != 0)
+        {
+            Reader.BaseStream.Seek(_lastStart + _bytesRead,
+                SeekOrigin.Begin); // In case we failed processing, go to the end of the packet
+            _bytesRead = 0;
+        }
         
-        start = (int)Reader.BaseStream.Position;
+        _lastStart = (int)Reader.BaseStream.Position;
 
         var length = Reader.ReadInt32(); // We always start reading from the beginning
         // Log.Debug($"Start: {start} Length: {length} BytesNotRead: {bytesNotRead} BytesRead: {_bytesRead}");
@@ -56,7 +60,7 @@ public class SocketReceiveState
 
         if (_bytesRead < length) // This means we still have bytes to read that we haven't received in this call
         {
-            System.Buffer.BlockCopy(Buffer, start, Buffer, 0,
+            System.Buffer.BlockCopy(Buffer, _lastStart, Buffer, 0,
                 _bytesRead); // Move this many bytes to the beginning of the buffer
             Reader.BaseStream.Seek(0, SeekOrigin.Begin);
             return false;
@@ -64,6 +68,13 @@ public class SocketReceiveState
 
         var packetId = (AppMessageId)Reader.ReadByte();
         msg = IAppMessage.Require(packetId);
+        
+        var seq = Reader.ReadInt32();
+        var isAck = Reader.ReadBoolean();
+        if (isAck)
+            msg = IAppMessage.RequireAck(packetId);
+        
+        msg.Sequence = seq;
 
         bytesNotRead -= read;
         return true;

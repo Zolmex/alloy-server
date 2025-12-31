@@ -2,5 +2,7 @@ namespace Common.Network.Messaging;
 
 public enum AppMessageId
 {
-    HELLO
+    Hello = 0,
+    Register = 1,
+    Verify = 2
 }

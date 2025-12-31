@@ -2,11 +2,14 @@ using Common.Network.Messaging;
 using Common.Utilities;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading.Tasks.Dataflow;
 
 namespace Common.Network;
 
 public class SocketSendState
 {
+    public const int HEADER_SIZE = 10;
+    
     private readonly MemoryStream _stream;
 
     private readonly NetworkWriter _writer;
@@ -24,23 +27,26 @@ public class SocketSendState
 
     public void SetBuffer(SocketAsyncEventArgs args)
     {
+        Logger.Debug($"Sending {LastValidIndex - Offset} Offset - {Offset}");
         args.SetBuffer(Offset, LastValidIndex - Offset);
     }
 
     private int PacketBegin() // Returns the start of the packet bytes in the buffer. NEVER use this without locking the SocketSendState instance
     {
         var begin = (int)_stream.Position;
-        _stream.Position += 5; // Leave 5 bytes for the header
+        _stream.Position += HEADER_SIZE; // Leave HEADER_SIZE bytes for the header
         return begin;
     }
 
-    private void PacketEnd(int begin, AppMessageId pkt)
+    private void PacketEnd(int begin, IAppMessage msg)
     {
         var length = (int)_stream.Position - begin;
-        _stream.Position -= length; // Write the header [length][id]
+        _stream.Position -= length; // Write the header [length][id][sequence][isAck]
         _writer.Write(length);
-        _writer.Write((byte)pkt);
-        _stream.Position += length - 5; // Go to the next position after packet body to write the next packet
+        _writer.Write((byte)msg.MessageId);
+        _writer.Write(msg.Sequence);
+        _writer.Write(msg.IsAck);
+        _stream.Position += length - HEADER_SIZE; // Go to the next position after packet body to write the next packet
 
         if (_stream.Position - Offset < Buffer.Length)
             LastValidIndex = (int)_stream.Position;
@@ -66,8 +72,21 @@ public class SocketSendState
 
             msg.Write(_writer);
 
-            PacketEnd(begin, msg.MessageId);
+            PacketEnd(begin, msg);
         }
+    }
+
+    public void BeginSend(SocketAsyncEventArgs args)
+    {
+        SetBuffer(args);
+        Lock();
+    }
+
+    public void EndSend()
+    {
+        // Entire buffer has been written, clear it
+        Reset();
+        Unlock();
     }
 
     public void Lock()

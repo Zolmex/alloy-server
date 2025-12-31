@@ -57,6 +57,8 @@ internal class Program
 
             // ServerControl.Subscribe<ShutdownInfo>(ControlChannel.Shutdown, OnShutdownRequested);
 
+            await DbClient.Register("lol", "pass123123123", "ipaddresslmao");
+            
             listener.Prefixes.Add($"http://{config.Address}:{config.Port}/"); // Start receiving HTTP requests
             listener.Start();
         }

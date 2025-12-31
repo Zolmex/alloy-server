@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Common.Network;
+using Common.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Account
+public partial class Account : IDbSerializable
 {
     public int Id { get; set; }
 
@@ -30,4 +32,33 @@ public partial class Account
     public virtual ICollection<GuildMember> GuildMembers { get; set; } = new List<GuildMember>();
 
     public virtual Login? Login { get; set; }
+    
+    public void Write(NetworkWriter wtr)
+    {
+        wtr.Write(Id);
+        wtr.Write(Name);
+        wtr.Write(Rank!.Value);
+        wtr.Write(GuildName!);
+        wtr.Write(IsAdmin!.Value);
+        wtr.Write(IsBanned!.Value);
+        wtr.Write(CreatedAd!.Value.ToUnixTimestamp());
+        wtr.Write(AccStatsId!.Value);
+        wtr.Write(LoginId!.Value);
+    }
+
+    public IDbSerializable Read(NetworkReader rdr)
+    {
+        return new Account()
+        {
+            Id = rdr.ReadInt32(),
+            Name = rdr.ReadString(),
+            Rank = rdr.ReadInt16(),
+            GuildName = rdr.ReadUTF(),
+            IsAdmin = rdr.ReadBoolean(),
+            IsBanned = rdr.ReadBoolean(),
+            CreatedAd = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
+            AccStatsId = rdr.ReadInt32(),
+            LoginId = rdr.ReadInt32()
+        };
+    }
 }

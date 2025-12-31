@@ -5,7 +5,8 @@ namespace Common.Network.Messaging.Impl;
 
 public record struct HelloMessage : IAppMessage
 {
-    public AppMessageId MessageId => AppMessageId.HELLO;
+    public AppMessageId MessageId => AppMessageId.Hello;
+    public int Sequence { get; set; }
     public string AppName { get; set; }
 
     public void Write(NetworkWriter wtr)
