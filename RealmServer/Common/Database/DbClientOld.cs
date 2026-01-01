@@ -106,7 +106,7 @@ public static class DbClientOld
                 TotalCredits = NewAccountsConfig.Config.Credits,
                 Fame = NewAccountsConfig.Config.Fame,
                 TotalFame = NewAccountsConfig.Config.Fame,
-                ClassStats = NewAccountsConfig.CreateClassStats()
+                // ClassStats = NewAccountsConfig.CreateClassStats()
             };
             acc.LockedIds = [];
             acc.IgnoredIds = [];
@@ -148,7 +148,7 @@ public static class DbClientOld
                 TotalCredits = NewAccountsConfig.Config.Credits,
                 Fame = NewAccountsConfig.Config.Fame,
                 TotalFame = NewAccountsConfig.Config.Fame,
-                ClassStats = NewAccountsConfig.CreateClassStats()
+                // ClassStats = NewAccountsConfig.CreateClassStats()
             },
             RegisterTime = DateTime.Now.ToUnixTimestamp(),
             LockedIds = new int[0],

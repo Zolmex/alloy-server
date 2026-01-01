@@ -19,11 +19,15 @@ public partial class Account : IDbSerializable
 
     public bool? IsBanned { get; set; }
 
-    public DateTime? CreatedAd { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
     public int? AccStatsId { get; set; }
 
     public int? LoginId { get; set; }
+    
+    public short? MaxChars { get; set; }
+    
+    public short? VaultCount { get; set; }
 
     public virtual AccountStat? AccStats { get; set; }
 
@@ -41,9 +45,11 @@ public partial class Account : IDbSerializable
         wtr.Write(GuildName!);
         wtr.Write(IsAdmin!.Value);
         wtr.Write(IsBanned!.Value);
-        wtr.Write(CreatedAd!.Value.ToUnixTimestamp());
+        wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
         wtr.Write(AccStatsId!.Value);
         wtr.Write(LoginId!.Value);
+        wtr.Write(MaxChars!.Value);
+        wtr.Write(VaultCount!.Value);
     }
 
     public IDbSerializable Read(NetworkReader rdr)
@@ -56,9 +62,11 @@ public partial class Account : IDbSerializable
             GuildName = rdr.ReadUTF(),
             IsAdmin = rdr.ReadBoolean(),
             IsBanned = rdr.ReadBoolean(),
-            CreatedAd = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
+            CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
             AccStatsId = rdr.ReadInt32(),
-            LoginId = rdr.ReadInt32()
+            LoginId = rdr.ReadInt32(),
+            MaxChars = rdr.ReadInt16(),
+            VaultCount = rdr.ReadInt16()
         };
     }
 }

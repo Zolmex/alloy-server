@@ -8,12 +8,16 @@ namespace DbServer.Service;
 
 public class NetworkService : BackgroundService
 {
+    public static IDbContextFactory<AlloyContext> ContextFactory; // Don't yell at me this is the closest to the correct way I could do
+    
     private readonly AlloyContext _dbContext;
     private readonly AppListener _listener;
     
-    public NetworkService(AlloyContext dbContext, IConfiguration config)
+    public NetworkService(IDbContextFactory<AlloyContext> contextFactory, IConfiguration config)
     {
-        _dbContext = dbContext;
+        ContextFactory = contextFactory;
+        
+        _dbContext = contextFactory.CreateDbContext();
         _listener = new AppListener(int.Parse(config["Server:Port"]!));
     }
     

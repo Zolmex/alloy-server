@@ -5,7 +5,9 @@ Table Accounts {
   guild_name varchar(255)
   is_admin boolean
   is_banned boolean
-  created_ad datetime [default: `NOW()`]
+  max_chars smallint
+  vault_count smallint
+  created_at datetime [default: `NOW()`]
 
   acc_stats_id integer [ref: - Account_Stats.id]
   login_id integer [ref: - Logins.id]
@@ -35,6 +37,7 @@ Table Logins {
   password_hash text
   password_salt text
   last_login_at datetime
+  ip_address varchar(30)
 }
 
 Table Characters {

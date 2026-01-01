@@ -1,8 +1,10 @@
 ﻿#region
 
 using Common.Database;
+using Common.Database.Models;
 using Common.Resources.Xml;
 using Common.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
@@ -42,12 +44,17 @@ public class NewAccountsConfig
         return new NewAccountsConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 
-    public static ClassStatsInfo[] CreateClassStats()
+    public static ClassStat[] CreateClassStats()
     {
-        var classStats = new List<ClassStatsInfo>();
+        var classStats = new List<ClassStat>();
         foreach (var player in XmlLibrary.PlayerDescs.Values)
         {
-            classStats.Add(new ClassStatsInfo { BestFame = 0, BestLevel = 0, ObjectType = player.ObjectType });
+            classStats.Add(new ClassStat
+            {
+                ObjectType = player.ObjectType,
+                BestFame = 0,
+                BestLevel = 0
+            });
         }
 
         return classStats.ToArray();

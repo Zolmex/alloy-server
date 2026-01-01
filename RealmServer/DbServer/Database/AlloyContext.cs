@@ -58,10 +58,10 @@ public partial class AlloyContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AccStatsId).HasColumnName("acc_stats_id");
-            entity.Property(e => e.CreatedAd)
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
-                .HasColumnName("created_ad");
+                .HasColumnName("created_at");
             entity.Property(e => e.GuildName)
                 .HasMaxLength(255)
                 .HasColumnName("guild_name");
@@ -72,6 +72,8 @@ public partial class AlloyContext : DbContext
                 .HasMaxLength(30)
                 .HasColumnName("name");
             entity.Property(e => e.Rank).HasColumnName("rank");
+            entity.Property(e => e.MaxChars).HasColumnName("max_chars");
+            entity.Property(e => e.VaultCount).HasColumnName("vault_count");
 
             entity.HasOne(d => d.AccStats).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.AccStatsId)
@@ -373,6 +375,9 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.PasswordSalt)
                 .HasColumnType("text")
                 .HasColumnName("password_salt");
+            entity.Property(e => e.IPAddress)
+                .HasMaxLength(30)
+                .HasColumnName("ip_address");
         });
 
         OnModelCreatingPartial(modelBuilder);

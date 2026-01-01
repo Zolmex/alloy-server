@@ -1,6 +1,7 @@
 ﻿#region
 
 using Common.Network.Messaging;
+using Common.Resources.Xml;
 using DbServer.Database;
 using DbServer.Implementation;
 using DbServer.Interface;
@@ -18,6 +19,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        
         var settings = new HostApplicationBuilderSettings { Args = args, ContentRootPath = Directory.GetCurrentDirectory(), ApplicationName = "DbServer" };
 
         var builder = Host.CreateEmptyApplicationBuilder(settings);
@@ -26,8 +28,10 @@ internal class Program
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
             .AddUserSecrets<Program>(optional: true)
             .AddEnvironmentVariables();
+        
+        XmlLibrary.Load(builder.Configuration["XmlsDir"]);
 
-        builder.Services.AddDbContext<AlloyContext>(optionsBuilder =>
+        builder.Services.AddDbContextFactory<AlloyContext>(optionsBuilder =>
         {
             optionsBuilder.UseMySQL(builder.Configuration.GetConnectionString("Default")!);
         });

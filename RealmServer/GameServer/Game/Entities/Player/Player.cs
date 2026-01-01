@@ -70,8 +70,8 @@ public partial class Player : Character
 
         InitPlayerSight();
 
-        if (User.Account.Stats.ClassStats.Length <= 0) //if player doesnt have any classstats for some reason
-            User.Account.Stats.ClassStats = NewAccountsConfig.CreateClassStats();
+        // if (User.Account.Stats.ClassStats.Length <= 0) //if player doesnt have any classstats for some reason
+        //     User.Account.Stats.ClassStats = NewAccountsConfig.CreateClassStats();
 
         // Load player stats
         Name = User.Account.Name;

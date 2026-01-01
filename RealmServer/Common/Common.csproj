@@ -1344,6 +1344,7 @@
 
     <ItemGroup>
         <PackageReference Include="Ionic.Zlib.Core" Version="1.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="StackExchange.Redis" Version="2.2.4"/>
         <PackageReference Include="System.Drawing.Common" Version="8.0.4"/>

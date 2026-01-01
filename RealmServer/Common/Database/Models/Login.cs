@@ -16,6 +16,7 @@ public partial class Login : IDbSerializable
     public string? PasswordSalt { get; set; }
 
     public DateTime? LastLoginAt { get; set; }
+    public string? IPAddress { get; set; }
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
     
@@ -26,6 +27,7 @@ public partial class Login : IDbSerializable
         wtr.Write(PasswordHash!);
         wtr.Write(PasswordSalt!);
         wtr.Write(LastLoginAt!.Value.ToUnixTimestamp());
+        wtr.Write(IPAddress!);
     }
 
     public IDbSerializable Read(NetworkReader rdr)
@@ -36,7 +38,8 @@ public partial class Login : IDbSerializable
             Name = rdr.ReadUTF(),
             PasswordHash = rdr.ReadUTF(),
             PasswordSalt = rdr.ReadUTF(),
-            LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+            LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
+            IPAddress = rdr.ReadUTF()
         };
     }
 }

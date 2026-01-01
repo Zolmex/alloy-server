@@ -5,6 +5,8 @@ CREATE TABLE `Accounts` (
   `guild_name` varchar(255),
   `is_admin` boolean,
   `is_banned` boolean,
+  `max_chars` smallint,
+  `vault_count` smallint,
   `created_at` datetime DEFAULT NOW(),
   `acc_stats_id` integer,
   `login_id` integer
@@ -32,7 +34,8 @@ CREATE TABLE `Logins` (
   `name` varchar(30) NOT NULL UNIQUE,
   `password_hash` text,
   `password_salt` text,
-  `last_login_at` datetime
+  `last_login_at` datetime,
+  `ip_address` varchar(30)
 );
 
 CREATE TABLE `Characters` (
