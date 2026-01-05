@@ -7,9 +7,11 @@ CREATE TABLE `Accounts` (
   `is_banned` boolean,
   `max_chars` smallint,
   `vault_count` smallint,
-  `created_at` datetime DEFAULT NOW(),
+  `next_char_id` smallint,
+  `created_at` datetime DEFAULT (NOW()),
   `acc_stats_id` integer,
-  `login_id` integer
+  `login_id` integer,
+  `guild_member_id` integer
 );
 
 CREATE TABLE `Account_Stats` (
@@ -38,8 +40,15 @@ CREATE TABLE `Logins` (
   `ip_address` varchar(30)
 );
 
+CREATE TABLE `Account_Skins` (
+  `account_id` integer,
+  `skin_type` integer,
+  PRIMARY KEY (`account_id`, `skin_type`)
+);
+
 CREATE TABLE `Characters` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `acc_char_id` integer,
   `object_type` smallint unsigned,
   `level` smallint unsigned,
   `current_fame` int unsigned,
@@ -53,7 +62,7 @@ CREATE TABLE `Characters` (
   `is_dead` boolean,
   `is_deleted` boolean,
   `has_backpack` boolean,
-  `created_at` datetime DEFAULT NOW(),
+  `created_at` datetime DEFAULT (NOW()),
   `deleted_at` datetime,
   `acc_id` integer,
   `char_stats_id` integer,
@@ -87,7 +96,7 @@ CREATE TABLE `Character_Inventory` (
 
 CREATE TABLE `Character_Death` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `dead_at` datetime DEFAULT NOW(),
+  `dead_at` datetime DEFAULT (NOW()),
   `death_fame` int unsigned,
   `char_id` integer
 );
@@ -141,22 +150,25 @@ CREATE TABLE `Guilds` (
   `current_fame` int unsigned,
   `total_fame` int unsigned,
   `guild_board` text,
-  `created_at` datetime DEFAULT NOW()
+  `created_at` datetime DEFAULT (NOW())
 );
 
 CREATE TABLE `Guild_Members` (
-  `guild_id` integer,
-  `account_id` integer,
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
   `guild_rank` smallint,
-  `last_seen_at` datetime DEFAULT NOW(),
-  PRIMARY KEY (`guild_id`, `account_id`)
+  `last_seen_at` datetime DEFAULT (NOW()),
+  `guild_id` integer
 );
 
 ALTER TABLE `Accounts` ADD FOREIGN KEY (`acc_stats_id`) REFERENCES `Account_Stats` (`id`);
 
 ALTER TABLE `Accounts` ADD FOREIGN KEY (`login_id`) REFERENCES `Logins` (`id`);
 
+ALTER TABLE `Accounts` ADD FOREIGN KEY (`guild_member_id`) REFERENCES `Guild_Members` (`id`);
+
 ALTER TABLE `Class_Stats` ADD FOREIGN KEY (`acc_stats_id`) REFERENCES `Account_Stats` (`id`);
+
+ALTER TABLE `Account_Skins` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);
 
 ALTER TABLE `Characters` ADD FOREIGN KEY (`acc_id`) REFERENCES `Accounts` (`id`);
 
@@ -175,5 +187,3 @@ ALTER TABLE `Character_Inventory` ADD FOREIGN KEY (`character_id`) REFERENCES `C
 ALTER TABLE `Character_Death` ADD FOREIGN KEY (`char_id`) REFERENCES `Characters` (`id`);
 
 ALTER TABLE `Guild_Members` ADD FOREIGN KEY (`guild_id`) REFERENCES `Guilds` (`id`);
-
-ALTER TABLE `Guild_Members` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);

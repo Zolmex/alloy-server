@@ -16,12 +16,15 @@ public record struct VerifyMessageAck : IAppMessageAck
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((byte)Status);
-        Account.Write(wtr);
+        if (Status == VerifyStatus.Success)
+            Account.Write(wtr);
+        else wtr.Write((byte)0);
     }
 
     public void Read(NetworkReader rdr)
     {
         Status = (VerifyStatus)rdr.ReadByte();
-        Account = (Account)Account.Read(rdr);
+        if (Status == VerifyStatus.Success)
+            Account = Account.Read(rdr);
     }
 }

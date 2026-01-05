@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CombatStat : IDbSerializable
+public partial class CombatStat
 {
     public int Id { get; set; }
 
@@ -26,28 +26,32 @@ public partial class CombatStat : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(Shots!.Value);
-        wtr.Write(ShotsHit!.Value);
-        wtr.Write(LevelUpAssists!.Value);
-        wtr.Write(PotionsDrank!.Value);
-        wtr.Write(AbilitiesUsed!.Value);
-        wtr.Write(DamageTaken!.Value);
-        wtr.Write(DamageDealt!.Value);
+        wtr.Write(Shots ?? 0);
+        wtr.Write(ShotsHit ?? 0);
+        wtr.Write(LevelUpAssists ?? 0);
+        wtr.Write(PotionsDrank ?? 0);
+        wtr.Write(AbilitiesUsed ?? 0);
+        wtr.Write(DamageTaken ?? 0);
+        wtr.Write(DamageDealt ?? 0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static CombatStat Read(NetworkReader rdr)
     {
-        return new CombatStat()
-        {
-            Id = rdr.ReadInt32(),
-            Shots = rdr.ReadUInt64(),
-            ShotsHit = rdr.ReadUInt32(),
-            LevelUpAssists = rdr.ReadUInt32(),
-            PotionsDrank = rdr.ReadUInt16(),
-            AbilitiesUsed = rdr.ReadUInt16(),
-            DamageTaken = rdr.ReadUInt32(),
-            DamageDealt = rdr.ReadUInt32()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new CombatStat();
+        ret.Id = rdr.ReadInt32();
+        ret.Shots = rdr.ReadUInt64();
+        ret.ShotsHit = rdr.ReadUInt32();
+        ret.LevelUpAssists = rdr.ReadUInt32();
+        ret.PotionsDrank = rdr.ReadUInt16();
+        ret.AbilitiesUsed = rdr.ReadUInt16();
+        ret.DamageTaken = rdr.ReadUInt32();
+        ret.DamageDealt = rdr.ReadUInt32();
+        return ret;
     }
 }

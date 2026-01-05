@@ -1,4 +1,7 @@
-﻿namespace Common.Utilities;
+﻿using Common.Database.Models;
+using System.Linq;
+
+namespace Common.Utilities;
 
 public static class GameUtils
 {
@@ -34,5 +37,18 @@ public static class GameUtils
         }
 
         return -1;
+    }
+
+    public static int GetNextLevelXp(int level)
+    {
+        // TODO: return real value lol
+        return level + 10;
+    }
+
+    public static int GetNextClassQuestFame(Character chr, Account acc)
+    {
+        // TODO: based on chr.ObjectType and classStat.BestFame find the next class quest fame
+        var classStat = acc.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
+        return (int)classStat!.BestFame!.Value;
     }
 }

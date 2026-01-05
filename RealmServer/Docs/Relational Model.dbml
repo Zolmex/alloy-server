@@ -1,16 +1,18 @@
 Table Accounts {
   id integer [pk, increment]
-  name varchar(30) [unique]
+  name varchar(30) [unique, not null]
   rank smallint
   guild_name varchar(255)
   is_admin boolean
   is_banned boolean
   max_chars smallint
   vault_count smallint
+  next_char_id smallint
   created_at datetime [default: `NOW()`]
 
   acc_stats_id integer [ref: - Account_Stats.id]
   login_id integer [ref: - Logins.id]
+  guild_member_id integer [ref: - Guild_Members.id]
 }
 
 Table Account_Stats {
@@ -33,15 +35,26 @@ Table Class_Stats {
 
 Table Logins {
   id integer [pk, increment]
-  name varchar(30) [unique]
+  name varchar(30) [unique, not null]
   password_hash text
   password_salt text
   last_login_at datetime
   ip_address varchar(30)
 }
 
+Table Account_Skins {
+  account_id integer [ref: > Accounts.id]
+  skin_type integer
+  
+  indexes {
+    (account_id, skin_type) [pk]
+  }
+}
+
+
 Table Characters {
   id integer [pk, increment]
+  acc_char_id integer
   object_type "smallint unsigned"
   level "smallint unsigned"
   current_fame "int unsigned"
@@ -152,12 +165,9 @@ Table Guilds {
 }
 
 Table Guild_Members {
-  guild_id integer [ref: > Guilds.id]
-  account_id integer [ref: - Accounts.id]
+  id integer [pk, increment]
   guild_rank smallint
   last_seen_at datetime [default: `NOW()`]
-
-  indexes {
-    (guild_id, account_id) [pk]
-  }
+  
+  guild_id integer [ref: > Guilds.id]
 }

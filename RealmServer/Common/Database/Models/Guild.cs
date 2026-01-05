@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Guild : IDbSerializable
+public partial class Guild
 {
     public int Id { get; set; }
 
@@ -25,26 +25,30 @@ public partial class Guild : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(Name!);
-        wtr.Write(Level!.Value);
-        wtr.Write(CurrentFame!.Value);
-        wtr.Write(TotalFame!.Value);
-        wtr.Write(GuildBoard!);
-        wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
+        wtr.Write(Name ?? "");
+        wtr.Write(Level ?? 0);
+        wtr.Write(CurrentFame ?? 0);
+        wtr.Write(TotalFame ?? 0);
+        wtr.Write(GuildBoard ?? "");
+        wtr.Write((CreatedAt ?? DateTime.MinValue).ToUnixTimestamp());
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static Guild Read(NetworkReader rdr)
     {
-        return new Guild()
-        {
-            Id = rdr.ReadInt32(),
-            Name = rdr.ReadUTF(),
-            Level = rdr.ReadInt16(),
-            CurrentFame = rdr.ReadUInt32(),
-            TotalFame = rdr.ReadUInt32(),
-            GuildBoard = rdr.ReadUTF(),
-            CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new Guild();
+        ret.Id = rdr.ReadInt32();
+        ret.Name = rdr.ReadUTF();
+        ret.Level = rdr.ReadInt16();
+        ret.CurrentFame = rdr.ReadUInt32();
+        ret.TotalFame = rdr.ReadUInt32();
+        ret.GuildBoard = rdr.ReadUTF();
+        ret.CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
+        return ret;
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Login : IDbSerializable
+public partial class Login
 {
     public int Id { get; set; }
 
@@ -22,24 +22,28 @@ public partial class Login : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
         wtr.Write(Name);
-        wtr.Write(PasswordHash!);
-        wtr.Write(PasswordSalt!);
-        wtr.Write(LastLoginAt!.Value.ToUnixTimestamp());
-        wtr.Write(IPAddress!);
+        wtr.Write(PasswordHash ?? "");
+        wtr.Write(PasswordSalt ?? "");
+        wtr.Write((LastLoginAt ?? DateTime.MinValue).ToUnixTimestamp());
+        wtr.Write(IPAddress ?? "");
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static Login Read(NetworkReader rdr)
     {
-        return new Login()
-        {
-            Id = rdr.ReadInt32(),
-            Name = rdr.ReadUTF(),
-            PasswordHash = rdr.ReadUTF(),
-            PasswordSalt = rdr.ReadUTF(),
-            LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
-            IPAddress = rdr.ReadUTF()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new Login();
+        ret.Id = rdr.ReadInt32();
+        ret.Name = rdr.ReadUTF();
+        ret.PasswordHash = rdr.ReadUTF();
+        ret.PasswordSalt = rdr.ReadUTF();
+        ret.LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
+        ret.IPAddress = rdr.ReadUTF();
+        return ret;
     }
 }

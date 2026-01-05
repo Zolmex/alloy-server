@@ -8,6 +8,7 @@ using Common.Utilities;
 using DbServer.Database;
 using DbServer.Implementation;
 using DbServer.Service;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DbServer.Messaging;
@@ -29,11 +30,12 @@ public class RegisterHandler : IMessageHandler
         var lowerName = pkt.Username.ToLower();
         
         // Check name in use
-        if (dbCon.Logins.Any(i => i.Name.Equals(lowerName)))
+        if (dbCon.Logins.AsNoTracking().Any(i => i.Name.Equals(lowerName)))
             status = RegisterStatus.NameInUse;
 
         // Check accounts per ip
-        else if (dbCon.Logins.Count(i => i.IPAddress == pkt.IPAddress) >= MAX_ACCOUNTS_PER_IP)
+        // TODO: using Count() is very expensive, replace with a db field
+        else if (dbCon.Logins.AsNoTracking().Count(i => i.IPAddress == pkt.IPAddress) >= MAX_ACCOUNTS_PER_IP)
             status = RegisterStatus.MaxAccountsReached;
 
         if (status == RegisterStatus.Success)

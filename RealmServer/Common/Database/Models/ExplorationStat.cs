@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class ExplorationStat : IDbSerializable
+public partial class ExplorationStat
 {
     public int Id { get; set; }
 
@@ -24,26 +24,30 @@ public partial class ExplorationStat : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(TilesUncovered!.Value);
-        wtr.Write(QuestsCompleted!.Value);
-        wtr.Write(Escapes!.Value);
-        wtr.Write(NearDeathEscapes!.Value);
-        wtr.Write(MinutesActive!.Value);
-        wtr.Write(Teleports!.Value);
+        wtr.Write(TilesUncovered ?? 0);
+        wtr.Write(QuestsCompleted ?? 0);
+        wtr.Write(Escapes ?? 0);
+        wtr.Write(NearDeathEscapes ?? 0);
+        wtr.Write(MinutesActive ?? 0);
+        wtr.Write(Teleports ?? 0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static ExplorationStat Read(NetworkReader rdr)
     {
-        return new ExplorationStat()
-        {
-            Id = rdr.ReadInt32(),
-            TilesUncovered = rdr.ReadUInt32(),
-            QuestsCompleted = rdr.ReadUInt32(),
-            Escapes = rdr.ReadUInt32(),
-            NearDeathEscapes = rdr.ReadUInt32(),
-            MinutesActive = rdr.ReadUInt32(),
-            Teleports = rdr.ReadUInt32()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new ExplorationStat();
+        ret.Id = rdr.ReadInt32();
+        ret.TilesUncovered = rdr.ReadUInt32();
+        ret.QuestsCompleted = rdr.ReadUInt32();
+        ret.Escapes = rdr.ReadUInt32();
+        ret.NearDeathEscapes = rdr.ReadUInt32();
+        ret.MinutesActive = rdr.ReadUInt32();
+        ret.Teleports = rdr.ReadUInt32();
+        return ret;
     }
 }

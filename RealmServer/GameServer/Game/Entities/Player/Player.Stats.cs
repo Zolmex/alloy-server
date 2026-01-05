@@ -198,9 +198,9 @@ public partial class Player
             StatType.MaxMS => StatType.MaxMSBonus,
             StatType.Attack => StatType.AttackBonus,
             StatType.Defense => StatType.DefenseBonus,
-            StatType.MovementSpeed => StatType.MovementSpeedBonus,
+            StatType.Speed => StatType.MovementSpeedBonus,
             StatType.Dexterity => StatType.DexterityBonus,
-            StatType.LifeRegeneration => StatType.LifeRegenerationBonus,
+            StatType.Vitality => StatType.LifeRegenerationBonus,
             StatType.Wisdom => StatType.WisdomBonus,
             StatType.DodgeChance => StatType.DodgeChanceBonus,
             StatType.CriticalChance => StatType.CriticalChanceBonus,
@@ -224,7 +224,7 @@ public partial class Player
             StatType.DamageMultiplier => DamageMultCalc(statPoints),
             StatType.CriticalDamage => CritDmgCalc(statPoints),
             StatType.Armor => ArmorCalc(statPoints),
-            StatType.LifeRegeneration => LifeRegenCalc(statPoints),
+            StatType.Vitality => LifeRegenCalc(statPoints),
             StatType.DodgeChance => DodgeCalc(statPoints),
             StatType.CriticalChance => CritChanceCalc(statPoints),
             StatType.AttackSpeed => AttackSpeedCalc(statPoints),
@@ -243,7 +243,7 @@ public partial class Player
             StatType.Defense => StatType.Defense,
             StatType.MaxHP => StatType.Defense,
             StatType.Armor => StatType.Defense,
-            StatType.LifeRegeneration => StatType.Defense,
+            StatType.Vitality => StatType.Defense,
             StatType.Dexterity => StatType.Dexterity,
             StatType.DodgeChance => StatType.Dexterity,
             StatType.CriticalChance => StatType.Dexterity,
@@ -299,7 +299,7 @@ public partial class Player
 
     public static float LifeRegenCalc(int statPoints)
     {
-        return PlayerDesc.GetDefaultStatValue(StatType.LifeRegeneration) + (statPoints / 5f);
+        return PlayerDesc.GetDefaultStatValue(StatType.Vitality) + (statPoints / 5f);
     }
 
 
@@ -339,8 +339,8 @@ public partial class Player
     public int Dexterity { get => Stats.Get<int>(StatType.Dexterity); set => Stats.Set(StatType.Dexterity, value, true); }
     public int Wisdom { get => Stats.Get<int>(StatType.Wisdom); set => Stats.Set(StatType.Wisdom, value, true); }
 
-    public float MovementSpeed { get => Stats.Get<float>(StatType.MovementSpeed); set => Stats.Set(StatType.MovementSpeed, value, true); }
-    public int LifeRegeneration { get => Stats.Get<int>(StatType.LifeRegeneration); set => Stats.Set(StatType.LifeRegeneration, value, true); }
+    public float MovementSpeed { get => Stats.Get<float>(StatType.Speed); set => Stats.Set(StatType.Speed, value, true); }
+    public int LifeRegeneration { get => Stats.Get<int>(StatType.Vitality); set => Stats.Set(StatType.Vitality, value, true); }
     public float DodgeChance { get => Stats.Get<float>(StatType.DodgeChance); set => Stats.Set(StatType.DodgeChance, value, true); }
     public float CriticalChance { get => Stats.Get<float>(StatType.CriticalChance); set => Stats.Set(StatType.CriticalChance, value, true); }
     public int CriticalDamage { get => Stats.Get<int>(StatType.CriticalDamage); set => Stats.Set(StatType.CriticalDamage, value, true); }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterDeath : IDbSerializable
+public partial class CharacterDeath
 {
     public int Id { get; set; }
 
@@ -19,20 +19,24 @@ public partial class CharacterDeath : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(DeadAt!.Value.ToUnixTimestamp());
-        wtr.Write(DeathFame!.Value);
-        wtr.Write(CharId!.Value);
+        wtr.Write((DeadAt ?? DateTime.MinValue).ToUnixTimestamp());
+        wtr.Write(DeathFame ?? 0);
+        wtr.Write(CharId ?? 0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static CharacterDeath Read(NetworkReader rdr)
     {
-        return new CharacterDeath()
-        {
-            Id = rdr.ReadInt32(),
-            DeadAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
-            DeathFame = rdr.ReadUInt32(),
-            CharId = rdr.ReadInt32()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new CharacterDeath();
+        ret.Id = rdr.ReadInt32();
+        ret.DeadAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
+        ret.DeathFame = rdr.ReadUInt32();
+        ret.CharId = rdr.ReadInt32();
+        return ret;
     }
 }

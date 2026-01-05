@@ -22,6 +22,7 @@ public class SocketReceiveState
     public void Reset()
     {
         _bytesRead = 0;
+        _lastStart = 0;
         Reader.BaseStream.Seek(0, SeekOrigin.Begin);
     }
 

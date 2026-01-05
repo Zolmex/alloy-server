@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterStat : IDbSerializable
+public partial class CharacterStat
 {
     public int Id { get; set; }
 
@@ -32,34 +32,38 @@ public partial class CharacterStat : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(Hp!.Value);
-        wtr.Write(Mp!.Value);
-        wtr.Write(MaxHp!.Value);
-        wtr.Write(MaxMp!.Value);
-        wtr.Write(Attack!.Value);
-        wtr.Write(Defense!.Value);
-        wtr.Write(Speed!.Value);
-        wtr.Write(Dexterity!.Value);
-        wtr.Write(Vitality!.Value);
-        wtr.Write(Wisdom!.Value);
+        wtr.Write(Hp ?? 0);
+        wtr.Write(Mp ?? 0);
+        wtr.Write(MaxHp ?? 0);
+        wtr.Write(MaxMp ?? 0);
+        wtr.Write(Attack ?? 0);
+        wtr.Write(Defense ?? 0);
+        wtr.Write(Speed ?? 0);
+        wtr.Write(Dexterity ?? 0);
+        wtr.Write(Vitality ?? 0);
+        wtr.Write(Wisdom ?? 0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static CharacterStat Read(NetworkReader rdr)
     {
-        return new CharacterStat()
-        {
-            Id = rdr.ReadInt32(),
-            Hp = rdr.ReadUInt32(),
-            Mp = rdr.ReadUInt32(),
-            MaxHp = rdr.ReadUInt32(),
-            MaxMp = rdr.ReadUInt32(),
-            Attack = rdr.ReadUInt32(),
-            Defense = rdr.ReadUInt32(),
-            Speed = rdr.ReadUInt32(),
-            Dexterity = rdr.ReadUInt32(),
-            Vitality = rdr.ReadUInt32(),
-            Wisdom = rdr.ReadUInt32()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new CharacterStat();
+        ret.Id = rdr.ReadInt32();
+        ret.Hp = rdr.ReadUInt32();
+        ret.Mp = rdr.ReadUInt32();
+        ret.MaxHp = rdr.ReadUInt32();
+        ret.MaxMp = rdr.ReadUInt32();
+        ret.Attack = rdr.ReadUInt32();
+        ret.Defense = rdr.ReadUInt32();
+        ret.Speed = rdr.ReadUInt32();
+        ret.Dexterity = rdr.ReadUInt32();
+        ret.Vitality = rdr.ReadUInt32();
+        ret.Wisdom = rdr.ReadUInt32();
+        return ret;
     }
 }

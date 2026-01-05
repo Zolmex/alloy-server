@@ -10,7 +10,6 @@
 
     <ItemGroup>
         <PackageReference Include="Discord.Net" Version="3.14.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8"/>
         <PackageReference Include="System.Drawing.Common" Version="8.0.4"/>
     </ItemGroup>
 

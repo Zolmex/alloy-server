@@ -5,36 +5,42 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class GuildMember : IDbSerializable
+public partial class GuildMember
 {
-    public int GuildId { get; set; }
-
-    public int AccountId { get; set; }
+    public int Id { get; set; }
 
     public short? GuildRank { get; set; }
 
     public DateTime? LastSeenAt { get; set; }
 
-    public virtual Account Account { get; set; } = null!;
+    public int? GuildId { get; set; }
 
-    public virtual Guild Guild { get; set; } = null!;
+    public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
+
+    public virtual Guild? Guild { get; set; }
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write(GuildId);
-        wtr.Write(AccountId);
-        wtr.Write(GuildRank!.Value);
-        wtr.Write(LastSeenAt!.Value.ToUnixTimestamp());
+        wtr.Write((byte)1);
+        
+        wtr.Write(Id);
+        wtr.Write(GuildRank ?? 0);
+        wtr.Write((LastSeenAt ?? DateTime.MinValue).ToUnixTimestamp());
+        wtr.Write(GuildId ?? 0);
+        Guild?.Write(wtr);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static GuildMember Read(NetworkReader rdr)
     {
-        return new GuildMember()
-        {
-            GuildId = rdr.ReadInt32(),
-            AccountId = rdr.ReadInt32(),
-            GuildRank = rdr.ReadInt16(),
-            LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+
+        var ret = new GuildMember();
+        ret.Id = rdr.ReadInt32();
+        ret.GuildRank = rdr.ReadInt16();
+        ret.LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
+        ret.GuildId = rdr.ReadInt32();
+        ret.Guild = Guild.Read(rdr);
+        return ret;
     }
 }

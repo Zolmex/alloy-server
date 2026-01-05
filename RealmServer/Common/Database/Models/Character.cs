@@ -5,9 +5,11 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Character : IDbSerializable
+public partial class Character
 {
     public int Id { get; set; }
+
+    public int? AccCharId { get; set; }
 
     public ushort? ObjectType { get; set; }
 
@@ -69,56 +71,83 @@ public partial class Character : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(ObjectType!.Value);
-        wtr.Write(Level!.Value);
-        wtr.Write(CurrentFame!.Value);
-        wtr.Write(XpPoints!.Value);
-        wtr.Write(SkinType!.Value);
-        wtr.Write(TextureOne!.Value);
-        wtr.Write(TextureTwo!.Value);
-        wtr.Write(PetType!.Value);
-        wtr.Write(HealthPotions!.Value);
-        wtr.Write(MagicPotions!.Value);
-        wtr.Write(IsDead!.Value);
-        wtr.Write(IsDeleted!.Value);
-        wtr.Write(HasBackpack!.Value);
+        wtr.Write(AccCharId ?? 0);
+        wtr.Write(ObjectType ?? 0);
+        wtr.Write(Level ?? 0);
+        wtr.Write(CurrentFame ?? 0);
+        wtr.Write(XpPoints ?? 0);
+        wtr.Write(SkinType ?? 0);
+        wtr.Write(TextureOne ?? 0);
+        wtr.Write(TextureTwo ?? 0);
+        wtr.Write(PetType ?? 0);
+        wtr.Write(HealthPotions ?? 0);
+        wtr.Write(MagicPotions ?? 0);
+        wtr.Write(IsDead ?? false);
+        wtr.Write(IsDeleted ?? false);
+        wtr.Write(HasBackpack ?? false);
         wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
-        wtr.Write(DeletedAt!.Value.ToUnixTimestamp());
-        wtr.Write(AccId!.Value);
-        wtr.Write(CharStatsId!.Value);
-        wtr.Write(ExploStatsId!.Value);
-        wtr.Write(CombatStatsId!.Value);
-        wtr.Write(KillStatsId!.Value);
-        wtr.Write(DungeonStatsId!.Value);
+        wtr.Write((DeletedAt ?? DateTime.MinValue).ToUnixTimestamp());
+        wtr.Write(AccId ?? 0);
+        wtr.Write(CharStatsId ?? 0);
+        wtr.Write(ExploStatsId ?? 0);
+        wtr.Write(CombatStatsId ?? 0);
+        wtr.Write(KillStatsId ?? 0);
+        wtr.Write(DungeonStatsId ?? 0);
+        
+        if (CharStats != null)
+            CharStats.Write(wtr);
+        else wtr.Write((byte)0);
+        if (CombatStats != null)
+            CombatStats.Write(wtr);
+        else wtr.Write((byte)0);
+        if (DungeonStats != null)
+            DungeonStats.Write(wtr);
+        else wtr.Write((byte)0);
+        if (ExploStats != null)
+            ExploStats.Write(wtr);
+        else wtr.Write((byte)0);
+        if (KillStats != null)
+            KillStats.Write(wtr);
+        else wtr.Write((byte)0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static Character Read(NetworkReader rdr)
     {
-        return new Character()
-        {
-            Id = rdr.ReadInt32(),
-            ObjectType = rdr.ReadUInt16(),
-            Level = rdr.ReadUInt16(),
-            CurrentFame = rdr.ReadUInt32(),
-            XpPoints = rdr.ReadUInt32(),
-            SkinType = rdr.ReadUInt16(),
-            TextureOne = rdr.ReadUInt16(),
-            TextureTwo = rdr.ReadUInt16(),
-            PetType = rdr.ReadUInt16(),
-            HealthPotions = rdr.ReadUInt16(),
-            MagicPotions = rdr.ReadUInt16(),
-            IsDead = rdr.ReadBoolean(),
-            IsDeleted = rdr.ReadBoolean(),
-            HasBackpack = rdr.ReadBoolean(),
-            CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
-            DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32()),
-            AccId = rdr.ReadInt32(),
-            CharStatsId = rdr.ReadInt32(),
-            ExploStatsId = rdr.ReadInt32(),
-            CombatStatsId = rdr.ReadInt32(),
-            KillStatsId = rdr.ReadInt32(),
-            DungeonStatsId = rdr.ReadInt32()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new Character();
+        ret.Id = rdr.ReadInt32();
+        ret.AccCharId = rdr.ReadInt32();
+        ret.ObjectType = rdr.ReadUInt16();
+        ret.Level = rdr.ReadUInt16();
+        ret.CurrentFame = rdr.ReadUInt32();
+        ret.XpPoints = rdr.ReadUInt32();
+        ret.SkinType = rdr.ReadUInt16();
+        ret.TextureOne = rdr.ReadUInt16();
+        ret.TextureTwo = rdr.ReadUInt16();
+        ret.PetType = rdr.ReadUInt16();
+        ret.HealthPotions = rdr.ReadUInt16();
+        ret.MagicPotions = rdr.ReadUInt16();
+        ret.IsDead = rdr.ReadBoolean();
+        ret.IsDeleted = rdr.ReadBoolean();
+        ret.HasBackpack = rdr.ReadBoolean();
+        ret.CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
+        ret.DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
+        ret.AccId = rdr.ReadInt32();
+        ret.CharStatsId = rdr.ReadInt32();
+        ret.ExploStatsId = rdr.ReadInt32();
+        ret.CombatStatsId = rdr.ReadInt32();
+        ret.KillStatsId = rdr.ReadInt32();
+        ret.DungeonStatsId = rdr.ReadInt32();
+        ret.CharStats = CharacterStat.Read(rdr);
+        ret.CombatStats = CombatStat.Read(rdr);
+        ret.DungeonStats = DungeonStat.Read(rdr);
+        ret.ExploStats = ExplorationStat.Read(rdr);
+        ret.KillStats = KillStat.Read(rdr);
+        return ret;
     }
 }

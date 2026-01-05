@@ -138,8 +138,8 @@ public partial class Player : Character
         Defense = Char.MainStats[StatType.Defense];
         Dexterity = Char.MainStats[StatType.Dexterity];
         Wisdom = Char.MainStats[StatType.Wisdom];
-        MovementSpeed = Char.BaseStats[StatType.MovementSpeed];
-        LifeRegeneration = (int)Char.BaseStats[StatType.MovementSpeed];
+        MovementSpeed = Char.BaseStats[StatType.Speed];
+        LifeRegeneration = (int)Char.BaseStats[StatType.Speed];
         DodgeChance = Char.BaseStats[StatType.DodgeChance];
         CriticalChance = Char.BaseStats[StatType.CriticalChance];
         CriticalDamage = (int)Char.BaseStats[StatType.CriticalDamage];
@@ -172,8 +172,8 @@ public partial class Player : Character
         Char.SecondaryStats[StatType.MaxHP] = MaxHP; // Save secondary stats
         Char.SecondaryStats[StatType.MaxMP] = MaxMP;
         Char.SecondaryStats[StatType.MaxMS] = MaxMS;
-        Char.SecondaryStats[StatType.MovementSpeed] = MovementSpeed;
-        Char.SecondaryStats[StatType.LifeRegeneration] = LifeRegeneration;
+        Char.SecondaryStats[StatType.Speed] = MovementSpeed;
+        Char.SecondaryStats[StatType.Vitality] = LifeRegeneration;
         Char.SecondaryStats[StatType.DodgeChance] = DodgeChance;
         Char.SecondaryStats[StatType.CriticalChance] = CriticalChance;
         Char.SecondaryStats[StatType.CriticalDamage] = CriticalDamage;

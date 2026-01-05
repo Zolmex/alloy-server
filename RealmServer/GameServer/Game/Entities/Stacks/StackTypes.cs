@@ -226,15 +226,15 @@ public class DesecratedStack : Stack
     {
         if (add)
         {
-            player.AddIncreasedBonus(StatType.LifeRegeneration, -DesecratedScale);
+            player.AddIncreasedBonus(StatType.Vitality, -DesecratedScale);
             player.AddIncreasedBonus(StatType.Defense, -DesecratedScale);
-            player.AddIncreasedBonus(StatType.MovementSpeed, -DesecratedScale);
+            player.AddIncreasedBonus(StatType.Speed, -DesecratedScale);
         }
         else
         {
-            player.RemoveIncreasedBonus(StatType.LifeRegeneration, -DesecratedScale);
+            player.RemoveIncreasedBonus(StatType.Vitality, -DesecratedScale);
             player.RemoveIncreasedBonus(StatType.Defense, -DesecratedScale);
-            player.RemoveIncreasedBonus(StatType.MovementSpeed, -DesecratedScale);
+            player.RemoveIncreasedBonus(StatType.Speed, -DesecratedScale);
         }
     }
 

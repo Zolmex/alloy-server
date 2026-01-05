@@ -45,7 +45,10 @@ public enum VerifyStatus
     [Description("Success")] Success,
 
     [Description("Invalid account credentials.")]
-    InvalidCredentials
+    InvalidCredentials,
+    
+    [Description("Internal server error.")]
+    InternalError
 }
 
 public enum StatType
@@ -72,8 +75,8 @@ public enum StatType
     Inventory11,
     Attack,
     Defense,
-    MovementSpeed,
-    LifeRegeneration,
+    Speed,
+    Vitality,
     Wisdom,
     Dexterity,
     Condition1,
@@ -137,7 +140,7 @@ public enum StatType
     Unused1,
     Unused2,
     Unused3,
-    DodgeChance,
+    DodgeChance, // TODO: delete all Astrum stats
     CriticalChance,
     CriticalDamage,
     MaxMS,

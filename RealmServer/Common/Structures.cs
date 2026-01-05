@@ -239,7 +239,7 @@ public struct StatData
             StatType.DodgeChanceBonus => true,
             StatType.AttackSpeed => true,
             StatType.AttackSpeedBonus => true,
-            StatType.MovementSpeed => true,
+            StatType.Speed => true,
             StatType.MovementSpeedBonus => true,
             _ => false
         };

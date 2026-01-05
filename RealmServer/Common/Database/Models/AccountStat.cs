@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountStat : IDbSerializable
+public partial class AccountStat
 {
     public int Id { get; set; }
 
@@ -24,24 +24,28 @@ public partial class AccountStat : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(BestCharFame!.Value);
-        wtr.Write(CurrentFame!.Value);
-        wtr.Write(TotalFame!.Value);
-        wtr.Write(CurrentCredits!.Value);
-        wtr.Write(TotalCredits!.Value);
+        wtr.Write(BestCharFame ?? 0);
+        wtr.Write(CurrentFame ?? 0);
+        wtr.Write(TotalFame ?? 0);
+        wtr.Write(CurrentCredits ?? 0);
+        wtr.Write(TotalCredits ?? 0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static AccountStat Read(NetworkReader rdr)
     {
-        return new AccountStat()
-        {
-            Id = rdr.ReadInt32(),
-            BestCharFame = rdr.ReadUInt32(),
-            CurrentFame = rdr.ReadUInt32(),
-            TotalFame = rdr.ReadUInt32(),
-            CurrentCredits = rdr.ReadUInt32(),
-            TotalCredits = rdr.ReadUInt32()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+
+        var ret = new AccountStat();
+        ret.Id = rdr.ReadInt32();
+        ret.BestCharFame = rdr.ReadUInt32();
+        ret.CurrentFame = rdr.ReadUInt32();
+        ret.TotalFame = rdr.ReadUInt32();
+        ret.CurrentCredits = rdr.ReadUInt32();
+        ret.TotalCredits = rdr.ReadUInt32();
+        return ret;
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterInventory : IDbSerializable
+public partial class CharacterInventory
 {
     public int CharacterId { get; set; }
 
@@ -18,20 +18,24 @@ public partial class CharacterInventory : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(CharacterId);
         wtr.Write(SlotId);
-        wtr.Write(ItemType!.Value);
-        wtr.Write(ItemData);
+        wtr.Write(ItemType ?? 0);
+        wtr.Write(ItemData ?? []);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static CharacterInventory Read(NetworkReader rdr)
     {
-        return new CharacterInventory()
-        {
-            CharacterId = rdr.ReadInt32(),
-            SlotId =  rdr.ReadInt32(),
-            ItemType = rdr.ReadUInt16(),
-            ItemData = rdr.Read<byte>()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new CharacterInventory();
+        ret.CharacterId = rdr.ReadInt32();
+        ret.SlotId = rdr.ReadInt32();
+        ret.ItemType = rdr.ReadUInt16();
+        ret.ItemData = rdr.Read<byte>();
+        return ret;
     }
 }

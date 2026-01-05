@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class ClassStat : IDbSerializable
+public partial class ClassStat
 {
     public int Id { get; set; }
 
@@ -20,22 +20,26 @@ public partial class ClassStat : IDbSerializable
     
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+
         wtr.Write(Id);
-        wtr.Write(ObjectType!.Value);
-        wtr.Write(BestLevel!.Value);
-        wtr.Write(BestFame!.Value);
-        wtr.Write(AccStatsId!.Value);
+        wtr.Write(ObjectType ?? 0);
+        wtr.Write(BestLevel ?? 0);
+        wtr.Write(BestFame ?? 0);
+        wtr.Write(AccStatsId ?? 0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public static ClassStat Read(NetworkReader rdr)
     {
-        return new ClassStat()
-        {
-            Id = rdr.ReadInt32(),
-            ObjectType = rdr.ReadUInt16(),
-            BestLevel = rdr.ReadUInt16(),
-            BestFame = rdr.ReadUInt32(),
-            AccStatsId = rdr.ReadInt32()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new ClassStat();
+        ret.Id = rdr.ReadInt32();
+        ret.ObjectType = rdr.ReadUInt16();
+        ret.BestLevel = rdr.ReadUInt16();
+        ret.BestFame = rdr.ReadUInt32();
+        ret.AccStatsId = rdr.ReadInt32();
+        return ret;
     }
 }

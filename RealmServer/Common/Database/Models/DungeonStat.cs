@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class DungeonStat : IDbSerializable
+public partial class DungeonStat
 {
     public int Id { get; set; }
 
@@ -12,22 +12,26 @@ public partial class DungeonStat : IDbSerializable
 
     public ushort? CompletedCount { get; set; }
 
-    public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
-    
     public void Write(NetworkWriter wtr)
     {
+        wtr.Write((byte)1);
+        
         wtr.Write(Id);
-        wtr.Write(DungeonName!);
-        wtr.Write(CompletedCount!.Value);
+        wtr.Write(DungeonName ?? "");
+        wtr.Write(CompletedCount ?? 0);
     }
 
-    public IDbSerializable Read(NetworkReader rdr)
+    public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
+
+    public static DungeonStat Read(NetworkReader rdr)
     {
-        return new DungeonStat()
-        {
-            Id = rdr.ReadInt32(),
-            DungeonName =  rdr.ReadUTF(),
-            CompletedCount = rdr.ReadUInt16()
-        };
+        if (rdr.ReadByte() == 0) // Empty flag
+            return null;
+        
+        var ret = new DungeonStat();
+        ret.Id = rdr.ReadInt32();
+        ret.DungeonName = rdr.ReadUTF();
+        ret.CompletedCount = rdr.ReadUInt16();
+        return ret;
     }
 }

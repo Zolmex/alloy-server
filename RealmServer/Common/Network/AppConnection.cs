@@ -186,6 +186,7 @@ public class AppConnection
             msg.Handle(this); // Handler is implemented by each individual app
         }
 
+        _receiveState.Reset();
         StartReceive();
     }
 

@@ -18,6 +18,8 @@ public partial class AlloyContext : DbContext
 
     public virtual DbSet<Account> Accounts { get; set; }
 
+    public virtual DbSet<AccountSkin> AccountSkins { get; set; }
+
     public virtual DbSet<AccountStat> AccountStats { get; set; }
 
     public virtual DbSet<Character> Characters { get; set; }
@@ -52,6 +54,8 @@ public partial class AlloyContext : DbContext
 
             entity.HasIndex(e => e.AccStatsId, "acc_stats_id");
 
+            entity.HasIndex(e => e.GuildMemberId, "guild_member_id");
+
             entity.HasIndex(e => e.LoginId, "login_id");
 
             entity.HasIndex(e => e.Name, "name").IsUnique();
@@ -59,29 +63,50 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AccStatsId).HasColumnName("acc_stats_id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("'now()'")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
+            entity.Property(e => e.GuildMemberId).HasColumnName("guild_member_id");
             entity.Property(e => e.GuildName)
                 .HasMaxLength(255)
                 .HasColumnName("guild_name");
             entity.Property(e => e.IsAdmin).HasColumnName("is_admin");
             entity.Property(e => e.IsBanned).HasColumnName("is_banned");
             entity.Property(e => e.LoginId).HasColumnName("login_id");
+            entity.Property(e => e.MaxChars).HasColumnName("max_chars");
             entity.Property(e => e.Name)
                 .HasMaxLength(30)
                 .HasColumnName("name");
+            entity.Property(e => e.NextCharId).HasColumnName("next_char_id");
             entity.Property(e => e.Rank).HasColumnName("rank");
-            entity.Property(e => e.MaxChars).HasColumnName("max_chars");
             entity.Property(e => e.VaultCount).HasColumnName("vault_count");
 
             entity.HasOne(d => d.AccStats).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.AccStatsId)
                 .HasConstraintName("Accounts_ibfk_1");
 
+            entity.HasOne(d => d.GuildMember).WithMany(p => p.Accounts)
+                .HasForeignKey(d => d.GuildMemberId)
+                .HasConstraintName("Accounts_ibfk_3");
+
             entity.HasOne(d => d.Login).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.LoginId)
                 .HasConstraintName("Accounts_ibfk_2");
+        });
+
+        modelBuilder.Entity<AccountSkin>(entity =>
+        {
+            entity.HasKey(e => new { e.AccountId, e.SkinType }).HasName("PRIMARY");
+
+            entity.ToTable("Account_Skins");
+
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.SkinType).HasColumnName("skin_type");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.AccountSkins)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Account_Skins_ibfk_1");
         });
 
         modelBuilder.Entity<AccountStat>(entity =>
@@ -115,11 +140,12 @@ public partial class AlloyContext : DbContext
             entity.HasIndex(e => e.KillStatsId, "kill_stats_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AccCharId).HasColumnName("acc_char_id");
             entity.Property(e => e.AccId).HasColumnName("acc_id");
             entity.Property(e => e.CharStatsId).HasColumnName("char_stats_id");
             entity.Property(e => e.CombatStatsId).HasColumnName("combat_stats_id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("'now()'")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CurrentFame).HasColumnName("current_fame");
@@ -178,7 +204,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CharId).HasColumnName("char_id");
             entity.Property(e => e.DeadAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("'now()'")
                 .HasColumnType("datetime")
                 .HasColumnName("dead_at");
             entity.Property(e => e.DeathFame).HasColumnName("death_fame");
@@ -295,7 +321,7 @@ public partial class AlloyContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("'now()'")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CurrentFame).HasColumnName("current_fame");
@@ -311,28 +337,22 @@ public partial class AlloyContext : DbContext
 
         modelBuilder.Entity<GuildMember>(entity =>
         {
-            entity.HasKey(e => new { e.GuildId, e.AccountId }).HasName("PRIMARY");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Guild_Members");
 
-            entity.HasIndex(e => e.AccountId, "account_id");
+            entity.HasIndex(e => e.GuildId, "guild_id");
 
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.GuildId).HasColumnName("guild_id");
-            entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.GuildRank).HasColumnName("guild_rank");
             entity.Property(e => e.LastSeenAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasDefaultValueSql("'now()'")
                 .HasColumnType("datetime")
                 .HasColumnName("last_seen_at");
 
-            entity.HasOne(d => d.Account).WithMany(p => p.GuildMembers)
-                .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Guild_Members_ibfk_2");
-
             entity.HasOne(d => d.Guild).WithMany(p => p.GuildMembers)
                 .HasForeignKey(d => d.GuildId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Guild_Members_ibfk_1");
         });
 
@@ -363,6 +383,9 @@ public partial class AlloyContext : DbContext
             entity.HasIndex(e => e.Name, "name").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IPAddress)
+                .HasMaxLength(30)
+                .HasColumnName("ip_address");
             entity.Property(e => e.LastLoginAt)
                 .HasColumnType("datetime")
                 .HasColumnName("last_login_at");
@@ -375,9 +398,6 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.PasswordSalt)
                 .HasColumnType("text")
                 .HasColumnName("password_salt");
-            entity.Property(e => e.IPAddress)
-                .HasMaxLength(30)
-                .HasColumnName("ip_address");
         });
 
         OnModelCreatingPartial(modelBuilder);
