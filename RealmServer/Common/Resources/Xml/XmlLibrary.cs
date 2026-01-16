@@ -37,6 +37,12 @@ public static class XmlLibrary
     /// <param name="dir">Directory containing XML asset files.</param>
     public static void Load(string dir)
     {
+        if (!Directory.Exists(dir))
+        {
+            _log.Error($"XMLs directory not found. '{dir}'");
+            return;
+        }
+        
         var files = Directory.EnumerateFiles(dir, "*xml", SearchOption.AllDirectories);
 
         Parallel.ForEach(files, file =>

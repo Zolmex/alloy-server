@@ -63,7 +63,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.AccStatsId).HasColumnName("acc_stats_id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("'now()'")
+                .HasDefaultValueSql("NOW()")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.GuildMemberId).HasColumnName("guild_member_id");
@@ -145,7 +145,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.CharStatsId).HasColumnName("char_stats_id");
             entity.Property(e => e.CombatStatsId).HasColumnName("combat_stats_id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("'now()'")
+                .HasDefaultValueSql("NOW()")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CurrentFame).HasColumnName("current_fame");
@@ -204,7 +204,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CharId).HasColumnName("char_id");
             entity.Property(e => e.DeadAt)
-                .HasDefaultValueSql("'now()'")
+                .HasDefaultValueSql("NOW()")
                 .HasColumnType("datetime")
                 .HasColumnName("dead_at");
             entity.Property(e => e.DeathFame).HasColumnName("death_fame");
@@ -321,7 +321,7 @@ public partial class AlloyContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("'now()'")
+                .HasDefaultValueSql("NOW()")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CurrentFame).HasColumnName("current_fame");
@@ -347,7 +347,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.GuildId).HasColumnName("guild_id");
             entity.Property(e => e.GuildRank).HasColumnName("guild_rank");
             entity.Property(e => e.LastSeenAt)
-                .HasDefaultValueSql("'now()'")
+                .HasDefaultValueSql("NOW()")
                 .HasColumnType("datetime")
                 .HasColumnName("last_seen_at");
 

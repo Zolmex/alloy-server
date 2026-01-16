@@ -23,7 +23,7 @@ public static class ModelUtils
                     new XElement("Name", acc.GuildName),
                     new XElement("Rank", acc.GuildMember!.GuildRank))
                 : null,
-                acc.IsAdmin!.Value ? new XElement("Admin") : null,
+                acc.IsAdmin ? new XElement("Admin") : null,
                 acc.AccStats.ToXml(acc)
             );
         }

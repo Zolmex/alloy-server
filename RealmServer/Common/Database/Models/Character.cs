@@ -31,11 +31,11 @@ public partial class Character
 
     public ushort? MagicPotions { get; set; }
 
-    public bool? IsDead { get; set; }
+    public bool IsDead { get; set; }
 
-    public bool? IsDeleted { get; set; }
+    public bool IsDeleted { get; set; }
 
-    public bool? HasBackpack { get; set; }
+    public bool HasBackpack { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -85,9 +85,9 @@ public partial class Character
         wtr.Write(PetType ?? 0);
         wtr.Write(HealthPotions ?? 0);
         wtr.Write(MagicPotions ?? 0);
-        wtr.Write(IsDead ?? false);
-        wtr.Write(IsDeleted ?? false);
-        wtr.Write(HasBackpack ?? false);
+        wtr.Write(IsDead);
+        wtr.Write(IsDeleted);
+        wtr.Write(HasBackpack);
         wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
         wtr.Write((DeletedAt ?? DateTime.MinValue).ToUnixTimestamp());
         wtr.Write(AccId ?? 0);

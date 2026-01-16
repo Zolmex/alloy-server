@@ -35,9 +35,9 @@ public partial class Account
 
     public string? GuildName { get; set; }
 
-    public bool? IsAdmin { get; set; }
+    public bool IsAdmin { get; set; }
 
-    public bool? IsBanned { get; set; }
+    public bool IsBanned { get; set; }
 
     public short? MaxChars { get; set; }
 
@@ -71,8 +71,8 @@ public partial class Account
         wtr.Write(Name);
         wtr.Write(Rank ?? 0);
         wtr.Write(GuildName ?? "");
-        wtr.Write(IsAdmin ?? false);
-        wtr.Write(IsBanned ?? false);
+        wtr.Write(IsAdmin);
+        wtr.Write(IsBanned);
         wtr.Write(MaxChars ?? (short)NewAccountsConfig.Config.MaxChars);
         wtr.Write(VaultCount ?? (short)NewAccountsConfig.Config.VaultCount);
         wtr.Write(NextCharId ?? 1);
