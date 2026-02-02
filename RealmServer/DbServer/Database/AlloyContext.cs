@@ -43,8 +43,11 @@ public partial class AlloyContext : DbContext
     public virtual DbSet<GuildMember> GuildMembers { get; set; }
 
     public virtual DbSet<KillStat> KillStats { get; set; }
-
     public virtual DbSet<Login> Logins { get; set; }
+    
+    public virtual DbSet<AccountLock> AccountLocks { get; set; }
+    
+    public virtual DbSet<AccountIgnore> AccountIgnores { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

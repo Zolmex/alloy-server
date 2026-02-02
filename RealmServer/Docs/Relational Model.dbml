@@ -24,6 +24,24 @@ Table Account_Stats {
   total_credits "int unsigned"
 }
 
+Table Account_Locks {
+  account_id integer [ref: > Accounts.id]
+  locked_id integer [ref: > Accounts.id]
+  
+  indexes {
+    (account_id, locked_id) [pk]
+  }
+}
+
+Table Account_Ignores {
+  account_id integer [ref: > Accounts.id]
+  ignored_id integer [ref: > Accounts.id]
+  
+  indexes {
+    (account_id, ignored_id) [pk]
+  }
+}
+
 Table Class_Stats {
   id integer [pk, increment]
   object_type "smallint unsigned"

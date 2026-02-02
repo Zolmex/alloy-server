@@ -1,6 +1,6 @@
 CREATE TABLE `Accounts` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL UNIQUE,
+  `name` varchar(30) UNIQUE NOT NULL,
   `rank` smallint,
   `guild_name` varchar(255),
   `is_admin` boolean,
@@ -23,6 +23,18 @@ CREATE TABLE `Account_Stats` (
   `total_credits` int unsigned
 );
 
+CREATE TABLE `Account_Locks` (
+  `account_id` integer,
+  `locked_id` integer,
+  PRIMARY KEY (`account_id`, `locked_id`)
+);
+
+CREATE TABLE `Account_Ignores` (
+  `account_id` integer,
+  `ignored_id` integer,
+  PRIMARY KEY (`account_id`, `ignored_id`)
+);
+
 CREATE TABLE `Class_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `object_type` smallint unsigned,
@@ -33,7 +45,7 @@ CREATE TABLE `Class_Stats` (
 
 CREATE TABLE `Logins` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL UNIQUE,
+  `name` varchar(30) UNIQUE NOT NULL,
   `password_hash` text,
   `password_salt` text,
   `last_login_at` datetime,
@@ -165,6 +177,14 @@ ALTER TABLE `Accounts` ADD FOREIGN KEY (`acc_stats_id`) REFERENCES `Account_Stat
 ALTER TABLE `Accounts` ADD FOREIGN KEY (`login_id`) REFERENCES `Logins` (`id`);
 
 ALTER TABLE `Accounts` ADD FOREIGN KEY (`guild_member_id`) REFERENCES `Guild_Members` (`id`);
+
+ALTER TABLE `Account_Locks` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Locks` ADD FOREIGN KEY (`locked_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Ignores` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Ignores` ADD FOREIGN KEY (`ignored_id`) REFERENCES `Accounts` (`id`);
 
 ALTER TABLE `Class_Stats` ADD FOREIGN KEY (`acc_stats_id`) REFERENCES `Account_Stats` (`id`);
 
