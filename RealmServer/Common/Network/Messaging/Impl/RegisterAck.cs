@@ -3,7 +3,7 @@ using System;
 
 namespace Common.Network.Messaging.Impl;
 
-public record struct RegisterMessageAck : IAppMessageAck
+public record struct RegisterAck : IAppMessageAck
 {
     public AppMessageId MessageId => AppMessageId.Register;
     public int Sequence { get; set; }

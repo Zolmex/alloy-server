@@ -20,26 +20,28 @@ public partial class ClassStat
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-
         wtr.Write(Id);
         wtr.Write(ObjectType ?? 0);
         wtr.Write(BestLevel ?? 0);
         wtr.Write(BestFame ?? 0);
-        wtr.Write(AccStatsId ?? 0);
+        if (AccStats != null)
+            AccStats.Write(wtr);
+        else wtr.Write(0);
     }
 
     public static ClassStat Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new ClassStat();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.ObjectType = rdr.ReadUInt16();
         ret.BestLevel = rdr.ReadUInt16();
         ret.BestFame = rdr.ReadUInt32();
-        ret.AccStatsId = rdr.ReadInt32();
+        ret.AccStats = AccountStat.Read(rdr);
+        ret.AccStatsId = ret.AccStats?.Id ?? 0;
         return ret;
     }
 }

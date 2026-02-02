@@ -26,7 +26,7 @@ internal class Program
 {
     private static readonly Logger Log = new(typeof(Program));
 
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         Console.Title = $"Realm Server v{Assembly.GetExecutingAssembly().GetName().Version} - GameServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -50,7 +50,7 @@ internal class Program
             WorldLibrary.Load(config.WorldsDir);
             BehaviorLibrary.Load();
 
-            DbClientOld.Connect(DatabaseConfig.Config);
+            await DbClient.Connect(DatabaseConfig.Config);
 
             ServerControl.Connect(MemberType.AppEngine, "GameServer", new ServerInfo { Port = config.Port, Address = config.Address, MaxPlayers = config.MaxPlayers, AdminOnly = config.AdminOnly });
 

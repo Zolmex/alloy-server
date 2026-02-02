@@ -12,7 +12,7 @@ public class VerifyAckHandler : IMessageHandler
     
     public void Handle(IAppMessage msg, AppConnection con)
     {
-        var pkt = (VerifyMessageAck)msg;
+        var pkt = (VerifyAck)msg;
         Logger.Debug($"Verify:{pkt.Status}");
     }
 }

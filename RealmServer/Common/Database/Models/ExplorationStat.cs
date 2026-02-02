@@ -24,8 +24,6 @@ public partial class ExplorationStat
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(TilesUncovered ?? 0);
         wtr.Write(QuestsCompleted ?? 0);
@@ -37,11 +35,12 @@ public partial class ExplorationStat
 
     public static ExplorationStat Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new ExplorationStat();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.TilesUncovered = rdr.ReadUInt32();
         ret.QuestsCompleted = rdr.ReadUInt32();
         ret.Escapes = rdr.ReadUInt32();

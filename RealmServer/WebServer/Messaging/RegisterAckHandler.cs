@@ -12,7 +12,7 @@ public class RegisterAckHandler : IMessageHandler
     
     public void Handle(IAppMessage msg, AppConnection con)
     {
-        var pkt = (RegisterMessageAck)msg;
+        var pkt = (RegisterAck)msg;
         Logger.Debug($"Register:{pkt.Status}");
     }
 }

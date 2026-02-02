@@ -25,8 +25,6 @@ public partial class Guild
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(Name ?? "");
         wtr.Write(Level ?? 0);
@@ -38,11 +36,12 @@ public partial class Guild
 
     public static Guild Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new Guild();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.Name = rdr.ReadUTF();
         ret.Level = rdr.ReadInt16();
         ret.CurrentFame = rdr.ReadUInt32();

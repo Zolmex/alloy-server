@@ -32,8 +32,6 @@ public partial class CharacterStat
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(Hp ?? 0);
         wtr.Write(Mp ?? 0);
@@ -49,11 +47,12 @@ public partial class CharacterStat
 
     public static CharacterStat Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new CharacterStat();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.Hp = rdr.ReadUInt32();
         ret.Mp = rdr.ReadUInt32();
         ret.MaxHp = rdr.ReadUInt32();

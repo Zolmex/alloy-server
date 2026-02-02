@@ -18,8 +18,6 @@ public partial class CharacterInventory
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(CharacterId);
         wtr.Write(SlotId);
         wtr.Write(ItemType ?? 0);
@@ -28,9 +26,6 @@ public partial class CharacterInventory
 
     public static CharacterInventory Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
-            return null;
-        
         var ret = new CharacterInventory();
         ret.CharacterId = rdr.ReadInt32();
         ret.SlotId = rdr.ReadInt32();

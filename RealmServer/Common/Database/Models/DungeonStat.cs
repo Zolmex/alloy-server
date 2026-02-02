@@ -14,8 +14,6 @@ public partial class DungeonStat
 
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(DungeonName ?? "");
         wtr.Write(CompletedCount ?? 0);
@@ -25,11 +23,12 @@ public partial class DungeonStat
 
     public static DungeonStat Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new DungeonStat();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.DungeonName = rdr.ReadUTF();
         ret.CompletedCount = rdr.ReadUInt16();
         return ret;

@@ -20,7 +20,7 @@ public class VerifyHandler : IMessageHandler
     public void Handle(IAppMessage msg, AppConnection con)
     {
         var pkt = (VerifyMessage)msg;
-        var response = new VerifyMessageAck { Sequence = pkt.Sequence };
+        var response = new VerifyAck { Sequence = pkt.Sequence };
         Logger.Debug($"Verify: {pkt.Username}:{pkt.Password}");
 
         var status = VerifyStatus.Success;

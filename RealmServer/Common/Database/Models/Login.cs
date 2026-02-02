@@ -22,8 +22,6 @@ public partial class Login
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(Name);
         wtr.Write(PasswordHash ?? "");
@@ -34,11 +32,12 @@ public partial class Login
 
     public static Login Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new Login();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.Name = rdr.ReadUTF();
         ret.PasswordHash = rdr.ReadUTF();
         ret.PasswordSalt = rdr.ReadUTF();

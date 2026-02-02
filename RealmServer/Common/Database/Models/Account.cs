@@ -65,8 +65,6 @@ public partial class Account
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(Name);
         wtr.Write(Rank ?? 0);
@@ -77,28 +75,25 @@ public partial class Account
         wtr.Write(VaultCount ?? (short)NewAccountsConfig.Config.VaultCount);
         wtr.Write(NextCharId ?? 1);
         wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
-        wtr.Write(AccStatsId ?? 0);
-        wtr.Write(LoginId ?? 0);
-        wtr.Write(GuildMemberId ?? 0);
-        
         if (AccStats != null)
             AccStats.Write(wtr);
-        else wtr.Write((byte)0);
-        if (GuildMember != null)
-            GuildMember.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
         if (Login != null)
             Login.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
+        if (GuildMember != null)
+            GuildMember.Write(wtr);
+        else wtr.Write(0);
     }
 
     public static Account Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var acc = new Account();
-        acc.Id = rdr.ReadInt32();
+        acc.Id = id;
         acc.Name = rdr.ReadUTF();
         acc.Rank = rdr.ReadInt16();
         acc.GuildName = rdr.ReadUTF();
@@ -108,12 +103,12 @@ public partial class Account
         acc.VaultCount = rdr.ReadInt16();
         acc.NextCharId = rdr.ReadInt16();
         acc.CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
-        acc.AccStatsId = rdr.ReadInt32();
-        acc.LoginId = rdr.ReadInt32();
-        acc.GuildMemberId = rdr.ReadInt32();
         acc.AccStats = AccountStat.Read(rdr);
-        acc.GuildMember = GuildMember.Read(rdr);
+        acc.AccStatsId = acc.AccStats?.Id ?? 0;
         acc.Login = Login.Read(rdr);
+        acc.LoginId = acc.Login?.Id ?? 0;
+        acc.GuildMember = GuildMember.Read(rdr);
+        acc.GuildMemberId = acc.GuildMember?.Id ?? 0;
         return acc;
     }
 }

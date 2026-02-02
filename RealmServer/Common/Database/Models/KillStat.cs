@@ -34,8 +34,6 @@ public partial class KillStat
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(MonsterKills ?? 0);
         wtr.Write(MonsterAssists ?? 0);
@@ -52,11 +50,12 @@ public partial class KillStat
 
     public static KillStat Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new KillStat();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.MonsterKills = rdr.ReadUInt32();
         ret.MonsterAssists = rdr.ReadUInt32();
         ret.GodKills = rdr.ReadUInt32();

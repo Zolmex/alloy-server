@@ -5,7 +5,7 @@ using System;
 
 namespace Common.Network.Messaging.Impl;
 
-public record struct VerifyMessageAck : IAppMessageAck
+public record struct VerifyAck : IAppMessageAck
 {
     public AppMessageId MessageId => AppMessageId.Verify;
     public int Sequence { get; set; }

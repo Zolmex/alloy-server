@@ -71,8 +71,6 @@ public partial class Character
     
     public void Write(NetworkWriter wtr)
     {
-        wtr.Write((byte)1);
-        
         wtr.Write(Id);
         wtr.Write(AccCharId ?? 0);
         wtr.Write(ObjectType ?? 0);
@@ -91,36 +89,31 @@ public partial class Character
         wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
         wtr.Write((DeletedAt ?? DateTime.MinValue).ToUnixTimestamp());
         wtr.Write(AccId ?? 0);
-        wtr.Write(CharStatsId ?? 0);
-        wtr.Write(ExploStatsId ?? 0);
-        wtr.Write(CombatStatsId ?? 0);
-        wtr.Write(KillStatsId ?? 0);
-        wtr.Write(DungeonStatsId ?? 0);
-        
         if (CharStats != null)
             CharStats.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
         if (CombatStats != null)
             CombatStats.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
         if (DungeonStats != null)
             DungeonStats.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
         if (ExploStats != null)
             ExploStats.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
         if (KillStats != null)
             KillStats.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
     }
 
     public static Character Read(NetworkReader rdr)
     {
-        if (rdr.ReadByte() == 0) // Empty flag
+        var id = rdr.ReadInt32();
+        if (id == 0) // ID flag. 0 for null
             return null;
         
         var ret = new Character();
-        ret.Id = rdr.ReadInt32();
+        ret.Id = id;
         ret.AccCharId = rdr.ReadInt32();
         ret.ObjectType = rdr.ReadUInt16();
         ret.Level = rdr.ReadUInt16();
@@ -138,16 +131,16 @@ public partial class Character
         ret.CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
         ret.DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
         ret.AccId = rdr.ReadInt32();
-        ret.CharStatsId = rdr.ReadInt32();
-        ret.ExploStatsId = rdr.ReadInt32();
-        ret.CombatStatsId = rdr.ReadInt32();
-        ret.KillStatsId = rdr.ReadInt32();
-        ret.DungeonStatsId = rdr.ReadInt32();
         ret.CharStats = CharacterStat.Read(rdr);
-        ret.CombatStats = CombatStat.Read(rdr);
-        ret.DungeonStats = DungeonStat.Read(rdr);
+        ret.CharStatsId = ret.CharStats?.Id ?? 0;
         ret.ExploStats = ExplorationStat.Read(rdr);
+        ret.ExploStatsId = ret.ExploStats?.Id ?? 0;
+        ret.CombatStats = CombatStat.Read(rdr);
+        ret.CombatStatsId = ret.CombatStats?.Id ?? 0;
         ret.KillStats = KillStat.Read(rdr);
+        ret.KillStatsId = ret.KillStats?.Id ?? 0;
+        ret.DungeonStats = DungeonStat.Read(rdr);
+        ret.DungeonStatsId = ret.DungeonStats?.Id ?? 0;
         return ret;
     }
 }
