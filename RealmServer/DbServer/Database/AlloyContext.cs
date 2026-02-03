@@ -111,6 +111,36 @@ public partial class AlloyContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Account_Skins_ibfk_1");
         });
+        
+        modelBuilder.Entity<AccountIgnore>(entity =>
+        {
+            entity.HasKey(e => new { e.AccountId, e.IgnoredId }).HasName("PRIMARY");
+
+            entity.ToTable("Account_Ignores");
+
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.IgnoredId).HasColumnName("ignored_id");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.AccountIgnores)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Account_Ignores_ibfk_1");
+        });
+        
+        modelBuilder.Entity<AccountLock>(entity =>
+        {
+            entity.HasKey(e => new { e.AccountId, e.LockedId }).HasName("PRIMARY");
+
+            entity.ToTable("Account_Locks");
+
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.LockedId).HasColumnName("locked_id");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.AccountLocks)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Account_Locks_ibfk_1");
+        });
 
         modelBuilder.Entity<AccountStat>(entity =>
         {
