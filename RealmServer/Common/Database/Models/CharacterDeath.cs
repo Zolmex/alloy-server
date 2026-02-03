@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterDeath
+public partial class CharacterDeath : IDbModel
 {
+    public string Key => $"characterDeath.{Id}";
+    
     public int Id { get; set; }
 
     public DateTime? DeadAt { get; set; }

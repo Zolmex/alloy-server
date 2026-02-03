@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class ClassStat
+public partial class ClassStat : IDbModel
 {
+    public string Key => $"classStat.{Id}";
+    
     public int Id { get; set; }
 
     public ushort? ObjectType { get; set; }

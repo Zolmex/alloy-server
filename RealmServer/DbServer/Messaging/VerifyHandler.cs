@@ -17,16 +17,15 @@ public class VerifyHandler : IMessageHandler
 {
     public AppMessageId MessageId => AppMessageId.Verify;
 
-    public void Handle(IAppMessage msg, AppConnection con)
+    public async Task Handle(IAppMessage msg, AppConnection con)
     {
         var pkt = (VerifyMessage)msg;
         var response = new VerifyAck { Sequence = pkt.Sequence };
         Logger.Debug($"Verify: {pkt.Username}:{pkt.Password}");
 
         var status = VerifyStatus.Success;
-        using var dbCon = NetworkService.ContextFactory.CreateDbContext();
 
-        var login = dbCon.Logins.FirstOrDefault(l => l.Name == pkt.Username);
+        var login = await DbCache.Logins.FirstOrDefaultAsync(l => l.Name == pkt.Username);
         if (login == null)
         {
             status = VerifyStatus.InvalidCredentials;
@@ -43,7 +42,7 @@ public class VerifyHandler : IMessageHandler
             return;
         }
 
-        var acc = dbCon.Accounts.Include(i => i.AccStats).FirstOrDefault(i => i.LoginId == login.Id);
+        var acc = await DbCache.Accounts.FirstOrDefaultAsync(acc => acc.LoginId == login.Id);
         if (acc == null)
         {
             response.Status = VerifyStatus.InternalError;

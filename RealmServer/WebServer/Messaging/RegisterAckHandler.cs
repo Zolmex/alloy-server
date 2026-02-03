@@ -10,7 +10,7 @@ public class RegisterAckHandler : IMessageHandler
 {
     public AppMessageId MessageId => AppMessageId.Register;
     
-    public void Handle(IAppMessage msg, AppConnection con)
+    public async Task Handle(IAppMessage msg, AppConnection con)
     {
         var pkt = (RegisterAck)msg;
         Logger.Debug($"Register:{pkt.Status}");

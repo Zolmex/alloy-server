@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class DungeonStat
+public partial class DungeonStat : IDbModel
 {
+    public string Key => $"dungeonStat.{Id}";
+    
     public int Id { get; set; }
 
     public string? DungeonName { get; set; }

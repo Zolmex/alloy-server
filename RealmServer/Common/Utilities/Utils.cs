@@ -203,4 +203,11 @@ public static class Utils
     {
         return t.GetAwaiter().GetResult();
     }
+    
+    public static bool IsNumericType(this Type type)
+    {
+        return type == typeof(int) || type == typeof(long) || 
+               type == typeof(float) || type == typeof(double) ||
+               type == typeof(decimal);
+    }
 }

@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountLock
+public partial class AccountLock : IDbModel
 {
+    public string Key => $"accountLock.{AccountId}.{LockedId}";
+    
     public int AccountId { get; set; }
     public Account Account { get; set; } = null!;
     public int LockedId { get; set; }

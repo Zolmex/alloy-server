@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterInventory
+public partial class CharacterInventory : IDbModel
 {
+    public string Key => $"characterInventory.{CharacterId}.{SlotId}";
+    
     public int CharacterId { get; set; }
 
     public int SlotId { get; set; }

@@ -10,7 +10,7 @@ public class VerifyAckHandler : IMessageHandler
 {
     public AppMessageId MessageId => AppMessageId.Verify;
     
-    public void Handle(IAppMessage msg, AppConnection con)
+    public async Task Handle(IAppMessage msg, AppConnection con)
     {
         var pkt = (VerifyAck)msg;
         Logger.Debug($"Verify:{pkt.Status}");

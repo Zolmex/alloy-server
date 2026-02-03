@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountSkin
+public partial class AccountSkin : IDbModel
 {
+    public string Key => $"accountSkin.{AccountId}.{SkinType}";
+    
     public int AccountId { get; set; }
 
     public int SkinType { get; set; }

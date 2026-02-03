@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Account
+public partial class Account : IDbModel
 {
     public static readonly Account Guest = new()
     {
@@ -26,6 +26,8 @@ public partial class Account
         CreatedAt = DateTime.Now,
         IsAdmin = false
     };
+
+    public string Key => $"account.{Id}";
     
     public int Id { get; set; }
 

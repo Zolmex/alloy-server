@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountIgnore
+public partial class AccountIgnore : IDbModel
 {
+    public string Key => $"accountIgnore.{AccountId}.{IgnoredId}";
+    
     public int AccountId { get; set; }
     public Account Account { get; set; } = null!;
     public int IgnoredId { get; set; }

@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class GuildMember
+public partial class GuildMember : IDbModel
 {
+    public string Key => $"guildMember.{Id}";
+    
     public int Id { get; set; }
 
     public short? GuildRank { get; set; }

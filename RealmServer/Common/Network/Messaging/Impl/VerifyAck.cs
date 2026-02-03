@@ -18,7 +18,7 @@ public record struct VerifyAck : IAppMessageAck
         wtr.Write((byte)Status);
         if (Status == VerifyStatus.Success)
             Account.Write(wtr);
-        else wtr.Write((byte)0);
+        else wtr.Write(0);
     }
 
     public void Read(NetworkReader rdr)

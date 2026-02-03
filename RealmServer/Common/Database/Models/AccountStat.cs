@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountStat
+public partial class AccountStat : IDbModel
 {
+    public string Key => $"accountStat.{Id}";
+    
     public int Id { get; set; }
 
     public uint? BestCharFame { get; set; }

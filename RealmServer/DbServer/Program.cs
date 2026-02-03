@@ -34,6 +34,7 @@ internal class Program
         builder.Services.AddDbContextFactory<AlloyContext>(optionsBuilder =>
         {
             optionsBuilder.UseMySQL(builder.Configuration.GetConnectionString("Default")!);
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // Default to no tracking, we handle cache manually
         });
         
         //builder.Services.AddSingleton<IBackupManager, FileBackupManager>();

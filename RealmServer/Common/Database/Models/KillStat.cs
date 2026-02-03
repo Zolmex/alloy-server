@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class KillStat
+public partial class KillStat : IDbModel
 {
+    public string Key => $"killStat.{Id}";
+    
     public int Id { get; set; }
 
     public uint? MonsterKills { get; set; }

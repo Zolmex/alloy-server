@@ -19,23 +19,22 @@ public class RegisterHandler : IMessageHandler
 
     public AppMessageId MessageId => AppMessageId.Register;
 
-    public void Handle(IAppMessage msg, AppConnection con)
+    public async Task Handle(IAppMessage msg, AppConnection con)
     {
         var pkt = (RegisterMessage)msg;
         Logger.Debug($"Register: {pkt.Username}:{pkt.Password}");
 
         var status = RegisterStatus.Success;
-        using var dbCon = NetworkService.ContextFactory.CreateDbContext();
 
         var lowerName = pkt.Username.ToLower();
         
         // Check name in use
-        if (dbCon.Logins.AsNoTracking().Any(i => i.Name.Equals(lowerName)))
+        if (await DbCache.Logins.Any(i => i.Name.Equals(lowerName)))
             status = RegisterStatus.NameInUse;
 
         // Check accounts per ip
         // TODO: using Count() is very expensive, replace with a db field
-        else if (dbCon.Logins.AsNoTracking().Count(i => i.IPAddress == pkt.IPAddress) >= MAX_ACCOUNTS_PER_IP)
+        else if (await DbCache.Logins.Count(i => i.IPAddress == pkt.IPAddress) >= MAX_ACCOUNTS_PER_IP)
             status = RegisterStatus.MaxAccountsReached;
 
         if (status == RegisterStatus.Success)
@@ -59,9 +58,9 @@ public class RegisterHandler : IMessageHandler
                 Login = new Login() { Name = lowerName, IPAddress = pkt.IPAddress, PasswordHash = (pkt.Password + salt).ToSHA1(), PasswordSalt = salt },
             };
 
-            dbCon.Accounts.Add(acc);
+            await DbCache.Accounts.UpdateOrAdd(acc);
             
-            var result = dbCon.SaveChanges();
+            var result = await DbCache.SaveChanges();
 
             if (result == 0) // No entries were added
                 status = RegisterStatus.InternalError;
