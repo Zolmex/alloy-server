@@ -29,8 +29,9 @@ public record struct VerifyAck : IAppMessageAck
         Status = (VerifyStatus)rdr.ReadByte();
         if (Status == VerifyStatus.Success)
         {
-            Account.Version = rdr.ReadInt32();
+            var version = rdr.ReadInt32();
             Account = Account.Read(rdr);
+            Account.Version = version;
         }
     }
 }

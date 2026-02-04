@@ -35,20 +35,6 @@ public partial class GuildMember : DbModel
             wtr => wtr.Write((LastSeenAt ?? DateTime.MinValue).ToUnixTimestamp()),
             rdr => LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
-        RegisterProperty("Guild",
-            wtr =>
-            {
-                var hasValue = Guild != null;
-                wtr.Write(hasValue);
-                if (hasValue)
-                    Guild.WriteProperties(wtr);
-            },
-            rdr =>
-            {
-                Guild = DbModel.Read<Guild>(rdr);
-                GuildId = Guild?.Id ?? 0;
-            }
-        );
     }
 
     public static GuildMember Read(string key)

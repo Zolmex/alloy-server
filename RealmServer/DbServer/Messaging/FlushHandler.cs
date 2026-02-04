@@ -35,6 +35,6 @@ public class FlushHandler : IMessageHandler
             Logger.Debug("You did it you son of a bitch. You did it.");
         }
 
-        await con.SendAsync(new FlushAck() { Status = status });
+        await con.SendAndReceiveAsync(new FlushAck() { Status = status });
     }
 }

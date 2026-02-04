@@ -153,14 +153,19 @@ public partial class Account : DbModel
             {
                 wtr.Write((short)AccountSkins.Count);
                 foreach (var skin in AccountSkins)
-                    wtr.Write(skin.Key);
+                {
+                    var hasValue = skin != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        skin.WriteProperties(wtr);
+                }
             },
             rdr =>
             {
                 AccountSkins.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    AccountSkins.Add(AccountSkin.Read(rdr.ReadUTF()));
+                    AccountSkins.Add(DbModel.Read<AccountSkin>(rdr));
             }
         );
         RegisterProperty("AccountIgnores",
@@ -168,14 +173,19 @@ public partial class Account : DbModel
             {
                 wtr.Write((short)AccountIgnores.Count);
                 foreach (var ignored in AccountIgnores)
-                    wtr.Write(ignored.Key);
+                {
+                    var hasValue = ignored != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        ignored.WriteProperties(wtr);
+                }
             },
             rdr =>
             {
                 AccountIgnores.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    AccountIgnores.Add(AccountIgnore.Read(rdr.ReadUTF()));
+                    AccountIgnores.Add(DbModel.Read<AccountIgnore>(rdr));
             }
         );
         RegisterProperty("AccountLocks",
@@ -183,14 +193,19 @@ public partial class Account : DbModel
             {
                 wtr.Write((short)AccountLocks.Count);
                 foreach (var locked in AccountLocks)
-                    wtr.Write(locked.Key);
+                {
+                    var hasValue = locked != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        locked.WriteProperties(wtr);
+                }
             },
             rdr =>
             {
                 AccountLocks.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    AccountLocks.Add(AccountLock.Read(rdr.ReadUTF()));
+                    AccountLocks.Add(DbModel.Read<AccountLock>(rdr));
             }
         );
         RegisterProperty("Characters",
@@ -198,14 +213,19 @@ public partial class Account : DbModel
             {
                 wtr.Write((short)Characters.Count);
                 foreach (var chr in Characters)
-                    wtr.Write(chr.Key);
+                {
+                    var hasValue = chr != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        chr.WriteProperties(wtr);
+                }
             },
             rdr =>
             {
                 Characters.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    Characters.Add(Character.Read(rdr.ReadUTF()));
+                    Characters.Add(DbModel.Read<Character>(rdr));
             }
         );
     }

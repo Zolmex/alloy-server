@@ -3,6 +3,7 @@ using Common.Network.Messaging.Impl;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Common.Database;
 public abstract class DbModel
 {
     public abstract string Key { get; }
-    public int Version { get; set; }
+    [NotMapped] public int Version { get; set; }
 
     private readonly Dictionary<string, PropertySerializer> _serializers = new();
 
@@ -75,7 +76,7 @@ public abstract class DbModel
             props[i] = property.Name;
         }
         
-        await con.SendAsync(new FlushMessage()
+        await con.SendAndReceiveAsync(new FlushMessage()
         {
             Key = Key,
             Version = Version,

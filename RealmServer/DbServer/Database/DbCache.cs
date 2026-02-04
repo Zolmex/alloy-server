@@ -48,23 +48,23 @@ public static class DbCache
         var modelName = key.Split('.')[0];
         return modelName switch
         {
-            "account" => await Accounts.Get(key),
-            "accountSkin" => await AccountSkins.Get(key),
-            "accountStat" => await AccountStats.Get(key),
-            "character" => await Characters.Get(key),
-            "characterDeath" => await CharacterDeaths.Get(key),
-            "characterInventory" => await CharacterInventories.Get(key),
-            "characterStat" => await CharacterStats.Get(key),
-            "classStat" => await ClassStats.Get(key),
-            "combatStat" => await CombatStats.Get(key),
-            "dungeonStat" => await DungeonStats.Get(key),
-            "explorationStat" => await ExplorationStats.Get(key),
-            "guild" => await Guilds.Get(key),
-            "guildMember" => await GuildMembers.Get(key),
-            "killStat" => await KillStats.Get(key),
-            "login" => await Logins.Get(key),
-            "accountLock" => await AccountLocks.Get(key),
-            "accountIgnore" => await AccountIgnores.Get(key),
+            "account" => await Accounts.GetAsync(key),
+            "accountSkin" => await AccountSkins.GetAsync(key),
+            "accountStat" => await AccountStats.GetAsync(key),
+            "character" => await Characters.GetAsync(key),
+            "characterDeath" => await CharacterDeaths.GetAsync(key),
+            "characterInventory" => await CharacterInventories.GetAsync(key),
+            "characterStat" => await CharacterStats.GetAsync(key),
+            "classStat" => await ClassStats.GetAsync(key),
+            "combatStat" => await CombatStats.GetAsync(key),
+            "dungeonStat" => await DungeonStats.GetAsync(key),
+            "explorationStat" => await ExplorationStats.GetAsync(key),
+            "guild" => await Guilds.GetAsync(key),
+            "guildMember" => await GuildMembers.GetAsync(key),
+            "killStat" => await KillStats.GetAsync(key),
+            "login" => await Logins.GetAsync(key),
+            "accountLock" => await AccountLocks.GetAsync(key),
+            "accountIgnore" => await AccountIgnores.GetAsync(key),
             _ => null
         };
     }
@@ -128,7 +128,7 @@ public static class DbCache
         }
     }
 
-    public static async Task<int> SaveChanges() // Returns the number of tables updated
+    public static async Task<int> SaveChanges() // Returns the number of entries written to the database
     {
         await using var dbContext = await NetworkService.ContextFactory.CreateDbContextAsync();
 

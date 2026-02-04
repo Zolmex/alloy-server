@@ -38,20 +38,6 @@ public partial class ClassStat : DbModel
             wtr => wtr.Write(BestFame ?? 0),
             rdr => BestFame = rdr.ReadUInt32()
         );
-        RegisterProperty("AccStats",
-            wtr =>
-            {
-                var hasValue = AccStats != null;
-                wtr.Write(hasValue);
-                if (hasValue)
-                    AccStats.WriteProperties(wtr);
-            },
-            rdr =>
-            {
-                AccStats = DbModel.Read<AccountStat>(rdr);
-                AccStatsId = AccStats?.Id ?? 0;
-            }
-        );
     }
 
     public static ClassStat Read(string key)

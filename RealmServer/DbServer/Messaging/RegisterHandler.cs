@@ -29,12 +29,12 @@ public class RegisterHandler : IMessageHandler
         var lowerName = pkt.Username.ToLower();
         
         // Check name in use
-        if (await DbCache.Logins.Any(i => i.Name.Equals(lowerName)))
+        if (await DbCache.Logins.AnyAsync(i => i.Name.Equals(lowerName)))
             status = RegisterStatus.NameInUse;
 
         // Check accounts per ip
         // TODO: using Count() is very expensive, replace with a db field
-        else if (await DbCache.Logins.Count(i => i.IPAddress == pkt.IPAddress) >= MAX_ACCOUNTS_PER_IP)
+        else if (await DbCache.Logins.CountAsync(i => i.IPAddress == pkt.IPAddress) >= MAX_ACCOUNTS_PER_IP)
             status = RegisterStatus.MaxAccountsReached;
 
         if (status == RegisterStatus.Success)
@@ -58,7 +58,7 @@ public class RegisterHandler : IMessageHandler
                 Login = new Login() { Name = lowerName, IPAddress = pkt.IPAddress, PasswordHash = (pkt.Password + salt).ToSHA1(), PasswordSalt = salt },
             };
 
-            await DbCache.Accounts.Add(acc);
+            await DbCache.Accounts.AddAsync(acc);
             
             var result = await DbCache.SaveChanges();
 
@@ -66,6 +66,6 @@ public class RegisterHandler : IMessageHandler
                 status = RegisterStatus.InternalError;
         }
 
-        await con.SendAsync(new RegisterAck() { Sequence = pkt.Sequence, Status = status });
+        con.Send(new RegisterAck() { Sequence = pkt.Sequence, Status = status });
     }
 }

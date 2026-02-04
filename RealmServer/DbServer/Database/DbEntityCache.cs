@@ -3,6 +3,7 @@ using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using DbServer.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -17,7 +18,7 @@ public class DbEntityCache<T> where T : DbModel
 
     #region Query Methods
 
-    public async Task<T?> Get(string key)
+    public async Task<T?> GetAsync(string key)
     {
         if (_cache.TryGetValue(key, out var cached)) // Cache is the source of truth, search here first
             return cached; // Cache hit
@@ -25,7 +26,8 @@ public class DbEntityCache<T> where T : DbModel
         // Cache miss, find in MySQL
         await using var dbContext = await NetworkService.ContextFactory.CreateDbContextAsync(); // Don't worry about no tracking, it's already disabled by default
 
-        var entity = await dbContext.Set<T>().FirstOrDefaultAsync(e => e.Key == key); // Find entity in MySQL
+        var keyValues = ParseKey(key);
+        var entity = await dbContext.Set<T>().FindAsync(keyValues); // Find entity in MySQL
 
         if (entity != null)
             _cache.TryAdd(key, entity); // Add to cache for future use
@@ -33,15 +35,21 @@ public class DbEntityCache<T> where T : DbModel
         return entity;
     }
 
-    public async Task<T?> FirstOrDefaultAsync(Func<T, bool> predicate)
+    private object[] ParseKey(string key)
     {
+        return key.Split('.').Skip(1).Select(i => (object)int.Parse(i)).ToArray();
+    }
+
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> expression)
+    {
+        var predicate = expression.Compile(); // Apparently not needed to cache...
         var match = _cache.Values.FirstOrDefault(predicate); // Find in cache first
         if (match != null)
             return match; // Hit
 
         await using var dbContext = await NetworkService.ContextFactory.CreateDbContextAsync();
 
-        match = await dbContext.Set<T>().FirstOrDefaultAsync(i => predicate(i)); // MySQL fallback
+        match = await dbContext.Set<T>().FirstOrDefaultAsync(expression); // MySQL fallback
 
         if (match != null)
             _cache.TryAdd(match.Key, match);
@@ -49,18 +57,19 @@ public class DbEntityCache<T> where T : DbModel
         return match;
     }
 
-    public async Task<bool> Any(Func<T, bool> predicate)
+    public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression)
     {
+        var predicate = expression.Compile();
         var match = _cache.Values.Any(predicate); // Find in cache first
         if (match)
             return match; // Hit
 
         await using var dbContext = await NetworkService.ContextFactory.CreateDbContextAsync();
 
-        return await dbContext.Set<T>().AnyAsync(i => predicate(i));
+        return await dbContext.Set<T>().AnyAsync(expression);
     }
 
-    public async Task<int> Count(Func<T, bool> predicate)
+    public async Task<int> CountAsync(Func<T, bool> predicate)
     {
         var matches = new HashSet<string>(); // Stores ID of matching entity
         
@@ -79,9 +88,9 @@ public class DbEntityCache<T> where T : DbModel
 
     #endregion
 
-    public async Task Add(T entity)
+    public async Task AddAsync(T entity)
     {
-        var newEntity = await Get(entity.Key) == null;
+        var newEntity = await GetAsync(entity.Key) == null;
         if (!newEntity)
             return;
 

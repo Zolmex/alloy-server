@@ -50,6 +50,25 @@ public partial class AccountStat : DbModel
             wtr => wtr.Write(TotalCredits ?? 0),
             rdr => TotalCredits = rdr.ReadUInt32()
         );
+        RegisterProperty("ClassStats",
+            wtr =>
+            {
+                wtr.Write((short)ClassStats.Count);
+                foreach (var stat in ClassStats)
+                {
+                    var hasValue = stat != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        stat.WriteProperties(wtr);
+                }
+            },
+            rdr => {
+                ClassStats.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                    ClassStats.Add(DbModel.Read<ClassStat>(rdr));
+            }
+        );
     }
 
     public static AccountStat Read(NetworkReader rdr)

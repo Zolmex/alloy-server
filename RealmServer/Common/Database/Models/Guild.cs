@@ -60,14 +60,19 @@ public partial class Guild : DbModel
             {
                 wtr.Write((short)GuildMembers.Count);
                 foreach (var guildMember in GuildMembers)
-                    wtr.Write(guildMember.Key);
+                {
+                    var hasValue = guildMember != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        guildMember.WriteProperties(wtr);
+                }
             },
             rdr =>
             {
                 GuildMembers.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    GuildMembers.Add(GuildMember.Read(rdr.ReadUTF()));
+                    GuildMembers.Add(DbModel.Read<GuildMember>(rdr));
             }
         );
     }

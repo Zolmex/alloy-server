@@ -83,7 +83,7 @@ public class AppConnection
         _sendState.WriteMessage(msg);
     }
 
-    public async Task<IAppMessageAck> SendAsync(IAppMessage msg) // Sends packet and completes when it receives a response
+    public async Task<IAppMessageAck> SendAndReceiveAsync(IAppMessage msg) // Sends packet and completes when it receives a response
     {
         IAppMessage.SetSequence(msg);
 

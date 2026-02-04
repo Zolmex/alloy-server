@@ -216,14 +216,19 @@ public partial class Character : DbModel
             {
                 wtr.Write((short)CharacterInventories.Count);
                 foreach (var inv in CharacterInventories)
-                    wtr.Write(inv.Key);
+                {
+                    var hasValue = inv != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        inv.WriteProperties(wtr);
+                }
             },
             rdr =>
             {
                 CharacterInventories.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    CharacterInventories.Add(CharacterInventory.Read(rdr.ReadUTF()));
+                    CharacterInventories.Add(DbModel.Read<CharacterInventory>(rdr));
             }
         );
     }
