@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountLock : DbModel
+public partial class AccountLock : DbModel, IDbQueryable
 {
     public override string Key => $"accountLock.{AccountId}.{LockedId}";
     
@@ -36,5 +36,10 @@ public partial class AccountLock : DbModel
         ret.AccountId = int.Parse(split[1]);
         ret.LockedId = int.Parse(split[2]);
         return ret;
+    }
+
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield break;
     }
 }

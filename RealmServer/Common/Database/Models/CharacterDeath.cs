@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterDeath : DbModel
+public partial class CharacterDeath : DbModel, IDbQueryable
 {
     public override string Key => $"characterDeath.{Id}";
     
@@ -55,5 +55,10 @@ public partial class CharacterDeath : DbModel
         var split = key.Split('.');
         ret.Id = int.Parse(split[1]);
         return ret;
+    }
+    
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield return "Char";
     }
 }

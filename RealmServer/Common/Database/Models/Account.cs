@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Common.Database.Models;
 
-public partial class Account : DbModel
+public partial class Account : DbModel, IDbQueryable
 {
     public static readonly Account Guest = new()
     {
@@ -230,13 +230,27 @@ public partial class Account : DbModel
         );
     }
 
-    public static Account Read(NetworkReader rdr)
+    public static Account Read(string key)
     {
-        if (!rdr.ReadBoolean())
-            return null;
-
         var ret = new Account();
-        ret.ReadProperties(rdr);
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
+    }
+    
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield return "AccStats.ClassStats";
+        yield return "Login";
+        yield return "GuildMember";
+        yield return "AccountSkins";
+        yield return "AccountIgnores";
+        yield return "AccountLocks";
+        yield return "Characters.CharStats";
+        yield return "Characters.CombatStats";
+        yield return "Characters.DungeonStats";
+        yield return "Characters.ExploStats";
+        yield return "Characters.KillStats";
+        yield return "Characters.CharacterInventories";
     }
 }

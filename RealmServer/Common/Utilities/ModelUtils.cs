@@ -56,6 +56,8 @@ public static class ModelUtils
     {
         public XElement ToXml(Account acc)
         {
+            Logger.Debug(acc.AccStats);
+            Logger.Debug(acc.AccStats.ClassStats);
             return new XElement("Stats",
                 new XElement("BestCharFame", stat.BestCharFame),
                 new XElement("TotalFame", stat.TotalFame),

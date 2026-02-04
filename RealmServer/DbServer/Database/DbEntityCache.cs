@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace DbServer.Database;
 
-public class DbEntityCache<T> where T : DbModel
+public class DbEntityCache<T> where T : DbModel, IDbQueryable
 {
     private readonly ConcurrentDictionary<string, T> _cache = new();
     private readonly ConcurrentDictionary<T, HashSet<string>> _dirty = new(); // Tracks modified properties in a given entity
@@ -49,7 +49,12 @@ public class DbEntityCache<T> where T : DbModel
 
         await using var dbContext = await NetworkService.ContextFactory.CreateDbContextAsync();
 
-        match = await dbContext.Set<T>().FirstOrDefaultAsync(expression); // MySQL fallback
+        var query = dbContext.Set<T>().AsQueryable(); // MySQL fallback
+
+        foreach (var path in T.GetIncludes()) // Need the model to tell us the path of the child models to include in the query
+            query = query.Include(path);
+        
+        match = await query.FirstOrDefaultAsync(expression);
 
         if (match != null)
             _cache.TryAdd(match.Key, match);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountStat : DbModel
+public partial class AccountStat : DbModel, IDbQueryable
 {
     public override string Key => $"accountStat.{Id}";
     
@@ -79,5 +79,10 @@ public partial class AccountStat : DbModel
         var ret = new AccountStat();
         ret.ReadProperties(rdr);
         return ret;
+    }
+    
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield return "ClassStats";
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountIgnore : DbModel
+public partial class AccountIgnore : DbModel, IDbQueryable
 {
     public override string Key => $"accountIgnore.{AccountId}.{IgnoredId}";
     
@@ -36,5 +36,10 @@ public partial class AccountIgnore : DbModel
         ret.AccountId = int.Parse(split[1]);
         ret.IgnoredId = int.Parse(split[2]);
         return ret;
+    }
+
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield break;
     }
 }

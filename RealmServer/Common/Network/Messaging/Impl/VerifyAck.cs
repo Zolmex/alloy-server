@@ -19,9 +19,9 @@ public record struct VerifyAck : IAppMessageAck
         if (Status == VerifyStatus.Success)
         {
             wtr.Write(Account.Version);
+            wtr.Write(true);
             Account.WriteProperties(wtr);
         }
-        else wtr.Write(0);
     }
 
     public void Read(NetworkReader rdr)
@@ -30,7 +30,7 @@ public record struct VerifyAck : IAppMessageAck
         if (Status == VerifyStatus.Success)
         {
             var version = rdr.ReadInt32();
-            Account = Account.Read(rdr);
+            Account = DbModel.Read<Account>(rdr);
             Account.Version = version;
         }
     }

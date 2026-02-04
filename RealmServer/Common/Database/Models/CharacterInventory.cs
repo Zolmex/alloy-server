@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterInventory : DbModel
+public partial class CharacterInventory : DbModel, IDbQueryable
 {
     public override string Key => $"characterInventory.{CharacterId}.{SlotId}";
     
@@ -45,5 +45,10 @@ public partial class CharacterInventory : DbModel
         ret.CharacterId = int.Parse(split[1]);
         ret.SlotId = int.Parse(split[2]);
         return ret;
+    }
+
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield break;
     }
 }

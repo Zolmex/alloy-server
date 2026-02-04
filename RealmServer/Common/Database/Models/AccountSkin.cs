@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountSkin : DbModel
+public partial class AccountSkin : DbModel, IDbQueryable
 {
     public override string Key => $"accountSkin.{AccountId}.{SkinType}";
     
@@ -34,5 +34,10 @@ public partial class AccountSkin : DbModel
         ret.AccountId = int.Parse(split[1]);
         ret.SkinType = int.Parse(split[2]);
         return ret;
+    }
+
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield break;
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -94,6 +95,6 @@ public abstract class DbModel
         ret.ReadProperties(rdr);
         return ret;
     }
-    
+
     private record PropertySerializer(string Property, Action<NetworkWriter> Writer, Action<NetworkReader> Reader);
 }

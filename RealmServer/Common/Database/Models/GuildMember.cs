@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class GuildMember : DbModel
+public partial class GuildMember : DbModel, IDbQueryable
 {
     public override string Key => $"guildMember.{Id}";
     
@@ -43,5 +43,10 @@ public partial class GuildMember : DbModel
         var split = key.Split('.');
         ret.Id = int.Parse(split[1]);
         return ret;
+    }
+
+    public static IEnumerable<string> GetIncludes()
+    {
+        yield break;
     }
 }
