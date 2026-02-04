@@ -21,6 +21,9 @@ public class Verify : RequestHandler
         var status = verify.Status;
         if (acc == null)
             return status.GetDescription();
+        
+        // Debug - buy char slot
+        await DbClient.BuyCharSlot(acc);
 
         return acc.ToXml().ToString();
     }

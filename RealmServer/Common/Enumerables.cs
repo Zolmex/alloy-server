@@ -54,7 +54,8 @@ public enum VerifyStatus
 public enum FlushStatus
 {
     Success,
-    VersionMismatch
+    VersionMismatch,
+    InternalError
 }
 
 public enum StatType

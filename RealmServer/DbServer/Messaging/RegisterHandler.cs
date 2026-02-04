@@ -66,6 +66,6 @@ public class RegisterHandler : IMessageHandler
                 status = RegisterStatus.InternalError;
         }
 
-        con.Send(new RegisterAck() { Sequence = pkt.Sequence, Status = status });
+        con.Send(new RegisterAck(pkt.Sequence) { Status = status });
     }
 }

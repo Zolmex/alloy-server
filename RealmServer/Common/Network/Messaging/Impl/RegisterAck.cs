@@ -10,6 +10,11 @@ public record struct RegisterAck : IAppMessageAck
 
     public RegisterStatus Status { get; set; }
 
+    public RegisterAck(int seq)
+    {
+        Sequence = seq;
+    }
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((byte)Status);

@@ -31,10 +31,13 @@ public class FlushHandler : IMessageHandler
             using var rdr = new NetworkReader(new MemoryStream(pkt.PropertiesBuffer));
             pkt.Entity.ReadProperties(rdr);
             DbCache.Update(pkt.Key, pkt.Entity, pkt.Properties);
+
+            if (await DbCache.SaveChanges() == 0)
+                status = FlushStatus.InternalError;
             
             Logger.Debug("You did it you son of a bitch. You did it.");
         }
 
-        await con.SendAndReceiveAsync(new FlushAck() { Status = status });
+        con.Send(new FlushAck(pkt.Sequence) { Status = status });
     }
 }

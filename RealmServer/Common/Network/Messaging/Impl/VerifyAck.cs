@@ -13,6 +13,11 @@ public record struct VerifyAck : IAppMessageAck
     public VerifyStatus Status { get; set; }
     public Account Account { get; set; } 
 
+    public VerifyAck(int seq)
+    {
+        Sequence = seq;
+    }
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((byte)Status);

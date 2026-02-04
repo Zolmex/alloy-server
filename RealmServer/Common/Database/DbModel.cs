@@ -66,7 +66,7 @@ public abstract class DbModel
         }
     }
 
-    public async Task Flush<T>(AppConnection con, params Expression<Func<T, object>>[] expressions) where T : DbModel
+    public async Task Flush<T, TValue>(AppConnection con, params Expression<Func<T, TValue>>[] expressions) where T : DbModel
     {
         var props = new string[expressions.Length];
         for (var i = 0; i < expressions.Length; i++)

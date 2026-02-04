@@ -10,6 +10,11 @@ public record struct FlushAck : IAppMessageAck
 
     public FlushStatus Status { get; set; }
 
+    public FlushAck(int seq)
+    {
+        Sequence = seq;
+    }
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((byte)Status);

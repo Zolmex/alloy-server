@@ -63,13 +63,14 @@ public static class DbClient
     public static async Task BuyCharSlot(Account acc)
     {
         var cost = NewAccountsConfig.Config.CharSlotCost;
+        Logger.Debug($"{acc.AccStats?.CurrentFame ?? 420}:{cost}");
         if (acc.AccStats?.CurrentFame < cost)
             return;
 
         acc.AccStats!.CurrentFame = (uint)Math.Max(0, acc.AccStats.CurrentFame.GetValueOrDefault() - cost);
         acc.MaxChars++;
         
-        await acc.AccStats.Flush<AccountStat>(_con, stats => stats.CurrentFame);
-        await acc.Flush<Account>(_con, a => a.MaxChars);
+        await acc.AccStats.Flush<AccountStat, uint?>(_con, stats => stats.CurrentFame);
+        await acc.Flush<Account, short?>(_con, a => a.MaxChars);
     }
 }
