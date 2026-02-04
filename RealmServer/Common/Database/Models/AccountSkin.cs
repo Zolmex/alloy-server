@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountSkin : IDbModel
+public partial class AccountSkin : DbModel
 {
-    public string Key => $"accountSkin.{AccountId}.{SkinType}";
+    public override string Key => $"accountSkin.{AccountId}.{SkinType}";
     
     public int AccountId { get; set; }
 
@@ -15,17 +15,24 @@ public partial class AccountSkin : IDbModel
 
     public virtual Account Account { get; set; } = null!;
     
-    public void Write(NetworkWriter wtr)
+    protected override void Prepare()
     {
-        wtr.Write(AccountId);
-        wtr.Write(SkinType);
+        RegisterProperty("AccountId",
+            wtr => wtr.Write(AccountId),
+            rdr => AccountId = rdr.ReadInt32()
+        );
+        RegisterProperty("SkinType",
+            wtr => wtr.Write(SkinType),
+            rdr => SkinType = rdr.ReadInt32()
+        );
     }
 
-    public static AccountSkin Read(NetworkReader rdr)
+    public static AccountSkin Read(string key)
     {
         var ret = new AccountSkin();
-        ret.AccountId = rdr.ReadInt32();
-        ret.SkinType = rdr.ReadInt32();
+        var split = key.Split('.');
+        ret.AccountId = int.Parse(split[1]);
+        ret.SkinType = int.Parse(split[2]);
         return ret;
     }
 }

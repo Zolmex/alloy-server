@@ -17,7 +17,7 @@ public interface IAppMessage
 
     void Handle(AppConnection con)
     {
-        _handlers[MessageId].Handle(this, con);
+        _handlers[MessageId].HandleAsync(this, con).Wait(); // TODO: make this async too
     }
 
     #region Static members

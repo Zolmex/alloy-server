@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace DbServer.Database;
 
-public class DbEntityCache<T> where T : class, IDbModel
+public class DbEntityCache<T> where T : DbModel
 {
     private readonly ConcurrentDictionary<string, T> _cache = new();
     private readonly ConcurrentDictionary<T, HashSet<string>> _dirty = new(); // Tracks modified properties in a given entity
@@ -79,24 +79,42 @@ public class DbEntityCache<T> where T : class, IDbModel
 
     #endregion
 
-    // Update values from existing entities OR create new entity if necessary.
-    public async Task UpdateOrAdd(T entity, params Expression<Func<T, object>>[] properties) // Properties need to be marked as dirty or they won't be updated in the database
+    public async Task Add(T entity)
     {
         var newEntity = await Get(entity.Key) == null;
-        if (newEntity)
-        {
-            _new.Add(entity);
+        if (!newEntity)
             return;
-        }
 
+        if (_new.Add(entity))
+            entity.Version++;
+    }
+    
+    // Update values from existing entities
+    public void Update(T entity, params Expression<Func<T, object>>[] properties) // Properties need to be marked as dirty or they won't be updated in the database
+    {
         foreach (var propertyExpression in properties)
         {
             var memberExpression = (MemberExpression)propertyExpression.Body;
             var property = (PropertyInfo)memberExpression.Member;
 
-            var props = _dirty.GetOrAdd(entity, new HashSet<string>());
-            props.Add(property.Name);
+            DirtyProperty(entity, property.Name);
         }
+        
+        entity.Version++;
+    }
+    
+    public void Update(T entity, params string[] properties) // If you need to update and you have the property names in a string[]
+    {
+        foreach (var propName in properties)
+            DirtyProperty(entity, propName);
+
+        entity.Version++;
+    }
+
+    private void DirtyProperty(T entity, string propertyName)
+    {
+        var props = _dirty.GetOrAdd(entity, new HashSet<string>());
+        props.Add(propertyName);
     }
 
     public void Save(AlloyContext dbContext) // Returns true if changes were made to this table

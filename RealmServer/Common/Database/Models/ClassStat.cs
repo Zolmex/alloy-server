@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class ClassStat : IDbModel
+public partial class ClassStat : DbModel
 {
-    public string Key => $"classStat.{Id}";
+    public override string Key => $"classStat.{Id}";
     
     public int Id { get; set; }
 
@@ -19,31 +19,46 @@ public partial class ClassStat : IDbModel
     public int? AccStatsId { get; set; }
 
     public virtual AccountStat? AccStats { get; set; }
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(ObjectType ?? 0);
-        wtr.Write(BestLevel ?? 0);
-        wtr.Write(BestFame ?? 0);
-        if (AccStats != null)
-            AccStats.Write(wtr);
-        else wtr.Write(0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("ObjectType",
+            wtr => wtr.Write(ObjectType ?? 0),
+            rdr => ObjectType = rdr.ReadUInt16()
+        );
+        RegisterProperty("BestLevel",
+            wtr => wtr.Write(BestLevel ?? 0),
+            rdr => BestLevel = rdr.ReadUInt16()
+        );
+        RegisterProperty("BestFame",
+            wtr => wtr.Write(BestFame ?? 0),
+            rdr => BestFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("AccStats",
+            wtr =>
+            {
+                var hasValue = AccStats != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    AccStats.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                AccStats = DbModel.Read<AccountStat>(rdr);
+                AccStatsId = AccStats?.Id ?? 0;
+            }
+        );
     }
 
-    public static ClassStat Read(NetworkReader rdr)
+    public static ClassStat Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
         var ret = new ClassStat();
-        ret.Id = id;
-        ret.ObjectType = rdr.ReadUInt16();
-        ret.BestLevel = rdr.ReadUInt16();
-        ret.BestFame = rdr.ReadUInt32();
-        ret.AccStats = AccountStat.Read(rdr);
-        ret.AccStatsId = ret.AccStats?.Id ?? 0;
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

@@ -17,7 +17,10 @@ public record struct VerifyAck : IAppMessageAck
     {
         wtr.Write((byte)Status);
         if (Status == VerifyStatus.Success)
-            Account.Write(wtr);
+        {
+            wtr.Write(Account.Version);
+            Account.WriteProperties(wtr);
+        }
         else wtr.Write(0);
     }
 
@@ -25,6 +28,9 @@ public record struct VerifyAck : IAppMessageAck
     {
         Status = (VerifyStatus)rdr.ReadByte();
         if (Status == VerifyStatus.Success)
+        {
+            Account.Version = rdr.ReadInt32();
             Account = Account.Read(rdr);
+        }
     }
 }

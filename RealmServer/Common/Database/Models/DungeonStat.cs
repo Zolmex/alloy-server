@@ -4,35 +4,39 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class DungeonStat : IDbModel
+public partial class DungeonStat : DbModel
 {
-    public string Key => $"dungeonStat.{Id}";
+    public override string Key => $"dungeonStat.{Id}";
     
     public int Id { get; set; }
 
     public string? DungeonName { get; set; }
 
     public ushort? CompletedCount { get; set; }
-
-    public void Write(NetworkWriter wtr)
-    {
-        wtr.Write(Id);
-        wtr.Write(DungeonName ?? "");
-        wtr.Write(CompletedCount ?? 0);
-    }
-
+    
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
-    public static DungeonStat Read(NetworkReader rdr)
+    protected override void Prepare()
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("DungeonName",
+            wtr => wtr.Write(DungeonName ?? ""),
+            rdr => DungeonName = rdr.ReadUTF()
+        );
+        RegisterProperty("CompletedCount",
+            wtr => wtr.Write(CompletedCount ?? 0),
+            rdr => CompletedCount = rdr.ReadUInt16()
+        );
+    }
+
+    public static DungeonStat Read(string key)
+    {
         var ret = new DungeonStat();
-        ret.Id = id;
-        ret.DungeonName = rdr.ReadUTF();
-        ret.CompletedCount = rdr.ReadUInt16();
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

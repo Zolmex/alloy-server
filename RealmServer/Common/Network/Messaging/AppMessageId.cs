@@ -4,5 +4,6 @@ public enum AppMessageId
 {
     Hello = 0,
     Register = 1,
-    Verify = 2
+    Verify = 2,
+    Flush = 3
 }

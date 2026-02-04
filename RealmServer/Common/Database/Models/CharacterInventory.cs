@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterInventory : IDbModel
+public partial class CharacterInventory : DbModel
 {
-    public string Key => $"characterInventory.{CharacterId}.{SlotId}";
+    public override string Key => $"characterInventory.{CharacterId}.{SlotId}";
     
     public int CharacterId { get; set; }
 
@@ -17,22 +17,33 @@ public partial class CharacterInventory : IDbModel
     public byte[]? ItemData { get; set; }
 
     public virtual Character Character { get; set; } = null!;
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(CharacterId);
-        wtr.Write(SlotId);
-        wtr.Write(ItemType ?? 0);
-        wtr.Write(ItemData ?? []);
+        RegisterProperty("CharacterId",
+            wtr => wtr.Write(CharacterId),
+            rdr => CharacterId = rdr.ReadInt32()
+        );
+        RegisterProperty("SlotId",
+            wtr => wtr.Write(SlotId),
+            rdr => SlotId = rdr.ReadInt32()
+        );
+        RegisterProperty("ItemType",
+            wtr => wtr.Write(ItemType ?? 0),
+            rdr => ItemType = rdr.ReadUInt16()
+        );
+        RegisterProperty("ItemData",
+            wtr => wtr.Write(ItemData ?? []),
+            rdr => ItemData = rdr.Read<byte>()
+        );
     }
 
-    public static CharacterInventory Read(NetworkReader rdr)
+    public static CharacterInventory Read(string key)
     {
         var ret = new CharacterInventory();
-        ret.CharacterId = rdr.ReadInt32();
-        ret.SlotId = rdr.ReadInt32();
-        ret.ItemType = rdr.ReadUInt16();
-        ret.ItemData = rdr.Read<byte>();
+        var split = key.Split('.');
+        ret.CharacterId = int.Parse(split[1]);
+        ret.SlotId = int.Parse(split[2]);
         return ret;
     }
 }

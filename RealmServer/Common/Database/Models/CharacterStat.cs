@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterStat : IDbModel
+public partial class CharacterStat : DbModel
 {
-    public string Key => $"characterStat.{Id}";
+    public override string Key => $"characterStat.{Id}";
     
     public int Id { get; set; }
 
@@ -31,40 +31,60 @@ public partial class CharacterStat : IDbModel
     public uint? Wisdom { get; set; }
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(Hp ?? 0);
-        wtr.Write(Mp ?? 0);
-        wtr.Write(MaxHp ?? 0);
-        wtr.Write(MaxMp ?? 0);
-        wtr.Write(Attack ?? 0);
-        wtr.Write(Defense ?? 0);
-        wtr.Write(Speed ?? 0);
-        wtr.Write(Dexterity ?? 0);
-        wtr.Write(Vitality ?? 0);
-        wtr.Write(Wisdom ?? 0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("Hp",
+            wtr => wtr.Write(Hp ?? 0),
+            rdr => Hp = rdr.ReadUInt32()
+        );
+        RegisterProperty("Mp",
+            wtr => wtr.Write(Mp ?? 0),
+            rdr => Mp = rdr.ReadUInt32()
+        );
+        RegisterProperty("MaxHp",
+            wtr => wtr.Write(MaxHp ?? 0),
+            rdr => MaxHp = rdr.ReadUInt32()
+        );
+        RegisterProperty("MaxMp",
+            wtr => wtr.Write(MaxMp ?? 0),
+            rdr => MaxMp = rdr.ReadUInt32()
+        );
+        RegisterProperty("Attack",
+            wtr => wtr.Write(Attack ?? 0),
+            rdr => Attack = rdr.ReadUInt32()
+        );
+        RegisterProperty("Defense",
+            wtr => wtr.Write(Defense ?? 0),
+            rdr => Defense = rdr.ReadUInt32()
+        );
+        RegisterProperty("Speed",
+            wtr => wtr.Write(Speed ?? 0),
+            rdr => Speed = rdr.ReadUInt32()
+        );
+        RegisterProperty("Dexterity",
+            wtr => wtr.Write(Dexterity ?? 0),
+            rdr => Dexterity = rdr.ReadUInt32()
+        );
+        RegisterProperty("Vitality",
+            wtr => wtr.Write(Vitality ?? 0),
+            rdr => Vitality = rdr.ReadUInt32()
+        );
+        RegisterProperty("Wisdom",
+            wtr => wtr.Write(Wisdom ?? 0),
+            rdr => Wisdom = rdr.ReadUInt32()
+        );
     }
 
-    public static CharacterStat Read(NetworkReader rdr)
+    public static CharacterStat Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
         var ret = new CharacterStat();
-        ret.Id = id;
-        ret.Hp = rdr.ReadUInt32();
-        ret.Mp = rdr.ReadUInt32();
-        ret.MaxHp = rdr.ReadUInt32();
-        ret.MaxMp = rdr.ReadUInt32();
-        ret.Attack = rdr.ReadUInt32();
-        ret.Defense = rdr.ReadUInt32();
-        ret.Speed = rdr.ReadUInt32();
-        ret.Dexterity = rdr.ReadUInt32();
-        ret.Vitality = rdr.ReadUInt32();
-        ret.Wisdom = rdr.ReadUInt32();
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

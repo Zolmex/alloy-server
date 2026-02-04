@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class ExplorationStat : IDbModel
+public partial class ExplorationStat : DbModel
 {
-    public string Key => $"explorationStat.{Id}";
+    public override string Key => $"explorationStat.{Id}";
     
     public int Id { get; set; }
 
@@ -23,32 +23,44 @@ public partial class ExplorationStat : IDbModel
     public uint? Teleports { get; set; }
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(TilesUncovered ?? 0);
-        wtr.Write(QuestsCompleted ?? 0);
-        wtr.Write(Escapes ?? 0);
-        wtr.Write(NearDeathEscapes ?? 0);
-        wtr.Write(MinutesActive ?? 0);
-        wtr.Write(Teleports ?? 0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("TilesUncovered",
+            wtr => wtr.Write(TilesUncovered ?? 0),
+            rdr => TilesUncovered = rdr.ReadUInt32()
+        );
+        RegisterProperty("QuestsCompleted",
+            wtr => wtr.Write(QuestsCompleted ?? 0),
+            rdr => QuestsCompleted = rdr.ReadUInt32()
+        );
+        RegisterProperty("Escapes",
+            wtr => wtr.Write(Escapes ?? 0),
+            rdr => Escapes = rdr.ReadUInt32()
+        );
+        RegisterProperty("NearDeathEscapes",
+            wtr => wtr.Write(NearDeathEscapes ?? 0),
+            rdr => NearDeathEscapes = rdr.ReadUInt32()
+        );
+        RegisterProperty("MinutesActive",
+            wtr => wtr.Write(MinutesActive ?? 0),
+            rdr => Teleports = rdr.ReadUInt32()
+        );
+        RegisterProperty("Teleports",
+            wtr => wtr.Write(Teleports ?? 0),
+            rdr => Teleports = rdr.ReadUInt32()
+        );
     }
 
-    public static ExplorationStat Read(NetworkReader rdr)
+    public static ExplorationStat Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
         var ret = new ExplorationStat();
-        ret.Id = id;
-        ret.TilesUncovered = rdr.ReadUInt32();
-        ret.QuestsCompleted = rdr.ReadUInt32();
-        ret.Escapes = rdr.ReadUInt32();
-        ret.NearDeathEscapes = rdr.ReadUInt32();
-        ret.MinutesActive = rdr.ReadUInt32();
-        ret.Teleports = rdr.ReadUInt32();
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

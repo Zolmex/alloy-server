@@ -59,4 +59,17 @@ public static class DbClient
             });
         return ack;
     }
+    
+    public static async Task BuyCharSlot(Account acc)
+    {
+        var cost = NewAccountsConfig.Config.CharSlotCost;
+        if (acc.AccStats?.CurrentFame < cost)
+            return;
+
+        acc.AccStats!.CurrentFame = (uint)Math.Max(0, acc.AccStats.CurrentFame.GetValueOrDefault() - cost);
+        acc.MaxChars++;
+        
+        await acc.AccStats.Flush<AccountStat>(_con, stats => stats.CurrentFame);
+        await acc.Flush<Account>(_con, a => a.MaxChars);
+    }
 }

@@ -5,26 +5,36 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountLock : IDbModel
+public partial class AccountLock : DbModel
 {
-    public string Key => $"accountLock.{AccountId}.{LockedId}";
+    public override string Key => $"accountLock.{AccountId}.{LockedId}";
     
     public int AccountId { get; set; }
+    
     public Account Account { get; set; } = null!;
+    
     public int LockedId { get; set; }
+    
     public Account Locked { get; set; } = null!;
     
-    public void Write(NetworkWriter wtr)
+    protected override void Prepare()
     {
-        wtr.Write(AccountId);
-        wtr.Write(LockedId);
+        RegisterProperty("AccountId",
+            wtr => wtr.Write(AccountId),
+            rdr => AccountId = rdr.ReadInt32()
+        );
+        RegisterProperty("LockedId",
+            wtr => wtr.Write(LockedId),
+            rdr => LockedId = rdr.ReadInt32()
+        );
     }
 
-    public static AccountLock Read(NetworkReader rdr)
+    public static AccountLock Read(string key)
     {
         var ret = new AccountLock();
-        ret.AccountId = rdr.ReadInt32();
-        ret.LockedId = rdr.ReadInt32();
+        var split = key.Split('.');
+        ret.AccountId = int.Parse(split[1]);
+        ret.LockedId = int.Parse(split[2]);
         return ret;
     }
 }

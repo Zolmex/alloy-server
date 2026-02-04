@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class GuildMember : IDbModel
+public partial class GuildMember : DbModel
 {
-    public string Key => $"guildMember.{Id}";
+    public override string Key => $"guildMember.{Id}";
     
     public int Id { get; set; }
 
@@ -20,29 +20,42 @@ public partial class GuildMember : IDbModel
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
     public virtual Guild? Guild { get; set; }
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(GuildRank ?? 0);
-        wtr.Write((LastSeenAt ?? DateTime.MinValue).ToUnixTimestamp());
-        if (Guild != null)
-            Guild.Write(wtr);
-        else wtr.Write(0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("GuildRank",
+            wtr => wtr.Write(GuildRank ?? 0),
+            rdr => GuildRank = rdr.ReadInt16()
+        );
+        RegisterProperty("LastSeenAt",
+            wtr => wtr.Write((LastSeenAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            rdr => LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("Guild",
+            wtr =>
+            {
+                var hasValue = Guild != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    Guild.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                Guild = DbModel.Read<Guild>(rdr);
+                GuildId = Guild?.Id ?? 0;
+            }
+        );
     }
 
-    public static GuildMember Read(NetworkReader rdr)
+    public static GuildMember Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-
         var ret = new GuildMember();
-        ret.Id = id;
-        ret.GuildRank = rdr.ReadInt16();
-        ret.LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
-        ret.Guild = Guild.Read(rdr);
-        ret.GuildId = ret.Guild?.Id ?? 0;
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

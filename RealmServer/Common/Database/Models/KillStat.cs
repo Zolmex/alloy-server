@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class KillStat : IDbModel
+public partial class KillStat : DbModel
 {
-    public string Key => $"killStat.{Id}";
+    public override string Key => $"killStat.{Id}";
     
     public int Id { get; set; }
 
@@ -33,42 +33,64 @@ public partial class KillStat : IDbModel
     public ushort? WhiteBags { get; set; }
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(MonsterKills ?? 0);
-        wtr.Write(MonsterAssists ?? 0);
-        wtr.Write(GodKills ?? 0);
-        wtr.Write(GodAssists ?? 0);
-        wtr.Write(OryxKills ?? 0);
-        wtr.Write(OryxAssists ?? 0);
-        wtr.Write(CubeKills ?? 0);
-        wtr.Write(CubeAssists ?? 0);
-        wtr.Write(BlueBags ?? 0);
-        wtr.Write(CyanBags ?? 0);
-        wtr.Write(WhiteBags ?? 0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("MonsterKills",
+            wtr => wtr.Write(MonsterKills ?? 0),
+            rdr => MonsterKills = rdr.ReadUInt32()
+        );
+        RegisterProperty("MonsterAssists",
+            wtr => wtr.Write(MonsterAssists ?? 0),
+            rdr => MonsterAssists = rdr.ReadUInt32()
+        );
+        RegisterProperty("GodKills",
+            wtr => wtr.Write(GodKills ?? 0),
+            rdr => GodKills = rdr.ReadUInt32()
+        );
+        RegisterProperty("GodAssists",
+            wtr => wtr.Write(GodAssists ?? 0),
+            rdr => GodAssists = rdr.ReadUInt32()
+        );
+        RegisterProperty("OryxKills",
+            wtr => wtr.Write(OryxKills ?? 0),
+            rdr => OryxKills = rdr.ReadUInt16()
+        );
+        RegisterProperty("OryxAssists",
+            wtr => wtr.Write(OryxAssists ?? 0),
+            rdr => OryxAssists = rdr.ReadUInt16()
+        );
+        RegisterProperty("CubeKills",
+            wtr => wtr.Write(CubeKills ?? 0),
+            rdr => CubeKills = rdr.ReadUInt16()
+        );
+        RegisterProperty("CubeAssists",
+            wtr => wtr.Write(CubeAssists ?? 0),
+            rdr => CubeAssists = rdr.ReadUInt16()
+        );
+        RegisterProperty("BlueBags",
+            wtr => wtr.Write(BlueBags ?? 0),
+            rdr => BlueBags = rdr.ReadUInt16()
+        );
+        RegisterProperty("CyanBags",
+            wtr => wtr.Write(CyanBags ?? 0),
+            rdr => CyanBags = rdr.ReadUInt16()
+        );
+        RegisterProperty("WhiteBags",
+            wtr => wtr.Write(WhiteBags ?? 0),
+            rdr => WhiteBags = rdr.ReadUInt16()
+        );
     }
 
-    public static KillStat Read(NetworkReader rdr)
+    public static KillStat Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
         var ret = new KillStat();
-        ret.Id = id;
-        ret.MonsterKills = rdr.ReadUInt32();
-        ret.MonsterAssists = rdr.ReadUInt32();
-        ret.GodKills = rdr.ReadUInt32();
-        ret.GodAssists = rdr.ReadUInt32();
-        ret.OryxKills = rdr.ReadUInt16();
-        ret.OryxAssists = rdr.ReadUInt16();
-        ret.CubeKills = rdr.ReadUInt16();
-        ret.CubeAssists = rdr.ReadUInt16();
-        ret.BlueBags = rdr.ReadUInt16();
-        ret.CyanBags = rdr.ReadUInt16();
-        ret.WhiteBags = rdr.ReadUInt16();
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

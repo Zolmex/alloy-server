@@ -51,6 +51,12 @@ public enum VerifyStatus
     InternalError
 }
 
+public enum FlushStatus
+{
+    Success,
+    VersionMismatch
+}
+
 public enum StatType
 {
     MaxHP,

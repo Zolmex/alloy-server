@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Login : IDbModel
+public partial class Login : DbModel
 {
-    public string Key => $"login.{Id}";
+    public override string Key => $"login.{Id}";
     
     public int Id { get; set; }
 
@@ -21,30 +21,40 @@ public partial class Login : IDbModel
     public string? IPAddress { get; set; }
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(Name);
-        wtr.Write(PasswordHash ?? "");
-        wtr.Write(PasswordSalt ?? "");
-        wtr.Write((LastLoginAt ?? DateTime.MinValue).ToUnixTimestamp());
-        wtr.Write(IPAddress ?? "");
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("Name",
+            wtr => wtr.Write(Name),
+            rdr => Name = rdr.ReadUTF()
+        );
+        RegisterProperty("PasswordHash",
+            wtr => wtr.Write(PasswordHash ?? ""),
+            rdr => PasswordHash = rdr.ReadUTF()
+        );
+        RegisterProperty("PasswordSalt",
+            wtr => wtr.Write(PasswordSalt ?? ""),
+            rdr => PasswordSalt = rdr.ReadUTF()
+        );
+        RegisterProperty("LastLoginAt",
+            wtr => wtr.Write((LastLoginAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            rdr => LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("IPAddress",
+            wtr => wtr.Write(IPAddress ?? ""),
+            rdr => IPAddress = rdr.ReadUTF()
+        );
     }
 
-    public static Login Read(NetworkReader rdr)
+    public static Login Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
         var ret = new Login();
-        ret.Id = id;
-        ret.Name = rdr.ReadUTF();
-        ret.PasswordHash = rdr.ReadUTF();
-        ret.PasswordSalt = rdr.ReadUTF();
-        ret.LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
-        ret.IPAddress = rdr.ReadUTF();
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Character : IDbModel
+public partial class Character : DbModel
 {
-    public string Key => $"character.{Id}";
+    public override string Key => $"character.{Id}";
     
     public int Id { get; set; }
 
@@ -70,79 +70,169 @@ public partial class Character : IDbModel
     public virtual ExplorationStat? ExploStats { get; set; }
 
     public virtual KillStat? KillStats { get; set; }
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(AccCharId ?? 0);
-        wtr.Write(ObjectType ?? 0);
-        wtr.Write(Level ?? 0);
-        wtr.Write(CurrentFame ?? 0);
-        wtr.Write(XpPoints ?? 0);
-        wtr.Write(SkinType ?? 0);
-        wtr.Write(TextureOne ?? 0);
-        wtr.Write(TextureTwo ?? 0);
-        wtr.Write(PetType ?? 0);
-        wtr.Write(HealthPotions ?? 0);
-        wtr.Write(MagicPotions ?? 0);
-        wtr.Write(IsDead);
-        wtr.Write(IsDeleted);
-        wtr.Write(HasBackpack);
-        wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
-        wtr.Write((DeletedAt ?? DateTime.MinValue).ToUnixTimestamp());
-        wtr.Write(AccId ?? 0);
-        if (CharStats != null)
-            CharStats.Write(wtr);
-        else wtr.Write(0);
-        if (CombatStats != null)
-            CombatStats.Write(wtr);
-        else wtr.Write(0);
-        if (DungeonStats != null)
-            DungeonStats.Write(wtr);
-        else wtr.Write(0);
-        if (ExploStats != null)
-            ExploStats.Write(wtr);
-        else wtr.Write(0);
-        if (KillStats != null)
-            KillStats.Write(wtr);
-        else wtr.Write(0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("AccCharId",
+            wtr => wtr.Write(AccCharId ?? 0),
+            rdr => AccCharId = rdr.ReadInt32()
+        );
+        RegisterProperty("ObjectType",
+            wtr => wtr.Write(ObjectType ?? 0),
+            rdr => ObjectType = rdr.ReadUInt16()
+        );
+        RegisterProperty("Level",
+            wtr => wtr.Write(Level ?? 0),
+            rdr => Level = rdr.ReadUInt16()
+        );
+        RegisterProperty("CurrentFame",
+            wtr => wtr.Write(CurrentFame ?? 0),
+            rdr => CurrentFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("XpPoints",
+            wtr => wtr.Write(XpPoints ?? 0),
+            rdr => XpPoints = rdr.ReadUInt32()
+        );
+        RegisterProperty("SkinType",
+            wtr => wtr.Write(SkinType ?? 0),
+            rdr => SkinType = rdr.ReadUInt16()
+        );
+        RegisterProperty("TextureOne",
+            wtr => wtr.Write(TextureOne ?? 0),
+            rdr => TextureOne = rdr.ReadUInt16()
+        );
+        RegisterProperty("TextureTwo",
+            wtr => wtr.Write(TextureTwo ?? 0),
+            rdr => TextureTwo = rdr.ReadUInt16()
+        );
+        RegisterProperty("PetType",
+            wtr => wtr.Write(PetType ?? 0),
+            rdr => PetType = rdr.ReadUInt16()
+        );
+        RegisterProperty("HealthPotions",
+            wtr => wtr.Write(HealthPotions ?? 0),
+            rdr => HealthPotions = rdr.ReadUInt16()
+        );
+        RegisterProperty("IsDead",
+            wtr => wtr.Write(IsDead),
+            rdr => IsDead = rdr.ReadBoolean()
+        );
+        RegisterProperty("IsDeleted",
+            wtr => wtr.Write(IsDeleted),
+            rdr => IsDeleted = rdr.ReadBoolean()
+        );
+        RegisterProperty("HasBackpack",
+            wtr => wtr.Write(HasBackpack),
+            rdr => HasBackpack = rdr.ReadBoolean()
+        );
+        RegisterProperty("CreatedAt",
+            wtr => wtr.Write(CreatedAt!.Value.ToUnixTimestamp()),
+            rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("DeletedAt",
+            wtr => wtr.Write((DeletedAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            rdr => DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("AccId",
+            wtr => wtr.Write(AccId ?? 0),
+            rdr => AccId = rdr.ReadInt32()
+        );
+        RegisterProperty("CharStats",
+            wtr =>
+            {
+                var hasValue = CharStats != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    CharStats.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                CharStats = DbModel.Read<CharacterStat>(rdr);
+                CharStatsId = CharStats?.Id ?? 0;
+            }
+        );
+        RegisterProperty("CombatStats",
+            wtr =>
+            {
+                var hasValue = CombatStats != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    CombatStats.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                CombatStats = DbModel.Read<CombatStat>(rdr);
+                CombatStatsId = CombatStats?.Id ?? 0;
+            }
+        );
+        RegisterProperty("DungeonStats",
+            wtr =>
+            {
+                var hasValue = DungeonStats != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    DungeonStats.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                DungeonStats = DbModel.Read<DungeonStat>(rdr);
+                DungeonStatsId = DungeonStats?.Id ?? 0;
+            }
+        );
+        RegisterProperty("ExploStats",
+            wtr =>
+            {
+                var hasValue = ExploStats != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    ExploStats.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                ExploStats = DbModel.Read<ExplorationStat>(rdr);
+                ExploStatsId = ExploStats?.Id ?? 0;
+            }
+        );
+        RegisterProperty("KillStats",
+            wtr =>
+            {
+                var hasValue = KillStats != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    KillStats.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                KillStats = DbModel.Read<KillStat>(rdr);
+                KillStatsId = KillStats?.Id ?? 0;
+            }
+        );
+        RegisterProperty("CharacterInventories",
+            wtr =>
+            {
+                wtr.Write((short)CharacterInventories.Count);
+                foreach (var inv in CharacterInventories)
+                    wtr.Write(inv.Key);
+            },
+            rdr =>
+            {
+                CharacterInventories.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                    CharacterInventories.Add(CharacterInventory.Read(rdr.ReadUTF()));
+            }
+        );
     }
 
-    public static Character Read(NetworkReader rdr)
+    public static Character Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
         var ret = new Character();
-        ret.Id = id;
-        ret.AccCharId = rdr.ReadInt32();
-        ret.ObjectType = rdr.ReadUInt16();
-        ret.Level = rdr.ReadUInt16();
-        ret.CurrentFame = rdr.ReadUInt32();
-        ret.XpPoints = rdr.ReadUInt32();
-        ret.SkinType = rdr.ReadUInt16();
-        ret.TextureOne = rdr.ReadUInt16();
-        ret.TextureTwo = rdr.ReadUInt16();
-        ret.PetType = rdr.ReadUInt16();
-        ret.HealthPotions = rdr.ReadUInt16();
-        ret.MagicPotions = rdr.ReadUInt16();
-        ret.IsDead = rdr.ReadBoolean();
-        ret.IsDeleted = rdr.ReadBoolean();
-        ret.HasBackpack = rdr.ReadBoolean();
-        ret.CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
-        ret.DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
-        ret.AccId = rdr.ReadInt32();
-        ret.CharStats = CharacterStat.Read(rdr);
-        ret.CharStatsId = ret.CharStats?.Id ?? 0;
-        ret.ExploStats = ExplorationStat.Read(rdr);
-        ret.ExploStatsId = ret.ExploStats?.Id ?? 0;
-        ret.CombatStats = CombatStat.Read(rdr);
-        ret.CombatStatsId = ret.CombatStats?.Id ?? 0;
-        ret.KillStats = KillStat.Read(rdr);
-        ret.KillStatsId = ret.KillStats?.Id ?? 0;
-        ret.DungeonStats = DungeonStat.Read(rdr);
-        ret.DungeonStatsId = ret.DungeonStats?.Id ?? 0;
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

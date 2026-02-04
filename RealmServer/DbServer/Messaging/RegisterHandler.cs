@@ -19,7 +19,7 @@ public class RegisterHandler : IMessageHandler
 
     public AppMessageId MessageId => AppMessageId.Register;
 
-    public async Task Handle(IAppMessage msg, AppConnection con)
+    public async Task HandleAsync(IAppMessage msg, AppConnection con)
     {
         var pkt = (RegisterMessage)msg;
         Logger.Debug($"Register: {pkt.Username}:{pkt.Password}");
@@ -58,7 +58,7 @@ public class RegisterHandler : IMessageHandler
                 Login = new Login() { Name = lowerName, IPAddress = pkt.IPAddress, PasswordHash = (pkt.Password + salt).ToSHA1(), PasswordSalt = salt },
             };
 
-            await DbCache.Accounts.UpdateOrAdd(acc);
+            await DbCache.Accounts.Add(acc);
             
             var result = await DbCache.SaveChanges();
 
@@ -66,6 +66,6 @@ public class RegisterHandler : IMessageHandler
                 status = RegisterStatus.InternalError;
         }
 
-        con.Send(new RegisterAck() { Sequence = pkt.Sequence, Status = status });
+        await con.SendAsync(new RegisterAck() { Sequence = pkt.Sequence, Status = status });
     }
 }

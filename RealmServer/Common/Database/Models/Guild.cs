@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class Guild : IDbModel
+public partial class Guild : DbModel
 {
-    public string Key => $"guild.{Id}";
+    public override string Key => $"guild.{Id}";
     
     public int Id { get; set; }
 
@@ -24,32 +24,59 @@ public partial class Guild : IDbModel
     public DateTime? CreatedAt { get; set; }
 
     public virtual ICollection<GuildMember> GuildMembers { get; set; } = new List<GuildMember>();
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(Name ?? "");
-        wtr.Write(Level ?? 0);
-        wtr.Write(CurrentFame ?? 0);
-        wtr.Write(TotalFame ?? 0);
-        wtr.Write(GuildBoard ?? "");
-        wtr.Write((CreatedAt ?? DateTime.MinValue).ToUnixTimestamp());
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("Name",
+            wtr => wtr.Write(Name ?? ""),
+            rdr => Name = rdr.ReadUTF()
+        );
+        RegisterProperty("Level",
+            wtr => wtr.Write(Level ?? 0),
+            rdr => Level = rdr.ReadInt16()
+        );
+        RegisterProperty("CurrentFame",
+            wtr => wtr.Write(CurrentFame ?? 0),
+            rdr => CurrentFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("TotalFame",
+            wtr => wtr.Write(TotalFame ?? 0),
+            rdr => TotalFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("GuildBoard",
+            wtr => wtr.Write(GuildBoard ?? ""),
+            rdr => GuildBoard = rdr.ReadUTF()
+        );
+        RegisterProperty("CreatedAt",
+            wtr => wtr.Write((CreatedAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("GuildMembers",
+            wtr =>
+            {
+                wtr.Write((short)GuildMembers.Count);
+                foreach (var guildMember in GuildMembers)
+                    wtr.Write(guildMember.Key);
+            },
+            rdr =>
+            {
+                GuildMembers.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                    GuildMembers.Add(GuildMember.Read(rdr.ReadUTF()));
+            }
+        );
     }
 
-    public static Guild Read(NetworkReader rdr)
+    public static Guild Read(string key)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
         var ret = new Guild();
-        ret.Id = id;
-        ret.Name = rdr.ReadUTF();
-        ret.Level = rdr.ReadInt16();
-        ret.CurrentFame = rdr.ReadUInt32();
-        ret.TotalFame = rdr.ReadUInt32();
-        ret.GuildBoard = rdr.ReadUTF();
-        ret.CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

@@ -15,14 +15,14 @@ public class PurchaseCharSlot : RequestHandler
 
     public override async Task<string> Handle(string ip, NameValueCollection query)
     {
-        var verify = await DbClientOld.VerifyAccount(query["username"], query["password"]);
+        var verify = await DbClient.VerifyAccount(query["username"], query["password"]);
 
-        var acc = verify.Item1;
-        var status = verify.Item2;
+        var acc = verify.Account;
+        var status = verify.Status;
         if (acc == null)
             return status.GetDescription();
 
-        DbClientOld.BuyCharSlot(acc);
+        await DbClient.BuyCharSlot(acc);
         return WriteSuccess();
     }
 }

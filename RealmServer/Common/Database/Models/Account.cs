@@ -3,10 +3,11 @@ using Common.Resources.Config;
 using Common.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Common.Database.Models;
 
-public partial class Account : IDbModel
+public partial class Account : DbModel
 {
     public static readonly Account Guest = new()
     {
@@ -16,19 +17,13 @@ public partial class Account : IDbModel
         MaxChars = (short)NewAccountsConfig.Config.MaxChars,
         VaultCount = (short)NewAccountsConfig.Config.VaultCount,
         NextCharId = 1,
-        AccStats = new AccountStat()
-        {
-            CurrentCredits = (uint)NewAccountsConfig.Config.Credits,
-            TotalCredits = (uint)NewAccountsConfig.Config.Credits,
-            CurrentFame = (uint)NewAccountsConfig.Config.Fame,
-            TotalFame = (uint)NewAccountsConfig.Config.Fame
-        },
+        AccStats = new AccountStat() { CurrentCredits = (uint)NewAccountsConfig.Config.Credits, TotalCredits = (uint)NewAccountsConfig.Config.Credits, CurrentFame = (uint)NewAccountsConfig.Config.Fame, TotalFame = (uint)NewAccountsConfig.Config.Fame },
         CreatedAt = DateTime.Now,
         IsAdmin = false
     };
 
-    public string Key => $"account.{Id}";
-    
+    public override string Key => $"account.{Id}";
+
     public int Id { get; set; }
 
     public string Name { get; set; } = null!;
@@ -59,58 +54,169 @@ public partial class Account : IDbModel
 
     public virtual ICollection<AccountSkin> AccountSkins { get; set; } = new List<AccountSkin>();
 
+    public virtual ICollection<AccountIgnore> AccountIgnores { get; set; } = new List<AccountIgnore>();
+
+    public virtual ICollection<AccountLock> AccountLocks { get; set; } = new List<AccountLock>();
+
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
     public virtual GuildMember? GuildMember { get; set; }
 
     public virtual Login? Login { get; set; }
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(Name);
-        wtr.Write(Rank ?? 0);
-        wtr.Write(GuildName ?? "");
-        wtr.Write(IsAdmin);
-        wtr.Write(IsBanned);
-        wtr.Write(MaxChars ?? (short)NewAccountsConfig.Config.MaxChars);
-        wtr.Write(VaultCount ?? (short)NewAccountsConfig.Config.VaultCount);
-        wtr.Write(NextCharId ?? 1);
-        wtr.Write(CreatedAt!.Value.ToUnixTimestamp());
-        if (AccStats != null)
-            AccStats.Write(wtr);
-        else wtr.Write(0);
-        if (Login != null)
-            Login.Write(wtr);
-        else wtr.Write(0);
-        if (GuildMember != null)
-            GuildMember.Write(wtr);
-        else wtr.Write(0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("Name",
+            wtr => wtr.Write(Name),
+            rdr => Name = rdr.ReadUTF()
+        );
+        RegisterProperty("Rank",
+            wtr => wtr.Write(Rank ?? 0),
+            rdr => Rank = rdr.ReadInt16()
+        );
+        RegisterProperty("GuildName",
+            wtr => wtr.Write(GuildName ?? ""),
+            rdr => GuildName = rdr.ReadUTF()
+        );
+        RegisterProperty("IsAdmin",
+            wtr => wtr.Write(IsAdmin),
+            rdr => IsAdmin = rdr.ReadBoolean()
+        );
+        RegisterProperty("IsBanned",
+            wtr => wtr.Write(IsBanned),
+            rdr => IsBanned = rdr.ReadBoolean()
+        );
+        RegisterProperty("MaxChars",
+            wtr => wtr.Write(MaxChars ?? (short)NewAccountsConfig.Config.MaxChars),
+            rdr => MaxChars = rdr.ReadInt16()
+        );
+        RegisterProperty("VaultCount",
+            wtr => wtr.Write(VaultCount ?? (short)NewAccountsConfig.Config.VaultCount),
+            rdr => VaultCount = rdr.ReadInt16()
+        );
+        RegisterProperty("NextCharId",
+            wtr => wtr.Write(NextCharId ?? 1),
+            rdr => NextCharId = rdr.ReadInt16()
+        );
+        RegisterProperty("CreatedAt",
+            wtr => wtr.Write(CreatedAt!.Value.ToUnixTimestamp()),
+            rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("AccStats",
+            wtr =>
+            {
+                var hasValue = AccStats != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    AccStats.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                AccStats = AccountStat.Read(rdr);
+                AccStatsId = AccStats?.Id ?? 0;
+            }
+        );
+        RegisterProperty("Login",
+            wtr =>
+            {
+                var hasValue = Login != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    Login.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                Login = DbModel.Read<Login>(rdr);
+                LoginId = Login?.Id ?? 0;
+            }
+        );
+        RegisterProperty("GuildMember",
+            wtr =>
+            {
+                var hasValue = GuildMember != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    GuildMember.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                GuildMember = DbModel.Read<GuildMember>(rdr);
+                GuildMemberId = GuildMember?.Id ?? 0;
+            }
+        );
+        RegisterProperty("AccountSkins",
+            wtr =>
+            {
+                wtr.Write((short)AccountSkins.Count);
+                foreach (var skin in AccountSkins)
+                    wtr.Write(skin.Key);
+            },
+            rdr =>
+            {
+                AccountSkins.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                    AccountSkins.Add(AccountSkin.Read(rdr.ReadUTF()));
+            }
+        );
+        RegisterProperty("AccountIgnores",
+            wtr =>
+            {
+                wtr.Write((short)AccountIgnores.Count);
+                foreach (var ignored in AccountIgnores)
+                    wtr.Write(ignored.Key);
+            },
+            rdr =>
+            {
+                AccountIgnores.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                    AccountIgnores.Add(AccountIgnore.Read(rdr.ReadUTF()));
+            }
+        );
+        RegisterProperty("AccountLocks",
+            wtr =>
+            {
+                wtr.Write((short)AccountLocks.Count);
+                foreach (var locked in AccountLocks)
+                    wtr.Write(locked.Key);
+            },
+            rdr =>
+            {
+                AccountLocks.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                    AccountLocks.Add(AccountLock.Read(rdr.ReadUTF()));
+            }
+        );
+        RegisterProperty("Characters",
+            wtr =>
+            {
+                wtr.Write((short)Characters.Count);
+                foreach (var chr in Characters)
+                    wtr.Write(chr.Key);
+            },
+            rdr =>
+            {
+                Characters.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                    Characters.Add(Character.Read(rdr.ReadUTF()));
+            }
+        );
     }
 
     public static Account Read(NetworkReader rdr)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
+        if (!rdr.ReadBoolean())
             return null;
-        
-        var acc = new Account();
-        acc.Id = id;
-        acc.Name = rdr.ReadUTF();
-        acc.Rank = rdr.ReadInt16();
-        acc.GuildName = rdr.ReadUTF();
-        acc.IsAdmin = rdr.ReadBoolean();
-        acc.IsBanned = rdr.ReadBoolean();
-        acc.MaxChars = rdr.ReadInt16();
-        acc.VaultCount = rdr.ReadInt16();
-        acc.NextCharId = rdr.ReadInt16();
-        acc.CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
-        acc.AccStats = AccountStat.Read(rdr);
-        acc.AccStatsId = acc.AccStats?.Id ?? 0;
-        acc.Login = Login.Read(rdr);
-        acc.LoginId = acc.Login?.Id ?? 0;
-        acc.GuildMember = GuildMember.Read(rdr);
-        acc.GuildMemberId = acc.GuildMember?.Id ?? 0;
-        return acc;
+
+        var ret = new Account();
+        ret.ReadProperties(rdr);
+        return ret;
     }
 }

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class CharacterDeath : IDbModel
+public partial class CharacterDeath : DbModel
 {
-    public string Key => $"characterDeath.{Id}";
+    public override string Key => $"characterDeath.{Id}";
     
     public int Id { get; set; }
 
@@ -18,29 +18,42 @@ public partial class CharacterDeath : IDbModel
     public int? CharId { get; set; }
 
     public virtual Character? Char { get; set; }
-    
-    public void Write(NetworkWriter wtr)
-    {
-        wtr.Write(Id);
-        wtr.Write((DeadAt ?? DateTime.MinValue).ToUnixTimestamp());
-        wtr.Write(DeathFame ?? 0);
-        if (Char != null)
-            Char.Write(wtr);
-        else wtr.Write(0);
-    }
 
-    public static CharacterDeath Read(NetworkReader rdr)
+    protected override void Prepare()
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
-            return null;
-        
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("DeadAt",
+            wtr => wtr.Write((DeadAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            rdr => DeadAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("DeathFame",
+            wtr => wtr.Write(DeathFame ?? 0),
+            rdr => DeathFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("Char",
+            wtr =>
+            {
+                var hasValue = Char != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    Char.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                Char = DbModel.Read<Character>(rdr);
+                CharId = Char?.Id ?? 0;
+            }
+        );
+    }
+    
+    public static CharacterDeath Read(string key)
+    {
         var ret = new CharacterDeath();
-        ret.Id = id;
-        ret.DeadAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32());
-        ret.DeathFame = rdr.ReadUInt32();
-        ret.Char = Character.Read(rdr);
-        ret.CharId = ret.Char?.Id ?? 0;
+        var split = key.Split('.');
+        ret.Id = int.Parse(split[1]);
         return ret;
     }
 }

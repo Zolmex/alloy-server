@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountStat : IDbModel
+public partial class AccountStat : DbModel
 {
-    public string Key => $"accountStat.{Id}";
+    public override string Key => $"accountStat.{Id}";
     
     public int Id { get; set; }
 
@@ -23,30 +23,42 @@ public partial class AccountStat : IDbModel
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
     public virtual ICollection<ClassStat> ClassStats { get; set; } = new List<ClassStat>();
-    
-    public void Write(NetworkWriter wtr)
+
+    protected override void Prepare()
     {
-        wtr.Write(Id);
-        wtr.Write(BestCharFame ?? 0);
-        wtr.Write(CurrentFame ?? 0);
-        wtr.Write(TotalFame ?? 0);
-        wtr.Write(CurrentCredits ?? 0);
-        wtr.Write(TotalCredits ?? 0);
+        RegisterProperty("Id",
+            wtr => wtr.Write(Id),
+            rdr => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("BestCharFame",
+            wtr => wtr.Write(BestCharFame ?? 0),
+            rdr => BestCharFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("CurrentFame",
+            wtr => wtr.Write(CurrentFame ?? 0),
+            rdr => CurrentFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("TotalFame",
+            wtr => wtr.Write(TotalFame ?? 0),
+            rdr => TotalFame = rdr.ReadUInt32()
+        );
+        RegisterProperty("CurrentCredits",
+            wtr => wtr.Write(CurrentCredits ?? 0),
+            rdr => CurrentCredits = rdr.ReadUInt32()
+        );
+        RegisterProperty("TotalCredits",
+            wtr => wtr.Write(TotalCredits ?? 0),
+            rdr => TotalCredits = rdr.ReadUInt32()
+        );
     }
 
     public static AccountStat Read(NetworkReader rdr)
     {
-        var id = rdr.ReadInt32();
-        if (id == 0) // ID flag. 0 for null
+        if (!rdr.ReadBoolean())
             return null;
-
+        
         var ret = new AccountStat();
-        ret.Id = id;
-        ret.BestCharFame = rdr.ReadUInt32();
-        ret.CurrentFame = rdr.ReadUInt32();
-        ret.TotalFame = rdr.ReadUInt32();
-        ret.CurrentCredits = rdr.ReadUInt32();
-        ret.TotalCredits = rdr.ReadUInt32();
+        ret.ReadProperties(rdr);
         return ret;
     }
 }

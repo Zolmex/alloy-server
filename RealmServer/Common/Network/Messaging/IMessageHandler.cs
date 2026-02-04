@@ -7,5 +7,5 @@ public interface IMessageHandler
 {
     AppMessageId MessageId { get; }
     
-    Task Handle(IAppMessage msg, AppConnection con);
+    Task HandleAsync(IAppMessage msg, AppConnection con);
 }

@@ -17,7 +17,7 @@ public class VerifyHandler : IMessageHandler
 {
     public AppMessageId MessageId => AppMessageId.Verify;
 
-    public async Task Handle(IAppMessage msg, AppConnection con)
+    public async Task HandleAsync(IAppMessage msg, AppConnection con)
     {
         var pkt = (VerifyMessage)msg;
         var response = new VerifyAck { Sequence = pkt.Sequence };
