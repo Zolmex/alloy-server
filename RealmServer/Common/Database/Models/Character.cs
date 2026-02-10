@@ -11,27 +11,27 @@ public partial class Character : DbModel, IDbQueryable
     
     public int Id { get; set; }
 
-    public int? AccCharId { get; set; }
+    public int AccCharId { get; set; }
 
-    public ushort? ObjectType { get; set; }
+    public ushort ObjectType { get; set; }
 
-    public ushort? Level { get; set; }
+    public ushort Level { get; set; }
 
-    public uint? CurrentFame { get; set; }
+    public uint CurrentFame { get; set; }
 
-    public uint? XpPoints { get; set; }
+    public uint XpPoints { get; set; }
 
-    public ushort? SkinType { get; set; }
+    public ushort SkinType { get; set; }
 
-    public ushort? TextureOne { get; set; }
+    public ushort TextureOne { get; set; }
 
-    public ushort? TextureTwo { get; set; }
+    public ushort TextureTwo { get; set; }
 
-    public ushort? PetType { get; set; }
+    public ushort PetType { get; set; }
 
-    public ushort? HealthPotions { get; set; }
+    public ushort HealthPotions { get; set; }
 
-    public ushort? MagicPotions { get; set; }
+    public ushort MagicPotions { get; set; }
 
     public bool IsDead { get; set; }
 
@@ -43,17 +43,17 @@ public partial class Character : DbModel, IDbQueryable
 
     public DateTime? DeletedAt { get; set; }
 
-    public int? AccId { get; set; }
+    public int AccId { get; set; }
 
-    public int? CharStatsId { get; set; }
+    public int CharStatsId { get; set; }
 
-    public int? ExploStatsId { get; set; }
+    public int ExploStatsId { get; set; }
 
-    public int? CombatStatsId { get; set; }
+    public int CombatStatsId { get; set; }
 
-    public int? KillStatsId { get; set; }
+    public int KillStatsId { get; set; }
 
-    public int? DungeonStatsId { get; set; }
+    public int DungeonStatsId { get; set; }
 
     public virtual Account? Acc { get; set; }
 
@@ -78,43 +78,43 @@ public partial class Character : DbModel, IDbQueryable
             rdr => Id = rdr.ReadInt32()
         );
         RegisterProperty("AccCharId",
-            wtr => wtr.Write(AccCharId ?? 0),
+            wtr => wtr.Write(AccCharId),
             rdr => AccCharId = rdr.ReadInt32()
         );
         RegisterProperty("ObjectType",
-            wtr => wtr.Write(ObjectType ?? 0),
+            wtr => wtr.Write(ObjectType),
             rdr => ObjectType = rdr.ReadUInt16()
         );
         RegisterProperty("Level",
-            wtr => wtr.Write(Level ?? 0),
+            wtr => wtr.Write(Level),
             rdr => Level = rdr.ReadUInt16()
         );
         RegisterProperty("CurrentFame",
-            wtr => wtr.Write(CurrentFame ?? 0),
+            wtr => wtr.Write(CurrentFame),
             rdr => CurrentFame = rdr.ReadUInt32()
         );
         RegisterProperty("XpPoints",
-            wtr => wtr.Write(XpPoints ?? 0),
+            wtr => wtr.Write(XpPoints),
             rdr => XpPoints = rdr.ReadUInt32()
         );
         RegisterProperty("SkinType",
-            wtr => wtr.Write(SkinType ?? 0),
+            wtr => wtr.Write(SkinType),
             rdr => SkinType = rdr.ReadUInt16()
         );
         RegisterProperty("TextureOne",
-            wtr => wtr.Write(TextureOne ?? 0),
+            wtr => wtr.Write(TextureOne),
             rdr => TextureOne = rdr.ReadUInt16()
         );
         RegisterProperty("TextureTwo",
-            wtr => wtr.Write(TextureTwo ?? 0),
+            wtr => wtr.Write(TextureTwo),
             rdr => TextureTwo = rdr.ReadUInt16()
         );
         RegisterProperty("PetType",
-            wtr => wtr.Write(PetType ?? 0),
+            wtr => wtr.Write(PetType),
             rdr => PetType = rdr.ReadUInt16()
         );
         RegisterProperty("HealthPotions",
-            wtr => wtr.Write(HealthPotions ?? 0),
+            wtr => wtr.Write(HealthPotions),
             rdr => HealthPotions = rdr.ReadUInt16()
         );
         RegisterProperty("IsDead",
@@ -138,7 +138,7 @@ public partial class Character : DbModel, IDbQueryable
             rdr => DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("AccId",
-            wtr => wtr.Write(AccId ?? 0),
+            wtr => wtr.Write(AccId),
             rdr => AccId = rdr.ReadInt32()
         );
         RegisterProperty("CharStats",

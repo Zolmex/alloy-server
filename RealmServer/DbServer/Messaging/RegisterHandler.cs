@@ -45,6 +45,7 @@ public class RegisterHandler : IMessageHandler
             var acc = new Account()
             {
                 Name = pkt.Username,
+                NextCharId = 1,
                 MaxChars = (short)NewAccountsConfig.Config.MaxChars,
                 VaultCount = (short)NewAccountsConfig.Config.VaultCount,
                 AccStats = new AccountStat()

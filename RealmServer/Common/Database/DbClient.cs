@@ -67,10 +67,10 @@ public static class DbClient
         if (acc.AccStats?.CurrentFame < cost)
             return;
 
-        acc.AccStats!.CurrentFame = (uint)Math.Max(0, acc.AccStats.CurrentFame.GetValueOrDefault() - cost);
+        acc.AccStats!.CurrentFame -= (uint)cost;
         acc.MaxChars++;
         
-        await acc.AccStats.Flush<AccountStat, uint?>(_con, stats => stats.CurrentFame);
-        await acc.Flush<Account, short?>(_con, a => a.MaxChars);
+        await acc.AccStats.Flush<AccountStat, uint>(_con, stats => stats.CurrentFame);
+        await acc.Flush<Account, short>(_con, a => a.MaxChars);
     }
 }

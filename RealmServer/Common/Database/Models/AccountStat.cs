@@ -10,15 +10,15 @@ public partial class AccountStat : DbModel, IDbQueryable
     
     public int Id { get; set; }
 
-    public uint? BestCharFame { get; set; }
+    public uint BestCharFame { get; set; }
 
-    public uint? CurrentFame { get; set; }
+    public uint CurrentFame { get; set; }
 
-    public uint? TotalFame { get; set; }
+    public uint TotalFame { get; set; }
 
-    public uint? CurrentCredits { get; set; }
+    public uint CurrentCredits { get; set; }
 
-    public uint? TotalCredits { get; set; }
+    public uint TotalCredits { get; set; }
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
@@ -31,23 +31,23 @@ public partial class AccountStat : DbModel, IDbQueryable
             rdr => Id = rdr.ReadInt32()
         );
         RegisterProperty("BestCharFame",
-            wtr => wtr.Write(BestCharFame ?? 0),
+            wtr => wtr.Write(BestCharFame),
             rdr => BestCharFame = rdr.ReadUInt32()
         );
         RegisterProperty("CurrentFame",
-            wtr => wtr.Write(CurrentFame ?? 0),
+            wtr => wtr.Write(CurrentFame),
             rdr => CurrentFame = rdr.ReadUInt32()
         );
         RegisterProperty("TotalFame",
-            wtr => wtr.Write(TotalFame ?? 0),
+            wtr => wtr.Write(TotalFame),
             rdr => TotalFame = rdr.ReadUInt32()
         );
         RegisterProperty("CurrentCredits",
-            wtr => wtr.Write(CurrentCredits ?? 0),
+            wtr => wtr.Write(CurrentCredits),
             rdr => CurrentCredits = rdr.ReadUInt32()
         );
         RegisterProperty("TotalCredits",
-            wtr => wtr.Write(TotalCredits ?? 0),
+            wtr => wtr.Write(TotalCredits),
             rdr => TotalCredits = rdr.ReadUInt32()
         );
         RegisterProperty("ClassStats",

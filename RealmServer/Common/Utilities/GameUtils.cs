@@ -49,6 +49,6 @@ public static class GameUtils
     {
         // TODO: based on chr.ObjectType and classStat.BestFame find the next class quest fame
         var classStat = acc.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
-        return (int)classStat!.BestFame!.Value;
+        return (int)classStat!.BestFame;
     }
 }

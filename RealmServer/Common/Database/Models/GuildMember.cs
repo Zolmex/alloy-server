@@ -15,7 +15,7 @@ public partial class GuildMember : DbModel, IDbQueryable
 
     public DateTime? LastSeenAt { get; set; }
 
-    public int? GuildId { get; set; }
+    public int GuildId { get; set; }
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 

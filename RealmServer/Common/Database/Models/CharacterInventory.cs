@@ -12,7 +12,7 @@ public partial class CharacterInventory : DbModel, IDbQueryable
 
     public int SlotId { get; set; }
 
-    public ushort? ItemType { get; set; }
+    public ushort ItemType { get; set; }
 
     public byte[]? ItemData { get; set; }
 
@@ -29,7 +29,7 @@ public partial class CharacterInventory : DbModel, IDbQueryable
             rdr => SlotId = rdr.ReadInt32()
         );
         RegisterProperty("ItemType",
-            wtr => wtr.Write(ItemType ?? 0),
+            wtr => wtr.Write(ItemType),
             rdr => ItemType = rdr.ReadUInt16()
         );
         RegisterProperty("ItemData",

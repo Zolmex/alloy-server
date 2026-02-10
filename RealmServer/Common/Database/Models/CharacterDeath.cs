@@ -13,9 +13,9 @@ public partial class CharacterDeath : DbModel, IDbQueryable
 
     public DateTime? DeadAt { get; set; }
 
-    public uint? DeathFame { get; set; }
+    public uint DeathFame { get; set; }
 
-    public int? CharId { get; set; }
+    public int CharId { get; set; }
 
     public virtual Character? Char { get; set; }
 
@@ -30,7 +30,7 @@ public partial class CharacterDeath : DbModel, IDbQueryable
             rdr => DeadAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("DeathFame",
-            wtr => wtr.Write(DeathFame ?? 0),
+            wtr => wtr.Write(DeathFame),
             rdr => DeathFame = rdr.ReadUInt32()
         );
         RegisterProperty("Char",

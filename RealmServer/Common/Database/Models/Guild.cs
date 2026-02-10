@@ -13,11 +13,11 @@ public partial class Guild : DbModel, IDbQueryable
 
     public string? Name { get; set; }
 
-    public short? Level { get; set; }
+    public short Level { get; set; }
 
-    public uint? CurrentFame { get; set; }
+    public uint CurrentFame { get; set; }
 
-    public uint? TotalFame { get; set; }
+    public uint TotalFame { get; set; }
 
     public string? GuildBoard { get; set; }
 
@@ -36,15 +36,15 @@ public partial class Guild : DbModel, IDbQueryable
             rdr => Name = rdr.ReadUTF()
         );
         RegisterProperty("Level",
-            wtr => wtr.Write(Level ?? 0),
+            wtr => wtr.Write(Level),
             rdr => Level = rdr.ReadInt16()
         );
         RegisterProperty("CurrentFame",
-            wtr => wtr.Write(CurrentFame ?? 0),
+            wtr => wtr.Write(CurrentFame),
             rdr => CurrentFame = rdr.ReadUInt32()
         );
         RegisterProperty("TotalFame",
-            wtr => wtr.Write(TotalFame ?? 0),
+            wtr => wtr.Write(TotalFame),
             rdr => TotalFame = rdr.ReadUInt32()
         );
         RegisterProperty("GuildBoard",

@@ -12,7 +12,7 @@ public partial class DungeonStat : DbModel, IDbQueryable
 
     public string? DungeonName { get; set; }
 
-    public ushort? CompletedCount { get; set; }
+    public ushort CompletedCount { get; set; }
     
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
@@ -27,7 +27,7 @@ public partial class DungeonStat : DbModel, IDbQueryable
             rdr => DungeonName = rdr.ReadUTF()
         );
         RegisterProperty("CompletedCount",
-            wtr => wtr.Write(CompletedCount ?? 0),
+            wtr => wtr.Write(CompletedCount),
             rdr => CompletedCount = rdr.ReadUInt16()
         );
     }

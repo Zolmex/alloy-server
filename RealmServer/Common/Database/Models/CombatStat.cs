@@ -10,19 +10,19 @@ public partial class CombatStat : DbModel, IDbQueryable
     
     public int Id { get; set; }
 
-    public ulong? Shots { get; set; }
+    public ulong Shots { get; set; }
 
-    public uint? ShotsHit { get; set; }
+    public uint ShotsHit { get; set; }
 
-    public uint? LevelUpAssists { get; set; }
+    public uint LevelUpAssists { get; set; }
 
-    public ushort? PotionsDrank { get; set; }
+    public ushort PotionsDrank { get; set; }
 
-    public ushort? AbilitiesUsed { get; set; }
+    public ushort AbilitiesUsed { get; set; }
 
-    public uint? DamageTaken { get; set; }
+    public uint DamageTaken { get; set; }
 
-    public uint? DamageDealt { get; set; }
+    public uint DamageDealt { get; set; }
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
@@ -33,31 +33,31 @@ public partial class CombatStat : DbModel, IDbQueryable
             rdr => Id = rdr.ReadInt32()
         );
         RegisterProperty("Shots",
-            wtr => wtr.Write(Shots ?? 0),
+            wtr => wtr.Write(Shots),
             rdr => Shots = rdr.ReadUInt64()
         );
         RegisterProperty("ShotsHit",
-            wtr => wtr.Write(ShotsHit ?? 0),
+            wtr => wtr.Write(ShotsHit),
             rdr => ShotsHit = rdr.ReadUInt32()
         );
         RegisterProperty("LevelUpAssists",
-            wtr => wtr.Write(LevelUpAssists ?? 0),
+            wtr => wtr.Write(LevelUpAssists),
             rdr => LevelUpAssists = rdr.ReadUInt16()
         );
         RegisterProperty("PotionsDrank",
-            wtr => wtr.Write(PotionsDrank ?? 0),
+            wtr => wtr.Write(PotionsDrank),
             rdr => PotionsDrank = rdr.ReadUInt16()
         );
         RegisterProperty("AbilitiesUsed",
-            wtr => wtr.Write(AbilitiesUsed ?? 0),
+            wtr => wtr.Write(AbilitiesUsed),
             rdr => AbilitiesUsed = rdr.ReadUInt16()
         );
         RegisterProperty("DamageTaken",
-            wtr => wtr.Write(DamageTaken ?? 0),
+            wtr => wtr.Write(DamageTaken),
             rdr => DamageTaken = rdr.ReadUInt32()
         );
         RegisterProperty("DamageDealt",
-            wtr => wtr.Write(DamageDealt ?? 0),
+            wtr => wtr.Write(DamageDealt),
             rdr => DamageDealt = rdr.ReadUInt32()
         );
     }

@@ -80,7 +80,7 @@ public static class ModelUtils
                 new("ObjectType", chr.ObjectType),
                 new("Level", chr.Level),
                 new("CharFame", chr.CurrentFame),
-                new("NextLevelXp", GameUtils.GetNextLevelXp(chr.Level!.Value)),
+                new("NextLevelXp", GameUtils.GetNextLevelXp(chr.Level)),
                 new("NextClassQuestFame", GameUtils.GetNextClassQuestFame(chr, acc)),
                 new("Experience", chr.XpPoints),
                 new("CurrentFame", chr.CurrentFame),

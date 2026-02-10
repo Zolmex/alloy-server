@@ -13,13 +13,11 @@ public partial class Account : DbModel, IDbQueryable
     {
         Id = -1,
         Name = "Guest",
-        Rank = 0,
         MaxChars = (short)NewAccountsConfig.Config.MaxChars,
         VaultCount = (short)NewAccountsConfig.Config.VaultCount,
         NextCharId = 1,
         AccStats = new AccountStat() { CurrentCredits = (uint)NewAccountsConfig.Config.Credits, TotalCredits = (uint)NewAccountsConfig.Config.Credits, CurrentFame = (uint)NewAccountsConfig.Config.Fame, TotalFame = (uint)NewAccountsConfig.Config.Fame },
         CreatedAt = DateTime.Now,
-        IsAdmin = false
     };
 
     public override string Key => $"account.{Id}";
@@ -28,7 +26,7 @@ public partial class Account : DbModel, IDbQueryable
 
     public string Name { get; set; } = null!;
 
-    public short? Rank { get; set; }
+    public short Rank { get; set; }
 
     public string? GuildName { get; set; }
 
@@ -36,17 +34,17 @@ public partial class Account : DbModel, IDbQueryable
 
     public bool IsBanned { get; set; }
 
-    public short? MaxChars { get; set; }
+    public short MaxChars { get; set; }
 
-    public short? VaultCount { get; set; }
+    public short VaultCount { get; set; }
 
-    public short? NextCharId { get; set; }
+    public short NextCharId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
-    public int? AccStatsId { get; set; }
+    public int AccStatsId { get; set; }
 
-    public int? LoginId { get; set; }
+    public int LoginId { get; set; }
 
     public int? GuildMemberId { get; set; }
 
@@ -75,7 +73,7 @@ public partial class Account : DbModel, IDbQueryable
             rdr => Name = rdr.ReadUTF()
         );
         RegisterProperty("Rank",
-            wtr => wtr.Write(Rank ?? 0),
+            wtr => wtr.Write(Rank),
             rdr => Rank = rdr.ReadInt16()
         );
         RegisterProperty("GuildName",
@@ -91,15 +89,15 @@ public partial class Account : DbModel, IDbQueryable
             rdr => IsBanned = rdr.ReadBoolean()
         );
         RegisterProperty("MaxChars",
-            wtr => wtr.Write(MaxChars ?? (short)NewAccountsConfig.Config.MaxChars),
+            wtr => wtr.Write(MaxChars),
             rdr => MaxChars = rdr.ReadInt16()
         );
         RegisterProperty("VaultCount",
-            wtr => wtr.Write(VaultCount ?? (short)NewAccountsConfig.Config.VaultCount),
+            wtr => wtr.Write(VaultCount),
             rdr => VaultCount = rdr.ReadInt16()
         );
         RegisterProperty("NextCharId",
-            wtr => wtr.Write(NextCharId ?? 1),
+            wtr => wtr.Write(NextCharId),
             rdr => NextCharId = rdr.ReadInt16()
         );
         RegisterProperty("CreatedAt",

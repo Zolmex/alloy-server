@@ -72,29 +72,29 @@ public class Logger : ILogger
         Log(obj.ToString(), LogLevel.Fatal, saveToFile, _loggerName);
     }
 
-    public static void Info(object obj, string loggerName = "Logger")
+    public static void Info(object obj, string loggerName = "Logger", bool saveToFile = false)
     {
-        Log(obj.ToString(), LogLevel.Info, false, loggerName);
+        Log(obj.ToString(), LogLevel.Info, saveToFile, loggerName);
     }
 
-    public static void Debug(object obj, string loggerName = "Logger")
+    public static void Debug(object obj, string loggerName = "Logger", bool saveToFile = false)
     {
-        Log(obj.ToString(), LogLevel.Debug, false, loggerName);
+        Log(obj.ToString(), LogLevel.Debug, saveToFile, loggerName);
     }
 
-    public static void Warn(object obj, string loggerName = "Logger")
+    public static void Warn(object obj, string loggerName = "Logger", bool saveToFile = false)
     {
-        Log(obj.ToString(), LogLevel.Warn, false, loggerName);
+        Log(obj.ToString(), LogLevel.Warn, saveToFile, loggerName);
     }
 
-    public static void Error(object obj, string loggerName = "Logger")
+    public static void Error(object obj, string loggerName = "Logger", bool saveToFile = false)
     {
-        Log(obj.ToString(), LogLevel.Error, false, loggerName);
+        Log(obj.ToString(), LogLevel.Error, saveToFile, loggerName);
     }
 
-    public static void Fatal(object obj, string loggerName = "Logger")
+    public static void Fatal(object obj, string loggerName = "Logger", bool saveToFile = false)
     {
-        Log(obj.ToString(), LogLevel.Fatal, false, loggerName);
+        Log(obj.ToString(), LogLevel.Fatal, saveToFile, loggerName);
     }
 
     public void Log(LogLevel level, object obj, bool saveToFile = false)

@@ -1,46 +1,46 @@
 CREATE TABLE `Accounts` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(30) UNIQUE NOT NULL,
-  `rank` smallint,
+  `rank` smallint NOT NULL DEFAULT 0,
   `guild_name` varchar(255),
   `is_admin` boolean,
   `is_banned` boolean,
-  `max_chars` smallint,
-  `vault_count` smallint,
-  `next_char_id` smallint,
+  `max_chars` smallint NOT NULL DEFAULT 0,
+  `vault_count` smallint NOT NULL DEFAULT 0,
+  `next_char_id` smallint NOT NULL DEFAULT 0,
   `created_at` datetime DEFAULT (NOW()),
-  `acc_stats_id` integer,
-  `login_id` integer,
+  `acc_stats_id` integer NOT NULL DEFAULT 0,
+  `login_id` integer NOT NULL DEFAULT 0,
   `guild_member_id` integer
 );
 
 CREATE TABLE `Account_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `best_char_fame` int unsigned,
-  `current_fame` int unsigned,
-  `total_fame` int unsigned,
-  `current_credits` int unsigned,
-  `total_credits` int unsigned
+  `best_char_fame` int unsigned NOT NULL DEFAULT 0,
+  `current_fame` int unsigned NOT NULL DEFAULT 0,
+  `total_fame` int unsigned NOT NULL DEFAULT 0,
+  `current_credits` int unsigned NOT NULL DEFAULT 0,
+  `total_credits` int unsigned NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Account_Locks` (
-  `account_id` integer,
-  `locked_id` integer,
+  `account_id` integer NOT NULL DEFAULT 0,
+  `locked_id` integer NOT NULL DEFAULT 0,
   PRIMARY KEY (`account_id`, `locked_id`)
 );
 
 CREATE TABLE `Account_Ignores` (
-  `account_id` integer,
-  `ignored_id` integer,
+  `account_id` integer NOT NULL DEFAULT 0,
+  `ignored_id` integer NOT NULL DEFAULT 0,
   PRIMARY KEY (`account_id`, `ignored_id`)
 );
 
 CREATE TABLE `Class_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `object_type` smallint unsigned,
-  `best_level` smallint unsigned,
-  `best_fame` int unsigned,
-  `acc_stats_id` integer
+  `object_type` smallint unsigned NOT NULL DEFAULT 0,
+  `best_level` smallint unsigned NOT NULL DEFAULT 0,
+  `best_fame` int unsigned NOT NULL DEFAULT 0,
+  `acc_stats_id` integer NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Logins` (
@@ -54,54 +54,54 @@ CREATE TABLE `Logins` (
 
 CREATE TABLE `Account_Skins` (
   `account_id` integer,
-  `skin_type` integer,
+  `skin_type` integer NOT NULL DEFAULT 0,
   PRIMARY KEY (`account_id`, `skin_type`)
 );
 
 CREATE TABLE `Characters` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `acc_char_id` integer,
-  `object_type` smallint unsigned,
-  `level` smallint unsigned,
-  `current_fame` int unsigned,
-  `xp_points` int unsigned,
-  `skin_type` smallint unsigned,
-  `texture_one` smallint unsigned,
-  `texture_two` smallint unsigned,
-  `pet_type` smallint unsigned,
-  `health_potions` smallint unsigned,
-  `magic_potions` smallint unsigned,
+  `acc_char_id` integer NOT NULL DEFAULT 0,
+  `object_type` smallint unsigned NOT NULL DEFAULT 0,
+  `level` smallint unsigned NOT NULL DEFAULT 0,
+  `current_fame` int unsigned NOT NULL DEFAULT 0,
+  `xp_points` int unsigned NOT NULL DEFAULT 0,
+  `skin_type` smallint unsigned NOT NULL DEFAULT 0,
+  `texture_one` smallint unsigned NOT NULL DEFAULT 0,
+  `texture_two` smallint unsigned NOT NULL DEFAULT 0,
+  `pet_type` smallint unsigned NOT NULL DEFAULT 0,
+  `health_potions` smallint unsigned NOT NULL DEFAULT 0,
+  `magic_potions` smallint unsigned NOT NULL DEFAULT 0,
   `is_dead` boolean,
   `is_deleted` boolean,
   `has_backpack` boolean,
   `created_at` datetime DEFAULT (NOW()),
   `deleted_at` datetime,
-  `acc_id` integer,
-  `char_stats_id` integer,
-  `explo_stats_id` integer,
-  `combat_stats_id` integer,
-  `kill_stats_id` integer,
-  `dungeon_stats_id` integer
+  `acc_id` integer NOT NULL DEFAULT 0,
+  `char_stats_id` integer NOT NULL DEFAULT 0,
+  `explo_stats_id` integer NOT NULL DEFAULT 0,
+  `combat_stats_id` integer NOT NULL DEFAULT 0,
+  `kill_stats_id` integer NOT NULL DEFAULT 0,
+  `dungeon_stats_id` integer NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Character_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `hp` int unsigned,
-  `mp` int unsigned,
-  `max_hp` int unsigned,
-  `max_mp` int unsigned,
-  `attack` int unsigned,
-  `defense` int unsigned,
-  `speed` int unsigned,
-  `dexterity` int unsigned,
-  `vitality` int unsigned,
-  `wisdom` int unsigned
+  `hp` int unsigned NOT NULL DEFAULT 0,
+  `mp` int unsigned NOT NULL DEFAULT 0,
+  `max_hp` int unsigned NOT NULL DEFAULT 0,
+  `max_mp` int unsigned NOT NULL DEFAULT 0,
+  `attack` int unsigned NOT NULL DEFAULT 0,
+  `defense` int unsigned NOT NULL DEFAULT 0,
+  `speed` int unsigned NOT NULL DEFAULT 0,
+  `dexterity` int unsigned NOT NULL DEFAULT 0,
+  `vitality` int unsigned NOT NULL DEFAULT 0,
+  `wisdom` int unsigned NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Character_Inventory` (
   `character_id` integer,
   `slot_id` integer,
-  `item_type` smallint unsigned,
+  `item_type` smallint unsigned NOT NULL DEFAULT 0,
   `item_data` blob,
   PRIMARY KEY (`character_id`, `slot_id`)
 );
@@ -109,67 +109,67 @@ CREATE TABLE `Character_Inventory` (
 CREATE TABLE `Character_Death` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `dead_at` datetime DEFAULT (NOW()),
-  `death_fame` int unsigned,
-  `char_id` integer
+  `death_fame` int unsigned NOT NULL DEFAULT 0,
+  `char_id` integer NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Exploration_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `tiles_uncovered` int unsigned,
-  `quests_completed` int unsigned,
-  `escapes` int unsigned,
-  `near_death_escapes` int unsigned,
-  `minutes_active` int unsigned,
-  `teleports` int unsigned
+  `tiles_uncovered` int unsigned NOT NULL DEFAULT 0,
+  `quests_completed` int unsigned NOT NULL DEFAULT 0,
+  `escapes` int unsigned NOT NULL DEFAULT 0,
+  `near_death_escapes` int unsigned NOT NULL DEFAULT 0,
+  `minutes_active` int unsigned NOT NULL DEFAULT 0,
+  `teleports` int unsigned NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Combat_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `shots` bigint unsigned,
-  `shots_hit` int unsigned,
-  `level_up_assists` int unsigned,
-  `potions_drank` smallint unsigned,
-  `abilities_used` smallint unsigned,
-  `damage_taken` int unsigned,
-  `damage_dealt` int unsigned
+  `shots` bigint unsigned NOT NULL DEFAULT 0,
+  `shots_hit` int unsigned NOT NULL DEFAULT 0,
+  `level_up_assists` int unsigned NOT NULL DEFAULT 0,
+  `potions_drank` smallint unsigned NOT NULL DEFAULT 0,
+  `abilities_used` smallint unsigned NOT NULL DEFAULT 0,
+  `damage_taken` int unsigned NOT NULL DEFAULT 0,
+  `damage_dealt` int unsigned NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Kill_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `monster_kills` int unsigned,
-  `monster_assists` int unsigned,
-  `god_kills` int unsigned,
-  `god_assists` int unsigned,
-  `oryx_kills` smallint unsigned,
-  `oryx_assists` smallint unsigned,
-  `cube_kills` smallint unsigned,
-  `cube_assists` smallint unsigned,
-  `blue_bags` smallint unsigned,
-  `cyan_bags` smallint unsigned,
-  `white_bags` smallint unsigned
+  `monster_kills` int unsigned NOT NULL DEFAULT 0,
+  `monster_assists` int unsigned NOT NULL DEFAULT 0,
+  `god_kills` int unsigned NOT NULL DEFAULT 0,
+  `god_assists` int unsigned NOT NULL DEFAULT 0,
+  `oryx_kills` smallint unsigned NOT NULL DEFAULT 0,
+  `oryx_assists` smallint unsigned NOT NULL DEFAULT 0,
+  `cube_kills` smallint unsigned NOT NULL DEFAULT 0,
+  `cube_assists` smallint unsigned NOT NULL DEFAULT 0,
+  `blue_bags` smallint unsigned NOT NULL DEFAULT 0,
+  `cyan_bags` smallint unsigned NOT NULL DEFAULT 0,
+  `white_bags` smallint unsigned NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Dungeon_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `dungeon_name` varchar(255),
-  `completed_count` smallint unsigned
+  `completed_count` smallint unsigned NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `Guilds` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
-  `level` smallint,
-  `current_fame` int unsigned,
-  `total_fame` int unsigned,
+  `level` smallint NOT NULL DEFAULT 0,
+  `current_fame` int unsigned NOT NULL DEFAULT 0,
+  `total_fame` int unsigned NOT NULL DEFAULT 0,
   `guild_board` text,
   `created_at` datetime DEFAULT (NOW())
 );
 
 CREATE TABLE `Guild_Members` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `guild_rank` smallint,
+  `guild_rank` smallint NOT NULL DEFAULT 0,
   `last_seen_at` datetime DEFAULT (NOW()),
-  `guild_id` integer
+  `guild_id` integer NOT NULL DEFAULT 0
 );
 
 ALTER TABLE `Accounts` ADD FOREIGN KEY (`acc_stats_id`) REFERENCES `Account_Stats` (`id`);

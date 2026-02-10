@@ -2,6 +2,7 @@
 
 using Common.Network.Messaging;
 using Common.Resources.Xml;
+using Common.Utilities;
 using DbServer.Database;
 using DbServer.Implementation;
 using DbServer.Interface;
@@ -17,6 +18,8 @@ namespace DbServer;
 
 internal class Program
 {
+    private static readonly Logger _log = new(typeof(Program));
+    
     private static void Main(string[] args)
     {
         
@@ -44,6 +47,13 @@ internal class Program
 
         builder.Services.AddHostedService<NetworkService>();
 
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            var exception = (Exception)e.ExceptionObject;
+            _log.Fatal($"Unhandled exception: {exception}");
+        };
+
+        
         using var app = builder.Build();
         app.Run();
     }
