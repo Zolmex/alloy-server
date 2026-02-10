@@ -1,5 +1,6 @@
 using Common.Database;
 using Common.Database.Models;
+using Common.Utilities;
 using DbServer.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
@@ -126,6 +127,239 @@ public static class DbCache
                 AccountIgnores.Update(entity as AccountIgnore, properties);
                 break;
         }
+    }
+    
+    public static void CacheEntity(DbModel entity)
+    {
+        var modelName = entity.Key.Split('.')[0];
+        switch (modelName)
+        {
+            case "account":
+                Accounts.CacheEntity(entity as Account);
+                break;
+            case "accountSkin":
+                AccountSkins.CacheEntity(entity as AccountSkin);
+                break;
+            case "accountStat":
+                AccountStats.CacheEntity(entity as AccountStat);
+                break;
+            case "character":
+                Characters.CacheEntity(entity as Character);
+                break;
+            case "characterDeath":
+                CharacterDeaths.CacheEntity(entity as CharacterDeath);
+                break;
+            case "characterInventory":
+                CharacterInventories.CacheEntity(entity as CharacterInventory);
+                break;
+            case "characterStat":
+                CharacterStats.CacheEntity(entity as CharacterStat);
+                break;
+            case "classStat":
+                ClassStats.CacheEntity(entity as ClassStat);
+                break;
+            case "combatStat":
+                CombatStats.CacheEntity(entity as CombatStat);
+                break;
+            case "dungeonStat":
+                DungeonStats.CacheEntity(entity as DungeonStat);
+                break;
+            case "explorationStat":
+                ExplorationStats.CacheEntity(entity as ExplorationStat);
+                break;
+            case "guild":
+                Guilds.CacheEntity(entity as Guild);
+                break;
+            case "guildMember":
+                GuildMembers.CacheEntity(entity as GuildMember);
+                break;
+            case "killStat":
+                KillStats.CacheEntity(entity as KillStat);
+                break;
+            case "login":
+                Logins.CacheEntity(entity as Login);
+                break;
+            case "accountLock":
+                AccountLocks.CacheEntity(entity as AccountLock);
+                break;
+            case "accountIgnore":
+                AccountIgnores.CacheEntity(entity as AccountIgnore);
+                break;
+        }
+    }
+    
+    public static void CacheChildren(DbModel entity)
+    {
+        var modelName = entity.Key.Split('.')[0];
+        IEnumerable<string> includePaths = modelName switch
+        {
+            "account" => Account.GetIncludes(),
+            "accountSkin" => AccountSkin.GetIncludes(),
+            "accountStat" => AccountStat.GetIncludes(),
+            "character" => Character.GetIncludes(),
+            "characterDeath" => CharacterDeath.GetIncludes(),
+            "characterInventory" => CharacterInventory.GetIncludes(),
+            "characterStat" => CharacterStat.GetIncludes(),
+            "classStat" => ClassStat.GetIncludes(),
+            "combatStat" => CombatStat.GetIncludes(),
+            "dungeonStat" => DungeonStat.GetIncludes(),
+            "explorationStat" => ExplorationStat.GetIncludes(),
+            "guild" => Guild.GetIncludes(),
+            "guildMember" => GuildMember.GetIncludes(),
+            "killStat" => KillStat.GetIncludes(),
+            "login" => Login.GetIncludes(),
+            "accountLock" => AccountLock.GetIncludes(),
+            "accountIgnore" => AccountIgnore.GetIncludes(),
+            _ => throw new InvalidDataException($"Model Name not found: {modelName}")
+        };
+        
+        foreach (var path in includePaths) // Since include paths equal the property names, we can use reflection
+        {
+            var propName = path.Split('.')[0]; // First property is always child of T, second is always a child of the child of T (inception)
+            var prop = entity.GetType().GetProperty(propName);
+            if (prop == null)
+                continue;
+
+            var val = prop.GetValue(entity);
+            if (val is not DbModel child)
+            {
+                if (val is not ICollection<DbModel> children)
+                    continue;
+
+                foreach (var colChild in children)
+                {
+                    CacheEntity(colChild);
+                    CacheChildren(colChild);
+                }
+                continue;
+            }
+
+            Logger.Debug($"Caching {child.Key} | {child.GetHashCode()}");
+            
+            CacheEntity(child); // Add the child to its respective cache
+
+            // Now cache the children of this child
+            CacheChildren(child);
+        }
+    }
+    
+    public static async Task AddEntityAsync(DbModel entity)
+    {
+        var modelName = entity.Key.Split('.')[0];
+        switch (modelName)
+        {
+            case "account":
+                await Accounts.AddAsync(entity as Account);
+                break;
+            case "accountSkin":
+                await AccountSkins.AddAsync(entity as AccountSkin);
+                break;
+            case "accountStat":
+                await AccountStats.AddAsync(entity as AccountStat);
+                break;
+            case "character":
+                await Characters.AddAsync(entity as Character);
+                break;
+            case "characterDeath":
+                await CharacterDeaths.AddAsync(entity as CharacterDeath);
+                break;
+            case "characterInventory":
+                await CharacterInventories.AddAsync(entity as CharacterInventory);
+                break;
+            case "characterStat":
+                await CharacterStats.AddAsync(entity as CharacterStat);
+                break;
+            case "classStat":
+                await ClassStats.AddAsync(entity as ClassStat);
+                break;
+            case "combatStat":
+                await CombatStats.AddAsync(entity as CombatStat);
+                break;
+            case "dungeonStat":
+                await DungeonStats.AddAsync(entity as DungeonStat);
+                break;
+            case "explorationStat":
+                await ExplorationStats.AddAsync(entity as ExplorationStat);
+                break;
+            case "guild":
+                await Guilds.AddAsync(entity as Guild);
+                break;
+            case "guildMember":
+                await GuildMembers.AddAsync(entity as GuildMember);
+                break;
+            case "killStat":
+                await KillStats.AddAsync(entity as KillStat);
+                break;
+            case "login":
+                await Logins.AddAsync(entity as Login);
+                break;
+            case "accountLock":
+                await AccountLocks.AddAsync(entity as AccountLock);
+                break;
+            case "accountIgnore":
+                await AccountIgnores.AddAsync(entity as AccountIgnore);
+                break;
+        }
+    }
+    
+    public static async Task AddChildrenAsync(DbModel entity)
+    {
+        var includePaths = GetIncludePaths(entity);
+        
+        foreach (var path in includePaths) // Since include paths equal the property names, we can use reflection
+        {
+            var propName = path.Split('.')[0]; // First property is always child of T, second is always a child of the child of T (inception)
+            var prop = entity.GetType().GetProperty(propName);
+            if (prop == null)
+                continue;
+
+            var val = prop.GetValue(entity);
+            if (val is not DbModel child)
+            {
+                if (val is not ICollection<DbModel> children)
+                    continue;
+
+                foreach (var colChild in children)
+                {
+                    await AddEntityAsync(colChild);
+                    await AddChildrenAsync(colChild);
+                }
+                continue;
+            }
+
+            Logger.Debug($"Adding {child.Key} | {child.GetHashCode()}");
+            
+            await AddEntityAsync(child); // Add the child to its respective cache/table
+
+            // Now add the children of this child
+            await AddChildrenAsync(child);
+        }
+    }
+
+    private static IEnumerable<string> GetIncludePaths(DbModel entity)
+    {
+        var modelName = entity.Key.Split('.')[0];
+        return modelName switch
+        {
+            "account" => Account.GetIncludes(),
+            "accountSkin" => AccountSkin.GetIncludes(),
+            "accountStat" => AccountStat.GetIncludes(),
+            "character" => Character.GetIncludes(),
+            "characterDeath" => CharacterDeath.GetIncludes(),
+            "characterInventory" => CharacterInventory.GetIncludes(),
+            "characterStat" => CharacterStat.GetIncludes(),
+            "classStat" => ClassStat.GetIncludes(),
+            "combatStat" => CombatStat.GetIncludes(),
+            "dungeonStat" => DungeonStat.GetIncludes(),
+            "explorationStat" => ExplorationStat.GetIncludes(),
+            "guild" => Guild.GetIncludes(),
+            "guildMember" => GuildMember.GetIncludes(),
+            "killStat" => KillStat.GetIncludes(),
+            "login" => Login.GetIncludes(),
+            "accountLock" => AccountLock.GetIncludes(),
+            "accountIgnore" => AccountIgnore.GetIncludes(),
+            _ => throw new InvalidDataException($"Model Name not found: {modelName}")
+        };
     }
 
     public static async Task<int> SaveChanges() // Returns the number of entries written to the database

@@ -20,6 +20,10 @@ public abstract class DbModel
 
     protected DbModel()
     {
+        RegisterProperty("Version",
+            wtr => wtr.Write(Version),
+            rdr => Version = rdr.ReadInt32()
+        );
         Prepare();
     }
     

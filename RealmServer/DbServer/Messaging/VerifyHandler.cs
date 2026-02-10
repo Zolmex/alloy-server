@@ -50,6 +50,8 @@ public class VerifyHandler : IMessageHandler
             return;
         }
 
+        Logger.Debug($"accStats: {acc.AccStats?.GetHashCode()}");
+        
         response.Status = status;
         response.Account = acc;
         con.Send(response);

@@ -15,6 +15,7 @@ public class FlushHandler : IMessageHandler
     {
         var pkt = (FlushMessage)msg;
         pkt.Entity = await DbCache.Find(pkt.Key);
+        Logger.Debug($"{pkt.Entity.GetType()} | {pkt.Entity.GetHashCode()}");
         if (pkt.Entity == null)
         {
             Logger.Error("You suck.");
@@ -24,6 +25,8 @@ public class FlushHandler : IMessageHandler
         var status = FlushStatus.Success;
 
         var version = pkt.Version;
+        
+        Logger.Debug($"{pkt.Entity.GetType()} | {pkt.Version}");
         if (version < pkt.Entity.Version) // Version mismatch. Entity was modified before these changes were applied. Revert changes
             status = FlushStatus.VersionMismatch;
         else

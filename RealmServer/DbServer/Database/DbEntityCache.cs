@@ -4,6 +4,7 @@ using Common.Utilities;
 using DbServer.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -26,15 +27,61 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
         // Cache miss, find in MySQL
         await using var dbContext = await NetworkService.ContextFactory.CreateDbContextAsync(); // Don't worry about no tracking, it's already disabled by default
 
+        Logger.Debug($"Cache miss for: {key}");
+        
         var keyValues = ParseKey(key);
         var entity = await dbContext.Set<T>().FindAsync(keyValues); // Find entity in MySQL
 
         if (entity != null)
-            _cache.TryAdd(key, entity); // Add to cache for future use
+        {
+            _cache.TryAdd(entity.Key, entity); // Add the parent entity to this cache
+
+            foreach (var path in T.GetIncludes()) // Load children models
+                await LoadNavigationPath(dbContext, entity, path);
+            
+            DbCache.CacheChildren(entity);
+        }
 
         return entity;
     }
 
+    private static async Task LoadNavigationPath(DbContext dbContext, object entity, string path)
+    {
+        var parts = path.Split('.');
+        var currentEntity = entity;
+    
+        for (int i = 0; i < parts.Length; i++)
+        {
+            if (currentEntity == null)
+                break;
+        
+            var part = parts[i];
+            var entry = dbContext.Entry(currentEntity);
+            var navigation = entry.Navigation(part);
+        
+            if (!navigation.IsLoaded)
+                await navigation.LoadAsync();
+        
+            var currentValue = navigation.CurrentValue;
+            // If this is a collection and there are more parts in the path
+            if (currentValue is IEnumerable enumerable && i < parts.Length - 1)
+            {
+                // Load the remaining path for each item in the collection
+                var remainingPath = string.Join(".", parts.Skip(i + 1));
+            
+                foreach (var item in enumerable)
+                {
+                    if (item != null)
+                        await LoadNavigationPath(dbContext, item, remainingPath);
+                }
+            
+                break; // We've handled the rest recursively
+            }
+        
+            currentEntity = currentValue;
+        }
+    }
+    
     private object[] ParseKey(string key)
     {
         return key.Split('.').Skip(1).Select(i => (object)int.Parse(i)).ToArray();
@@ -56,8 +103,11 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
         
         match = await query.FirstOrDefaultAsync(expression);
 
-        if (match != null)
-            _cache.TryAdd(match.Key, match);
+        if (match != null) // Entity found
+        {
+            _cache.TryAdd(match.Key, match); // Add the parent entity to this cache
+            DbCache.CacheChildren(match);
+        }
 
         return match;
     }
@@ -95,12 +145,19 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
 
     public async Task AddAsync(T entity)
     {
-        var newEntity = await GetAsync(entity.Key) == null;
-        if (!newEntity)
+        if (!_new.Add(entity))
             return;
-
-        if (_new.Add(entity))
-            entity.Version++;
+        
+        entity.Version++;
+        await DbCache.AddChildrenAsync(entity);
+    }
+    
+    public void CacheEntity(T entity)
+    {
+        if (_cache.TryGetValue(entity.Key, out var cached))
+            return;
+        
+        _cache.TryAdd(entity.Key, entity);
     }
     
     // Update values from existing entities
@@ -144,7 +201,7 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
                 dbContext.Entry(entity).Property(property).IsModified = true;
         }
 
-        foreach (var entity in _new)
+        foreach (var entity in _new) // Don't cache entities here, they don't have PKs assigned yet
             set.Add(entity);
 
         _dirty.Clear();
