@@ -6,7 +6,9 @@ namespace Common.Database.Models;
 
 public partial class CombatStat : DbModel, IDbQueryable
 {
-    public override string Key => $"combatStat.{Id}";
+    public const string KEY_BASE = "combatStat";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -73,5 +75,10 @@ public partial class CombatStat : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

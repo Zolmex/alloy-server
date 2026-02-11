@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class CharacterDeath : DbModel, IDbQueryable
 {
-    public override string Key => $"characterDeath.{Id}";
+    public const string KEY_BASE = "characterDeath";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -60,5 +62,10 @@ public partial class CharacterDeath : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield return "Char";
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

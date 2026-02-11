@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class GuildMember : DbModel, IDbQueryable
 {
-    public override string Key => $"guildMember.{Id}";
+    public const string KEY_BASE = "guildMember";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -48,5 +50,10 @@ public partial class GuildMember : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

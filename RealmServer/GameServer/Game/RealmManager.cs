@@ -60,7 +60,7 @@ public static class RealmManager
 
         CommandManager.Load();
 
-        DbClientOld.UpdateLegends(); // Update legends every day
+        // DbClientOld.UpdateLegends(); // Update legends every day // TODO: fix
         AddTimedAction((int)TimeSpan.FromDays(1).TotalMilliseconds, DbClientOld.UpdateLegends);
 
         apiEventManager = new APIEventManager();
@@ -103,7 +103,7 @@ public static class RealmManager
 
             Parallel.ForEach(Worlds.Values, w => w.Tick(WorldTime));
 
-            DbClientOld.SetPlayerCount(Users.Count);
+            // DbClientOld.SetPlayerCount(Users.Count); // TODO: honestly just remove this
         }
     }
 

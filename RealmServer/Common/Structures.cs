@@ -233,14 +233,6 @@ public struct StatData
     {
         return type switch
         {
-            StatType.CriticalChance => true,
-            StatType.DodgeChance => true,
-            StatType.CriticalChanceBonus => true,
-            StatType.DodgeChanceBonus => true,
-            StatType.AttackSpeed => true,
-            StatType.AttackSpeedBonus => true,
-            StatType.Speed => true,
-            StatType.SpeedBonus => true,
             _ => false
         };
     }

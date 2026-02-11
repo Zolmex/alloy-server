@@ -83,7 +83,7 @@ public class AppConnection
         _sendState.WriteMessage(msg);
     }
 
-    public async Task<IAppMessageAck> SendAndReceiveAsync(IAppMessage msg) // Sends packet and completes when it receives a response
+    public async Task<T> SendAndReceiveAsync<T>(IAppMessage msg) where T : IAppMessageAck // Sends packet and completes when it receives a response
     {
         IAppMessage.SetSequence(msg);
 
@@ -93,11 +93,19 @@ public class AppConnection
         var tcs = _pendingAcks[msg.Sequence] = new TaskCompletionSource<IAppMessageAck>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         using var cts = new CancellationTokenSource(RESPONSE_TTL_MS);
-        await using (cts.Token.Register(() =>
-                         tcs.TrySetException(new TimeoutException(
-                             $"Response for {msg.MessageId} (Seq:{msg.Sequence}) timed out"))))
+        try
         {
-            return await tcs.Task;
+            await using (cts.Token.Register(() =>
+                             tcs.TrySetException(new TimeoutException(
+                                 $"Response for {msg.MessageId} (Seq:{msg.Sequence}) timed out"))))
+            {
+                return (T)await tcs.Task;
+            }
+        }
+        catch (TimeoutException e)
+        {
+            _log.Error(e.Message);
+            return default;
         }
     }
 

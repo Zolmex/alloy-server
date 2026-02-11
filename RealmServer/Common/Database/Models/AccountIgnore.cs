@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class AccountIgnore : DbModel, IDbQueryable
 {
-    public override string Key => $"accountIgnore.{AccountId}.{IgnoredId}";
+    public const string KEY_BASE = "accountIgnore";
+    
+    public override string Key => KEY_BASE + $".{AccountId}.{IgnoredId}";
     
     public int AccountId { get; set; }
     
@@ -41,5 +43,10 @@ public partial class AccountIgnore : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int accountId, int ignoredId)
+    {
+        return KEY_BASE + $".{accountId}.{ignoredId}";
     }
 }

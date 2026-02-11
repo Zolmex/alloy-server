@@ -49,6 +49,12 @@ public static class GameUtils
     {
         // TODO: based on chr.ObjectType and classStat.BestFame find the next class quest fame
         var classStat = acc.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
+        if (classStat == null)
+        {
+            Logger.Debug($"BITCH {chr.ObjectType}");
+            return 0;
+        }
+
         return (int)classStat!.BestFame;
     }
 }

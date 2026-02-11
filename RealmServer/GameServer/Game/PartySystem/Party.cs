@@ -37,17 +37,17 @@ public class Party
 
     public static Party GetFromId(int partyId)
     {
-        if (_partyCache.TryGetValue(partyId, out var party))
-            return party;
-
-        var dbParty = DbClientOld.GetParty(partyId).Result;
-
-        if (dbParty is not null)
-        {
-            party = new Party(dbParty);
-            _partyCache[partyId] = party;
-            return party;
-        }
+        // if (_partyCache.TryGetValue(partyId, out var party)) // TODO: fix
+        //     return party;
+        //
+        // var dbParty = DbClientOld.GetParty(partyId).Result;
+        //
+        // if (dbParty is not null)
+        // {
+        //     party = new Party(dbParty);
+        //     _partyCache[partyId] = party;
+        //     return party;
+        // }
 
         Logger.Error($"DbParty Id {partyId} does not exist in database.", "Party");
         return null;

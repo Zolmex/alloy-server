@@ -41,7 +41,7 @@ public static class DbClient
         if (!IsValidPassword(password))
             return RegisterStatus.InvalidPassword;
 
-        var ack = (RegisterAck)await _con.SendAndReceiveAsync(
+        var ack = await _con.SendAndReceiveAsync<RegisterAck>(
             new RegisterMessage
             {
                 Username = username,
@@ -53,7 +53,7 @@ public static class DbClient
 
     public static async Task<VerifyAck> VerifyAccount(string username, string password)
     {
-        var ack = (VerifyAck)await _con.SendAndReceiveAsync(
+        var ack = await _con.SendAndReceiveAsync<VerifyAck>(
             new VerifyMessage
             {
                 Username = username,
@@ -78,7 +78,7 @@ public static class DbClient
 
     public static async Task<GetCharacterAck> GetChar(int accId, int charId)
     {
-        var ack = (GetCharacterAck)await _con.SendAndReceiveAsync(
+        var ack = await _con.SendAndReceiveAsync<GetCharacterAck>(
             new GetCharacterMessage
             {
                 AccountId = accId,
@@ -95,7 +95,7 @@ public static class DbClient
 
     public static async Task<CreateCharacterAck> CreateCharacter(Account acc, ushort objectType, ushort skinType)
     {
-        var ack = (CreateCharacterAck)await _con.SendAndReceiveAsync(
+        var ack = await _con.SendAndReceiveAsync<CreateCharacterAck>(
             new CreateCharacterMessage
             {
                 AccountId = acc.Id,

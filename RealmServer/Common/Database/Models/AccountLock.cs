@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class AccountLock : DbModel, IDbQueryable
 {
-    public override string Key => $"accountLock.{AccountId}.{LockedId}";
+    public const string KEY_BASE = "accountLock";
+    
+    public override string Key => KEY_BASE + $".{AccountId}.{LockedId}";
     
     public int AccountId { get; set; }
     
@@ -41,5 +43,10 @@ public partial class AccountLock : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int accountId, int lockedId)
+    {
+        return KEY_BASE + $".{accountId}.{lockedId}";
     }
 }

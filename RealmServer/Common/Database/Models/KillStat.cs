@@ -6,7 +6,9 @@ namespace Common.Database.Models;
 
 public partial class KillStat : DbModel, IDbQueryable
 {
-    public override string Key => $"killStat.{Id}";
+    public const string KEY_BASE = "killStat";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -97,5 +99,10 @@ public partial class KillStat : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

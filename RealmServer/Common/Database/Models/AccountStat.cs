@@ -6,7 +6,9 @@ namespace Common.Database.Models;
 
 public partial class AccountStat : DbModel, IDbQueryable
 {
-    public override string Key => $"accountStat.{Id}";
+    public const string KEY_BASE = "accountStat";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -66,7 +68,11 @@ public partial class AccountStat : DbModel, IDbQueryable
                 ClassStats.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    ClassStats.Add(DbModel.Read<ClassStat>(rdr));
+                {
+                    var classStat = DbModel.Read<ClassStat>(rdr);
+                    if (classStat != null)
+                        ClassStats.Add(classStat);
+                }
             }
         );
     }
@@ -84,5 +90,10 @@ public partial class AccountStat : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield return "ClassStats";
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

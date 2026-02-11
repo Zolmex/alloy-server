@@ -30,7 +30,6 @@ public record struct GetCharacterAck : IAppMessageAck
 
     public void Read(NetworkReader rdr)
     {
-        if (rdr.ReadBoolean())
-            Character = DbModel.Read<Character>(rdr);
+        Character = DbModel.Read<Character>(rdr);
     }
 }

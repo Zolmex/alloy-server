@@ -165,13 +165,22 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
     {
         foreach (var propertyExpression in properties)
         {
-            var memberExpression = (MemberExpression)propertyExpression.Body;
+            var memberExpression = GetMemberExpression(propertyExpression.Body);
             var property = (PropertyInfo)memberExpression.Member;
 
             DirtyProperty(entity, property.Name);
         }
         
         entity.Version++;
+    }
+
+    private MemberExpression GetMemberExpression(Expression body)
+    {
+        if (body is MemberExpression memberExpression)
+            return memberExpression;
+        if (body is UnaryExpression unaryExpression)
+            return unaryExpression.Operand as MemberExpression;
+        throw new ArgumentException($"Expression {body} is not supported");
     }
     
     public void Update(T entity, params string[] properties) // If you need to update and you have the property names in a string[]

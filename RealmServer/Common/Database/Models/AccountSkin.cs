@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class AccountSkin : DbModel, IDbQueryable
 {
-    public override string Key => $"accountSkin.{AccountId}.{SkinType}";
+    public const string KEY_BASE = "accountSkin";
+    
+    public override string Key => KEY_BASE + $".{AccountId}.{SkinType}";
     
     public int AccountId { get; set; }
 
@@ -39,5 +41,10 @@ public partial class AccountSkin : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int accountId, int skinType)
+    {
+        return KEY_BASE + $".{accountId}.{skinType}";
     }
 }

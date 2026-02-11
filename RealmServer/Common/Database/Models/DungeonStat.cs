@@ -6,7 +6,9 @@ namespace Common.Database.Models;
 
 public partial class DungeonStat : DbModel, IDbQueryable
 {
-    public override string Key => $"dungeonStat.{Id}";
+    public const string KEY_BASE = "dungeonStat";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -43,5 +45,10 @@ public partial class DungeonStat : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

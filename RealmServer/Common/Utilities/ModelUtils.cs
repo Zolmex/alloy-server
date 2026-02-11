@@ -75,6 +75,11 @@ public static class ModelUtils
     {
         public XElement ToXml(Account acc)
         {
+            Logger.Debug(chr);
+            Logger.Info(chr.CharStats); // TODO: figure out whats null here bruh
+            Logger.Warn(acc);
+            foreach (var slot in chr.CharacterInventories)
+                Logger.Debug(slot);
             var elements = new List<XElement>
             {
                 new("ObjectType", chr.ObjectType),

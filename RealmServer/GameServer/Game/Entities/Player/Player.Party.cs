@@ -22,7 +22,7 @@ public partial class Player
             return;
 
         Party = Party.GetFromId(PartyId);
-        Party.MemberConnected(this);
+        Party?.MemberConnected(this);
     }
 
     public void UnsetParty()

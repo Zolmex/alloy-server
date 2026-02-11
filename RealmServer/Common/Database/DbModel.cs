@@ -81,7 +81,7 @@ public abstract class DbModel
             props[i] = property.Name;
         }
         
-        return (FlushAck)await con.SendAndReceiveAsync(new FlushMessage()
+        return await con.SendAndReceiveAsync<FlushAck>(new FlushMessage()
         {
             Key = Key,
             Version = Version,
@@ -100,7 +100,7 @@ public abstract class DbModel
             i++;
         }
 
-        return (FlushAck)await con.SendAndReceiveAsync(new FlushMessage()
+        return await con.SendAndReceiveAsync<FlushAck>(new FlushMessage()
         {
             Key = Key,
             Version = Version,

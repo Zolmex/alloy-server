@@ -9,6 +9,8 @@ namespace Common.Database.Models;
 
 public partial class Account : DbModel, IDbQueryable
 {
+    public const string KEY_BASE = "account";
+    
     public static readonly Account Guest = new()
     {
         Id = -1,
@@ -20,7 +22,7 @@ public partial class Account : DbModel, IDbQueryable
         CreatedAt = DateTime.Now,
     };
 
-    public override string Key => $"account.{Id}";
+    public override string Key => KEY_BASE + $".{Id}";
 
     public int Id { get; set; }
 
@@ -163,7 +165,11 @@ public partial class Account : DbModel, IDbQueryable
                 AccountSkins.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    AccountSkins.Add(DbModel.Read<AccountSkin>(rdr));
+                {
+                    var skin = DbModel.Read<AccountSkin>(rdr);
+                    if (skin != null)
+                        AccountSkins.Add(skin);
+                }
             }
         );
         RegisterProperty("AccountIgnores",
@@ -183,7 +189,11 @@ public partial class Account : DbModel, IDbQueryable
                 AccountIgnores.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    AccountIgnores.Add(DbModel.Read<AccountIgnore>(rdr));
+                {
+                    var ign = DbModel.Read<AccountIgnore>(rdr);
+                    if (ign != null)
+                        AccountIgnores.Add(ign);
+                }
             }
         );
         RegisterProperty("AccountLocks",
@@ -203,7 +213,11 @@ public partial class Account : DbModel, IDbQueryable
                 AccountLocks.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    AccountLocks.Add(DbModel.Read<AccountLock>(rdr));
+                {
+                    var locks = DbModel.Read<AccountLock>(rdr);
+                    if (locks != null)
+                        AccountLocks.Add(locks);
+                }
             }
         );
         RegisterProperty("Characters",
@@ -223,7 +237,11 @@ public partial class Account : DbModel, IDbQueryable
                 Characters.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    Characters.Add(DbModel.Read<Character>(rdr));
+                {
+                    var chr = DbModel.Read<Character>(rdr);
+                    if (chr != null)
+                        Characters.Add(chr);
+                }
             }
         );
     }
@@ -250,5 +268,10 @@ public partial class Account : DbModel, IDbQueryable
         yield return "Characters.ExploStats";
         yield return "Characters.KillStats";
         yield return "Characters.CharacterInventories";
+    }
+    
+    public static string BuildKey(int accountId)
+    {
+        return KEY_BASE + $".{accountId}";
     }
 }

@@ -1,3 +1,4 @@
+using Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,8 @@ namespace Common.Network.Messaging;
 
 public interface IAppMessage
 {
+    private static readonly Logger _log = new Logger(typeof(IAppMessage));
+    
     AppMessageId MessageId { get; }
     int Sequence { get; set; }
     bool IsAck => this is IAppMessageAck;
@@ -17,7 +20,13 @@ public interface IAppMessage
 
     void Handle(AppConnection con)
     {
-        _handlers[MessageId].HandleAsync(this, con).Wait(); // TODO: make this async too
+        if (!_handlers.TryGetValue(MessageId, out var handler))
+        {
+            _log.Error($"No handler for '{MessageId}'");
+            return;
+        }
+
+        handler.HandleAsync(this, con).Wait(); // TODO: make this async too
     }
 
     #region Static members

@@ -31,6 +31,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
         <PackageReference Include="MySql.EntityFrameworkCore" Version="10.0.0-preview" />
+        <PackageReference Include="System.Security.Permissions" Version="10.0.3" />
     </ItemGroup>
 
     <ItemGroup>

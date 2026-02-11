@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class Guild : DbModel, IDbQueryable
 {
-    public override string Key => $"guild.{Id}";
+    public const string KEY_BASE = "guild";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -72,7 +74,11 @@ public partial class Guild : DbModel, IDbQueryable
                 GuildMembers.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    GuildMembers.Add(DbModel.Read<GuildMember>(rdr));
+                {
+                    var member = DbModel.Read<GuildMember>(rdr);
+                    if (member != null)
+                        GuildMembers.Add(member);
+                }
             }
         );
     }
@@ -88,5 +94,10 @@ public partial class Guild : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield return "GuildMembers";
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

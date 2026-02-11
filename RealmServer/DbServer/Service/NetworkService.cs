@@ -10,14 +10,12 @@ public class NetworkService : BackgroundService
 {
     public static IDbContextFactory<AlloyContext> ContextFactory; // Don't yell at me this is the closest to the correct way I could do
     
-    private readonly AlloyContext _dbContext;
     private readonly AppListener _listener;
     
     public NetworkService(IDbContextFactory<AlloyContext> contextFactory, IConfiguration config)
     {
         ContextFactory = contextFactory;
         
-        _dbContext = contextFactory.CreateDbContext();
         _listener = new AppListener(int.Parse(config["Server:Port"]!));
     }
     
@@ -29,9 +27,10 @@ public class NetworkService : BackgroundService
         {
             NetworkHealthMonitor();
             
-            Console.WriteLine($"Connected: {await _dbContext.Database.CanConnectAsync(stoppingToken)} | Connection count: {_listener.AppConnections.Count}");
+            await using var context = await ContextFactory.CreateDbContextAsync(stoppingToken);
+            Console.WriteLine($"Connected: {await context.Database.CanConnectAsync(stoppingToken)} | Connection count: {_listener.AppConnections.Count}");
             
-            await Task.Delay(3 * 1000, stoppingToken);
+            await Task.Delay(5 * 1000, stoppingToken);
         }
     }
 

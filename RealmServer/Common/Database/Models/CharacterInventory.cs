@@ -6,7 +6,9 @@ namespace Common.Database.Models;
 
 public partial class CharacterInventory : DbModel, IDbQueryable
 {
-    public override string Key => $"characterInventory.{CharacterId}.{SlotId}";
+    public const string KEY_BASE = "characterInventory";
+    
+    public override string Key => KEY_BASE + $".{CharacterId}.{SlotId}";
     
     public int CharacterId { get; set; }
 
@@ -50,5 +52,10 @@ public partial class CharacterInventory : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int charId, int slotId)
+    {
+        return KEY_BASE + $".{charId}.{slotId}";
     }
 }

@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class Login : DbModel, IDbQueryable
 {
-    public override string Key => $"login.{Id}";
+    public const string KEY_BASE = "login";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -61,5 +63,10 @@ public partial class Login : DbModel, IDbQueryable
     public static IEnumerable<string> GetIncludes()
     {
         yield break;
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }

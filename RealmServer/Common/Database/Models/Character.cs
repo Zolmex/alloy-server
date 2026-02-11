@@ -7,7 +7,9 @@ namespace Common.Database.Models;
 
 public partial class Character : DbModel, IDbQueryable
 {
-    public override string Key => $"character.{Id}";
+    public const string KEY_BASE = "character";
+    
+    public override string Key => KEY_BASE + $".{Id}";
     
     public int Id { get; set; }
 
@@ -228,7 +230,11 @@ public partial class Character : DbModel, IDbQueryable
                 CharacterInventories.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
-                    CharacterInventories.Add(DbModel.Read<CharacterInventory>(rdr));
+                {
+                    var inv = DbModel.Read<CharacterInventory>(rdr);
+                    if (inv != null)
+                        CharacterInventories.Add(inv);
+                }
             }
         );
     }
@@ -249,5 +255,10 @@ public partial class Character : DbModel, IDbQueryable
         yield return "ExploStats";
         yield return "KillStats";
         yield return "CharacterInventories";
+    }
+    
+    public static string BuildKey(int id)
+    {
+        return KEY_BASE + $".{id}";
     }
 }
