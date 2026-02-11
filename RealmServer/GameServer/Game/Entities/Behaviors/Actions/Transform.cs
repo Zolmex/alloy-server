@@ -15,7 +15,7 @@ public record Transform : BehaviorScript
         _target = target;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var obj = XmlLibrary.Id2Object(_target);
         if (obj.Class.Contains("Portal"))

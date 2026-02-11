@@ -58,10 +58,9 @@ public class Party
     {
         _data.Members.Add(player.AccountId);
 
-        player.User.Account.PartyId = PartyId;
         player.PartyId = PartyId;
 
-        DbClientOld.Save(_data, player.User.Account);
+        // DbClientOld.Save(_data, player.User.Account); // TODO: Dont save party in database
 
         _logger.Debug($"AccountId {player.AccountId} was added to party id {_data.PartyId}.");
     }

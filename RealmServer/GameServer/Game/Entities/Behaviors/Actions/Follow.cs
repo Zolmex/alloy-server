@@ -55,7 +55,7 @@ public record Follow : BehaviorScript
         _target = xml.GetAttribute("target", "player");
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var followInfo = host.ResolveResource<FollowInfo>(this);
         followInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
@@ -63,7 +63,7 @@ public record Follow : BehaviorScript
         followInfo.TargetId = -1;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var followInfo = host.ResolveResource<FollowInfo>(this);
         if (_cooldownMS >= 0)
@@ -111,7 +111,7 @@ public record Follow : BehaviorScript
         return BehaviorTickState.OnCooldown;
     }
 
-    public static int FindTarget(Character host, TargetType targetType, float acquireRadiusSqr, string target = "player")
+    public static int FindTarget(CharacterEntity host, TargetType targetType, float acquireRadiusSqr, string target = "player")
     {
         switch (targetType)
         {

@@ -51,7 +51,7 @@ public record Wander : BehaviorScript
         _ease = Enum.Parse<Ease>(xml.GetAttribute("ease", "None"));
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var wanderInfo = host.ResolveResource<WanderInfo>(this);
         wanderInfo.WanderCooldown = _cooldownMs;
@@ -59,7 +59,7 @@ public record Wander : BehaviorScript
         wanderInfo.Wandering = false;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var wanderInfo = host.ResolveResource<WanderInfo>(this);
         var firstMove = false;

@@ -54,7 +54,7 @@ public record StayAwayFrom : BehaviorScript
         _target = target;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var stayAwayFromInfo = host.ResolveResource<StayAwayFromInfo>(this);
         stayAwayFromInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
@@ -62,7 +62,7 @@ public record StayAwayFrom : BehaviorScript
         stayAwayFromInfo.TargetId = -1;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var stayAwayFromInfo = host.ResolveResource<StayAwayFromInfo>(this);
         if (_cooldownMS >= 0)

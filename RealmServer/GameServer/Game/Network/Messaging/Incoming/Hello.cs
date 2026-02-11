@@ -35,9 +35,9 @@ public partial record Hello : IIncomingPacket
         var acc = user.Account;
         if (user.State != ConnectionState.Reconnecting)
         {
-            var verify = await DbClientOld.VerifyAccount(Username, Password);
-            var status = verify.Item2;
-            acc = verify.Item1;
+            var verify = await DbClient.VerifyAccount(Username, Password);
+            var status = verify.Status;
+            acc = verify.Account;
             if (acc == null)
             {
                 user.SendFailure(Failure.DEFAULT, status.GetDescription());
@@ -53,11 +53,11 @@ public partial record Hello : IIncomingPacket
 
         if (RealmManager.UserAccIds.TryGetValue(user, out _) && user.State != ConnectionState.Reconnecting)
         {
-            user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.AccountId}");
+            user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.Id}");
             return;
         }
 
-        if (GameServerConfig.Config.AdminOnly && !acc.Admin)
+        if (GameServerConfig.Config.AdminOnly && !acc.IsAdmin)
         {
             user.SendFailure(Failure.DEFAULT, "Admin only server.");
             return;
@@ -67,7 +67,7 @@ public partial record Hello : IIncomingPacket
 
         if (GameId == World.TEST_ID)
         {
-            if (!acc.Admin)
+            if (!acc.IsAdmin)
             {
                 user.SendFailure(Failure.FORCE_CLOSE_GAME, "Only players with admin permissions can make test maps.");
                 return;

@@ -1,9 +1,11 @@
 using Common.Database.Models;
 using Common.Network;
+using Common.Network.Messaging;
 using Common.Network.Messaging.Impl;
 using Common.Resources.Config;
 using Common.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -72,5 +74,34 @@ public static class DbClient
         
         await acc.AccStats.Flush<AccountStat, uint>(_con, stats => stats.CurrentFame);
         await acc.Flush<Account, short>(_con, a => a.MaxChars);
+    }
+
+    public static async Task<GetCharacterAck> GetChar(int accId, int charId)
+    {
+        var ack = (GetCharacterAck)await _con.SendAndReceiveAsync(
+            new GetCharacterMessage
+            {
+                AccountId = accId,
+                CharacterId = charId
+            });
+        return ack;
+    }
+
+    public static async IAsyncEnumerable<IAppMessageAck> Flush(params DbModel[] models)
+    {
+        foreach (var model in models)
+            yield return await model.FlushAll(_con);
+    }
+
+    public static async Task<CreateCharacterAck> CreateCharacter(Account acc, ushort objectType, ushort skinType)
+    {
+        var ack = (CreateCharacterAck)await _con.SendAndReceiveAsync(
+            new CreateCharacterMessage
+            {
+                AccountId = acc.Id,
+                ClassType = objectType,
+                SkinType = skinType
+            });
+        return ack;
     }
 }

@@ -14,7 +14,7 @@ public class EntityHpLessTransition : BehaviorTransition
         _entity = entity;
     }
 
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         var entity = host.World.GetNearestEnemyByName(_entity, host.Position.X, host.Position.Y, _dist);
         if (entity == null)

@@ -19,7 +19,7 @@ public record ConditionEffectBehavior : BehaviorScript
         _persist = persist;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         if (_durationMS == 0)
         { // Remove effect
@@ -30,7 +30,7 @@ public record ConditionEffectBehavior : BehaviorScript
         host.ApplyConditionEffect(_condEffect, _durationMS);
     }
 
-    public override void End(Character host, RealmTime time)
+    public override void End(CharacterEntity host, RealmTime time)
     {
         if (_persist)
             return;

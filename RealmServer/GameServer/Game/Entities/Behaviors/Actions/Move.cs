@@ -49,14 +49,14 @@ public record Move : BehaviorScript
         _ease = Enum.Parse<Ease>(xml.GetAttribute("ease", "None"));
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var moveInfo = host.ResolveResource<MoveInfo>(this);
         moveInfo.CooldownMs = _cooldownMsDefault;
         moveInfo.Moving = false;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var moveInfo = host.ResolveResource<MoveInfo>(this);
         var firstMove = false;

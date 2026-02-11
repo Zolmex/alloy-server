@@ -26,7 +26,7 @@ using static GameServer.Game.Entities.Player;
 
 namespace GameServer.Game.Entities;
 
-public class Character : Entity
+public class CharacterEntity : Entity
 {
     public static readonly int PROJECTILE_DAMAGE_RANGE = 32;
 
@@ -38,7 +38,7 @@ public class Character : Entity
     private readonly Dictionary<int, LootCache> _playerLootCaches = new();
 
     protected readonly object _projIdLock = new();
-    private readonly Dictionary<ProjectileTargetType, IEnumerable<Character>> _targetCache = new();
+    private readonly Dictionary<ProjectileTargetType, IEnumerable<CharacterEntity>> _targetCache = new();
 
     public readonly DamageStorage DamageStorage = new();
 
@@ -53,7 +53,7 @@ public class Character : Entity
 
     public LazyCollection<Projectile> Projectiles = new();
 
-    public Character(ushort objType) : base(objType)
+    public CharacterEntity(ushort objType) : base(objType)
     {
         LoadBehavior();
 
@@ -87,8 +87,8 @@ public class Character : Entity
     public StateResourceController StateResources { get; } = new();
     public string Killer { get; private set; }
 
-    public event Action<Character, Character, int> OnDamagedBy; // <This, From, DamageDealt>
-    public event Action<Character, Player, string> OnPlayerText; // <This, From, text>
+    public event Action<CharacterEntity, CharacterEntity, int> OnDamagedBy; // <This, From, DamageDealt>
+    public event Action<CharacterEntity, Player, string> OnPlayerText; // <This, From, text>
 
     private void CloseDamageCounterForAttackers(Entity en)
     {
@@ -238,7 +238,7 @@ public class Character : Entity
                 case ProjectileTargetType.Player:
                     _targetCache.Add(proj.TargetType,
                         World.GetAllPlayersWithin(Position.X, Position.Y, PROJECTILE_DAMAGE_RANGE)
-                            .Select(x => (Character)x));
+                            .Select(x => (CharacterEntity)x));
                     break;
                 case ProjectileTargetType.Enemy:
                     _targetCache.Add(proj.TargetType,
@@ -273,20 +273,20 @@ public class Character : Entity
             return;
         }
 
-        if (!World.Entities.TryGetValue(targetId, out var target) || target is not Character c)
+        if (!World.Entities.TryGetValue(targetId, out var target) || target is not CharacterEntity c)
             return;
 
         proj.CheckClientCollision(c, elapsedLifetimeMs, targetPos);
     }
 
-    public Character GetNearestOtherEnemyByName(string name, float radius)
+    public CharacterEntity GetNearestOtherEnemyByName(string name, float radius)
     {
         var query = new SearchQuery(name, new IntPoint((int)Position.X, (int)Position.Y), radius, 0);
         if (World.SearchCache.TryGetValue(query, out var result) && result.NearestEntity != null)
             return result.NearestEntity;
 
         var entities = World.GetEnemiesByName(name, Position.X, Position.Y, radius);
-        Character nearest = null;
+        CharacterEntity nearest = null;
         var minDist = float.MaxValue;
         if (name != Name)
         {
@@ -316,7 +316,7 @@ public class Character : Entity
         return nearest;
     }
 
-    public IEnumerable<Character> GetEnemiesWithin(float radius)
+    public IEnumerable<CharacterEntity> GetEnemiesWithin(float radius)
     {
         return World.GetEnemiesWithin(Position.X, Position.Y, radius);
     }
@@ -332,7 +332,7 @@ public class Character : Entity
         return players;
     }
 
-    public IEnumerable<Character> GetOtherEnemiesByName(string name, float radius)
+    public IEnumerable<CharacterEntity> GetOtherEnemiesByName(string name, float radius)
     {
         var entities = World.GetEnemiesByName(name, Position.X, Position.Y, radius);
         if (name != Name)
@@ -341,7 +341,7 @@ public class Character : Entity
         return entities.Where(x => x.Id != Id); // i think this is more performant than casting to list then removing. if not then change it.
     }
 
-    public IEnumerable<Character> GetOtherEnemiesByName(IEnumerable<string> names, float radius)
+    public IEnumerable<CharacterEntity> GetOtherEnemiesByName(IEnumerable<string> names, float radius)
     {
         var entities = World.GetEnemiesByName(names, Position.X, Position.Y, radius);
 
@@ -351,7 +351,7 @@ public class Character : Entity
     public List<Projectile> ShootProjectiles(ProjectilePath path, ushort projType = 0, int minDamage = 0, int maxDamage = 0,
         byte numShots = 1, float angle = 0, float? x = null, float? y = null, float angleInc = 0,
         bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
-        Action<Character, Character> onHitEvent = null, int size = 100,
+        Action<CharacterEntity, CharacterEntity> onHitEvent = null, int size = 100,
         (ConditionEffectIndex, int)[] effects = null,
         int propId = -1, float radiusSqr = SIGHT_RADIUS_SQR,
         string projName = null, int? damage = null)
@@ -533,7 +533,7 @@ public class Character : Entity
         }
     }
 
-    public virtual void OnHitBy(Character from, DamageSource damageSource)
+    public virtual void OnHitBy(CharacterEntity from, DamageSource damageSource)
     {
         var damage = damageSource.GetTotalDamage();
         if (from.IsPlayer)
@@ -549,7 +549,7 @@ public class Character : Entity
         GetBehavior()?.OnHitBy(this, from, damageSource);
     }
 
-    public void HitBy(Character from, DamageSource damageSource, bool ignoreInvincible = false)
+    public void HitBy(CharacterEntity from, DamageSource damageSource, bool ignoreInvincible = false)
     {
         if (from.Dead || Dead)
             return;
@@ -563,7 +563,7 @@ public class Character : Entity
         OnHitBy(from, damageSource);
     }
 
-    public void DamageWithText(int dmg, int color = 0xFF0000, int size = 24, Character from = null,
+    public void DamageWithText(int dmg, int color = 0xFF0000, int size = 24, CharacterEntity from = null,
         string prefix = "", (ConditionEffectIndex, int)[] effects = null, bool ignoreInvincible = false)
     {
         if (!CanBeDamaged(ignoreInvincible))
@@ -586,16 +586,13 @@ public class Character : Entity
             player.SendNotif(prefix + "-" + dmg, color, size, Id);
     }
 
-    public int Damage(int damage, Character from = null)
+    public int Damage(int damage, CharacterEntity from = null)
     {
         using (TimedLock.Lock(_dmgLock))
         {
-            var msAfterDmg = MS - damage;
-            var hpDmg = msAfterDmg < 0 ? Math.Abs(msAfterDmg) : 0;
-            var dmgDealt = hpDmg > HP ? HP : hpDmg;
+            var dmgDealt = damage > HP ? HP : damage;
 
-            MS = Math.Max(0, msAfterDmg);
-            HP = Math.Max(0, HP - hpDmg);
+            HP -= dmgDealt;
 
             OnDamagedBy?.Invoke(this, from, dmgDealt);
 
@@ -628,7 +625,7 @@ public class Character : Entity
             ApplyConditionEffect(eff.Item1, eff.Item2);
     }
 
-    public virtual void Hit(Character hit, DamageSource damageSource)
+    public virtual void Hit(CharacterEntity hit, DamageSource damageSource)
     {
         if (!_hitEntities.Contains(hit))
         {

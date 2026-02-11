@@ -30,13 +30,13 @@ public class StunnedStar : EntityBehavior
     }
 
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, StunnedStarState.Start);
         base.Initialize(owner);
     }
 
-    public void StartTick(RealmTime time, Character owner, StateTick state)
+    public void StartTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         { }
@@ -48,7 +48,7 @@ public class StunnedStar : EntityBehavior
         }
     }
 
-    public void SelfDestructionTick(RealmTime time, Character owner, StateTick state)
+    public void SelfDestructionTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         {

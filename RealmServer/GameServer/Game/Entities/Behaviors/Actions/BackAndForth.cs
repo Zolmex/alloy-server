@@ -22,13 +22,13 @@ public record BackAndForth : BehaviorScript
         _distance = distance;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var chargeState = host.ResolveResource<BackAndForthInfo>(this);
         chargeState.Distance = _distance;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var backAndForthState = host.ResolveResource<BackAndForthInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))

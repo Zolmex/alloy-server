@@ -37,9 +37,9 @@ public record Circle : BehaviorScript
         _target = target;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
-        Character target;
+        CharacterEntity target;
         if (_target == "player")
             target = host.GetNearestPlayer(_acquireRadiusSqr);
         else
@@ -51,12 +51,12 @@ public record Circle : BehaviorScript
         resource.CurrentAngle = host.GetAngleBetween(target).Rad2Deg();
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var resource = host.ResolveResource<CircleInfo>(this);
         var angleInc = 360f * (_rotationsPerSecond * time.ElapsedMsDelta / 1000);
 
-        Character target;
+        CharacterEntity target;
         if (_target == "player")
             target = host.GetNearestPlayer(_acquireRadiusSqr);
         else

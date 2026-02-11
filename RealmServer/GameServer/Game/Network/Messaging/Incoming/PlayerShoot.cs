@@ -55,7 +55,7 @@ public partial record PlayerShoot : IIncomingPacket
 
             // Compare player's position (updated last tick) with projectile position (player's position on the client)
             var moveThresh =
-                4 + (player.MovementSpeed *
+                4 + (player.Speed *
                      (player.TimeSinceLastMove() / 1000f)); // 4 tiles to account for any lag or speed modifiers
             moveThresh *= moveThresh; // Squared
             var dist = player.DistSqr(Pos.X, Pos.Y);

@@ -88,14 +88,14 @@ public record Spawn : BehaviorScript
             throw new ArithmeticException();
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var spawnInfo = host.ResolveResource<SpawnInfo>(this);
         spawnInfo.CooldownMs = _cooldownOffsetMs;
         spawnInfo.SpawnCount = 0;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var spawnInfo = host.ResolveResource<SpawnInfo>(this);
         if (spawnInfo.SpawnCount > _maxSpawnsPerReset) return BehaviorTickState.BehaviorFailed;

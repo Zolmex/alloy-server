@@ -20,7 +20,7 @@ public partial record InvDrop : IIncomingPacket
         if (itemToDrop == null)
             return;
 
-        user.GameInfo.World.CreateContainerAt(player.Position.X, player.Position.Y, new Item[1] { itemToDrop }, BagType.Purple, player.User.Account.AccountId);
+        user.GameInfo.World.CreateContainerAt(player.Position.X, player.Position.Y, new Item[1] { itemToDrop }, BagType.Purple, player.User.Account.Id);
     }
 
     public void Read(NetworkReader rdr)

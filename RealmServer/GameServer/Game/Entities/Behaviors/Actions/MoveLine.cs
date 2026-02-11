@@ -27,13 +27,13 @@ public record MoveLine : BehaviorScript
         _distance = distance;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<MoveLineInfo>(this);
         state.DistLeft = _distance;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<MoveLineInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))

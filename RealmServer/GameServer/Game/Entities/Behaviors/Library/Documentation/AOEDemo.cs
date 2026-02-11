@@ -30,13 +30,13 @@ public class AOEDemo : EntityBehavior
         AOE3 = new AOE(6f, 10, 10000, cooldownOffset: 4500, color: 0x0000FF, throwTime: 500, activateCount: 3, damageColor: 0x0000FF, damageCooldown: 1000);
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, DemoState.Tick);
         base.Initialize(owner);
     }
 
-    public void TestTick(RealmTime time, Character owner, StateTick state)
+    public void TestTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         { }
@@ -48,7 +48,7 @@ public class AOEDemo : EntityBehavior
         }
     }
 
-    public void AOEManualTick(RealmTime time, Character owner, StateTick state)
+    public void AOEManualTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         {

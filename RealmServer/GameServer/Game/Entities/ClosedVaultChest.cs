@@ -24,13 +24,13 @@ public class ClosedVaultChest : SellableObject
             return "Not in Vault.";
 
         var acc = plr.User.Account;
-        if (acc.Stats.Fame < Price)
+        if (acc.AccStats.CurrentFame < Price)
             return "Not enough fame.";
 
         plr.AddCurrency(Currency, -Price);
         acc.VaultCount++;
-        acc.Vault.AddVaultChest();
-        DbClientOld.Save(acc);
+        // acc.Vault.AddVaultChest(); // TODO: fix
+        _ = DbClient.Flush(acc);
 
         vault.OpenChest(this);
         return SUCCESS;

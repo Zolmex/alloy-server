@@ -44,7 +44,7 @@ public class World : IIdentifiable
     private readonly List<Tuple<long, Action>> _timers = new();
     private readonly object _updateLock = new();
     public readonly LazyCollection<Entity> ActiveEntities = new();
-    public readonly LazyCollection<Character> Characters = new();
+    public readonly LazyCollection<CharacterEntity> Characters = new();
     public readonly LazyCollection<Enemy> Enemies = new();
 
     public readonly LazyCollection<Entity> Entities = new(); // Complete list of entities in this world
@@ -177,7 +177,7 @@ public class World : IIdentifiable
             _lastActiveTime = RealmManager.WorldTime.TotalElapsedMs;
             Players.Add(en as Player);
         }
-        else if (en is Character chr)
+        else if (en is CharacterEntity chr)
         {
             Characters.Add(chr);
 
@@ -201,7 +201,7 @@ public class World : IIdentifiable
         {
             Players.Remove(en as Player);
         }
-        else if (en is Character chr)
+        else if (en is CharacterEntity chr)
         {
             Characters.Remove(chr);
 
@@ -547,7 +547,7 @@ public class World : IIdentifiable
         }
     }
 
-    public IEnumerable<Character> GetEnemiesWithin(float x, float y, float radius)
+    public IEnumerable<CharacterEntity> GetEnemiesWithin(float x, float y, float radius)
     {
         var cx = (int)(x / ChunkMap.CHUNK_SIZE);
         var cy = (int)(y / ChunkMap.CHUNK_SIZE);
@@ -569,20 +569,20 @@ public class World : IIdentifiable
                 foreach (var kvp in chunk.Entities)
                 {
                     var en = kvp.Value;
-                    if (en is Character chr && chr.DistSqr(x, y) <= radSqr)
+                    if (en is CharacterEntity chr && chr.DistSqr(x, y) <= radSqr)
                         yield return chr;
                 }
             }
         }
     }
 
-    public IEnumerable<Character> GetEnemiesWithBehavior<T>(Character owner, float radius)
+    public IEnumerable<CharacterEntity> GetEnemiesWithBehavior<T>(CharacterEntity owner, float radius)
         where T : EntityBehavior
     {
         return GetEnemiesWithBehavior<T>(owner.Position.X, owner.Position.Y, radius);
     }
 
-    public IEnumerable<Character> GetEnemiesWithBehavior<T>(float x, float y, float radius)
+    public IEnumerable<CharacterEntity> GetEnemiesWithBehavior<T>(float x, float y, float radius)
         where T : EntityBehavior
     {
         var enemiesWithin = GetEnemiesWithin(x, y, radius);
@@ -592,7 +592,7 @@ public class World : IIdentifiable
         return enemiesWithin.Where(ent => ent.GetBehavior() is T);
     }
 
-    public IEnumerable<Character> GetEnemiesByName(string name, float x, float y, float radius)
+    public IEnumerable<CharacterEntity> GetEnemiesByName(string name, float x, float y, float radius)
     {
         var query = new SearchQuery(name, new IntPoint((int)x, (int)y), radius, 0);
         if (SearchCache.TryGetValue(query, out var result))
@@ -608,7 +608,7 @@ public class World : IIdentifiable
         return enemiesWithin.Where(ent => ent.Desc.ObjectId != null && ent.Desc.ObjectId == name);
     }
 
-    public IEnumerable<Character> GetEnemiesByName(IEnumerable<string> names, float x, float y, float radius)
+    public IEnumerable<CharacterEntity> GetEnemiesByName(IEnumerable<string> names, float x, float y, float radius)
     {
         foreach (var name in names)
         {
@@ -618,13 +618,13 @@ public class World : IIdentifiable
         }
     }
 
-    public Character GetNearestEnemyByName(string name, float x, float y, float radius)
+    public CharacterEntity GetNearestEnemyByName(string name, float x, float y, float radius)
     {
         var enemies = GetEnemiesByName(name, x, y, radius);
         if (!enemies.Any())
             return null;
 
-        Character nearest = null;
+        CharacterEntity nearest = null;
         var minDist = float.MaxValue;
         foreach (var en in enemies)
         {
@@ -704,7 +704,7 @@ public class World : IIdentifiable
         bag.EnterWorld(this);
     }
 
-    public void Taunt(Character host, string taunt)
+    public void Taunt(CharacterEntity host, string taunt)
     {
         BroadcastAll(plr =>
         {

@@ -21,7 +21,7 @@ public record DropPortalOnDeath : BehaviorScript
         _timeout = timeout;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         host.DeathEvent += HandleDeath;
     }

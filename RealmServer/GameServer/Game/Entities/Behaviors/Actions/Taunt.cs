@@ -27,13 +27,13 @@ public record Taunt : BehaviorScript
         _probability = probability;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         if (_cooldownMS == 0 && _rand.NextDouble() < _probability)
             host.World.Taunt(host, _text.RandomElement());
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         if (_cooldownMS == 0)
             return BehaviorTickState.BehaviorFailed; // IDK ??!??!

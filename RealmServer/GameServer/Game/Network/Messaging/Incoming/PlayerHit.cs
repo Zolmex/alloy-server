@@ -21,7 +21,7 @@ public partial record PlayerHit : IIncomingPacket
         if (user.State != ConnectionState.Ready || user.GameInfo.State != GameState.Playing)
             return;
 
-        if (!user.GameInfo.Player.World.Entities.TryGetValue(OwnerId, out var en) || en is not Character projOwner)
+        if (!user.GameInfo.Player.World.Entities.TryGetValue(OwnerId, out var en) || en is not CharacterEntity projOwner)
         {
             _log.Debug($"NULL PROJ OWNER {OwnerId}");
             return;

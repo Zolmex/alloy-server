@@ -1,6 +1,7 @@
 ﻿#region
 
 using Common.Database;
+using Common.Database.Models;
 using Common.Utilities;
 using GameServer.Game.Entities;
 using GameServer.Game.Worlds;
@@ -28,7 +29,7 @@ public class GameInfo
     }
 
     public World World { get; private set; }
-    public DbChar Char { get; private set; }
+    public Character Char { get; private set; }
     public Player Player { get; private set; }
     public GameState State { get; private set; }
 
@@ -62,7 +63,7 @@ public class GameInfo
         World = world;
     }
 
-    public void Load(DbChar chr, World world)
+    public void Load(Character chr, World world)
     {
         State = GameState.Playing;
 

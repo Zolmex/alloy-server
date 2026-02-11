@@ -50,13 +50,13 @@ public class MultiProjectilePathDemo : EntityBehavior
         base.RegisterStates();
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, MultiProjectilePathState.Shoot);
         base.Initialize(owner);
     }
 
-    public void ShootTick(RealmTime time, Character owner, StateTick state)
+    public void ShootTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         LineIntoCircle.Tick(owner, time);
     }

@@ -254,7 +254,7 @@ public static class RealmManager
             {
                 foreach (var ent in world.Value.Entities)
                 {
-                    var c = ent.Value as Character;
+                    var c = ent.Value as CharacterEntity;
                     c?.LoadBehavior();
                 }
             }

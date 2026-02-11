@@ -45,7 +45,7 @@ public class ArcherQuiverAbility : Ability
         return true;
     }
 
-    private void EnemyHit(Character enemy, DamageSource damageSource)
+    private void EnemyHit(CharacterEntity enemy, DamageSource damageSource)
     {
         var arrowChance = _item.Quiver.ArrowChance;
         if (_player.Rand.NextSingle() <= arrowChance)

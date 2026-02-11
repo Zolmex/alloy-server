@@ -29,13 +29,13 @@ public class ProjectileHitDemo : EntityBehavior
     }
 
     // Called every time a behavior is added to an entity
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, DemoState.Tick);
         base.Initialize(owner);
     }
 
-    public void Tick(RealmTime time, Character owner, StateTick state)
+    public void Tick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Tick)
         {
@@ -43,7 +43,7 @@ public class ProjectileHitDemo : EntityBehavior
         }
     }
 
-    private void _hitWithGreenStar(Character hit, Character hitBy)
+    private void _hitWithGreenStar(CharacterEntity hit, CharacterEntity hitBy)
     {
         hitBy.World.Taunt(hitBy, $"I just hit {hit.Name}!");
     }

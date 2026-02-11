@@ -33,13 +33,13 @@ public class PaladinBanner : EntityBehavior
     public override void RegisterBehaviors()
     { }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, PaladinBannerState.Buff);
         base.Initialize(owner);
     }
 
-    private void BuffTick(RealmTime time, Character owner, StateTick state)
+    private void BuffTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (Seal == null)
             return;
@@ -47,7 +47,7 @@ public class PaladinBanner : EntityBehavior
         {
             owner.Lifetime = Seal.Duration;
             lifetimeSet = true;
-            Follow = new Follow(Player.GetSpeed(Player.MovementSpeed) * (Seal.BannerSpeed / 100), 1.5f, 15, target: Player.Name);
+            Follow = new Follow(Player.GetSpeed(Player.Speed) * (Seal.BannerSpeed / 100), 1.5f, 15, target: Player.Name);
             nextBuffTime = time.TotalElapsedMs;
         }
 

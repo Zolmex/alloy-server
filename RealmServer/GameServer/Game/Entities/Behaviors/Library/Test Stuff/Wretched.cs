@@ -69,13 +69,13 @@ public class Wretched : EntityBehavior
         //COMMENTED DUE TO DEPRECATION. RETURN TO LATER. 
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, WretchedState.Start);
         base.Initialize(owner);
     }
 
-    public void StartTick(RealmTime time, Character owner, StateTick state)
+    public void StartTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         { }
@@ -92,7 +92,7 @@ public class Wretched : EntityBehavior
         }
     }
 
-    public void EncircleTick(RealmTime time, Character owner, StateTick state)
+    public void EncircleTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         {
@@ -106,10 +106,10 @@ public class Wretched : EntityBehavior
             var WretchedHelperEntity2 = owner.World.SpawnEntity("WretchedHelper", owner.Position.X - 2, owner.Position.Y);
             var WretchedHelperEntity3 = owner.World.SpawnEntity("WretchedHelper", owner.Position.X, owner.Position.Y + 2);
             var WretchedHelperEntity4 = owner.World.SpawnEntity("WretchedHelper", owner.Position.X, owner.Position.Y - 2);
-            var WretchedHelperEntity1Character = (Character)WretchedHelperEntity1;
-            var WretchedHelperEntity2Character = (Character)WretchedHelperEntity2;
-            var WretchedHelperEntity3Character = (Character)WretchedHelperEntity3;
-            var WretchedHelperEntity4Character = (Character)WretchedHelperEntity4;
+            var WretchedHelperEntity1Character = (CharacterEntity)WretchedHelperEntity1;
+            var WretchedHelperEntity2Character = (CharacterEntity)WretchedHelperEntity2;
+            var WretchedHelperEntity3Character = (CharacterEntity)WretchedHelperEntity3;
+            var WretchedHelperEntity4Character = (CharacterEntity)WretchedHelperEntity4;
 
             for (var i = 1; i < 5; i++)
             {

@@ -10,7 +10,7 @@ namespace GameServer.Game.Entities.Behaviors;
 public class StateManager
 {
     private readonly Dictionary<int, Enum> _currentStates = new();
-    public Dictionary<Enum, Action<RealmTime, Character, StateTick>> States = new();
+    public Dictionary<Enum, Action<RealmTime, CharacterEntity, StateTick>> States = new();
 
     public void RegisterEntity(Entity ent)
     {
@@ -22,43 +22,43 @@ public class StateManager
         _currentStates.Remove(ent.Id);
     }
 
-    public void RegisterState(Enum state, Action<RealmTime, Character, StateTick> action)
+    public void RegisterState(Enum state, Action<RealmTime, CharacterEntity, StateTick> action)
     {
         States.Add(state, action);
     }
 
-    public void Transition(RealmTime time, Character owner, Enum targetState)
+    public void Transition(RealmTime time, CharacterEntity owner, Enum targetState)
     {
         EndCurrentState(owner, time);
         SetCurrentState(owner, targetState);
         StartCurrentState(owner, time);
     }
 
-    public Enum GetCurrentState(Character owner)
+    public Enum GetCurrentState(CharacterEntity owner)
     {
         return _currentStates[owner.Id];
     }
 
-    public void SetCurrentState(Character owner, Enum targetState)
+    public void SetCurrentState(CharacterEntity owner, Enum targetState)
     {
         _currentStates[owner.Id] = targetState;
     }
 
-    public void StartCurrentState(Character owner, RealmTime time)
+    public void StartCurrentState(CharacterEntity owner, RealmTime time)
     {
         var state = GetCurrentState(owner);
         if (state == null || !States.ContainsKey(state) || States[state] == null) return;
         States[state]?.Invoke(time, owner, StateTick.Start);
     }
 
-    public void Tick(Character owner, RealmTime time)
+    public void Tick(CharacterEntity owner, RealmTime time)
     {
         var state = GetCurrentState(owner);
         if (state == null || !States.ContainsKey(state) || States[state] == null) return;
         States[state]?.Invoke(time, owner, StateTick.Tick);
     }
 
-    public void EndCurrentState(Character owner, RealmTime time)
+    public void EndCurrentState(CharacterEntity owner, RealmTime time)
     {
         var state = GetCurrentState(owner);
         if (state == null || !States.ContainsKey(state) || States[state] == null) return;
@@ -67,7 +67,7 @@ public class StateManager
     }
 
 
-    public bool CheckTransition<T>(BehaviorTransition transition, Character owner, RealmTime time) where T : struct, Enum
+    public bool CheckTransition<T>(BehaviorTransition transition, CharacterEntity owner, RealmTime time) where T : struct, Enum
     {
         var transResult = transition.Tick(owner, time);
         if (!string.IsNullOrEmpty(transResult))

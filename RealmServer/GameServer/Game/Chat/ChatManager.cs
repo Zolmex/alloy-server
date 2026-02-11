@@ -21,7 +21,7 @@ public static class ChatManager
             if (worldId != 0 && (user.GameInfo.State != GameState.Playing || user.GameInfo.Player.World.Id != worldId))
                 return;
 
-            if (ignoreAccounts.Length > 0 && ignoreAccounts.Contains(user.Account.AccountId))
+            if (ignoreAccounts.Length > 0 && ignoreAccounts.Contains(user.Account.Id))
                 return;
 
             if (user.State == ConnectionState.Ready && user.GameInfo.State == GameState.Playing)

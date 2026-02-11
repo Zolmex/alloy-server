@@ -21,7 +21,7 @@ public record SetAltTexture : BehaviorScript
         _loop = loop;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<SetAltTextureInfo>(this);
         state.CurrentTexture = host.AltTexture;
@@ -34,7 +34,7 @@ public record SetAltTexture : BehaviorScript
         }
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<SetAltTextureInfo>(this);
 

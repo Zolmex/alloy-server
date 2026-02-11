@@ -11,7 +11,7 @@ public record SpawnSetpieceOnDeath : BehaviorScript
         _useSpawnPoint = useSpawnPoint;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         host.DeathEvent += OnDeath;
     }

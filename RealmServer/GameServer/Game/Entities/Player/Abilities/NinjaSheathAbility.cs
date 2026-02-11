@@ -99,7 +99,7 @@ public class NinjaSheathAbility : Ability
         _player.AbilityDataA = 0;
     }
 
-    private void OnDamageDealt(Character target, int damage)
+    private void OnDamageDealt(CharacterEntity target, int damage)
     {
         if (_item?.Sheath == null || InStance)
             return;

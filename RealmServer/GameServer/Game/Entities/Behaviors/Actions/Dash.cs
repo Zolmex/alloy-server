@@ -103,7 +103,7 @@ public record Dash : BehaviorScript
     }
 
     /// <inheritdoc />
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var dashInfo = host.ResolveResource<DashInfo>(this);
         dashInfo.DashCooldown = cooldownOffsetMS == 0 ? cooldownMS : cooldownOffsetMS;
@@ -114,7 +114,7 @@ public record Dash : BehaviorScript
     }
 
     /// <inheritdoc />
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var dashInfo = host.ResolveResource<DashInfo>(this);
         if (dashInfo.CycleCooldown > 0)
@@ -198,7 +198,7 @@ public record Dash : BehaviorScript
         return BehaviorTickState.OnCooldown;
     }
 
-    private void SetTarget(Character host, DashInfo dashInfo)
+    private void SetTarget(CharacterEntity host, DashInfo dashInfo)
     {
         switch (targetType)
         {

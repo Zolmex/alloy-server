@@ -9,12 +9,12 @@ namespace GameServer.Game.Entities.Stacks;
 
 public class StackController
 {
-    private readonly Character _host;
+    private readonly CharacterEntity _host;
     public ConcurrentDictionary<ModStacks, Stack> AllStacks = new();
     public List<PendingStack> PendingStacks = new();
     public ConcurrentDictionary<ModStacks, int[]> SpecialStackDatas = new();
 
-    public StackController(Character host)
+    public StackController(CharacterEntity host)
     {
         _host = host;
     }
@@ -59,7 +59,7 @@ public class StackController
         return stack;
     }
 
-    public void AddStack(ModStacks stackId, float duration, int amount = 1, Character from = null,
+    public void AddStack(ModStacks stackId, float duration, int amount = 1, CharacterEntity from = null,
         params object[] additionalData)
     {
         if (!AllStacks.TryGetValue(stackId, out var stack))

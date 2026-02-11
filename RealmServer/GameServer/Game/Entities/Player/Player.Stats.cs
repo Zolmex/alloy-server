@@ -11,15 +11,9 @@ namespace GameServer.Game.Entities;
 
 public partial class Player
 {
+    // TODO: rewrite this whole goddamn file lol
+    
     private readonly Dictionary<StatType, StatBonus> _statBonuses = new();
-
-    public void InitStatBonuses()
-    {
-        foreach (var kvp in Char.SecondaryStats)
-        {
-            _statBonuses.TryAdd(kvp.Key, new StatBonus());
-        }
-    }
 
     private void ModifyBonus(StatType statType, Action<StatBonus> modifyAction)
     {
@@ -43,43 +37,43 @@ public partial class Player
 
     public void RecalculateStat(StatType statType)
     {
-        var baseStatType = GetBaseStatType(statType);
-        var statPoints = 0;
-        if (baseStatType != StatType.None)
-        {
-            statPoints = Char.MainStats[baseStatType]; // Need to calculate the baseValue based on stat points
-            if (baseStatType != statType) // Att, def, dex, wis shouldn't recalculate with their boosts, but the other stats should consider the total of the base stat
-                statPoints = Stats.Get<int>(baseStatType);
-        }
-
-        // Not all stats depend on a base stat
-        var baseValue = baseStatType == StatType.None ? Char.BaseStats[statType] : CalculateBaseValue(statType, statPoints);
-        var bonus = _statBonuses[statType];
-
-        // I need increased/reduced and more/less to be explained to me in order to understand this
-        var increasedReducedMultiplier = 1f + (bonus.IncreasedBonus / 100) - (bonus.ReducedBonus / 100);
-        var moreLessMultiplier = (1f + (bonus.MoreBonus / 100)) * (1f - (bonus.LessBonus / 100));
-        var finalValue = (baseValue + bonus.FlatBonus) * increasedReducedMultiplier * moreLessMultiplier;
-        var bonusValue = finalValue - baseValue;
-
-        finalValue = Round(finalValue);
-
-        var bonusStat = GetBonusStat(statType);
-        var isPrivate = IsPrivate(statType);
-        if (StatData.IsFloatStat(statType)) // Breaks if it's done any other way...
-        {
-            Stats.Set(statType, finalValue, isPrivate);
-            if (bonusStat != StatType.None)
-                Stats.Set(bonusStat, finalValue, isPrivate);
-        }
-        else
-        {
-            var intValue = Convert.ToInt32(finalValue);
-            var intBonusValue = Convert.ToInt32(bonusValue);
-            Stats.Set(statType, intValue, isPrivate);
-            if (bonusStat != StatType.None)
-                Stats.Set(bonusStat, intBonusValue, isPrivate);
-        }
+        // var baseStatType = GetBaseStatType(statType);
+        // var statPoints = 0;
+        // if (baseStatType != StatType.None)
+        // {
+        //     statPoints = Char.MainStats[baseStatType]; // Need to calculate the baseValue based on stat points
+        //     if (baseStatType != statType) // Att, def, dex, wis shouldn't recalculate with their boosts, but the other stats should consider the total of the base stat
+        //         statPoints = Stats.Get<int>(baseStatType);
+        // }
+        //
+        // // Not all stats depend on a base stat
+        // var baseValue = baseStatType == StatType.None ? Char.BaseStats[statType] : CalculateBaseValue(statType, statPoints);
+        // var bonus = _statBonuses[statType];
+        //
+        // // I need increased/reduced and more/less to be explained to me in order to understand this
+        // var increasedReducedMultiplier = 1f + (bonus.IncreasedBonus / 100) - (bonus.ReducedBonus / 100);
+        // var moreLessMultiplier = (1f + (bonus.MoreBonus / 100)) * (1f - (bonus.LessBonus / 100));
+        // var finalValue = (baseValue + bonus.FlatBonus) * increasedReducedMultiplier * moreLessMultiplier;
+        // var bonusValue = finalValue - baseValue;
+        //
+        // finalValue = Round(finalValue);
+        //
+        // var bonusStat = GetBonusStat(statType);
+        // var isPrivate = IsPrivate(statType);
+        // if (StatData.IsFloatStat(statType)) // Breaks if it's done any other way...
+        // {
+        //     Stats.Set(statType, finalValue, isPrivate);
+        //     if (bonusStat != StatType.None)
+        //         Stats.Set(bonusStat, finalValue, isPrivate);
+        // }
+        // else
+        // {
+        //     var intValue = Convert.ToInt32(finalValue);
+        //     var intBonusValue = Convert.ToInt32(bonusValue);
+        //     Stats.Set(statType, intValue, isPrivate);
+        //     if (bonusStat != StatType.None)
+        //         Stats.Set(bonusStat, intBonusValue, isPrivate);
+        // }
     }
 
     private float Round(float value)
@@ -198,9 +192,9 @@ public partial class Player
             StatType.MaxMS => StatType.MaxMSBonus,
             StatType.Attack => StatType.AttackBonus,
             StatType.Defense => StatType.DefenseBonus,
-            StatType.Speed => StatType.MovementSpeedBonus,
+            StatType.Speed => StatType.SpeedBonus,
             StatType.Dexterity => StatType.DexterityBonus,
-            StatType.Vitality => StatType.LifeRegenerationBonus,
+            StatType.Vitality => StatType.VitalityBonus,
             StatType.Wisdom => StatType.WisdomBonus,
             StatType.DodgeChance => StatType.DodgeChanceBonus,
             StatType.CriticalChance => StatType.CriticalChanceBonus,
@@ -329,26 +323,17 @@ public partial class Player
     public int Gold { get => Stats.Get<int>(StatType.Credits); set => Stats.Set(StatType.Credits, value); }
     public string GuildName { get => Stats.Get<string>(StatType.GuildName); set => Stats.Set(StatType.GuildName, value); }
     public int GuildRank { get => Stats.Get<int>(StatType.GuildRank); set => Stats.Set(StatType.GuildRank, value); }
-    public int Skin { get => Stats.Get<int>(StatType.Texture); set => Stats.Set(StatType.Texture, value); }
+    public ushort Skin { get => Stats.Get<ushort>(StatType.Texture); set => Stats.Set(StatType.Texture, value); }
 
     public int MaxMP { get => Stats.Get<int>(StatType.MaxMP); set => Stats.Set(StatType.MaxMP, value); }
     public int MP { get => Stats.Get<int>(StatType.MP); set => Stats.Set(StatType.MP, value); }
 
     public int Attack { get => Stats.Get<int>(StatType.Attack); set => Stats.Set(StatType.Attack, value, true); }
     public int Defense { get => Stats.Get<int>(StatType.Defense); set => Stats.Set(StatType.Defense, value, true); }
+    public int Speed { get => Stats.Get<int>(StatType.Speed); set => Stats.Set(StatType.Speed, value, true); }
     public int Dexterity { get => Stats.Get<int>(StatType.Dexterity); set => Stats.Set(StatType.Dexterity, value, true); }
+    public int Vitality { get => Stats.Get<int>(StatType.Vitality); set => Stats.Set(StatType.Vitality, value, true); }
     public int Wisdom { get => Stats.Get<int>(StatType.Wisdom); set => Stats.Set(StatType.Wisdom, value, true); }
-
-    public float MovementSpeed { get => Stats.Get<float>(StatType.Speed); set => Stats.Set(StatType.Speed, value, true); }
-    public int LifeRegeneration { get => Stats.Get<int>(StatType.Vitality); set => Stats.Set(StatType.Vitality, value, true); }
-    public float DodgeChance { get => Stats.Get<float>(StatType.DodgeChance); set => Stats.Set(StatType.DodgeChance, value, true); }
-    public float CriticalChance { get => Stats.Get<float>(StatType.CriticalChance); set => Stats.Set(StatType.CriticalChance, value, true); }
-    public int CriticalDamage { get => Stats.Get<int>(StatType.CriticalDamage); set => Stats.Set(StatType.CriticalDamage, value, true); }
-    public int ManaRegeneration { get => Stats.Get<int>(StatType.ManaRegeneration); set => Stats.Set(StatType.ManaRegeneration, value, true); }
-    public int MSRegenRate { get => Stats.Get<int>(StatType.MSRegenRate); set => Stats.Set(StatType.MSRegenRate, value, true); }
-    public int DamageMultiplier { get => Stats.Get<int>(StatType.DamageMultiplier); set => Stats.Set(StatType.DamageMultiplier, value, true); }
-    public int Armor { get => Stats.Get<int>(StatType.Armor); set => Stats.Set(StatType.Armor, value, true); }
-    public float AttackSpeed { get => Stats.Get<float>(StatType.AttackSpeed); set => Stats.Set(StatType.AttackSpeed, value, true); }
 
     public int MaxHPBonus { get => Stats.Get<int>(StatType.MaxHPBonus); set => Stats.Set(StatType.MaxHPBonus, value); }
     public int MaxMPBonus { get => Stats.Get<int>(StatType.MaxMPBonus); set => Stats.Set(StatType.MaxMPBonus, value); }
@@ -356,24 +341,15 @@ public partial class Player
 
     public int AttackBonus { get => Stats.Get<int>(StatType.AttackBonus); set => Stats.Set(StatType.AttackBonus, value, true); }
     public int DefenseBonus { get => Stats.Get<int>(StatType.DefenseBonus); set => Stats.Set(StatType.DefenseBonus, value, true); }
+    public float SpeedBonus { get => Stats.Get<float>(StatType.SpeedBonus); set => Stats.Set(StatType.SpeedBonus, value, true); }
     public int DexterityBonus { get => Stats.Get<int>(StatType.DexterityBonus); set => Stats.Set(StatType.DexterityBonus, value, true); }
+    public int VitalityBonus { get => Stats.Get<int>(StatType.VitalityBonus); set => Stats.Set(StatType.VitalityBonus, value, true); }
     public int WisdomBonus { get => Stats.Get<int>(StatType.WisdomBonus); set => Stats.Set(StatType.WisdomBonus, value, true); }
-
-    public float MovementSpeedBonus { get => Stats.Get<float>(StatType.MovementSpeedBonus); set => Stats.Set(StatType.MovementSpeedBonus, value, true); }
-    public int LifeRegenerationBonus { get => Stats.Get<int>(StatType.LifeRegenerationBonus); set => Stats.Set(StatType.LifeRegenerationBonus, value, true); }
-    public float DodgeChanceBonus { get => Stats.Get<float>(StatType.DodgeChanceBonus); set => Stats.Set(StatType.DodgeChanceBonus, value, true); }
-    public float CriticalChanceBonus { get => Stats.Get<float>(StatType.CriticalChanceBonus); set => Stats.Set(StatType.CriticalChanceBonus, value, true); }
-    public int CriticalDamageBonus { get => Stats.Get<int>(StatType.CriticalDamageBonus); set => Stats.Set(StatType.CriticalDamageBonus, value, true); }
-    public int ManaRegenerationBonus { get => Stats.Get<int>(StatType.ManaRegenerationBonus); set => Stats.Set(StatType.ManaRegenerationBonus, value, true); }
-    public int MSRegenRateBonus { get => Stats.Get<int>(StatType.MSRegenRateBonus); set => Stats.Set(StatType.MSRegenRateBonus, value, true); }
-    public int DamageBonus { get => Stats.Get<int>(StatType.DamageBonus); set => Stats.Set(StatType.DamageBonus, value, true); }
-    public int ArmorBonus { get => Stats.Get<int>(StatType.ArmorBonus); set => Stats.Set(StatType.ArmorBonus, value, true); }
-    public float AttackSpeedBonus { get => Stats.Get<float>(StatType.AttackSpeedBonus); set => Stats.Set(StatType.AttackSpeedBonus, value, true); }
 
     public int AccRank { get => Stats.Get<int>(StatType.AccRank); set => Stats.Set(StatType.AccRank, value); }
     public int PartyId { get => Stats.Get<int>(StatType.PartyId); set => Stats.Set(StatType.PartyId, value); }
-    public int HealthPotions { get => Stats.Get<int>(StatType.HealthPotionStack); set => Stats.Set(StatType.HealthPotionStack, value); }
-    public int MagicPotions { get => Stats.Get<int>(StatType.MagicPotionStack); set => Stats.Set(StatType.MagicPotionStack, value); }
+    public ushort HealthPotions { get => Stats.Get<ushort>(StatType.HealthPotionStack); set => Stats.Set(StatType.HealthPotionStack, value); }
+    public ushort MagicPotions { get => Stats.Get<ushort>(StatType.MagicPotionStack); set => Stats.Set(StatType.MagicPotionStack, value); }
 
     // AbilityData is serialized as string
     public object AbilityDataA { get => Stats.Get<string>(StatType.AbilityDataA); set => Stats.Set(StatType.AbilityDataA, value.ToString()); }

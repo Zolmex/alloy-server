@@ -6,7 +6,7 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities;
 
-public class Portal : Character
+public class Portal : CharacterEntity
 {
     public Portal(ushort type, bool attachWorld = false) : base(type)
     {
@@ -81,7 +81,7 @@ public class Portal : Character
         {
             "Nexus" => RealmManager.NexusInstance,
             "Vault" => user.GameInfo.Vault ?? new Vault(user),
-            "Guild Hall" => RealmManager.GetGuildHall(user.Account.GuildId),
+            "Guild Hall" => RealmManager.GetGuildHall(user.Account.GuildMember?.GuildId ?? 0),
             _ => new World(worldName, -1)
         };
 

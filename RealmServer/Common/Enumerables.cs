@@ -58,6 +58,20 @@ public enum FlushStatus
     InternalError
 }
 
+public enum CreateCharacterStatus
+{
+    [Description("Success")] Success,
+
+    [Description("You don't own this skin.")]
+    SkinNotOwned,
+
+    [Description("Characters limit reached.")]
+    MaxCharactersReached,
+
+    [Description("Internal server error.")]
+    InternalError
+}
+
 public enum StatType
 {
     MaxHP,
@@ -163,9 +177,9 @@ public enum StatType
     MaxMPBonus,
     AttackBonus,
     DefenseBonus,
-    MovementSpeedBonus,
+    SpeedBonus,
     DexterityBonus,
-    LifeRegenerationBonus,
+    VitalityBonus,
     WisdomBonus,
     DodgeChanceBonus,
     CriticalChanceBonus,

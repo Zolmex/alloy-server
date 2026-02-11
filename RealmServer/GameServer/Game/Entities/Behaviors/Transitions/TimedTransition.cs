@@ -36,7 +36,7 @@ public class TimedTransition : BehaviorTransition
         _timeDefault = time;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         base.Start(host);
         var state = host.ResolveResource<TimedTransitionInfo>(this);
@@ -44,7 +44,7 @@ public class TimedTransition : BehaviorTransition
     }
 
     /// <inheritdoc />
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<TimedTransitionInfo>(this);
         state.TimeLeft -= time.ElapsedMsDelta;

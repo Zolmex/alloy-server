@@ -22,7 +22,7 @@ public class Vault : World
     public Vault(User user)
         : base(VAULT, 0)
     {
-        AccountId = user.Account.AccountId;
+        AccountId = user.Account.Id;
 
         _user = user;
         _user.GameInfo.Vault ??= this;
@@ -62,32 +62,32 @@ public class Vault : World
         _closedChests = OrderToCenter(_closedChests);
         _closedGiftChests = OrderToCenter(_closedGiftChests);
 
-        for (var i = 0; i < _user.Account.VaultCount; i++)
-        {
-            var chest = OpenChest();
-            chest?.LoadVaultChest(_user.Account.Vault, i);
-        }
-
-        var giftTypes = _user.Account.Gifts.ItemTypes;
-        if (giftTypes.Count != 0)
-        {
-            using var stream = new MemoryStream(_user.Account.Gifts.ItemDatas.ToArray());
-            using var dataReader = new BinaryReader(stream);
-
-            OneWayContainer giftChest = null;
-            for (var i = 0; i < giftTypes.Count; i++)
-            {
-                var giftType = giftTypes[i];
-                if (giftType != -1) // Idk if it could happen but doesn't hurt to check
-                {
-                    var slot = i % 8;
-                    if (slot == 0) // Means we need a new chest
-                        giftChest = OpenGiftChest();
-
-                    giftChest.Inventory.SetItem(slot, giftType, dataReader);
-                }
-            }
-        }
+        // for (var i = 0; i < _user.Account.VaultCount; i++) // TODO: fix
+        // {
+        //     var chest = OpenChest();
+        //     chest?.LoadVaultChest(_user.Account.Vault, i);
+        // }
+        //
+        // var giftTypes = _user.Account.Gifts.ItemTypes;
+        // if (giftTypes.Count != 0)
+        // {
+        //     using var stream = new MemoryStream(_user.Account.Gifts.ItemDatas.ToArray());
+        //     using var dataReader = new BinaryReader(stream);
+        //
+        //     OneWayContainer giftChest = null;
+        //     for (var i = 0; i < giftTypes.Count; i++)
+        //     {
+        //         var giftType = giftTypes[i];
+        //         if (giftType != -1) // Idk if it could happen but doesn't hurt to check
+        //         {
+        //             var slot = i % 8;
+        //             if (slot == 0) // Means we need a new chest
+        //                 giftChest = OpenGiftChest();
+        //
+        //             giftChest.Inventory.SetItem(slot, giftType, dataReader);
+        //         }
+        //     }
+        // }
     }
 
     public VaultChest OpenChest(Entity closedChest = null)
@@ -99,7 +99,7 @@ public class Vault : World
         closedChest.TryLeaveWorld();
         _closedChests.Remove(closedChest);
 
-        var chest = new VaultChest(1284, _user.Account.AccountId);
+        var chest = new VaultChest(1284, _user.Account.Id);
         chest.Move(closedChest.Position.X, closedChest.Position.Y);
         chest.EnterWorld(this);
         _openChests.Add(chest);
@@ -115,7 +115,7 @@ public class Vault : World
         closedGiftChest.TryLeaveWorld();
         _closedGiftChests.Remove(closedGiftChest);
 
-        var giftChest = new OneWayContainer(1860, _user.Account.AccountId);
+        var giftChest = new OneWayContainer(1860, _user.Account.Id);
         giftChest.Move(closedGiftChest.Position.X, closedGiftChest.Position.Y);
         giftChest.EnterWorld(this);
         _openGiftChests.Add(giftChest);
@@ -145,22 +145,22 @@ public class Vault : World
             _closedGiftChests = OrderToCenter(_closedGiftChests);
         }
 
-        if (_openChests.Count == 0 || en is not Player plr || plr.User.Account.AccountId != _user.Account.AccountId)
+        if (_openChests.Count == 0 || en is not Player plr || plr.User.Account.Id != _user.Account.Id)
             return;
 
-        // Player leaves
-        for (var i = 0; i < _user.Account.VaultCount; i++) // If player bought chests the vault count and chests array will have already been updated
-        {
-            _user.Account.Vault.VaultChests[i].ItemTypes = _openChests[i].Inventory.GetItemTypes();
-            _user.Account.Vault.VaultChests[i].ItemDatas = _openChests[i].Inventory.GetItemDatas();
-        }
-
-        // Save gifts
-        _user.Account.Gifts.Clear();
-        foreach (var giftChest in _openGiftChests)
-            _user.Account.Gifts.AddGifts(giftChest.Inventory.GetItems());
-
-        DbClientOld.Save(_user.Account.Vault, _user.Account.Gifts);
+        // Player leaves // TODO: fix
+        // for (var i = 0; i < _user.Account.VaultCount; i++) // If player bought chests the vault count and chests array will have already been updated
+        // {
+        //     _user.Account.Vault.VaultChests[i].ItemTypes = _openChests[i].Inventory.GetItemTypes();
+        //     _user.Account.Vault.VaultChests[i].ItemDatas = _openChests[i].Inventory.GetItemDatas();
+        // }
+        //
+        // // Save gifts
+        // _user.Account.Gifts.Clear();
+        // foreach (var giftChest in _openGiftChests)
+        //     _user.Account.Gifts.AddGifts(giftChest.Inventory.GetItems());
+        //
+        // DbClientOld.Save(_user.Account.Vault, _user.Account.Gifts);
     }
 
     private static List<Entity> OrderToCenter(List<Entity> containers)

@@ -111,7 +111,7 @@ public class WarriorHelmAbility : Ability
         _statsModifierSave = _item == null ? new GemstoneBoost[0] : _item.Helm.StatsModifier;
     }
 
-    private void OnDamageDealt(Character target, int damage)
+    private void OnDamageDealt(CharacterEntity target, int damage)
     {
         if (RealmManager.WorldTime.TotalElapsedMs > _helmDuration)
             return;
@@ -134,7 +134,7 @@ public class WarriorHelmAbility : Ability
         }
     }
 
-    private void OnDamagedBy(Character arg1, Character arg2, int arg3)
+    private void OnDamagedBy(CharacterEntity arg1, CharacterEntity arg2, int arg3)
     {
         if (RealmManager.WorldTime.TotalElapsedMs > _helmDuration)
             return;

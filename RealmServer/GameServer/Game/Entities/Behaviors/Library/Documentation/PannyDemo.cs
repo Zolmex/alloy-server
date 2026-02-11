@@ -30,13 +30,13 @@ public class PannyDemo : EntityBehavior
     public override void RegisterBehaviors()
     { }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, DemoState.Tick);
         base.Initialize(owner);
     }
 
-    public void TestTick(RealmTime time, Character owner, StateTick state)
+    public void TestTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Tick)
         {
@@ -49,7 +49,7 @@ public class PannyDemo : EntityBehavior
         }
     }
 
-    private void _shockwave(Character owner)
+    private void _shockwave(CharacterEntity owner)
     {
         var rand = new Random();
         var numberOfGaps = rand.Next(ShockwaveGapMinimum, ShockwaveGapMaximum);

@@ -10,7 +10,7 @@ public class PoisonInstance
 {
     private static readonly Logger _log = new(typeof(PoisonInstance));
 
-    public PoisonInstance(Item item, Character target, Player caster, long startTime, float efficiency)
+    public PoisonInstance(Item item, CharacterEntity target, Player caster, long startTime, float efficiency)
     {
         if (target.Dead)
         {
@@ -44,7 +44,7 @@ public class PoisonInstance
     }
 
     public Item Item { get; }
-    public Character Target { get; }
+    public CharacterEntity Target { get; }
     public Player Caster { get; }
     public long NextTickTime { get; private set; }
     public long StartTime { get; }

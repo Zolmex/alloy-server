@@ -19,7 +19,7 @@ public class EntitiesWithinTransition : BehaviorTransition
         _radius = radius;
     }
 
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         if (_targets == null)
         {

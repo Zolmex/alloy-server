@@ -25,13 +25,13 @@ public class SpawnEnemyDemo : EntityBehavior
         Spawn = new Spawn("Move Demo", -3, 3, -3, maxY: 3, maxSpawnsPerReset: 20, minSpawnCount: 1, maxSpawnCount: 3);
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, DemoState.Tick);
         base.Initialize(owner);
     }
 
-    public void TestTick(RealmTime time, Character owner, StateTick state)
+    public void TestTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         {

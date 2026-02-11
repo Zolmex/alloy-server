@@ -13,7 +13,7 @@ public record Order : BehaviorScript
         _targetState = targetState;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         foreach (var i in host.GetOtherEnemiesByName(_children, _range))
         {

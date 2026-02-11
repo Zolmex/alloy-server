@@ -34,42 +34,41 @@ public partial class Player
         Party = null;
     }
 
-    public void CreateParty()
+    public void CreateParty() // TODO: fix, don't use database for parties
     {
-        if (IsInParty)
-        {
-            SendError("You are already in a party.");
-            return;
-        }
-
-        if (!DbClientOld.TryCreateParty(User.Account, out var dbParty))
-        {
-            SendError("Failed to create party.");
-            return;
-        }
-
-        PartyId = dbParty.PartyId;
-        SetParty();
-
-        SendInfo("Created Party!");
+        // if (IsInParty)
+        // {
+        //     SendError("You are already in a party.");
+        //     return;
+        // }
+        //
+        // if (!DbClientOld.TryCreateParty(User.Account, out var dbParty))
+        // {
+        //     SendError("Failed to create party.");
+        //     return;
+        // }
+        //
+        // PartyId = dbParty.PartyId;
+        // SetParty();
+        //
+        // SendInfo("Created Party!");
     }
 
     public void LeaveParty()
     {
-        if (!IsInParty)
-            return;
-
-        if (Party is null)
-            return;
-
-        Party.RemoveMember(AccountId);
-        UnsetParty();
-
-        User.Account.PartyId = -1;
-        PartyId = -1;
-        DbClientOld.Save(User.Account);
-
-        SendInfo("You have left your current party.");
+        // if (!IsInParty)
+        //     return;
+        //
+        // if (Party is null)
+        //     return;
+        //
+        // Party.RemoveMember(AccountId);
+        // UnsetParty();
+        //
+        // PartyId = -1;
+        // DbClientOld.Save(User.Account);
+        //
+        // SendInfo("You have left your current party.");
     }
 
     /// <summary>

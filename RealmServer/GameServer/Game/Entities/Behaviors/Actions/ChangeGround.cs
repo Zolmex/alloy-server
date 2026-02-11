@@ -21,7 +21,7 @@ public record ChangeGround : BehaviorScript
         _dist = dist;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var w = host.World;
         var pos = new IntPoint((int)host.Position.X - (_dist / 2), (int)host.Position.Y - (_dist / 2));

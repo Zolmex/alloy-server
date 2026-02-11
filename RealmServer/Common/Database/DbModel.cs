@@ -70,7 +70,7 @@ public abstract class DbModel
         }
     }
 
-    public async Task Flush<T, TValue>(AppConnection con, params Expression<Func<T, TValue>>[] expressions) where T : DbModel
+    public async Task<FlushAck> Flush<T, TValue>(AppConnection con, params Expression<Func<T, TValue>>[] expressions) where T : DbModel
     {
         var props = new string[expressions.Length];
         for (var i = 0; i < expressions.Length; i++)
@@ -81,7 +81,26 @@ public abstract class DbModel
             props[i] = property.Name;
         }
         
-        await con.SendAndReceiveAsync(new FlushMessage()
+        return (FlushAck)await con.SendAndReceiveAsync(new FlushMessage()
+        {
+            Key = Key,
+            Version = Version,
+            Entity = this,
+            Properties = props
+        });
+    }
+    
+    public async Task<FlushAck> FlushAll(AppConnection con)
+    {
+        var props = new string[_serializers.Count];
+        var i = 0;
+        foreach (var kvp in _serializers)
+        {
+            props[i] = kvp.Key;
+            i++;
+        }
+
+        return (FlushAck)await con.SendAndReceiveAsync(new FlushMessage()
         {
             Key = Key,
             Version = Version,

@@ -30,7 +30,7 @@ public record Swirl : BehaviorScript
         _targeted = targeted;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var swirlState = host.ResolveResource<SwirlInfo>(this);
         swirlState.Center = _targeted ? Vector2.Zero : new Vector2(host.Position.X, host.Position.Y);
@@ -38,7 +38,7 @@ public record Swirl : BehaviorScript
         swirlState.RemainingTime = 0;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var swirlState = host.ResolveResource<SwirlInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))

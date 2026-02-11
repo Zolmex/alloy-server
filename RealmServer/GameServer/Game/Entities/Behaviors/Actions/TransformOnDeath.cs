@@ -22,12 +22,12 @@ public record TransformOnDeath : BehaviorScript
         _probability = probability;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         host.DeathEvent += HandleDeath;
     }
 
-    public override void End(Character host, RealmTime time)
+    public override void End(CharacterEntity host, RealmTime time)
     {
         host.DeathEvent -= HandleDeath;
     }

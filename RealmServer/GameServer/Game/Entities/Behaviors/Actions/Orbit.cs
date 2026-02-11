@@ -41,7 +41,7 @@ public record Orbit : BehaviorScript
         _targetPlayer = targetPlayer;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var orbitInfo = host.ResolveResource<OrbitInfo>(this);
         orbitInfo.Direction = _orbitClockwise ? 1 : -1;
@@ -50,7 +50,7 @@ public record Orbit : BehaviorScript
         orbitInfo.FirstTick = true;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var orbitInfo = host.ResolveResource<OrbitInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))

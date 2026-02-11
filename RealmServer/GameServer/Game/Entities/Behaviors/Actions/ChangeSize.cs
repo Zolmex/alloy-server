@@ -16,13 +16,13 @@ public record ChangeSize : BehaviorScript
         _target = target;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<SizeInfo>(this);
         state.CooldownLeft = 0;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<SizeInfo>(this);
 

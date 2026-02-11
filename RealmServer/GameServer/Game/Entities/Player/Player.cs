@@ -2,6 +2,7 @@
 
 using Common;
 using Common.Database;
+using Common.Database.Models;
 using Common.Resources.Config;
 using Common.Resources.World;
 using Common.Utilities;
@@ -20,14 +21,14 @@ using System.Numerics;
 
 namespace GameServer.Game.Entities;
 
-public partial class Player : Character
+public partial class Player : CharacterEntity
 {
     public static Action<Player, string> OnDeath;
     private readonly List<string> _guildInvites = new();
 
     private readonly HashSet<Projectile> _unconfirmedHits = new();
 
-    public Player(User user, DbChar chr) : base((ushort)chr.ClassType)
+    public Player(User user, Character chr) : base(chr.ObjectType)
     {
         User = user;
         Char = chr;
@@ -45,12 +46,12 @@ public partial class Player : Character
     }
 
     public User User { get; }
-    public DbChar Char { get; }
+    public Character Char { get; }
     public PlayerInventory Inventory { get; }
     public Dictionary<ModTypes, Modifier> ActiveModifiers { get; set; }
     public double LootBoost { get; private set; } // todo: loot boost implementation.
 
-    public int AccountId => User.Account.AccountId;
+    public int AccountId => User.Account.Id;
     public bool IsTargetable => !HasConditionEffect(ConditionEffectIndex.Invisible);
 
     public event Action<RealmTime> OnTick;
@@ -76,7 +77,6 @@ public partial class Player : Character
         // Load player stats
         Name = User.Account.Name;
         SetParty();
-        InitStatBonuses();
         InitLevel(Char);
         NumStars = GetStars();
         TradedWith.Clear();
@@ -90,7 +90,7 @@ public partial class Player : Character
         RecalculateStats();
 
         // Load inventory data
-        Inventory.Load(Char);
+        // Inventory.Load(Char); // TODO: fix
         _ability = ResolveAbilityController(Desc.ObjectId);
 
         if (World is Realm realm)
@@ -117,37 +117,28 @@ public partial class Player : Character
 
         Stats.Initializing = true;
 
-        Fame = User.Account.Stats.Fame;
-        Gold = User.Account.Stats.Credits;
+        Fame = (int)User.Account.AccStats!.CurrentFame;
+        Gold = (int)User.Account.AccStats.CurrentCredits;
         GuildName = User.Account.GuildName;
-        GuildRank = User.Account.GuildRank;
+        GuildRank = User.Account.GuildMember?.GuildRank ?? 0;
         Skin = Char.SkinType;
         AccRank = User.Account.Rank;
-        PartyId = User.Account.PartyId;
 
         // These stats will be recalculated anyway based on gear, constellations, etc, but no harm in having this here
-        MaxHP = Char.HP;
-        HP = Char.HP;
-        MaxMP = Char.MP;
-        MP = Char.MP;
-        MaxMS = Char.MS;
-        MS = Char.MS;
-        Level = Char.Level;
-        StatPoints = Char.StatPoints;
-        Attack = Char.MainStats[StatType.Attack];
-        Defense = Char.MainStats[StatType.Defense];
-        Dexterity = Char.MainStats[StatType.Dexterity];
-        Wisdom = Char.MainStats[StatType.Wisdom];
-        MovementSpeed = Char.BaseStats[StatType.Speed];
-        LifeRegeneration = (int)Char.BaseStats[StatType.Speed];
-        DodgeChance = Char.BaseStats[StatType.DodgeChance];
-        CriticalChance = Char.BaseStats[StatType.CriticalChance];
-        CriticalDamage = (int)Char.BaseStats[StatType.CriticalDamage];
-        ManaRegeneration = (int)Char.BaseStats[StatType.ManaRegeneration];
-        MSRegenRate = (int)Char.BaseStats[StatType.MSRegenRate];
-        DamageMultiplier = (int)Char.BaseStats[StatType.DamageMultiplier];
-        Armor = (int)Char.BaseStats[StatType.Armor];
-        AttackSpeed = Char.BaseStats[StatType.AttackSpeed];
+        if (Char.CharStats != null)
+        {
+            MaxHP = (int)Char.CharStats.MaxHp;
+            HP = (int)Char.CharStats.Hp;
+            MaxMP = (int)Char.CharStats.MaxMp;
+            MP = (int)Char.CharStats.Mp;
+            Level = Char.Level;
+            Attack = (int)Char.CharStats.Attack;
+            Defense = (int)Char.CharStats.Defense;
+            Speed = (int)Char.CharStats.Speed;
+            Dexterity = (int)Char.CharStats.Dexterity;
+            Vitality = (int)Char.CharStats.Vitality;
+            Wisdom = (int)Char.CharStats.Wisdom;
+        }
 
         Stats.Initializing = false;
     }
@@ -158,34 +149,31 @@ public partial class Player : Character
             return;
 
         Char.Level = Level;
-        Char.Experience = Experience;
-        Char.StatPoints = StatPoints;
-        Char.CharFame = CharFame;
-        Char.NextLevelXp = NextLevelXpGoal;
-        Char.NextClassQuestFame = NextClassQuestFame;
-        Char.HP = HP;
-        Char.MP = MP;
-        Char.MS = MS;
-        Char.SkinType = Skin;
-        Char.HealthPotions = HealthPotions;
-        Char.MagicPotions = MagicPotions;
-        Char.SecondaryStats[StatType.MaxHP] = MaxHP; // Save secondary stats
-        Char.SecondaryStats[StatType.MaxMP] = MaxMP;
-        Char.SecondaryStats[StatType.MaxMS] = MaxMS;
-        Char.SecondaryStats[StatType.Speed] = MovementSpeed;
-        Char.SecondaryStats[StatType.Vitality] = LifeRegeneration;
-        Char.SecondaryStats[StatType.DodgeChance] = DodgeChance;
-        Char.SecondaryStats[StatType.CriticalChance] = CriticalChance;
-        Char.SecondaryStats[StatType.CriticalDamage] = CriticalDamage;
-        Char.SecondaryStats[StatType.ManaRegeneration] = ManaRegeneration;
-        Char.SecondaryStats[StatType.MSRegenRate] = MSRegenRate;
-        Char.SecondaryStats[StatType.DamageMultiplier] = DamageMultiplier;
-        Char.SecondaryStats[StatType.Armor] = Armor;
-        Char.SecondaryStats[StatType.AttackSpeed] = AttackSpeed;
-        Inventory.Save(Char);
+        Char.XpPoints = Experience;
+        Char.CurrentFame = CharFame;
+        // Char.NextLevelXp = NextLevelXpGoal; // TODO: fix
+        // Char.NextClassQuestFame = NextClassQuestFame;
+        if (Char.CharStats != null)
+        {
+            Char.CharStats.Hp = (uint)HP;
+            Char.CharStats.Mp = (uint)MP;
+            Char.SkinType = Skin;
+            Char.HealthPotions = HealthPotions;
+            Char.MagicPotions = MagicPotions;
+            Char.CharStats.MaxHp = (uint)MaxHP; // Save secondary stats
+            Char.CharStats.MaxMp = (uint)MaxMP;
+            Char.CharStats.Attack = (uint)Attack;
+            Char.CharStats.Defense = (uint)Defense;
+            Char.CharStats.Speed = (uint)Speed;
+            Char.CharStats.Dexterity = (uint)Dexterity;
+            Char.CharStats.Vitality = (uint)Vitality;
+            Char.CharStats.Wisdom = (uint)Wisdom;
+        }
+
+        // Inventory.Save(Char); // TODO: fix
 
         if (saveToDb)
-            DbClientOld.Save(Char);
+            DbClient.Flush(Char);
     }
 
     public void RemoveReferenceTo(Entity ent)
@@ -233,10 +221,10 @@ public partial class Player : Character
         OnDeath?.Invoke(this, killer);
 
         SaveCharacter(); // DbChar instance will be saved by DbClient.Death() method
-        _ = DbClientOld.Death(User.Account, Char, killer)
-            .ContinueWith(t => DbClientOld.TryAddLegend(t.Result, Char));
+        // _ = DbClientOld.Death(User.Account, Char, killer) // TODO: fix
+        //     .ContinueWith(t => DbClientOld.TryAddLegend(t.Result, Char));
 
-        User.SendPacket(new Death(AccountId, Char.CharId, killer)); // 😭😭😭
+        User.SendPacket(new Death(AccountId, Char.AccCharId, killer)); // 😭😭😭
         RealmManager.AddTimedAction(1000, () => User.Disconnect(null, DisconnectReason.Death));
 
         var grave = new Entity(GetGraveType(), 2 * 60000); // 2 min
@@ -274,23 +262,26 @@ public partial class Player : Character
 
     public void AddCurrency(CurrencyType currency, int amount)
     {
-        var accStats = User.Account.Stats;
+        var accStats = User.Account.AccStats;
+        if (accStats == null)
+            throw new Exception($"Null account stats. AccId:{User.Account.Id}");
+        
         switch (currency)
         {
             case CurrencyType.Gold:
                 Gold += amount;
-                accStats.Credits += amount;
+                accStats.CurrentCredits += (uint)amount;
                 break;
             case CurrencyType.Fame:
                 Fame += amount;
-                accStats.Fame += amount;
+                accStats.CurrentFame += (uint)amount;
                 break;
             case CurrencyType.GuildFame:
                 _log.Warn("Guild fame not implemented.");
                 break;
         }
 
-        DbClientOld.Save(accStats);
+        _ = DbClient.Flush(accStats);
     }
 
     public void SetLootBoost(double lootBoost)
@@ -299,7 +290,7 @@ public partial class Player : Character
         foreach (var ent in _hitEntities)
         {
             if (ent == null) continue; // will be cleaned up later in tick
-            if (ent is Character c)
+            if (ent is CharacterEntity c)
             {
                 c.UpdateLootRollCache(this);
             }
@@ -328,10 +319,10 @@ public partial class Player : Character
         DbClientOld.JoinGuild(AccountId, guildname);
 
         GuildName = User.Account.GuildName;
-        GuildRank = User.Account.GuildRank;
+        GuildRank = User.Account.GuildMember?.GuildRank ?? 0;
     }
 
-    public override void Hit(Character hit, DamageSource damageSource)
+    public override void Hit(CharacterEntity hit, DamageSource damageSource)
     {
         if (!_hitEntities.Contains(hit))
         {
@@ -346,7 +337,7 @@ public partial class Player : Character
             EnemyHit(this, damageSource);
     }
 
-    public override void OnHitBy(Character from, DamageSource damageSource)
+    public override void OnHitBy(CharacterEntity from, DamageSource damageSource)
     {
         IsInCombat = true;
 

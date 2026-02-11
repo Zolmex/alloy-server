@@ -63,14 +63,14 @@ public record AOE : BehaviorScript
         _effects = effects;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var aoeInfo = host.ResolveResource<AOEInfo>(this);
         aoeInfo.CooldownLeft = _cooldownOffset;
         aoeInfo.AngleOffset = 0f;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var aoeInfo = host.ResolveResource<AOEInfo>(this);
         if (aoeInfo.CooldownLeft > 0)

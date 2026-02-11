@@ -31,13 +31,13 @@ public class DashDemo : EntityBehavior
         DashShoot = new Shoot(32f, new LinePath(15f), 3, 15, projName: "Red Star", targetType: TargetType.ClosestPlayer, cooldownMS: 100, lifetimeMs: 500, damage: 5);
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, DemoState.Tick);
         base.Initialize(owner);
     }
 
-    public void TestTick(RealmTime time, Character owner, StateTick state)
+    public void TestTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         { }

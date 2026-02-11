@@ -17,13 +17,13 @@ public record Timed : BehaviorScript
         _behaviors = behaviors;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<TimedInfo>(this);
         state.PeriodLeft = _period;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<TimedInfo>(this);
 

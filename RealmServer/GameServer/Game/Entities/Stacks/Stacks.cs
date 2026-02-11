@@ -10,11 +10,11 @@ public class Stack
 {
     protected readonly StackController _controller;
 
-    protected readonly Character _owner;
+    protected readonly CharacterEntity _owner;
     private readonly List<float> StackDurations = new();
     public bool ToRemove;
 
-    public Stack(Character owner)
+    public Stack(CharacterEntity owner)
     {
         _owner = owner;
         _controller = owner.Stacks;
@@ -25,14 +25,14 @@ public class Stack
     public bool SharedDuration { get; set; } // Indicates if the last duration is the duration for all of the stacks of this type
     public int MaxCount { get; set; }
     public int Count { get; set; }
-    public Character LastGiver { get; set; }
+    public CharacterEntity LastGiver { get; set; }
 
     public int Timer { get; set; }
 
     public virtual void OnStackAdded(object[] additionalData) { }
     public virtual void OnStackRemoved() { }
     public virtual void OnAllStacksRemoved() { }
-    public virtual void OnStackCountChanged(int count, Character from, object[] additionalData) { }
+    public virtual void OnStackCountChanged(int count, CharacterEntity from, object[] additionalData) { }
     public virtual void OnTick(RealmTime time) { }
     public virtual void OnSpecialUpdate() { }
 
@@ -43,12 +43,12 @@ public class Stack
         SharedDuration = sharedDuration;
     }
 
-    public void UpdateLastGiver(Character from)
+    public void UpdateLastGiver(CharacterEntity from)
     {
         LastGiver = from == null ? LastGiver : LastGiver != from ? from : null;
     }
 
-    public void AddStack(int amount, float duration, Character from = null, object[] additionalData = null)
+    public void AddStack(int amount, float duration, CharacterEntity from = null, object[] additionalData = null)
     {
         UpdateLastGiver(from);
         for (var i = 0; i < amount; i++)
@@ -72,7 +72,7 @@ public class Stack
         }
     }
 
-    public void RemoveStack(int amount, Character from = null) // Will remove X amount of stacks with the lowest duration left
+    public void RemoveStack(int amount, CharacterEntity from = null) // Will remove X amount of stacks with the lowest duration left
     {
         UpdateLastGiver(from);
         if (!SharedDuration)
@@ -141,7 +141,7 @@ public class Stack
         return Count <= 0;
     }
 
-    public void CountChanged(int count, Character from, object[] additionalData)
+    public void CountChanged(int count, CharacterEntity from, object[] additionalData)
     {
         UpdateLastGiver(from);
         OnStackCountChanged(count, from, additionalData);

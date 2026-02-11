@@ -57,7 +57,7 @@ public class State : IStateChild
     public List<State> ChildStates { get; }
     public CharacterLoot Loot { get; }
 
-    public void RegisterLoot(Character host)
+    public void RegisterLoot(CharacterEntity host)
     {
         if (Loot == null)
         {
@@ -84,7 +84,7 @@ public class State : IStateChild
         return this;
     }
 
-    public void Enter(Character host) // Perform any initial setups we need for current and child states
+    public void Enter(CharacterEntity host) // Perform any initial setups we need for current and child states
     {
         if (!host.ClassicBehavior.ActiveStates.Add(this))
             return;
@@ -102,7 +102,7 @@ public class State : IStateChild
         }
     }
 
-    public string Tick(Character host, RealmTime time)
+    public string Tick(CharacterEntity host, RealmTime time)
     {
         var targetState = Parent?.Tick(host, time);
         if (targetState != null)
@@ -123,7 +123,7 @@ public class State : IStateChild
         return null;
     }
 
-    public void Exit(Character host, RealmTime time)
+    public void Exit(CharacterEntity host, RealmTime time)
     {
         if (!host.ClassicBehavior.ActiveStates.Remove(this)) // Prevents exiting the same state twice
             return;
@@ -142,7 +142,7 @@ public class State : IStateChild
         }
     }
 
-    public void ExitInactiveParent(Character host, RealmTime time, State targetState)
+    public void ExitInactiveParent(CharacterEntity host, RealmTime time, State targetState)
     { // Will exit parent if it is not parent of the targetState
         if (Parent == null)
             return;

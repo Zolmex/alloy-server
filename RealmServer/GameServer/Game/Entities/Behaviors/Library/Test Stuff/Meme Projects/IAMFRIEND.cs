@@ -35,13 +35,13 @@ public class IAMFRIEND : EntityBehavior
         BloodSuck = new Taunt("*blood sucking noises", 2000);
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, IAMFRIENDState.EmbraceMe);
         base.Initialize(owner);
     }
 
-    public void EmbraceMeTick(RealmTime time, Character owner, StateTick state)
+    public void EmbraceMeTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         { }
@@ -72,7 +72,7 @@ public class IAMFRIEND : EntityBehavior
         }
     }
 
-    public void YouveHurtMeTick(RealmTime time, Character owner, StateTick state)
+    public void YouveHurtMeTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         var player = owner.GetNearestPlayer(10);
         if (player == null)

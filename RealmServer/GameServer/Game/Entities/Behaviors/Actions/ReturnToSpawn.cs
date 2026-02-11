@@ -25,7 +25,7 @@ public record ReturnToSpawn : BehaviorScript
         _distanceFromSpawn = distanceFromSpawn;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var distToSpawn = EntityUtils.GetDistanceBetweenF(host.Position.X, host.SpawnPosition.X, host.Position.Y, host.SpawnPosition.Y);
         if (distToSpawn <= _distanceFromSpawn + (_speed / 50))

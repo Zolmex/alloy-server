@@ -1,6 +1,6 @@
 ﻿namespace GameServer.Game.Entities;
 
-public class Enemy : Character
+public class Enemy : CharacterEntity
 {
     public Enemy(ushort objType) : base(objType)
     { }

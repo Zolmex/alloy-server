@@ -12,10 +12,10 @@ public class BehaviorController
 {
     private static readonly Logger _log = new(typeof(BehaviorController));
 
-    private readonly Character _host;
+    private readonly CharacterEntity _host;
     private State _currentState;
 
-    public BehaviorController(Character host, State rootState)
+    public BehaviorController(CharacterEntity host, State rootState)
     {
         _host = host;
         ActiveStates = new HashSet<State>();

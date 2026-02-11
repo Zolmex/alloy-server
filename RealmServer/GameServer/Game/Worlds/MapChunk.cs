@@ -46,7 +46,7 @@ public class MapChunk
 
             _world.ActiveEntities.Add(en); // Here we put into a list the entities that belong to active chunks
 
-            if (en is Character chr)
+            if (en is CharacterEntity chr)
                 chr.Tick(time);
             else if (en is Container c)
                 c.Tick(time);

@@ -154,17 +154,17 @@ public class SetStatCommand : Command
             return;
         }
 
-        if (type == StatType.Attack || type == StatType.Defense || type == StatType.Dexterity ||
-            type == StatType.Wisdom)
-        {
-            player.Char.MainStats[type] = (int)amount;
-            player.RecalculateStats();
-        }
-        else
-        {
-            player.Char.BaseStats[type] = amount;
-            player.RecalculateStats();
-        }
+        // if (type == StatType.Attack || type == StatType.Defense || type == StatType.Dexterity || // TODO: fix
+        //     type == StatType.Wisdom)
+        // {
+        //     player.Char.MainStats[type] = (int)amount;
+        //     player.RecalculateStats();
+        // }
+        // else
+        // {
+        //     player.Char.BaseStats[type] = amount;
+        // }
+        player.RecalculateStats();
 
         player.SaveCharacter(true);
 

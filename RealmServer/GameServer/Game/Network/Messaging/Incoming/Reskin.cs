@@ -16,7 +16,7 @@ public partial record Reskin : IIncomingPacket
         if (user.GameInfo.State != GameState.Playing)
             return;
 
-        user.GameInfo.Player.Skin = SkinType;
+        user.GameInfo.Player.Skin = (ushort)SkinType;
     }
 
     public void Read(NetworkReader rdr)

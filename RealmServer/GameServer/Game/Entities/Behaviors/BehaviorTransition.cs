@@ -65,7 +65,7 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
     ///     before the transition runs on tick.
     /// </summary>
     /// <param name="host">The character that the behavior is being ran on.</param>
-    public virtual void Start(Character host)
+    public virtual void Start(CharacterEntity host)
     { }
 
     /// <summary>
@@ -77,7 +77,7 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
     ///     Returns the state to be transitioned to if the transition condition is met, or null if the condition is not
     ///     met.
     /// </returns>
-    public virtual string Tick(Character host, RealmTime time)
+    public virtual string Tick(CharacterEntity host, RealmTime time)
     {
         return null;
     }
@@ -88,6 +88,6 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
     /// </summary>
     /// <param name="host">The character that the transition is being ran on.</param>
     /// <param name="time">The current <see cref="RealmTime" /> the transition is being ended at.</param>
-    public virtual void End(Character host, RealmTime time)
+    public virtual void End(CharacterEntity host, RealmTime time)
     { }
 }

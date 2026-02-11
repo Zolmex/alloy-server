@@ -22,25 +22,25 @@ public class GuildMerchant : SellableObject
         if (World.DisplayName != "Guild Hall")
             return "Not in guild hall.";
 
-        var acc = plr.User.Account;
-        var guild = DbClientOld.GetGuild(acc.GuildId).SafeResult();
-        if (guild == null)
-            return "Not in guild.";
-
-        if (acc.GuildRank < (int)GuildRank.Leader)
-            return "Only leaders can upgrade the guild.";
-
-        if (guild.Level == 3)
-            return "Guild is already fully upgraded.";
-
-        if (guild.Fame < Price)
-            return "Not enough guild fame.";
-
-        guild.Fame -= Price; // Charge accordingly
-        guild.Level++;
-        DbClientOld.Save(guild);
-
-        RealmManager.ReloadGuildHall(guild.GuildId); // Delete old ghall and creates a new one
+        // var acc = plr.User.Account; // TODO: fix
+        // var guild = DbClientOld.GetGuild(acc.GuildId).SafeResult();
+        // if (guild == null)
+        //     return "Not in guild.";
+        //
+        // if (acc.GuildRank < (int)GuildRank.Leader)
+        //     return "Only leaders can upgrade the guild.";
+        //
+        // if (guild.Level == 3)
+        //     return "Guild is already fully upgraded.";
+        //
+        // if (guild.Fame < Price)
+        //     return "Not enough guild fame.";
+        //
+        // guild.Fame -= Price; // Charge accordingly
+        // guild.Level++;
+        // DbClientOld.Save(guild);
+        //
+        // RealmManager.ReloadGuildHall(guild.GuildId); // Delete old ghall and creates a new one
 
         return SUCCESS;
     }

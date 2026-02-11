@@ -27,13 +27,13 @@ public record Reproduce : BehaviorScript
         _densityRadius = densityRadius;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var spawnInfo = host.ResolveResource<ReproduceInfo>(this);
         spawnInfo.CooldownMs = 0;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var spawnInfo = host.ResolveResource<ReproduceInfo>(this);
         if (spawnInfo.CooldownMs > 0)

@@ -16,14 +16,14 @@ public record Duration : BehaviorScript
         _duration = duration;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<DurationInfo>(this);
         state.TimeLeft = _duration;
         _behavior.Start(host);
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<DurationInfo>(this);
 

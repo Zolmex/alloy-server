@@ -2,6 +2,7 @@
 
 using Common;
 using Common.Database;
+using Common.Database.Models;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
@@ -82,7 +83,7 @@ internal class Merchant : SellableObject
     public override string Purchase(Player plr)
     {
         var acc = plr.User.Account;
-        if (!HasEnoughCapital(acc.Stats, Currency, Price))
+        if (!HasEnoughCapital(acc.AccStats, Currency, Price))
             return $"Not enough {Currency}.";
 
         if (Stock <= 0)
@@ -106,12 +107,12 @@ internal class Merchant : SellableObject
         return SUCCESS;
     }
 
-    private static bool HasEnoughCapital(DbAccStats stats, CurrencyType currency, int amount)
+    private static bool HasEnoughCapital(AccountStat stats, CurrencyType currency, int amount)
     {
         return currency switch
         {
-            CurrencyType.Gold => stats.Credits >= amount,
-            CurrencyType.Fame => stats.Fame >= amount,
+            CurrencyType.Gold => stats.CurrentCredits >= amount,
+            CurrencyType.Fame => stats.CurrentFame >= amount,
             CurrencyType.GuildFame => true,
             _ => false
         };

@@ -5,5 +5,7 @@ public enum AppMessageId
     Hello = 0,
     Register = 1,
     Verify = 2,
-    Flush = 3
+    Flush = 3,
+    GetCharacter = 4,
+    CreateCharacter = 5,
 }

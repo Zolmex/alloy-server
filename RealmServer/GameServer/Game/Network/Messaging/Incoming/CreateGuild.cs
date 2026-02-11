@@ -18,12 +18,12 @@ public partial record CreateGuild : IIncomingPacket
         if (user.GameInfo.State != GameState.Playing)
             return;
 
-        var result = DbClientOld.CreateGuild(user.Account, Name);
-        var player = user.GameInfo.Player; // Update the values for the player
-        player.GuildName = user.Account.GuildName;
-        player.GuildRank = user.Account.GuildRank;
-
-        user.SendPacket(new GuildResult(result == GuildResult.SUCCESS, result));
+        // var result = DbClientOld.CreateGuild(user.Account, Name); // TODO: fix
+        // var player = user.GameInfo.Player; // Update the values for the player
+        // player.GuildName = user.Account.GuildName;
+        // player.GuildRank = user.Account.GuildMember?.GuildRank ?? 0;
+        //
+        // user.SendPacket(new GuildResult(result == GuildResult.SUCCESS, result));
     }
 
     public void Read(NetworkReader rdr)

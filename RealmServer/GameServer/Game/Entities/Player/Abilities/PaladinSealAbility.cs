@@ -27,11 +27,11 @@ public class PaladinSealAbility : Ability
         _player.MP -= seal.MpCost;
         _cooldownReset = RealmManager.WorldTime.TotalElapsedMs + RealmManager.TicksFromTime(item.Cooldown); // Reset cooldown
 
-        foreach (var player in _player.GetPlayersWithin(seal.Radius))
-            if (player.MS < player.MaxMS + seal.ShieldAmount)
-                player.MS += seal.ShieldAmount;
-        if (_player.MS < _player.MaxMS + seal.ShieldAmount)
-            _player.MS += seal.ShieldAmount;
+        // foreach (var player in _player.GetPlayersWithin(seal.Radius)) // TODO: fix
+        //     if (player.MS < player.MaxMS + seal.ShieldAmount)
+        //         player.MS += seal.ShieldAmount;
+        // if (_player.MS < _player.MaxMS + seal.ShieldAmount)
+        //     _player.MS += seal.ShieldAmount;
 
         _player.User.SendPacket(new ShowEffect(
             (byte)ShowEffectIndex.Nova,
@@ -45,7 +45,7 @@ public class PaladinSealAbility : Ability
             return;
 
         _banner = _player.World.SpawnEntity("Paladin Banner", _player.Position);
-        _behavior = (PaladinBanner)((Character)_banner).Behavior;
+        _behavior = (PaladinBanner)((CharacterEntity)_banner).Behavior;
         _behavior.Seal = seal;
         _behavior.Player = _player;
         _bannerCount++;

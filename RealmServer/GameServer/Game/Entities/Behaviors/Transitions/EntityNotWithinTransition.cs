@@ -68,7 +68,7 @@ public class EntityNotWithinTransition : BehaviorTransition
     }
 
     /// <inheritdoc />
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         if (targetType == TargetType.Player && !host.GetPlayersWithin(radius).Any())
         {

@@ -474,7 +474,7 @@ public class ClassStatsInfo
 {
     public int ObjectType { get; set; }
     public int BestLevel { get; set; }
-    public int BestFame { get; set; }
+    public uint BestFame { get; set; }
 
     public XElement ToXml()
     {

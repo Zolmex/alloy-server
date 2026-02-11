@@ -29,13 +29,13 @@ public class EntityWithinDemo : EntityBehavior
         PlayerNotWithin12Tiles = new EntityNotWithinTransition("player", 12f, targetStates: "PlayerWithin");
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, DemoState.PlayerWithin);
         base.Initialize(owner);
     }
 
-    public void PlayerWithinTick(RealmTime time, Character owner, StateTick state)
+    public void PlayerWithinTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
             owner.Say("Checking for Player Within 8 tiles");
@@ -43,7 +43,7 @@ public class EntityWithinDemo : EntityBehavior
             StateManager.CheckTransition<DemoState>(PlayerWithin8Tiles, owner, time);
     }
 
-    public void PlayerNotWithinTick(RealmTime time, Character owner, StateTick state)
+    public void PlayerNotWithinTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
             owner.Say("Checking for Player Not Within 12 tiles");

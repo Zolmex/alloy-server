@@ -17,9 +17,9 @@ public partial record Create : IIncomingPacket
 
     public async void Handle(User user)
     {
-        var createChar = await DbClientOld.CreateCharacter(user.Account, ClassType, SkinType);
-        var chr = createChar.Item1;
-        var result = createChar.Item2;
+        var createChar = await DbClient.CreateCharacter(user.Account, (ushort)ClassType, (ushort)SkinType);
+        var chr = createChar.Character;
+        var result = createChar.Status;
         if (chr == null)
         {
             user.SendFailure(Failure.DEFAULT, result.GetDescription());

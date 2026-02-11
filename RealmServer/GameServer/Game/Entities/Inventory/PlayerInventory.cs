@@ -115,14 +115,14 @@ public class PlayerInventory : EntityInventory
                 }
 
                 Interlocked.Increment(ref _healthPotionCount);
-                _player.HealthPotions = _healthPotionCount;
+                _player.HealthPotions = (ushort)_healthPotionCount;
                 return true;
             case 2595:
                 if (_magicPotionCount >= MAX_POTIONS)
                     return false;
 
                 Interlocked.Increment(ref _magicPotionCount);
-                _player.MagicPotions = _magicPotionCount;
+                _player.MagicPotions = (ushort)_magicPotionCount;
                 return true;
         }
 
@@ -141,14 +141,14 @@ public class PlayerInventory : EntityInventory
                 }
 
                 Interlocked.Decrement(ref _healthPotionCount);
-                _player.HealthPotions = _healthPotionCount;
+                _player.HealthPotions = (ushort)_healthPotionCount;
                 return true;
             case 2595:
                 if (_magicPotionCount <= 0)
                     return false;
 
                 Interlocked.Decrement(ref _magicPotionCount);
-                _player.MagicPotions = _magicPotionCount;
+                _player.MagicPotions = (ushort)_magicPotionCount;
                 return true;
         }
 

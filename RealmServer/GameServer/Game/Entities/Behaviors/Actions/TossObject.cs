@@ -73,7 +73,7 @@ public record TossObject : BehaviorScript
         _targeted = targeted;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var tossObjectInfo = host.ResolveResource<TossObjectInfo>(this);
         tossObjectInfo.CooldownLeft = _cooldownOffsetMS;
@@ -96,7 +96,7 @@ public record TossObject : BehaviorScript
             }
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var tossObjectInfo = host.ResolveResource<TossObjectInfo>(this);
         if (tossObjectInfo.CooldownLeft <= 0)

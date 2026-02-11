@@ -89,14 +89,14 @@ public partial class Player
         World.BroadcastAll(plr =>
         {
             var user = plr.User;
-            if (!user.Account.IgnoredIds?.Contains(acc.AccountId) ?? true)
-                User.SendPacket(new Text(acc.Admin ? $"@{acc.Name}" : acc.Name, Id, NumStars, 5, null, text));
+            if (!user.Account.AccountIgnores?.Any(i => i.IgnoredId == acc.Id) ?? true)
+                User.SendPacket(new Text(acc.IsAdmin ? $"@{acc.Name}" : acc.Name, Id, NumStars, 5, null, text));
         });
     }
 
     private bool ValidateSpeak(RealmTime time, string text)
     {
-        if (User.Account.Admin)
+        if (User.Account.IsAdmin)
             return true;
 
         // If desired, word filter goes here

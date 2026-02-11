@@ -25,12 +25,12 @@ public record Buzz : BehaviorScript
         _distance = distance;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var buzzState = host.ResolveResource<BuzzInfo>(this);
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var buzzState = host.ResolveResource<BuzzInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))

@@ -81,7 +81,7 @@ public abstract class CommandManager
             return;
         }
 
-        if (cmd.PermissionLevel == Command.CommandPermissionLevel.Admin && (!player.User.Account.Admin ||
+        if (cmd.PermissionLevel == Command.CommandPermissionLevel.Admin && (!player.User.Account.IsAdmin ||
                                                                             (int)cmd.PermissionLevel > player.User.Account.Rank))
         {
             player.SendError("You're not authorized to use this command.");

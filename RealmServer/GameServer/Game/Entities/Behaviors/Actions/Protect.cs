@@ -37,13 +37,13 @@ public record Protect : BehaviorScript
         _speed = speed;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var protectInfo = host.ResolveResource<ProtectInfo>(this);
         protectInfo.State = ProtectState.DontKnowWhere;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var protectInfo = host.ResolveResource<ProtectInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))

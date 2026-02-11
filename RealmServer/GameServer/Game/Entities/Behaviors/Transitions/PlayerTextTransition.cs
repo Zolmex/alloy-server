@@ -20,25 +20,25 @@ public class PlayerTextTransition : BehaviorTransition
         _ignoreCase = ignoreCase;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<PlayerTextInfo>(this);
         state.Rgx = _ignoreCase ? new Regex(_regex, RegexOptions.IgnoreCase) : new Regex(_regex);
         host.OnPlayerText += HandlePlayerText;
     }
 
-    public override void End(Character host, RealmTime time)
+    public override void End(CharacterEntity host, RealmTime time)
     {
         host.OnPlayerText -= HandlePlayerText;
     }
 
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<PlayerTextInfo>(this);
         return state.Transition ? GetTargetState() : null;
     }
 
-    public void HandlePlayerText(Character host, Player player, string text)
+    public void HandlePlayerText(CharacterEntity host, Player player, string text)
     {
         var state = host.ResolveResource<PlayerTextInfo>(this);
         var match = state.Rgx.Match(text);

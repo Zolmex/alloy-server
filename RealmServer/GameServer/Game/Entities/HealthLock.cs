@@ -23,27 +23,27 @@ public class HealthLock
     /// <summary>
     ///     Check if a lock is active for a given character.
     /// </summary>
-    /// <param name="character">Character the lock is on.</param>
+    /// <param name="characterEntity">Character the lock is on.</param>
     /// <returns>Whether or not the lock is active.</returns>
-    public bool IsLockActive(Character character)
+    public bool IsLockActive(CharacterEntity characterEntity)
     {
-        if (locked && character.HpPerc < LockAtPerc && !lockTriggered)
+        if (locked && characterEntity.HpPerc < LockAtPerc && !lockTriggered)
         {
             lockTriggered = true;
-            character.ApplyConditionEffect(ConditionEffectIndex.Invincible, LockDurationMs);
+            characterEntity.ApplyConditionEffect(ConditionEffectIndex.Invincible, LockDurationMs);
         }
 
-        return locked && character.HpPerc < LockAtPerc;
+        return locked && characterEntity.HpPerc < LockAtPerc;
     }
 
     /// <summary>
     ///     Release an existing lock.
     /// </summary>
-    /// <param name="character">Character the lock is on.</param>
-    public void ReleaseLock(Character character)
+    /// <param name="characterEntity">Character the lock is on.</param>
+    public void ReleaseLock(CharacterEntity characterEntity)
     {
         locked = false;
         lockTriggered = true;
-        character.RemoveConditionEffect(ConditionEffectIndex.Invincible);
+        characterEntity.RemoveConditionEffect(ConditionEffectIndex.Invincible);
     }
 }

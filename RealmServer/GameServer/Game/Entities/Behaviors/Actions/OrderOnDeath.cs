@@ -13,14 +13,14 @@ public record OrderOnDeath : BehaviorScript
         _targetState = targetState;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         host.DeathEvent += OnDeath;
     }
 
     private void OnDeath(Entity en)
     {
-        foreach (var i in (en as Character).GetOtherEnemiesByName(_children, _range))
+        foreach (var i in (en as CharacterEntity).GetOtherEnemiesByName(_children, _range))
         {
             if (i.Behavior != null)
             { // Patpot's behavior system

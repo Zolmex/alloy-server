@@ -4,7 +4,7 @@ public class DamageTakenRecord
 {
     public int DamageTaken;
 
-    public void OnEntityDamaged(Character en, Character from, int dmgTaken)
+    public void OnEntityDamaged(CharacterEntity en, CharacterEntity from, int dmgTaken)
     {
         DamageTaken += dmgTaken;
     }
@@ -21,13 +21,13 @@ public class DamageTakenTransition : BehaviorTransition
         _damage = damage;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
         host.OnDamagedBy += dmgTakenInfo.OnEntityDamaged;
     }
 
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
         if (dmgTakenInfo.DamageTaken >= _damage)
@@ -38,7 +38,7 @@ public class DamageTakenTransition : BehaviorTransition
         return null;
     }
 
-    public override void End(Character host, RealmTime time)
+    public override void End(CharacterEntity host, RealmTime time)
     {
         var dmgTakenInfo = host.ResolveResource<DamageTakenRecord>(this);
         host.OnDamagedBy -= dmgTakenInfo.OnEntityDamaged;

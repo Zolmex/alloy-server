@@ -164,7 +164,7 @@ public static class EntityUtils
             return speed * tileSpeedMult;
         }
 
-        if (entity is Character chr)
+        if (entity is CharacterEntity chr)
         {
             if (chr.HasConditionEffect(ConditionEffectIndex.Slowed))
                 return 1;

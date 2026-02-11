@@ -6,7 +6,7 @@ using Common;
 
 namespace GameServer.Game.Entities;
 
-public class SellableObject : Character
+public class SellableObject : CharacterEntity
 {
     public const string SUCCESS = "Success!";
 

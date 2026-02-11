@@ -23,14 +23,14 @@ public class NotMovingTransition : BehaviorTransition
         _delay = delay;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<NotMovingTransitionInfo>(this);
         state.Position = new Vector2(host.Position.X, host.Position.Y);
         state.TimeLeft = _delay;
     }
 
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<NotMovingTransitionInfo>(this);
         if (state.TimeLeft > 0)

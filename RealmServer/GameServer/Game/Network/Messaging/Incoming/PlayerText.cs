@@ -13,11 +13,11 @@ public partial record PlayerText : IIncomingPacket
 
     public void Handle(User user)
     {
-        if (user.Account.Muted)
-        {
-            user.GameInfo.Player.SendError("You are muted.");
-            return;
-        }
+        // if (user.Account.Muted) // TODO: fix
+        // {
+        //     user.GameInfo.Player.SendError("You are muted.");
+        //     return;
+        // }
 
         user.GameInfo.Player.Speak(Text);
     }

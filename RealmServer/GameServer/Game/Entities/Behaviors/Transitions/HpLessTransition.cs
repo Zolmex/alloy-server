@@ -11,7 +11,7 @@ public class HpLessTransition : BehaviorTransition
         _threshold = threshold;
     }
 
-    public override string Tick(Character host, RealmTime time)
+    public override string Tick(CharacterEntity host, RealmTime time)
     {
         var transition = (float)host.HP / host.MaxHP < _threshold;
         return transition ? GetTargetState() : null;

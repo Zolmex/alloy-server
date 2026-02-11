@@ -26,14 +26,14 @@ public record Charge : BehaviorScript
         _cooldownMS = cooldownMS;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var chargeState = host.ResolveResource<ChargeInfo>(this);
         chargeState.RemainingTime = 0; // Make sure the behavior runs once
         chargeState.Direction = Vector2.Zero;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var chargeState = host.ResolveResource<ChargeInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))

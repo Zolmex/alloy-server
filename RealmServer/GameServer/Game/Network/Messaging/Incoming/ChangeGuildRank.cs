@@ -20,18 +20,18 @@ public partial record ChangeGuildRank : IIncomingPacket
             return;
 
         var acc = user.Account;
-        if (acc.GuildId == 0 || acc.GuildRank < (int)GuildRank.Officer)
+        if (acc.GuildMember == null || acc.GuildMember?.GuildRank < (int)GuildRank.Officer)
             return;
 
         var plr = user.GameInfo.Player;
         var target = plr.World.GetPlayerByName(TargetName);
         var targetAcc = target.User.Account;
-        if (targetAcc.GuildId != acc.GuildId || targetAcc.GuildRank >= acc.GuildRank)
+        if (targetAcc.GuildMember == null || targetAcc.GuildMember.GuildId != acc.GuildMember.GuildId || targetAcc.GuildMember.GuildRank >= acc.GuildMember.GuildRank)
             return;
 
-        targetAcc.GuildRank = TargetRank;
+        targetAcc.GuildMember.GuildRank = (short)TargetRank;
         target.GuildRank = TargetRank;
-        DbClientOld.Save(targetAcc);
+        _ = DbClient.Flush(targetAcc);
     }
 
     public void Read(NetworkReader rdr)

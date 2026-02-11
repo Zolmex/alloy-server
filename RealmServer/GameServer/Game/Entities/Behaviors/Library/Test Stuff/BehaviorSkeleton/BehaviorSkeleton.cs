@@ -15,7 +15,7 @@ public class EntityNameHere : EntityBehavior
     public override void RegisterBehaviors()
     { }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, EntityNameHereState.StateName);
 
@@ -23,7 +23,7 @@ public class EntityNameHere : EntityBehavior
         base.Initialize(owner);
     }
 
-    public void StateNameTick(RealmTime time, Character owner, StateTick state)
+    public void StateNameTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         { }

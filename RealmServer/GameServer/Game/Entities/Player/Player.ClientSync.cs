@@ -52,7 +52,7 @@ public partial class Player
         }
 
         var moveThresh =
-            4 + (this.GetSpeed(MovementSpeed) *
+            4 + (this.GetSpeed(Speed) *
                  (TimeSinceLastMove() / 1000f)); // 4 tiles to account for any lag or speed modifiers
         moveThresh *= moveThresh; // Squared
         var dist = this.DistSqr(posX, posY);

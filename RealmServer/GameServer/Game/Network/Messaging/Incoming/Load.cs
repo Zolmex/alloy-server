@@ -15,7 +15,7 @@ public partial record Load : IIncomingPacket
 
     public async void Handle(User user)
     {
-        if (user.Account.Banned)
+        if (user.Account.IsBanned)
         {
             user.SendFailure(Failure.DEFAULT, "Account has been banned.");
             return;
@@ -24,7 +24,7 @@ public partial record Load : IIncomingPacket
         var chr = user.GameInfo.Char;
         if (user.State != ConnectionState.Reconnecting)
         {
-            chr = await DbClientOld.GetChar(user.Account.AccountId, CharId);
+            chr = (await DbClient.GetChar(user.Account.Id, CharId)).Character;
             if (chr == null)
             {
                 user.SendFailure(Failure.DEFAULT, $"Failed to load character #{CharId}");
@@ -38,7 +38,7 @@ public partial record Load : IIncomingPacket
             return;
         }
 
-        if (chr.Dead)
+        if (chr.IsDead)
         {
             user.SendFailure(Failure.DEFAULT, "Character is dead.");
             return;

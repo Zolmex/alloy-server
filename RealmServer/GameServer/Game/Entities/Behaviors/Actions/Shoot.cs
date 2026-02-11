@@ -39,7 +39,7 @@ public record Shoot : BehaviorScript
 
     private readonly float minRadiusSqr;
     private readonly bool multiHit;
-    private readonly Action<Character, Character> onHitEvent; // hit, hit by
+    private readonly Action<CharacterEntity, CharacterEntity> onHitEvent; // hit, hit by
     private readonly bool passesCover;
     private readonly ProjectilePath path;
     private readonly float predictive;
@@ -55,7 +55,7 @@ public record Shoot : BehaviorScript
     public Shoot(float maxRadius, byte count = 1, float shootAngle = 0f, int projectileIndex = 0,
         float fixedAngle = 0f, float rotateAngle = 0f, float angleOffset = 0f,
         float predictive = 0f, int coolDownOffset = 0, int cooldownMS = 0, bool targeted = false,
-        float xOffset = 0f, float yOffset = 0f, Action<Character, Character> onHitEvent = null, float minRadius = 0)
+        float xOffset = 0f, float yOffset = 0f, Action<CharacterEntity, CharacterEntity> onHitEvent = null, float minRadius = 0)
     {
         propId = projectileIndex;
         maxRadiusSqr = maxRadius * maxRadius;
@@ -79,7 +79,7 @@ public record Shoot : BehaviorScript
         float predictive = 0f, int coolDownOffset = 0, int cooldownMS = 0, bool targeted = false,
         string projName = "",
         int lifetimeMs = 1000, int minDamage = -1, int maxDamage = -1, int damage = -1, float xOffset = 0f,
-        float yOffset = 0f, Action<Character, Character> onHitEvent = null,
+        float yOffset = 0f, Action<CharacterEntity, CharacterEntity> onHitEvent = null,
         int size = 100, bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
         float minRadius = 0,
         params (ConditionEffectIndex, int)[] effects)
@@ -137,7 +137,7 @@ public record Shoot : BehaviorScript
         ushort projType = 0, float fixedAngle = 0f, float rotateAngle = 0f, float angleOffset = 0f,
         float predictive = 0f, int coolDownOffset = 0, int cooldownMS = 0, bool targeted = false,
         string projName = "", int minDamage = -1, int maxDamage = -1, int damage = -1, float xOffset = 0f,
-        float yOffset = 0f, Action<Character, Character> onHitEvent = null,
+        float yOffset = 0f, Action<CharacterEntity, CharacterEntity> onHitEvent = null,
         int size = 100, bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
         float minRadius = 0,
         params (ConditionEffectIndex, int)[] effects)
@@ -195,7 +195,7 @@ public record Shoot : BehaviorScript
         float predictive = 0f, int coolDownOffset = 0, int cooldownMS = 0,
         TargetType targetType = TargetType.ClosestPlayer, string projName = "",
         int lifetimeMs = 1000, int minDamage = -1, int maxDamage = -1, int damage = -1, float xOffset = 0f,
-        float yOffset = 0f, Action<Character, Character> onHitEvent = null,
+        float yOffset = 0f, Action<CharacterEntity, CharacterEntity> onHitEvent = null,
         int size = 100, bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
         float minRadius = 0,
         params (ConditionEffectIndex, int)[] effects)
@@ -243,7 +243,7 @@ public record Shoot : BehaviorScript
         float predictive = 0f, int coolDownOffset = 0, int cooldownMS = 0,
         TargetType targetType = TargetType.ClosestPlayer, string projName = "",
         int lifetimeMs = 1000, int minDamage = -1, int maxDamage = -1, int damage = -1, float xOffset = 0f,
-        float yOffset = 0f, Action<Character, Character> onHitEvent = null,
+        float yOffset = 0f, Action<CharacterEntity, CharacterEntity> onHitEvent = null,
         int size = 100, bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
         float minRadius = 0,
         params (ConditionEffectIndex, int)[] effects)
@@ -325,7 +325,7 @@ public record Shoot : BehaviorScript
         this.path = path;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var shootInfo = host.ResolveResource<ShootInfo>(this);
         shootInfo.CooldownLeft = cooldownOffsetMs;
@@ -355,7 +355,7 @@ public record Shoot : BehaviorScript
         }
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var shootInfo = host.ResolveResource<ShootInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Stunned))
@@ -410,7 +410,7 @@ public record Shoot : BehaviorScript
         return BehaviorTickState.BehaviorActive;
     }
 
-    private static float Predict(Character host, Entity target)
+    private static float Predict(CharacterEntity host, Entity target)
     {
         var targetX = target.Position.X + (PREDICT_NUM_TICKS * (target.Position.X - target.PrevPosition.X));
         var targetY = target.Position.Y + (PREDICT_NUM_TICKS * (target.Position.Y - target.PrevPosition.Y));

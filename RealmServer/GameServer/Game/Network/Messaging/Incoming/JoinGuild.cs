@@ -17,7 +17,7 @@ public partial record JoinGuild : IIncomingPacket
             return;
 
         var acc = user.Account;
-        if (acc.GuildId != 0)
+        if (acc.GuildMember != null)
             return;
 
         var player = user.GameInfo.Player;

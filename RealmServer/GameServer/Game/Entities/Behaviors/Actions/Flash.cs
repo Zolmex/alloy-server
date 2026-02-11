@@ -20,7 +20,7 @@ public record Flash : BehaviorScript
         _flashRepeats = flashRepeats;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         host.World.BroadcastAll(p =>
         {

@@ -1,12 +1,14 @@
 ﻿#region
 
 using Common.Database;
+using Common.Database.Models;
 using Common.Utilities;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using System;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -50,7 +52,7 @@ public class User : IIdentifiable
     public GameInfo GameInfo { get; }
 
     public ConnectionState State { get; private set; }
-    public DbAccount Account { get; private set; }
+    public Account Account { get; private set; }
     public ClientRandom Random { get; private set; }
     public ClientRandom ServerRandom { get; private set; }
 
@@ -67,10 +69,10 @@ public class User : IIdentifiable
         Network.StartReceive();
     }
 
-    public void SetGameInfo(DbAccount acc, uint randomSeed, World world)
+    public void SetGameInfo(Account acc, uint randomSeed, World world)
     {
         Account = acc;
-        RealmManager.UserAccIds.TryAdd(this, acc.AccountId);
+        RealmManager.UserAccIds.TryAdd(this, acc.Id);
 
         Random = new ClientRandom(randomSeed);
         ServerRandom = new ClientRandom((uint)new Random().Next(1, int.MaxValue));
@@ -78,7 +80,7 @@ public class User : IIdentifiable
         GameInfo.SetWorld(world);
     }
 
-    public void Load(DbChar chr, World world)
+    public void Load(Character chr, World world)
     {
         State = ConnectionState.Ready;
 
@@ -86,13 +88,13 @@ public class User : IIdentifiable
 
         SendPacket(new CreateSuccess(
             GameInfo.Player.Id,
-            chr.CharId));
+            chr.AccCharId));
         SendPacket(new AccountList(
             AccountList.Locked,
-            Account.LockedIds ?? Array.Empty<int>()));
+            Account.AccountLocks.Select(i => i.LockedId).ToArray()));
         SendPacket(new AccountList(
             AccountList.Ignored,
-            Account.IgnoredIds ?? Array.Empty<int>()));
+            Account.AccountIgnores.Select(i => i.IgnoredId).ToArray()));
     }
 
     public void Unload(bool reconnect, bool death = false)

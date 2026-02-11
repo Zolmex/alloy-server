@@ -29,7 +29,7 @@ public class Projectile : DamageSource, IIdentifiable
     public const int MOVEMENT_TIME_FRAME = 50;
     private static readonly Logger _log = new(typeof(Projectile));
 
-    private readonly Action<Character, Character> _onHitEvent; // hit, hit by
+    private readonly Action<CharacterEntity, CharacterEntity> _onHitEvent; // hit, hit by
 
     private readonly HashSet<(Player p, WorldPosData pos, long time)> _unconfirmedHits = new();
     public readonly float Angle;
@@ -37,7 +37,7 @@ public class Projectile : DamageSource, IIdentifiable
     public readonly HashSet<int> Hit;
     public readonly long Lifetime;
     public readonly bool MultiHit;
-    public readonly Character Owner;
+    public readonly CharacterEntity Owner;
     public readonly bool PassesCover;
     private readonly ProjectilePath Path;
     public readonly Vector2 StartPosition;
@@ -50,10 +50,10 @@ public class Projectile : DamageSource, IIdentifiable
 
     public long Time;
 
-    public Projectile(Character owner, int id, long time, float angle, Vector2 startPos, int damage,
+    public Projectile(CharacterEntity owner, int id, long time, float angle, Vector2 startPos, int damage,
         ProjectilePath path,
         int lifetimeMS, bool multiHit, bool passesCover, bool armorPiercing, ProjectileTargetType targetType,
-        Action<Character, Character> onHitEvent = null, (ConditionEffectIndex, int)[] effects = null)
+        Action<CharacterEntity, CharacterEntity> onHitEvent = null, (ConditionEffectIndex, int)[] effects = null)
     {
         Owner = owner;
         Id = id;
@@ -107,7 +107,7 @@ public class Projectile : DamageSource, IIdentifiable
     }
 
     // Server-side projectile collision
-    public void CheckCollisions(IEnumerable<Character> entitiesInRadius, long serverTime)
+    public void CheckCollisions(IEnumerable<CharacterEntity> entitiesInRadius, long serverTime)
     {
         foreach (var entity in entitiesInRadius)
         {
@@ -122,7 +122,7 @@ public class Projectile : DamageSource, IIdentifiable
     }
 
     // EnemyHit packet
-    public void CheckClientCollision(Character entity, long elapsedLifetimeMs, WorldPosData targetPos)
+    public void CheckClientCollision(CharacterEntity entity, long elapsedLifetimeMs, WorldPosData targetPos)
     {
         var elapsed = startTime + elapsedLifetimeMs;
         Position = PositionAt(elapsed);
@@ -152,7 +152,7 @@ public class Projectile : DamageSource, IIdentifiable
         return false;
     }
 
-    public bool CheckServerEntityHit(Character entity, long serverTime)
+    public bool CheckServerEntityHit(CharacterEntity entity, long serverTime)
     {
         if (Dead)
             return false;
@@ -183,7 +183,7 @@ public class Projectile : DamageSource, IIdentifiable
         }
     }
 
-    public bool CheckUnconfirmedHit(Character hit, float posX, float posY)
+    public bool CheckUnconfirmedHit(CharacterEntity hit, float posX, float posY)
     {
         (Player, WorldPosData pos, long) hitData;
         using (TimedLock.Lock(this))
@@ -195,7 +195,7 @@ public class Projectile : DamageSource, IIdentifiable
         return false;
     }
 
-    public void RemoveHit(Character notHit)
+    public void RemoveHit(CharacterEntity notHit)
     {
         using (TimedLock.Lock(this))
             Hit.Remove(notHit.Id);
@@ -207,7 +207,7 @@ public class Projectile : DamageSource, IIdentifiable
             return _unconfirmedHits.Where(player => player.p == p).FirstOrDefault().time;
     }
 
-    public void ConfirmHit(Character hit)
+    public void ConfirmHit(CharacterEntity hit)
     {
         // a player has reported back that a collision did go through, hit that mf
         HitEntity(hit);
@@ -215,7 +215,7 @@ public class Projectile : DamageSource, IIdentifiable
             _unconfirmedHits.RemoveWhere(p => p.p == hit);
     }
 
-    public void TryHitEntity(Character entity)
+    public void TryHitEntity(CharacterEntity entity)
     {
         using (TimedLock.Lock(this))
         {
@@ -233,7 +233,7 @@ public class Projectile : DamageSource, IIdentifiable
         HitEntity(entity);
     }
 
-    public void HitEntity(Character entity)
+    public void HitEntity(CharacterEntity entity)
     {
         _onHitEvent?.Invoke(entity, Owner);
         using (TimedLock.Lock(this))

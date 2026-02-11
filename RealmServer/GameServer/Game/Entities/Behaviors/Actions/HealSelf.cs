@@ -37,14 +37,14 @@ public record HealSelf : BehaviorScript
         _cooldownOffset = cooldownOffset;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var healGroupInfo = host.ResolveResource<HealSelfInfo>(this);
         // Instead of forcing TimeLeft = 0, start it at the cooldownOffset.
         healGroupInfo.TimeLeft = _cooldownOffset;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var healSelfInfo = host.ResolveResource<HealSelfInfo>(this);
 

@@ -19,7 +19,7 @@ public partial record PartyInvite : IIncomingPacket
         var acc = user.Account;
 
         // Shouldn't happen but make sure player is in party before inviting
-        if (acc.PartyId == -1)
+        if (user.GameInfo.Player.PartyId == -1)
             return;
 
         var target = user.GameInfo.Player.World.GetPlayerById(_objId);

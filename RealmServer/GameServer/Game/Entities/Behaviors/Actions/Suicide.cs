@@ -9,7 +9,7 @@ public record Suicide : BehaviorScript
         _delay = delay;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         host.World.AddTimedAction(_delay, () => host.TryLeaveWorld());
     }

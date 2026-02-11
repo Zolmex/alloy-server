@@ -25,13 +25,13 @@ public class WretchedHelper : EntityBehavior
         //Taunt = new Taunt(text: "YOOO WE HERE");
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, WretchedHelperState.CreateSquare);
         base.Initialize(owner);
     }
 
-    public void CreateSquareTick(RealmTime time, Character owner, StateTick state)
+    public void CreateSquareTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         {

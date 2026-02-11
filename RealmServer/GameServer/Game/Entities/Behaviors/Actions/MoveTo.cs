@@ -25,13 +25,13 @@ public record MoveTo : BehaviorScript
         _relative = relative;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var moveToState = host.ResolveResource<MoveToState>(this);
         moveToState.StartPos = host.Position.ToVec2();
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var moveToState = host.ResolveResource<MoveToState>(this);
         var pos = _relative ? moveToState.StartPos + _targetPos : _targetPos;

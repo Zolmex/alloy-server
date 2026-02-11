@@ -32,7 +32,7 @@ public record OpenGate : BehaviorScript
         _useArea = true;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         if (_useArea)
         {

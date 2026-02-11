@@ -25,7 +25,7 @@ public class Entity : IIdentifiable
     protected readonly Logger _log;
 
     public bool Initialized;
-    public Character Parent; // Entity that spawned this entity
+    public CharacterEntity Parent; // Entity that spawned this entity
 
     public WorldPosData Position;
     public WorldPosData PrevPosition;
@@ -77,7 +77,7 @@ public class Entity : IIdentifiable
                 case "Character":
                     if (desc.Enemy)
                         return new Enemy(objType);
-                    return new Character(objType);
+                    return new CharacterEntity(objType);
                 case "ClosedVaultChest":
                     return new ClosedVaultChest(objType);
                 case "Container":
@@ -270,18 +270,6 @@ public class Entity : IIdentifiable
     {
         get => Stats.Get<int>(StatType.Size);
         set => Stats.Set(StatType.Size, value);
-    }
-
-    public int MaxMS
-    {
-        get => Stats.Get<int>(StatType.MaxMS);
-        set => Stats.Set(StatType.MaxMS, value, true);
-    }
-
-    public int MS
-    {
-        get => Stats.Get<int>(StatType.MS);
-        set => Stats.Set(StatType.MS, value, true);
     }
 
     #endregion

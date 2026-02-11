@@ -96,7 +96,7 @@ public class ShootConfig
     /// <summary>
     ///     Gets or sets the event triggered when the projectile hits a target.
     /// </summary>
-    public Action<Character, Character> OnHitEvent { get; set; } = null;
+    public Action<CharacterEntity, CharacterEntity> OnHitEvent { get; set; } = null;
 
     /// <summary>
     ///     Gets or sets the size of the projectile.

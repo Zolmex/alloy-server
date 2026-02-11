@@ -7,7 +7,7 @@
 public record BehaviorScript : IStateChild
 {
     /// <summary>
-    ///     A return from the <see cref="Tick(Character, RealmTime)" /> function to indicate what happened during the tick.
+    ///     A return from the <see cref="Tick(CharacterEntity, RealmTime)" /> function to indicate what happened during the tick.
     /// </summary>
     public enum BehaviorTickState
     {
@@ -84,7 +84,7 @@ public record BehaviorScript : IStateChild
     ///     Useful for resetting variables like cooldowns and angles.
     /// </summary>
     /// <param name="host">The character that the behavior is being ran on.</param>
-    public virtual void Start(Character host)
+    public virtual void Start(CharacterEntity host)
     { }
 
     /// <summary>
@@ -93,7 +93,7 @@ public record BehaviorScript : IStateChild
     /// <param name="host">The character that the behavior is being ran on.</param>
     /// <param name="time">The current <see cref="RealmTime" /> the behavior was ticked at.</param>
     /// <returns>Returns a <see cref="BehaviorTickState" /> which will indicate what happened during the tick.</returns>
-    public virtual BehaviorTickState Tick(Character host, RealmTime time)
+    public virtual BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         return BehaviorTickState.OnCooldown;
     }
@@ -104,6 +104,6 @@ public record BehaviorScript : IStateChild
     /// </summary>
     /// <param name="host">The character that the behavior is being ran on.</param>
     /// <param name="time">The current <see cref="RealmTime" /> the behavior is being ended at.</param>
-    public virtual void End(Character host, RealmTime time)
+    public virtual void End(CharacterEntity host, RealmTime time)
     { }
 }

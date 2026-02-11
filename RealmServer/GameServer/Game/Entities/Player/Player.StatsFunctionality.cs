@@ -1,5 +1,6 @@
 ﻿#region
 
+using Common;
 using Common.Resources.Config;
 using System;
 
@@ -20,7 +21,7 @@ public partial class Player
             _hpRegenCounter = 0;
         else
         {
-            _hpRegenCounter += (float)LifeRegeneration / TPS;
+            _hpRegenCounter += (float)Vitality / TPS;
 
             var regen = (int)_hpRegenCounter;
             if (regen > 0)
@@ -34,26 +35,13 @@ public partial class Player
             _mpRegenCounter = 0;
         else
         {
-            _mpRegenCounter += (float)ManaRegeneration / TPS;
+            _mpRegenCounter += (float)Wisdom / TPS;
 
             var regen = (int)_mpRegenCounter;
             if (regen > 0)
             {
                 MP = Math.Min(MaxMP, MP + regen);
                 _mpRegenCounter -= regen;
-            }
-        }
-
-        if (MS == MaxMS)
-            _msRegenCounter = 0;
-        else if (TimeSinceLastHit > 2000)
-        {
-            _msRegenCounter += (float)MaxMS / 3 * (1 + ((float)MSRegenRate / 100)) / TPS; //base 33% per second, increased by MSRegenRate, if MSRegenRate is 50, it will increase by 50%, turning 33% into 49.5%
-            var regen = (int)_msRegenCounter;
-            if (regen > 0)
-            {
-                MS = Math.Min(MaxMS, MS + regen);
-                _msRegenCounter -= regen;
             }
         }
     }
@@ -77,27 +65,25 @@ public partial class Player
 
     private float GetDamageMultiplier()
     {
-        //var attMult = MIN_ATTACK_MULT + Stats.Get<int>(StatType.Attack) / 75f * (MAX_ATTACK_MULT - MIN_ATTACK_MULT);
+        if (HasConditionEffect(ConditionEffectIndex.Weak))
+            return MIN_ATTACK_MULT;
+        
+        var attMult = MIN_ATTACK_MULT + Attack / 75f * (MAX_ATTACK_MULT - MIN_ATTACK_MULT);
+        if (HasConditionEffect(ConditionEffectIndex.Damaging))
+            attMult *= 1.5f;
 
-        var dmgMult = 1f + (DamageMultiplier / 100f);
-
-        return dmgMult;
+        return attMult;
     }
 
-    private float GetCritMultiplier(bool normalRandom = true, bool forceCrit = false)
+    private float GetCritMultiplier(bool normalRandom = true, bool forceCrit = false) // TODO: remove
     {
         var critMult = 1f;
-
-        if (forceCrit || (normalRandom ? User.Random.NextIntRange(0, 1001) : User.ServerRandom.NextIntRange(0, 1001)) < CriticalChance * 10)
-        {
-            critMult += CriticalDamage / 100f;
-        }
 
         return critMult;
     }
 
-    public bool CheckDodge()
+    public bool CheckDodge() // TODO: remove
     {
-        return User.Random.NextIntRange(0, 1001) < DodgeChance * 10;
+        return false;
     }
 }

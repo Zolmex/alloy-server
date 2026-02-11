@@ -25,13 +25,13 @@ public class MoveDemo : EntityBehavior
         Move = new Move(4, 2, 1000, 4f);
     }
 
-    public override void Initialize(Character owner)
+    public override void Initialize(CharacterEntity owner)
     {
         StateManager.SetCurrentState(owner, DemoState.Tick);
         base.Initialize(owner);
     }
 
-    public void TestTick(RealmTime time, Character owner, StateTick state)
+    public void TestTick(RealmTime time, CharacterEntity owner, StateTick state)
     {
         if (state == StateTick.Start)
         {

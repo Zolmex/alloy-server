@@ -46,7 +46,7 @@ public record RingAttack : BehaviorScript
         _useSavedAngle = useSavedAngle;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var state = host.ResolveResource<RingAttackInfo>(this);
         state.AngleToIncrement = _angleToIncrement;
@@ -55,7 +55,7 @@ public record RingAttack : BehaviorScript
         state.Targeted = _targeted;
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var state = host.ResolveResource<RingAttackInfo>(this);
 

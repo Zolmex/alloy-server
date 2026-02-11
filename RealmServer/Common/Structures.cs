@@ -240,7 +240,7 @@ public struct StatData
             StatType.AttackSpeed => true,
             StatType.AttackSpeedBonus => true,
             StatType.Speed => true,
-            StatType.MovementSpeedBonus => true,
+            StatType.SpeedBonus => true,
             _ => false
         };
     }

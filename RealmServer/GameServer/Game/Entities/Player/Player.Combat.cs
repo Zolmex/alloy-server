@@ -16,9 +16,12 @@ public partial class Player
 {
     private const float MIN_ATTACK_MULT = 0.5f;
     private const float MAX_ATTACK_MULT = 2f;
-    public Character DamageCounterTarget;
+    private const float MIN_ATTACK_FREQ = 0.0015f;
+    private const float MAX_ATTACK_FREQ = 0.008f;
+    
+    public CharacterEntity DamageCounterTarget;
 
-    public Character LastHitTarget;
+    public CharacterEntity LastHitTarget;
 
     public bool ShotsVisible(Player player)
     {
@@ -124,7 +127,7 @@ public partial class Player
         if (HasConditionEffect(ConditionEffectIndex.Dazed))
             return 1;
 
-        var freq = AttackSpeed;
+        var freq = MIN_ATTACK_FREQ + (Dexterity / 75f) * (MAX_ATTACK_FREQ - MIN_ATTACK_FREQ);
         if (HasConditionEffect(ConditionEffectIndex.Berserk))
             freq *= 1.5f;
         return freq;
