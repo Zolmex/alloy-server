@@ -76,13 +76,13 @@ public static class DbClient
         await acc.Flush<Account, short>(_con, a => a.MaxChars);
     }
 
-    public static async Task<GetCharacterAck> GetChar(int accId, int charId)
+    public static async Task<GetCharacterAck> GetCharacter(int accId, int accCharId)
     {
         var ack = await _con.SendAndReceiveAsync<GetCharacterAck>(
             new GetCharacterMessage
             {
                 AccountId = accId,
-                CharacterId = charId
+                CharacterId = accCharId
             });
         return ack;
     }
@@ -103,5 +103,16 @@ public static class DbClient
                 SkinType = skinType
             });
         return ack;
+    }
+    
+    public static async Task<bool> DeleteCharacter(int accId, int accCharId)
+    {
+        var ack = await _con.SendAndReceiveAsync<DeleteCharacterAck>(
+            new DeleteCharacterMessage
+            {
+                AccountId = accId,
+                CharacterId = accCharId
+            });
+        return ack.Success;
     }
 }

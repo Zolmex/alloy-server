@@ -158,6 +158,8 @@ public partial class AlloyContext : DbContext
 
         modelBuilder.Entity<Character>(entity =>
         {
+            entity.HasQueryFilter(e => !e.IsDeleted); // Handle soft deletes
+            
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.HasIndex(e => e.AccId, "acc_id");

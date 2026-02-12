@@ -201,7 +201,7 @@ public class AppConnection
     public void Disconnect(string reason = "Shutdown")
     {
         _log.Info($"Disconnected from app '{TargetName}'. Reason: {reason}");
-        Socket.Disconnect(true);
+        Socket.Disconnect(false);
         Reset();
     }
 }

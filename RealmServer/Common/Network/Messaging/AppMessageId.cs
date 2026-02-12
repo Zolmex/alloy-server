@@ -8,4 +8,5 @@ public enum AppMessageId
     Flush = 3,
     GetCharacter = 4,
     CreateCharacter = 5,
+    DeleteCharacter = 6,
 }

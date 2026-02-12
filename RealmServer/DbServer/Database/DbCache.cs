@@ -302,6 +302,65 @@ public static class DbCache
         }
     }
     
+    public static async Task DeleteEntityAsync(DbModel entity)
+    {
+        var modelName = entity.Key.Split('.')[0];
+        switch (modelName)
+        {
+            case "account":
+                await Accounts.DeleteAsync(entity as Account);
+                break;
+            case "accountSkin":
+                await AccountSkins.DeleteAsync(entity as AccountSkin);
+                break;
+            case "accountStat":
+                await AccountStats.DeleteAsync(entity as AccountStat);
+                break;
+            case "character":
+                await Characters.DeleteAsync(entity as Character);
+                break;
+            case "characterDeath":
+                await CharacterDeaths.DeleteAsync(entity as CharacterDeath);
+                break;
+            case "characterInventory":
+                await CharacterInventories.DeleteAsync(entity as CharacterInventory);
+                break;
+            case "characterStat":
+                await CharacterStats.DeleteAsync(entity as CharacterStat);
+                break;
+            case "classStat":
+                await ClassStats.DeleteAsync(entity as ClassStat);
+                break;
+            case "combatStat":
+                await CombatStats.DeleteAsync(entity as CombatStat);
+                break;
+            case "dungeonStat":
+                await DungeonStats.DeleteAsync(entity as DungeonStat);
+                break;
+            case "explorationStat":
+                await ExplorationStats.DeleteAsync(entity as ExplorationStat);
+                break;
+            case "guild":
+                await Guilds.DeleteAsync(entity as Guild);
+                break;
+            case "guildMember":
+                await GuildMembers.DeleteAsync(entity as GuildMember);
+                break;
+            case "killStat":
+                await KillStats.DeleteAsync(entity as KillStat);
+                break;
+            case "login":
+                await Logins.DeleteAsync(entity as Login);
+                break;
+            case "accountLock":
+                await AccountLocks.DeleteAsync(entity as AccountLock);
+                break;
+            case "accountIgnore":
+                await AccountIgnores.DeleteAsync(entity as AccountIgnore);
+                break;
+        }
+    }
+    
     public static async Task AddChildrenAsync(DbModel entity)
     {
         var includePaths = GetIncludePaths(entity);
@@ -333,6 +392,40 @@ public static class DbCache
 
             // Now add the children of this child
             await AddChildrenAsync(child);
+        }
+    }
+    
+    public static async Task DeleteChildrenAsync(DbModel entity)
+    {
+        var includePaths = GetIncludePaths(entity);
+        
+        foreach (var path in includePaths) // Since include paths equal the property names, we can use reflection
+        {
+            var propName = path.Split('.')[0]; // First property is always child of T, second is always a child of the child of T (inception)
+            var prop = entity.GetType().GetProperty(propName);
+            if (prop == null)
+                continue;
+
+            var val = prop.GetValue(entity);
+            if (val is not DbModel child)
+            {
+                if (val is not ICollection<DbModel> children)
+                    continue;
+
+                foreach (var colChild in children)
+                {
+                    await DeleteEntityAsync(colChild);
+                    await DeleteChildrenAsync(colChild);
+                }
+                continue;
+            }
+
+            Logger.Debug($"Deleting {child.Key} | {child.GetHashCode()}");
+            
+            await DeleteEntityAsync(child); // Delete the child to its respective cache/table
+
+            // Now delete the children of this child
+            await DeleteChildrenAsync(child);
         }
     }
 

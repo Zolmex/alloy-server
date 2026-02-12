@@ -16,6 +16,7 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
     private readonly ConcurrentDictionary<string, T> _cache = new();
     private readonly ConcurrentDictionary<T, HashSet<string>> _dirty = new(); // Tracks modified properties in a given entity
     private readonly HashSet<T> _new = new(); // Tracks new entities
+    private readonly HashSet<T> _deleted = new(); // Tracks deleted entities
 
     #region Query Methods
 
@@ -152,6 +153,14 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
         await DbCache.AddChildrenAsync(entity);
     }
     
+    public async Task DeleteAsync(T entity)
+    {
+        if (!_deleted.Add(entity))
+            return;
+        
+        await DbCache.DeleteChildrenAsync(entity);
+    }
+    
     public void CacheEntity(T entity)
     {
         if (_cache.TryGetValue(entity.Key, out var cached))
@@ -212,6 +221,9 @@ public class DbEntityCache<T> where T : DbModel, IDbQueryable
 
         foreach (var entity in _new) // Don't cache entities here, they don't have PKs assigned yet
             set.Add(entity);
+        
+        foreach (var entity in _deleted)
+            set.Remove(entity);
 
         _dirty.Clear();
         _new.Clear();
