@@ -28,7 +28,7 @@ public partial class CombatStat : DbModel, IDbQueryable
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
-    protected override void Prepare()
+    public CombatStat()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),
@@ -44,7 +44,7 @@ public partial class CombatStat : DbModel, IDbQueryable
         );
         RegisterProperty("LevelUpAssists",
             wtr => wtr.Write(LevelUpAssists),
-            rdr => LevelUpAssists = rdr.ReadUInt16()
+            rdr => LevelUpAssists = rdr.ReadUInt32()
         );
         RegisterProperty("PotionsDrank",
             wtr => wtr.Write(PotionsDrank),

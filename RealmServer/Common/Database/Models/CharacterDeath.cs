@@ -21,7 +21,7 @@ public partial class CharacterDeath : DbModel, IDbQueryable
 
     public virtual Character? Char { get; set; }
 
-    protected override void Prepare()
+    public CharacterDeath()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

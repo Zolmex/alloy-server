@@ -1,5 +1,6 @@
 using Common.Network;
 using Common.Network.Messaging.Impl;
+using Common.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,11 +25,8 @@ public abstract class DbModel
             wtr => wtr.Write(Version),
             rdr => Version = rdr.ReadInt32()
         );
-        Prepare();
     }
     
-    protected abstract void Prepare();
-
     protected void RegisterProperty(string propName, Action<NetworkWriter> writer, Action<NetworkReader> reader)
     {
         _serializers.Add(propName, new PropertySerializer(propName, writer, reader));

@@ -23,7 +23,7 @@ public partial class GuildMember : DbModel, IDbQueryable
 
     public virtual Guild? Guild { get; set; }
 
-    protected override void Prepare()
+    public GuildMember()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

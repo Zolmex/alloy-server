@@ -34,7 +34,7 @@ public partial class CharacterStat : DbModel, IDbQueryable
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
-    protected override void Prepare()
+    public CharacterStat()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

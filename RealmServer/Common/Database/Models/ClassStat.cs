@@ -22,7 +22,7 @@ public partial class ClassStat : DbModel, IDbQueryable
 
     public virtual AccountStat? AccStats { get; set; }
 
-    protected override void Prepare()
+    public ClassStat()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

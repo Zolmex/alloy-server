@@ -20,7 +20,7 @@ public partial class CharacterInventory : DbModel, IDbQueryable
 
     public virtual Character Character { get; set; } = null!;
 
-    protected override void Prepare()
+    public CharacterInventory()
     {
         RegisterProperty("CharacterId",
             wtr => wtr.Write(CharacterId),

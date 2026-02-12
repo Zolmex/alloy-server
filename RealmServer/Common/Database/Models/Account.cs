@@ -64,7 +64,7 @@ public partial class Account : DbModel, IDbQueryable
 
     public virtual Login? Login { get; set; }
 
-    protected override void Prepare()
+    public Account()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

@@ -19,7 +19,7 @@ public partial class AccountLock : DbModel, IDbQueryable
     
     public Account Locked { get; set; } = null!;
     
-    protected override void Prepare()
+    public AccountLock()
     {
         RegisterProperty("AccountId",
             wtr => wtr.Write(AccountId),

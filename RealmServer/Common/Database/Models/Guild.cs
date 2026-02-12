@@ -27,7 +27,7 @@ public partial class Guild : DbModel, IDbQueryable
 
     public virtual ICollection<GuildMember> GuildMembers { get; set; } = new List<GuildMember>();
 
-    protected override void Prepare()
+    public Guild()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

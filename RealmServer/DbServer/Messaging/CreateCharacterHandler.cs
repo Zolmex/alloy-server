@@ -49,7 +49,7 @@ public class CreateCharacterHandler : IMessageHandler
                 XpPoints = (uint)NewCharsConfig.Config.Experience,
                 Level = (ushort)NewCharsConfig.Config.Level,
                 ObjectType = pkt.ClassType,
-                CharacterInventories = new List<CharacterInventory>(20),
+                CharacterInventories = new List<CharacterInventory>(20), // Fill these with 20 instances
                 TextureOne = (ushort)NewCharsConfig.Config.Tex1,
                 TextureTwo = (ushort)NewCharsConfig.Config.Tex2,
                 SkinType = pkt.SkinType,

@@ -26,7 +26,7 @@ public partial class ExplorationStat : DbModel, IDbQueryable
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
-    protected override void Prepare()
+    public ExplorationStat()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

@@ -18,7 +18,7 @@ public partial class DungeonStat : DbModel, IDbQueryable
     
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
-    protected override void Prepare()
+    public DungeonStat()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

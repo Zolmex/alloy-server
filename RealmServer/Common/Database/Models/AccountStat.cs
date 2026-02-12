@@ -26,7 +26,7 @@ public partial class AccountStat : DbModel, IDbQueryable
 
     public virtual ICollection<ClassStat> ClassStats { get; set; } = new List<ClassStat>();
 
-    protected override void Prepare()
+    public AccountStat()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

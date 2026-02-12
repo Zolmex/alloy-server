@@ -19,7 +19,7 @@ public partial class AccountIgnore : DbModel, IDbQueryable
     
     public Account Ignored { get; set; } = null!;
 
-    protected override void Prepare()
+    public AccountIgnore()
     {
         RegisterProperty("AccountId",
             wtr => wtr.Write(AccountId),

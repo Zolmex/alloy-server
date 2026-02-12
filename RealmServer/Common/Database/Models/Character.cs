@@ -73,7 +73,7 @@ public partial class Character : DbModel, IDbQueryable
 
     public virtual KillStat? KillStats { get; set; }
 
-    protected override void Prepare()
+    public Character()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),

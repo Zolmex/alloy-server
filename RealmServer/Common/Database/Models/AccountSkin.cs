@@ -17,7 +17,7 @@ public partial class AccountSkin : DbModel, IDbQueryable
 
     public virtual Account Account { get; set; } = null!;
     
-    protected override void Prepare()
+    public AccountSkin()
     {
         RegisterProperty("AccountId",
             wtr => wtr.Write(AccountId),

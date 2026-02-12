@@ -24,7 +24,7 @@ public partial class Login : DbModel, IDbQueryable
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
-    protected override void Prepare()
+    public Login()
     {
         RegisterProperty("Id",
             wtr => wtr.Write(Id),
