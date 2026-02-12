@@ -61,7 +61,7 @@ public static class RealmManager
         CommandManager.Load();
 
         // DbClientOld.UpdateLegends(); // Update legends every day // TODO: fix
-        AddTimedAction((int)TimeSpan.FromDays(1).TotalMilliseconds, DbClientOld.UpdateLegends);
+        // AddTimedAction((int)TimeSpan.FromDays(1).TotalMilliseconds, DbClientOld.UpdateLegends);
 
         apiEventManager = new APIEventManager();
 
@@ -218,33 +218,34 @@ public static class RealmManager
 
     public static World GetGuildHall(int guildId)
     {
-        if (!_guildHalls.TryGetValue(guildId, out var ghall))
-        {
-            var guild = DbClientOld.GetGuild(guildId).Result;
-            if (guild == null)
-                return null;
-
-            ghall = _guildHalls[guildId] = new World("Guild Hall", guild.Level);
-        }
-
-        if (!ghall.Active || ghall.Deleted)
-            AddWorld(ghall);
-
-        return ghall;
+        return null;
+        // if (!_guildHalls.TryGetValue(guildId, out var ghall)) // TODO: fix
+        // {
+        //     var guild = DbClient.GetGuild(guildId).Result;
+        //     if (guild == null)
+        //         return null;
+        //
+        //     ghall = _guildHalls[guildId] = new World("Guild Hall", guild.Level);
+        // }
+        //
+        // if (!ghall.Active || ghall.Deleted)
+        //     AddWorld(ghall);
+        //
+        // return ghall;
     }
 
-    public static void ReloadGuildHall(int guildId)
-    {
-        if (!_guildHalls.TryGetValue(guildId, out var ghall))
-            return;
-
-        ghall.Delete(); // This will disconnect all players
-
-        var guild = DbClientOld.GetGuild(guildId).Result;
-        var newGhall = new World("Guild Hall", guild.Level);
-        _guildHalls[guildId] = newGhall;
-        AddWorld(newGhall);
-    }
+    // public static void ReloadGuildHall(int guildId) // TODO: fix
+    // {
+    //     if (!_guildHalls.TryGetValue(guildId, out var ghall))
+    //         return;
+    //
+    //     ghall.Delete(); // This will disconnect all players
+    //
+    //     var guild = DbClient.GetGuild(guildId).Result;
+    //     var newGhall = new World("Guild Hall", guild.Level);
+    //     _guildHalls[guildId] = newGhall;
+    //     AddWorld(newGhall);
+    // }
 
     public static bool ReloadAllBehaviors()
     {

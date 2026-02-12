@@ -16,7 +16,7 @@ public class FameList : RequestHandler
     {
         var timespan = query["timespan"];
 
-        var legendsList = await DbClientOld.GetLegends(timespan);
-        return legendsList?.ToString() ?? WriteError("Invalid legends timespan");
+        // var legendsList = await DbClient.GetLegends(timespan); // TODO: fix
+        return /*legendsList?.ToString() ?? */WriteError("Invalid legends timespan");
     }
 }

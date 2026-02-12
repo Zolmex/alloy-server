@@ -87,16 +87,16 @@ public class BanCommand : Command
             return;
         }
 
-        var ban = DbClientOld.BanAccount(args).Result;
-        var success = ban.Item1;
-        var error = ban.Item2;
+        var result = DbClient.BanAccount(args).Result;
+        var success = result.Item1;
+        var error = result.Item2;
         if (success)
         {
             player.SendInfo($"Player {args} successfully banned.");
             RealmManager.TryDisconnectUserByName(args);
         }
         else
-            player.SendError(string.Format(error, args));
+            player.SendError(error);
     }
 }
 
@@ -111,7 +111,7 @@ public class UnbanCommand : Command
             return;
         }
 
-        var unban = DbClientOld.UnbanAccount(args).Result;
+        var unban = DbClient.UnbanAccount(args).Result;
         var success = unban.Item1;
         var error = unban.Item2;
         if (success)
@@ -120,7 +120,7 @@ public class UnbanCommand : Command
             RealmManager.TryDisconnectUserByName(args);
         }
         else
-            player.SendError(string.Format(error, args));
+            player.SendError(error);
     }
 }
 
@@ -153,13 +153,13 @@ public class MuteCommand : Command
             return;
         }
 
-        var mute = DbClientOld.MuteAccount(args).Result;
+        var mute = DbClient.MuteAccount(args).Result;
         var success = mute.Item1;
         var error = mute.Item2;
         if (success)
             player.SendInfo($"Player {args} successfully muted.");
         else
-            player.SendError(string.Format(error, args));
+            player.SendError(error);
     }
 }
 
@@ -174,13 +174,13 @@ public class UnmuteCommand : Command
             return;
         }
 
-        var unmute = DbClientOld.UnmuteAccount(args).Result;
+        var unmute = DbClient.UnmuteAccount(args).Result;
         var success = unmute.Item1;
         var error = unmute.Item2;
         if (success)
             player.SendInfo($"Player {args} successfully unmuted.");
         else
-            player.SendError(string.Format(error, args));
+            player.SendError(error);
     }
 }
 
@@ -189,42 +189,45 @@ public class GiftCommand : Command
 {
     public override void Execute(Player player, string args)
     {
-        var txt = args.Split(' ');
-
-        if (txt.Length != 2)
-        {
-            player.SendInfo("Usage: /gift {player} {slot}");
-            return;
-        }
-
-        if (!int.TryParse(txt[0], out var accId))
-        {
-            player.SendError("Invalid account id.");
-            return;
-        }
-
-        var targetAcc = DbClientOld.GetAccount(accId).Result;
-        if (targetAcc == null)
-        {
-            player.SendError("Invalid account id.");
-            return;
-        }
-
-        if (!int.TryParse(txt[1], out var slot))
-        {
-            player.SendError("Invalid slot.");
-            return;
-        }
-
-        var item = player.Inventory[slot];
-        if (item == null)
-        {
-            player.SendError("Invalid slot.");
-            return;
-        }
-
-        targetAcc.Gifts.AddGift(item.ObjectType, item.Export().ToArray());
-        DbClientOld.Save(targetAcc.Gifts);
+        player.SendError("Not implemented."); // TODO: fix gifts
+        return;
+        
+        // var txt = args.Split(' ');
+        //
+        // if (txt.Length != 2)
+        // {
+        //     player.SendInfo("Usage: /gift {player} {slot}");
+        //     return;
+        // }
+        //
+        // if (!int.TryParse(txt[0], out var accId))
+        // {
+        //     player.SendError("Invalid account id.");
+        //     return;
+        // }
+        //
+        // var targetAcc = DbClient.GetAccount(accId).Result;
+        // if (targetAcc == null)
+        // {
+        //     player.SendError("Invalid account id.");
+        //     return;
+        // }
+        //
+        // if (!int.TryParse(txt[1], out var slot))
+        // {
+        //     player.SendError("Invalid slot.");
+        //     return;
+        // }
+        //
+        // var item = player.Inventory[slot];
+        // if (item == null)
+        // {
+        //     player.SendError("Invalid slot.");
+        //     return;
+        // }
+        //
+        // targetAcc.Gifts.AddGift(item.ObjectType, item.Export().ToArray());
+        // DbClientOld.Save(targetAcc.Gifts);
     }
 }
 

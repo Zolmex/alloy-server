@@ -1,6 +1,7 @@
 ﻿#region
 
 using Common.Database;
+using Common.Database.Models;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using System;
@@ -166,25 +167,25 @@ public class PlayerInventory : EntityInventory
         return -1;
     }
 
-    public void Load(DbChar chr)
+    public void Load(Character chr) // TODO: fix
     {
-        if (chr.ItemTypes == null || chr.ItemDatas == null)
-            return;
-
-        _healthPotionCount = _player.HealthPotions;
-        _magicPotionCount = _player.MagicPotions;
-
-        _invSize = chr.HasBackpack ? 20 : 12;
-        SetItems(chr.ItemTypes, chr.ItemDatas);
+        // if (chr.ItemTypes == null || chr.ItemDatas == null)
+        //     return;
+        //
+        // _healthPotionCount = _player.HealthPotions;
+        // _magicPotionCount = _player.MagicPotions;
+        //
+        // _invSize = chr.HasBackpack ? 20 : 12;
+        // SetItems(chr.ItemTypes, chr.ItemDatas);
     }
 
-    public void Save(DbChar chr)
+    public void Save(Character chr) // TODO: fix
     {
-        if (chr.ItemTypes == null || chr.ItemDatas == null)
-            return;
-
-        chr.ItemTypes = GetItemTypes();
-        chr.ItemDatas = GetItemDatas();
+        // if (chr.ItemTypes == null || chr.ItemDatas == null)
+        //     return;
+        //
+        // chr.ItemTypes = GetItemTypes();
+        // chr.ItemDatas = GetItemDatas();
     }
 
     public bool ApplyGemstones(byte slot, byte gemSlot, byte invSlot)

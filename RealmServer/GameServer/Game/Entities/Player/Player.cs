@@ -76,7 +76,6 @@ public partial class Player : CharacterEntity
 
         // Load player stats
         Name = User.Account.Name;
-        SetParty();
         InitLevel(Char);
         NumStars = GetStars();
         TradedWith.Clear();
@@ -316,7 +315,7 @@ public partial class Player : CharacterEntity
         if (!_guildInvites.Remove(guildname))
             return;
 
-        DbClientOld.JoinGuild(AccountId, guildname);
+        // DbClient.JoinGuild(AccountId, guildname); // TODO: fix
 
         GuildName = User.Account.GuildName;
         GuildRank = User.Account.GuildMember?.GuildRank ?? 0;
@@ -354,8 +353,6 @@ public partial class Player : CharacterEntity
     {
         // Player instance is reused when moving between worlds, so this acts as a Reset() method. Called in RealmManager.Update()
         base.Dispose();
-
-        UnsetParty();
 
         StacksLost = null;
         OnKill = null;

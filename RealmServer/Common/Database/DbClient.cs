@@ -7,6 +7,7 @@ using Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Common.Database;
@@ -42,26 +43,17 @@ public static class DbClient
             return RegisterStatus.InvalidPassword;
 
         var ack = await _con.SendAndReceiveAsync<RegisterAck>(
-            new RegisterMessage
-            {
-                Username = username,
-                IPAddress = ip,
-                Password = password
-            });
+            new RegisterMessage { Username = username, IPAddress = ip, Password = password });
         return ack.Status;
     }
 
     public static async Task<VerifyAck> VerifyAccount(string username, string password)
     {
         var ack = await _con.SendAndReceiveAsync<VerifyAck>(
-            new VerifyMessage
-            {
-                Username = username,
-                Password = password
-            });
+            new VerifyMessage { Username = username, Password = password });
         return ack;
     }
-    
+
     public static async Task BuyCharSlot(Account acc)
     {
         var cost = NewAccountsConfig.Config.CharSlotCost;
@@ -71,7 +63,7 @@ public static class DbClient
 
         acc.AccStats!.CurrentFame -= (uint)cost;
         acc.MaxChars++;
-        
+
         await acc.AccStats.Flush<AccountStat, uint>(_con, stats => stats.CurrentFame);
         await acc.Flush<Account, short>(_con, a => a.MaxChars);
     }
@@ -79,11 +71,7 @@ public static class DbClient
     public static async Task<GetCharacterAck> GetCharacter(int accId, int accCharId)
     {
         var ack = await _con.SendAndReceiveAsync<GetCharacterAck>(
-            new GetCharacterMessage
-            {
-                AccountId = accId,
-                CharacterId = accCharId
-            });
+            new GetCharacterMessage { AccountId = accId, CharacterId = accCharId });
         return ack;
     }
 
@@ -92,27 +80,110 @@ public static class DbClient
         foreach (var model in models)
             yield return await model.FlushAll(_con);
     }
+    
+    public static async Task<FlushAck> Flush<T, TValue>(T model, params Expression<Func<T,TValue>>[] expressions) where T : DbModel
+    {
+        return await model.Flush(_con, expressions);
+    }
 
     public static async Task<CreateCharacterAck> CreateCharacter(Account acc, ushort objectType, ushort skinType)
     {
         var ack = await _con.SendAndReceiveAsync<CreateCharacterAck>(
-            new CreateCharacterMessage
-            {
-                AccountId = acc.Id,
-                ClassType = objectType,
-                SkinType = skinType
-            });
+            new CreateCharacterMessage { AccountId = acc.Id, ClassType = objectType, SkinType = skinType });
         return ack;
     }
-    
+
     public static async Task<bool> DeleteCharacter(int accId, int accCharId)
     {
         var ack = await _con.SendAndReceiveAsync<DeleteCharacterAck>(
-            new DeleteCharacterMessage
-            {
-                AccountId = accId,
-                CharacterId = accCharId
-            });
+            new DeleteCharacterMessage { AccountId = accId, CharacterId = accCharId });
         return ack.Success;
     }
+
+    public static async Task<Account> GetAccountByName(string name)
+    {
+        var ack = await _con.SendAndReceiveAsync<GetAccountAck>(
+            new GetAccountByNameMessage { Name = name });
+        return ack.Account;
+    }
+
+    public static async Task<Account> GetAccount(int accId)
+    {
+        var ack = await _con.SendAndReceiveAsync<GetAccountAck>(
+            new GetAccountByNameMessage { AccountId = accId });
+        return ack.Account;
+    }
+
+    public static async Task<(bool, string)> BanAccount(string name) // TODO: proper ban model with "reason" and "banned by" fields
+    {
+        var acc = await GetAccountByName(name);
+        if (acc == null)
+            return (false, $"Account {name} not found.");
+
+        if (acc.IsBanned)
+            return (false, $"Account {name} is already banned.");
+
+        acc.IsBanned = true;
+
+        await acc.Flush<Account, bool>(_con, a => a.IsBanned);
+        return (true, "");
+    }
+
+    public static async Task<(bool, string)> UnbanAccount(string name)
+    {
+        var acc = await GetAccountByName(name);
+        if (acc == null)
+            return (false, $"Account {name} not found.");
+
+        if (!acc.IsBanned)
+            return (false, $"Account {name} is not banned.");
+
+        acc.IsBanned = false;
+
+        await acc.Flush<Account, bool>(_con, a => a.IsBanned);
+        return (true, "");
+    }
+
+    public static async Task<(bool, string)> MuteAccount(string name) // TODO: proper muted model with "reason" and "muted by" fields
+    {
+        // var acc = await GetAccountByName(name);
+        // if (acc == null)
+        //     return (false, $"Account {name} not found.");
+        //
+        // if (acc.IsMuted)
+        //     return (false, $"Account {name} is already muted.");
+        //
+        // acc.IsMuted = true;
+        //
+        // await acc.Flush<Account, bool>(_con, a => a.IsMuted);
+        // return (true, "");
+        return (false, "Not implemented.");
+    }
+
+    public static async Task<(bool, string)> UnmuteAccount(string name)
+    {
+        // var acc = await GetAccountByName(name);
+        // if (acc == null)
+        //     return (false, $"Account {name} not found.");
+        //
+        // if (!acc.IsMuted)
+        //     return (false, $"Account {name} is not muted.");
+        //
+        // acc.IsMuted = false;
+        //
+        // await acc.Flush<Account, bool>(_con, a => a.IsMuted);
+        // return (true, "");
+        return (false, "Not implemented.");
+    }
+
+    public static async Task<CharacterDeath> GetDeathInfo(int accId, int charId)
+    {
+        return null;
+    }
+
+    public static async Task<Guild> GetGuild(int guildId)
+    {
+        return null;
+    }
+
 }

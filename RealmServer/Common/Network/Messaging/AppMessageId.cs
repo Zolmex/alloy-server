@@ -9,4 +9,5 @@ public enum AppMessageId
     GetCharacter = 4,
     CreateCharacter = 5,
     DeleteCharacter = 6,
+    GetAccount = 7,
 }

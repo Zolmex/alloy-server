@@ -80,7 +80,6 @@ public class GameInfo
             return;
 
         // Don't set char to null, we need that for reconnecting
-        Player.UnsetParty();
         Player.SaveCharacter(!reconnect); // Save to database if we're disconnecting
         Player.TryLeaveWorld();
     }

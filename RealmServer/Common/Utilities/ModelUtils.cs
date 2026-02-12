@@ -115,4 +115,24 @@ public static class ModelUtils
             );
         }
     }
+
+    extension(Guild guild)
+    {
+        public XElement ToXml()
+        {
+            return new XElement("Guild"
+                // new XAttribute("name", guild.Name ?? ""),
+                // new XElement("CurrentFame", guild.CurrentFame),
+                // guild.GuildMembers.Select(async m =>
+                // {
+                //     var acc = await DbClient.GetAccount(m.AccountId); // TODO: fix db model, Account should link to Guild, and GuildMember should link to Account
+                //     return new XElement("Member",
+                //         new XElement("Name", acc.Name),
+                //         new XElement("Rank", acc.GuildRank),
+                //         new XElement("Fame", acc.Stats.GuildFame)
+                //     );
+                // })
+            );
+        }
+    }
 }

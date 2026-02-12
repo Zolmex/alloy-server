@@ -14,16 +14,16 @@ public class GetBoard : RequestHandler
 
     public override async Task<string> Handle(string ip, NameValueCollection query)
     {
-        var verify = await DbClientOld.VerifyAccount(query["username"], query["password"]);
+        var verify = await DbClient.VerifyAccount(query["username"], query["password"]);
 
-        var acc = verify.Item1;
+        var acc = verify.Account;
         if (acc == null)
             return WriteError("Invalid account credentials.");
 
-        var guild = await DbClientOld.GetGuild(acc.GuildId);
+        var guild = await DbClient.GetGuild(acc.GuildMember?.GuildId ?? 0);
         if (guild == null)
             return WriteError("Invalid guild id.");
 
-        return guild.Board ?? "";
+        return guild.GuildBoard ?? "";
     }
 }
