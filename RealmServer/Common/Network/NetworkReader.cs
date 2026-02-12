@@ -100,7 +100,7 @@ public class NetworkReader : BinaryReader
 
     public string ReadUTF()
     {
-        return Encoding.UTF8.GetString(ReadBytes(ReadInt16()));
+        return Encoding.UTF8.GetString(ReadBytes(ReadUInt16()));
     }
 
     public string Read32UTF()
