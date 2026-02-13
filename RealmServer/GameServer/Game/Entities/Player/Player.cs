@@ -89,7 +89,7 @@ public partial class Player : CharacterEntity
         RecalculateStats();
 
         // Load inventory data
-        // Inventory.Load(Char); // TODO: fix
+        Inventory.Load(Char);
         _ability = ResolveAbilityController(Desc.ObjectId);
 
         if (World is Realm realm)
@@ -169,7 +169,7 @@ public partial class Player : CharacterEntity
             Char.CharStats.Wisdom = (uint)Wisdom;
         }
 
-        // Inventory.Save(Char); // TODO: fix
+        Inventory.Save(Char);
 
         if (saveToDb)
             DbClient.Flush(Char);
