@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "server=localhost;database=alloy;user=alloy-db;password=" MySql.EntityFrameworkCore

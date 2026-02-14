@@ -41,7 +41,7 @@ public partial class Character : DbModel, IDbQueryable
 
     public bool HasBackpack { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
 
@@ -132,7 +132,7 @@ public partial class Character : DbModel, IDbQueryable
             rdr => HasBackpack = rdr.ReadBoolean()
         );
         RegisterProperty("CreatedAt",
-            wtr => wtr.Write(CreatedAt!.Value.ToUnixTimestamp()),
+            wtr => wtr.Write(CreatedAt.ToUnixTimestamp()),
             rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("DeletedAt",

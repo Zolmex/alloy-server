@@ -23,7 +23,9 @@ public partial class Guild : DbModel, IDbQueryable
 
     public string? GuildBoard { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
     public virtual ICollection<GuildMember> GuildMembers { get; set; } = new List<GuildMember>();
 
@@ -54,7 +56,7 @@ public partial class Guild : DbModel, IDbQueryable
             rdr => GuildBoard = rdr.ReadUTF()
         );
         RegisterProperty("CreatedAt",
-            wtr => wtr.Write((CreatedAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            wtr => wtr.Write(CreatedAt.ToUnixTimestamp()),
             rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("GuildMembers",

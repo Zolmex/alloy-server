@@ -3,15 +3,16 @@ CREATE TABLE `Accounts` (
   `name` varchar(30) UNIQUE NOT NULL,
   `rank` smallint NOT NULL DEFAULT 0,
   `guild_name` varchar(255),
-  `is_admin` boolean,
-  `is_banned` boolean,
+  `is_admin` boolean NOT NULL,
+  `is_banned` boolean NOT NULL,
   `max_chars` smallint NOT NULL DEFAULT 0,
   `vault_count` smallint NOT NULL DEFAULT 0,
   `next_char_id` smallint NOT NULL DEFAULT 0,
-  `created_at` datetime DEFAULT (NOW()),
+  `created_at` datetime NOT NULL DEFAULT (NOW()),
   `acc_stats_id` integer NOT NULL DEFAULT 0,
   `login_id` integer NOT NULL DEFAULT 0,
-  `guild_member_id` integer
+  `guild_member_id` integer,
+  `guild_id` integer
 );
 
 CREATE TABLE `Account_Stats` (
@@ -35,6 +36,47 @@ CREATE TABLE `Account_Ignores` (
   PRIMARY KEY (`account_id`, `ignored_id`)
 );
 
+CREATE TABLE `Account_Mutes` (
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `reason` varchar(255),
+  `muted_at` datetime NOT NULL DEFAULT (NOW()),
+  `expires_at` datetime,
+  `moderator_id` integer NOT NULL DEFAULT 0,
+  `muted_id` integer NOT NULL DEFAULT 0
+);
+
+CREATE TABLE `Account_Bans` (
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `ban_type` integer NOT NULL DEFAULT 0,
+  `reason` varchar(255),
+  `banned_at` datetime NOT NULL DEFAULT (NOW()),
+  `expires_at` datetime,
+  `moderator_id` integer NOT NULL DEFAULT 0,
+  `banned_id` integer NOT NULL DEFAULT 0
+);
+
+CREATE TABLE `Account_Skins` (
+  `account_id` integer,
+  `skin_type` integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (`account_id`, `skin_type`)
+);
+
+CREATE TABLE `Account_Vault` (
+  `account_id` integer,
+  `slot_id` integer NOT NULL,
+  `item_type` smallint unsigned NOT NULL DEFAULT 0,
+  `item_data` blob,
+  PRIMARY KEY (`account_id`, `slot_id`)
+);
+
+CREATE TABLE `Account_Gifts` (
+  `account_id` integer,
+  `slot_id` integer NOT NULL,
+  `item_type` smallint unsigned NOT NULL DEFAULT 0,
+  `item_data` blob,
+  PRIMARY KEY (`account_id`, `slot_id`)
+);
+
 CREATE TABLE `Class_Stats` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `object_type` smallint unsigned NOT NULL DEFAULT 0,
@@ -52,12 +94,6 @@ CREATE TABLE `Logins` (
   `ip_address` varchar(30)
 );
 
-CREATE TABLE `Account_Skins` (
-  `account_id` integer,
-  `skin_type` integer NOT NULL DEFAULT 0,
-  PRIMARY KEY (`account_id`, `skin_type`)
-);
-
 CREATE TABLE `Characters` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `acc_char_id` integer NOT NULL DEFAULT 0,
@@ -71,10 +107,10 @@ CREATE TABLE `Characters` (
   `pet_type` smallint unsigned NOT NULL DEFAULT 0,
   `health_potions` smallint unsigned NOT NULL DEFAULT 0,
   `magic_potions` smallint unsigned NOT NULL DEFAULT 0,
-  `is_dead` boolean,
-  `is_deleted` boolean,
-  `has_backpack` boolean,
-  `created_at` datetime DEFAULT (NOW()),
+  `is_dead` boolean NOT NULL,
+  `is_deleted` boolean NOT NULL,
+  `has_backpack` boolean NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT (NOW()),
   `deleted_at` datetime,
   `acc_id` integer NOT NULL DEFAULT 0,
   `char_stats_id` integer NOT NULL DEFAULT 0,
@@ -100,7 +136,7 @@ CREATE TABLE `Character_Stats` (
 
 CREATE TABLE `Character_Inventory` (
   `character_id` integer,
-  `slot_id` integer,
+  `slot_id` integer NOT NULL,
   `item_type` smallint unsigned NOT NULL DEFAULT 0,
   `item_data` blob,
   PRIMARY KEY (`character_id`, `slot_id`)
@@ -108,7 +144,7 @@ CREATE TABLE `Character_Inventory` (
 
 CREATE TABLE `Character_Death` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `dead_at` datetime DEFAULT (NOW()),
+  `dead_at` datetime NOT NULL DEFAULT (NOW()),
   `death_fame` int unsigned NOT NULL DEFAULT 0,
   `char_id` integer NOT NULL DEFAULT 0
 );
@@ -162,13 +198,13 @@ CREATE TABLE `Guilds` (
   `current_fame` int unsigned NOT NULL DEFAULT 0,
   `total_fame` int unsigned NOT NULL DEFAULT 0,
   `guild_board` text,
-  `created_at` datetime DEFAULT (NOW())
+  `created_at` datetime NOT NULL DEFAULT (NOW())
 );
 
 CREATE TABLE `Guild_Members` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `guild_rank` smallint NOT NULL DEFAULT 0,
-  `last_seen_at` datetime DEFAULT (NOW()),
+  `last_seen_at` datetime NOT NULL DEFAULT (NOW()),
   `guild_id` integer NOT NULL DEFAULT 0
 );
 
@@ -178,6 +214,8 @@ ALTER TABLE `Accounts` ADD FOREIGN KEY (`login_id`) REFERENCES `Logins` (`id`);
 
 ALTER TABLE `Accounts` ADD FOREIGN KEY (`guild_member_id`) REFERENCES `Guild_Members` (`id`);
 
+ALTER TABLE `Accounts` ADD FOREIGN KEY (`guild_id`) REFERENCES `Guilds` (`id`);
+
 ALTER TABLE `Account_Locks` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);
 
 ALTER TABLE `Account_Locks` ADD FOREIGN KEY (`locked_id`) REFERENCES `Accounts` (`id`);
@@ -186,9 +224,21 @@ ALTER TABLE `Account_Ignores` ADD FOREIGN KEY (`account_id`) REFERENCES `Account
 
 ALTER TABLE `Account_Ignores` ADD FOREIGN KEY (`ignored_id`) REFERENCES `Accounts` (`id`);
 
-ALTER TABLE `Class_Stats` ADD FOREIGN KEY (`acc_stats_id`) REFERENCES `Account_Stats` (`id`);
+ALTER TABLE `Account_Mutes` ADD FOREIGN KEY (`moderator_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Mutes` ADD FOREIGN KEY (`muted_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Bans` ADD FOREIGN KEY (`moderator_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Bans` ADD FOREIGN KEY (`banned_id`) REFERENCES `Accounts` (`id`);
 
 ALTER TABLE `Account_Skins` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Vault` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Account_Gifts` ADD FOREIGN KEY (`account_id`) REFERENCES `Accounts` (`id`);
+
+ALTER TABLE `Class_Stats` ADD FOREIGN KEY (`acc_stats_id`) REFERENCES `Account_Stats` (`id`);
 
 ALTER TABLE `Characters` ADD FOREIGN KEY (`acc_id`) REFERENCES `Accounts` (`id`);
 

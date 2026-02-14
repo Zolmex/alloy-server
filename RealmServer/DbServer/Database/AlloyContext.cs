@@ -43,11 +43,20 @@ public partial class AlloyContext : DbContext
     public virtual DbSet<GuildMember> GuildMembers { get; set; }
 
     public virtual DbSet<KillStat> KillStats { get; set; }
+    
     public virtual DbSet<Login> Logins { get; set; }
     
     public virtual DbSet<AccountLock> AccountLocks { get; set; }
     
     public virtual DbSet<AccountIgnore> AccountIgnores { get; set; }
+    
+    public virtual DbSet<AccountBan> AccountBans { get; set; }
+
+    public virtual DbSet<AccountGift> AccountGifts { get; set; }
+
+    public virtual DbSet<AccountMute> AccountMutes { get; set; }
+
+    public virtual DbSet<AccountVault> AccountVaults { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +66,8 @@ public partial class AlloyContext : DbContext
 
             entity.HasIndex(e => e.AccStatsId, "acc_stats_id");
 
+            entity.HasIndex(e => e.GuildId, "guild_id");
+            
             entity.HasIndex(e => e.GuildMemberId, "guild_member_id");
 
             entity.HasIndex(e => e.LoginId, "login_id");
@@ -69,6 +80,7 @@ public partial class AlloyContext : DbContext
                 .HasDefaultValueSql("NOW()")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
+            entity.Property(e => e.GuildId).HasColumnName("guild_id");
             entity.Property(e => e.GuildMemberId).HasColumnName("guild_member_id");
             entity.Property(e => e.GuildName)
                 .HasMaxLength(255)
@@ -86,15 +98,121 @@ public partial class AlloyContext : DbContext
 
             entity.HasOne(d => d.AccStats).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.AccStatsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Accounts_ibfk_1");
 
+            entity.HasOne(d => d.Guild).WithMany(p => p.Accounts)
+                .HasForeignKey(d => d.GuildId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Accounts_ibfk_4");
+            
             entity.HasOne(d => d.GuildMember).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.GuildMemberId)
                 .HasConstraintName("Accounts_ibfk_3");
 
             entity.HasOne(d => d.Login).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.LoginId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Accounts_ibfk_2");
+        });
+        
+        modelBuilder.Entity<AccountBan>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("Account_Bans");
+
+            entity.HasIndex(e => e.BannedId, "banned_id");
+
+            entity.HasIndex(e => e.ModeratorId, "moderator_id");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BanType).HasColumnName("ban_type");
+            entity.Property(e => e.BannedAt)
+                .HasDefaultValueSql("NOW()")
+                .HasColumnType("datetime")
+                .HasColumnName("banned_at");
+            entity.Property(e => e.BannedId).HasColumnName("banned_id");
+            entity.Property(e => e.ExpiresAt)
+                .HasColumnType("datetime")
+                .HasColumnName("expires_at");
+            entity.Property(e => e.ModeratorId).HasColumnName("moderator_id");
+            entity.Property(e => e.Reason)
+                .HasMaxLength(255)
+                .HasColumnName("reason");
+
+            entity.HasOne(d => d.Banned).WithMany(p => p.AccountBans)
+                .HasForeignKey(d => d.BannedId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Account_Bans_ibfk_2");
+        });
+
+        modelBuilder.Entity<AccountGift>(entity =>
+        {
+            entity.HasKey(e => new { e.AccountId, e.SlotId }).HasName("PRIMARY");
+
+            entity.ToTable("Account_Gifts");
+
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.SlotId).HasColumnName("slot_id");
+            entity.Property(e => e.ItemData)
+                .HasColumnType("blob")
+                .HasColumnName("item_data");
+            entity.Property(e => e.ItemType).HasColumnName("item_type");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.AccountGifts)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Account_Gifts_ibfk_1");
+        });
+
+        modelBuilder.Entity<AccountMute>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("Account_Mutes");
+
+            entity.HasIndex(e => e.ModeratorId, "moderator_id");
+
+            entity.HasIndex(e => e.MutedId, "muted_id");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ExpiresAt)
+                .HasColumnType("datetime")
+                .HasColumnName("expires_at");
+            entity.Property(e => e.ModeratorId).HasColumnName("moderator_id");
+            entity.Property(e => e.MutedAt)
+                .HasDefaultValueSql("NOW()")
+                .HasColumnType("datetime")
+                .HasColumnName("muted_at");
+            entity.Property(e => e.MutedId).HasColumnName("muted_id");
+            entity.Property(e => e.Reason)
+                .HasMaxLength(255)
+                .HasColumnName("reason");
+
+            entity.HasOne(d => d.Muted).WithMany(p => p.AccountMutes)
+                .HasForeignKey(d => d.MutedId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Account_Mutes_ibfk_2");
+        });
+        
+        modelBuilder.Entity<AccountVault>(entity =>
+        {
+            entity.HasKey(e => new { e.AccountId, e.SlotId }).HasName("PRIMARY");
+
+            entity.ToTable("Account_Vault");
+
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.SlotId).HasColumnName("slot_id");
+            entity.Property(e => e.ItemData)
+                .HasColumnType("blob")
+                .HasColumnName("item_data");
+            entity.Property(e => e.ItemType).HasColumnName("item_type");
+
+            entity.HasOne(d => d.Account).WithMany(p => p.AccountVaults)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Account_Vault_ibfk_1");
         });
 
         modelBuilder.Entity<AccountSkin>(entity =>
@@ -205,26 +323,32 @@ public partial class AlloyContext : DbContext
 
             entity.HasOne(d => d.Acc).WithMany(p => p.Characters)
                 .HasForeignKey(d => d.AccId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Characters_ibfk_1");
 
             entity.HasOne(d => d.CharStats).WithMany(p => p.Characters)
                 .HasForeignKey(d => d.CharStatsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Characters_ibfk_2");
 
             entity.HasOne(d => d.CombatStats).WithMany(p => p.Characters)
                 .HasForeignKey(d => d.CombatStatsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Characters_ibfk_4");
 
             entity.HasOne(d => d.DungeonStats).WithMany(p => p.Characters)
                 .HasForeignKey(d => d.DungeonStatsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Characters_ibfk_6");
 
             entity.HasOne(d => d.ExploStats).WithMany(p => p.Characters)
                 .HasForeignKey(d => d.ExploStatsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Characters_ibfk_3");
 
             entity.HasOne(d => d.KillStats).WithMany(p => p.Characters)
                 .HasForeignKey(d => d.KillStatsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Characters_ibfk_5");
         });
 
@@ -246,6 +370,7 @@ public partial class AlloyContext : DbContext
 
             entity.HasOne(d => d.Char).WithMany(p => p.CharacterDeaths)
                 .HasForeignKey(d => d.CharId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Character_Death_ibfk_1");
         });
 
@@ -303,6 +428,7 @@ public partial class AlloyContext : DbContext
 
             entity.HasOne(d => d.AccStats).WithMany(p => p.ClassStats)
                 .HasForeignKey(d => d.AccStatsId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Class_Stats_ibfk_1");
         });
 
@@ -388,6 +514,7 @@ public partial class AlloyContext : DbContext
 
             entity.HasOne(d => d.Guild).WithMany(p => p.GuildMembers)
                 .HasForeignKey(d => d.GuildId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Guild_Members_ibfk_1");
         });
 

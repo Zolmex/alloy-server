@@ -3,16 +3,17 @@ Table Accounts {
   name varchar(30) [unique, not null]
   rank smallint [not null, default: 0]
   guild_name varchar(255)
-  is_admin boolean
-  is_banned boolean
+  is_admin boolean [not null]
+  is_banned boolean [not null]
   max_chars smallint [not null, default: 0]
   vault_count smallint [not null, default: 0]
   next_char_id smallint [not null, default: 0]
-  created_at datetime [default: `NOW()`]
+  created_at datetime [not null, default: `NOW()`]
 
   acc_stats_id integer [ref: - Account_Stats.id, not null, default: 0]
   login_id integer [ref: - Logins.id, not null, default: 0]
   guild_member_id integer [ref: - Guild_Members.id]
+  guild_id integer [ref: > Guilds.id]
 }
 
 Table Account_Stats {
@@ -42,6 +43,58 @@ Table Account_Ignores {
   }
 }
 
+Table Account_Mutes {
+  id integer [pk, increment]
+  reason varchar(255)
+  muted_at datetime [not null, default: `NOW()`]
+  expires_at datetime
+  
+  moderator_id integer [ref: > Accounts.id, not null, default: 0]
+  muted_id integer [ref: > Accounts.id, not null, default: 0]
+}
+
+Table Account_Bans {
+  id integer [pk, increment]
+  ban_type integer [not null, default: 0]
+  reason varchar(255)
+  banned_at datetime [not null, default: `NOW()`]
+  expires_at datetime
+  
+  moderator_id integer [ref: > Accounts.id, not null, default: 0]
+  banned_id integer [ref: > Accounts.id, not null, default: 0]
+}
+
+Table Account_Skins {
+  account_id integer [ref: > Accounts.id]
+  skin_type integer [not null, default: 0]
+  
+  indexes {
+    (account_id, skin_type) [pk]
+  }
+}
+
+Table Account_Vault {
+  account_id integer [ref: > Accounts.id]
+  slot_id integer [not null]
+  item_type "smallint unsigned" [not null, default: 0]
+  item_data blob
+
+  indexes {
+    (account_id, slot_id) [pk]
+  }
+}
+
+Table Account_Gifts {
+  account_id integer [ref: > Accounts.id]
+  slot_id integer [not null]
+  item_type "smallint unsigned" [not null, default: 0]
+  item_data blob
+
+  indexes {
+    (account_id, slot_id) [pk]
+  }
+}
+
 Table Class_Stats {
   id integer [pk, increment]
   object_type "smallint unsigned" [not null, default: 0]
@@ -60,16 +113,6 @@ Table Logins {
   ip_address varchar(30)
 }
 
-Table Account_Skins {
-  account_id integer [ref: > Accounts.id]
-  skin_type integer [not null, default: 0]
-  
-  indexes {
-    (account_id, skin_type) [pk]
-  }
-}
-
-
 Table Characters {
   id integer [pk, increment]
   acc_char_id integer [not null, default: 0]
@@ -83,10 +126,10 @@ Table Characters {
   pet_type "smallint unsigned" [not null, default: 0]
   health_potions "smallint unsigned" [not null, default: 0]
   magic_potions "smallint unsigned" [not null, default: 0]
-  is_dead boolean
-  is_deleted boolean
-  has_backpack boolean
-  created_at datetime [default: `NOW()`]
+  is_dead boolean [not null]
+  is_deleted boolean [not null]
+  has_backpack boolean [not null]
+  created_at datetime [not null, default: `NOW()`]
   deleted_at datetime
 
   acc_id integer [ref: > Accounts.id, not null, default: 0]
@@ -113,7 +156,7 @@ Table Character_Stats {
 
 Table Character_Inventory {
   character_id integer [ref: > Characters.id]
-  slot_id integer
+  slot_id integer [not null]
   item_type "smallint unsigned" [not null, default: 0]
   item_data blob
 
@@ -124,7 +167,7 @@ Table Character_Inventory {
 
 Table Character_Death {
   id integer [pk, increment]
-  dead_at datetime [default: `NOW()`]
+  dead_at datetime [not null, default: `NOW()`]
   death_fame "int unsigned" [not null, default: 0]
 
   char_id integer [ref: - Characters.id, not null, default: 0]
@@ -179,13 +222,13 @@ Table Guilds {
   current_fame "int unsigned" [not null, default: 0]
   total_fame "int unsigned" [not null, default: 0]
   guild_board text
-  created_at datetime [default: `NOW()`]
+  created_at datetime [not null, default: `NOW()`]
 }
 
 Table Guild_Members {
   id integer [pk, increment]
   guild_rank smallint [not null, default: 0]
-  last_seen_at datetime [default: `NOW()`]
+  last_seen_at datetime [not null, default: `NOW()`]
   
   guild_id integer [ref: > Guilds.id, not null, default: 0]
 }

@@ -42,15 +42,17 @@ public partial class Account : DbModel, IDbQueryable
 
     public short NextCharId { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public int AccStatsId { get; set; }
 
     public int LoginId { get; set; }
 
     public int? GuildMemberId { get; set; }
+    
+    public int? GuildId { get; set; }
 
-    public virtual AccountStat? AccStats { get; set; }
+    public virtual AccountStat AccStats { get; set; }
 
     public virtual ICollection<AccountSkin> AccountSkins { get; set; } = new List<AccountSkin>();
 
@@ -60,9 +62,19 @@ public partial class Account : DbModel, IDbQueryable
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
-    public virtual GuildMember? GuildMember { get; set; }
+    public virtual ICollection<AccountVault> AccountVaults { get; set; } = new List<AccountVault>();
+    
+    public virtual ICollection<AccountGift> AccountGifts { get; set; } = new List<AccountGift>();
 
-    public virtual Login? Login { get; set; }
+    public virtual ICollection<AccountMute> AccountMutes { get; set; } = new List<AccountMute>();
+    
+    public virtual ICollection<AccountBan> AccountBans { get; set; } = new List<AccountBan>();
+    
+    public virtual GuildMember? GuildMember { get; set; }
+    
+    public virtual Guild? Guild { get; set; }
+
+    public virtual Login Login { get; set; }
 
     public Account()
     {
@@ -103,7 +115,7 @@ public partial class Account : DbModel, IDbQueryable
             rdr => NextCharId = rdr.ReadInt16()
         );
         RegisterProperty("CreatedAt",
-            wtr => wtr.Write(CreatedAt!.Value.ToUnixTimestamp()),
+            wtr => wtr.Write(CreatedAt.ToUnixTimestamp()),
             rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("AccStats",
@@ -146,6 +158,20 @@ public partial class Account : DbModel, IDbQueryable
             {
                 GuildMember = DbModel.Read<GuildMember>(rdr);
                 GuildMemberId = GuildMember?.Id ?? 0;
+            }
+        );
+        RegisterProperty("Guild",
+            wtr =>
+            {
+                var hasValue = Guild != null;
+                wtr.Write(hasValue);
+                if (hasValue)
+                    Guild.WriteProperties(wtr);
+            },
+            rdr =>
+            {
+                Guild = DbModel.Read<Guild>(rdr);
+                GuildId = Guild?.Id ?? 0;
             }
         );
         RegisterProperty("AccountSkins",
@@ -241,6 +267,102 @@ public partial class Account : DbModel, IDbQueryable
                     var chr = DbModel.Read<Character>(rdr);
                     if (chr != null)
                         Characters.Add(chr);
+                }
+            }
+        );
+        RegisterProperty("AccountVaults",
+            wtr =>
+            {
+                wtr.Write((short)AccountVaults.Count);
+                foreach (var vault in AccountVaults)
+                {
+                    var hasValue = vault != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        vault.WriteProperties(wtr);
+                }
+            },
+            rdr =>
+            {
+                AccountVaults.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                {
+                    var vault = DbModel.Read<AccountVault>(rdr);
+                    if (vault != null)
+                        AccountVaults.Add(vault);
+                }
+            }
+        );
+        RegisterProperty("AccountGifts",
+            wtr =>
+            {
+                wtr.Write((short)AccountGifts.Count);
+                foreach (var gift in AccountGifts)
+                {
+                    var hasValue = gift != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        gift.WriteProperties(wtr);
+                }
+            },
+            rdr =>
+            {
+                AccountGifts.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                {
+                    var gift = DbModel.Read<AccountGift>(rdr);
+                    if (gift != null)
+                        AccountGifts.Add(gift);
+                }
+            }
+        );
+        RegisterProperty("AccountMutes",
+            wtr =>
+            {
+                wtr.Write((short)AccountMutes.Count);
+                foreach (var mute in AccountMutes)
+                {
+                    var hasValue = mute != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        mute.WriteProperties(wtr);
+                }
+            },
+            rdr =>
+            {
+                AccountMutes.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                {
+                    var mute = DbModel.Read<AccountMute>(rdr);
+                    if (mute != null)
+                        AccountMutes.Add(mute);
+                }
+            }
+        );
+        RegisterProperty("AccountBans",
+            wtr =>
+            {
+                wtr.Write((short)AccountBans.Count);
+                foreach (var bans in AccountBans)
+                {
+                    var hasValue = bans != null;
+                    wtr.Write(hasValue);
+                    if (hasValue)
+                        bans.WriteProperties(wtr);
+                }
+            },
+            rdr =>
+            {
+                AccountBans.Clear();
+                var count = rdr.ReadInt16();
+                for (var i = 0; i < count; i++)
+                {
+                    var ban = DbModel.Read<AccountBan>(rdr);
+                    if (ban != null)
+                        AccountBans.Add(ban);
                 }
             }
         );

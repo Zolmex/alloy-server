@@ -13,15 +13,15 @@ public partial class GuildMember : DbModel, IDbQueryable
     
     public int Id { get; set; }
 
-    public short? GuildRank { get; set; }
+    public short GuildRank { get; set; }
 
-    public DateTime? LastSeenAt { get; set; }
+    public DateTime LastSeenAt { get; set; }
 
     public int GuildId { get; set; }
 
     public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
 
-    public virtual Guild? Guild { get; set; }
+    public virtual Guild Guild { get; set; }
 
     public GuildMember()
     {
@@ -30,11 +30,11 @@ public partial class GuildMember : DbModel, IDbQueryable
             rdr => Id = rdr.ReadInt32()
         );
         RegisterProperty("GuildRank",
-            wtr => wtr.Write(GuildRank ?? 0),
+            wtr => wtr.Write(GuildRank),
             rdr => GuildRank = rdr.ReadInt16()
         );
         RegisterProperty("LastSeenAt",
-            wtr => wtr.Write((LastSeenAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            wtr => wtr.Write(LastSeenAt.ToUnixTimestamp()),
             rdr => LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
     }
