@@ -3,6 +3,7 @@
 using Common;
 using Common.API.Helpers;
 using Common.API.Requests;
+using Common.Database.Models;
 using Common.Enums;
 using Common.Resources.World;
 using Common.Resources.Xml;
@@ -154,22 +155,38 @@ public class SetStatCommand : Command
             return;
         }
 
-        // if (type == StatType.Attack || type == StatType.Defense || type == StatType.Dexterity || // TODO: fix
-        //     type == StatType.Wisdom)
-        // {
-        //     player.Char.MainStats[type] = (int)amount;
-        //     player.RecalculateStats();
-        // }
-        // else
-        // {
-        //     player.Char.BaseStats[type] = amount;
-        // }
+        UpdateStatValue(player.Char.CharStats, type, amount);
         player.RecalculateStats();
 
         player.SaveCharacter(true);
 
         player.HandleEntityStatChanged(player, type, amount);
         player.SendInfo($"Set {type} to {amount}");
+    }
+
+    private void UpdateStatValue(CharacterStat stats, StatType type, float amount)
+    {
+        switch (type)
+        {
+            case StatType.Attack:
+                stats.Attack = (uint)amount;
+                break;
+            case StatType.Defense:
+                stats.Defense = (uint)amount;
+                break;
+            case StatType.Speed:
+                stats.Speed = (uint)amount;
+                break;
+            case StatType.Dexterity:
+                stats.Dexterity = (uint)amount;
+                break;
+            case StatType.Vitality:
+                stats.Vitality = (uint)amount;
+                break;
+            case StatType.Wisdom:
+                stats.Wisdom = (uint)amount;
+                break;
+        }
     }
 }
 
