@@ -59,6 +59,7 @@ Table Account_Bans {
   reason varchar(255)
   banned_at datetime [not null, default: `NOW()`]
   expires_at datetime
+  enabled boolean [not null, default: true]
   
   moderator_id integer [ref: > Accounts.id, not null, default: 0]
   banned_id integer [ref: > Accounts.id, not null, default: 0]

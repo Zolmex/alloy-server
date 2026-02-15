@@ -52,7 +52,8 @@ CREATE TABLE `Account_Bans` (
   `banned_at` datetime NOT NULL DEFAULT (NOW()),
   `expires_at` datetime,
   `moderator_id` integer NOT NULL DEFAULT 0,
-  `banned_id` integer NOT NULL DEFAULT 0
+  `banned_id` integer NOT NULL DEFAULT 0,
+  `enabled` boolean NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE `Account_Skins` (

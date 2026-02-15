@@ -51,9 +51,9 @@ public class UnbanAccountHandler : IMessageHandler
         }
         
         var perma = acc.AccountBans.FirstOrDefault(b => b.ExpiresAt == null); // There should only be one perma ban at a given time
-        var activeBan = acc.AccountBans.FirstOrDefault(b => b.ExpiresAt > DateTime.UtcNow);
+        var activeBan = perma ?? acc.AccountBans.FirstOrDefault(b => b.ExpiresAt > DateTime.UtcNow);
 
-        if (perma == null && activeBan == null)
+        if (activeBan == null)
         {
             response.Success = false;
             response.Error = "Internal error: no valid ban entry found.";
@@ -62,17 +62,12 @@ public class UnbanAccountHandler : IMessageHandler
             return;
         }
 
-        // Delete either perma or active ban
         acc.IsBanned = false;
+        activeBan.Enabled = false;
         
-        DbCache.Accounts.Update(acc,
-            a => a.IsBanned);
+        DbCache.Accounts.Update(acc, a => a.IsBanned);
+        DbCache.AccountBans.Update(activeBan, b => b.Enabled);
         
-        // TODO: not happy with deleting ban history... maybe add a field to disable the ban
-        acc.AccountBans.Remove(perma);
-        acc.AccountBans.Remove(activeBan);
-        await DbCache.AccountBans.DeleteAsync(perma ?? activeBan); // Either of them, but not both, is null
-
         await DbCache.SaveChanges(); // Save changes to database
 
         con.Send(response);

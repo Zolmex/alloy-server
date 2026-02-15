@@ -18,6 +18,8 @@ public partial class AccountBan : DbModel, IDbQueryable
 
     public DateTime? ExpiresAt { get; set; }
 
+    public bool Enabled { get; set; } = true;
+
     public int ModeratorId { get; set; }
 
     public int BannedId { get; set; }
@@ -43,6 +45,10 @@ public partial class AccountBan : DbModel, IDbQueryable
         RegisterProperty("ExpiresAt",
             wtr => wtr.Write((ExpiresAt ?? DateTime.MaxValue).ToUnixTimestamp()),
             rdr => ExpiresAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+        RegisterProperty("Enabled",
+            wtr => wtr.Write(Enabled),
+            rdr => Enabled = rdr.ReadBoolean()
         );
     }
     

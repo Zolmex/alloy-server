@@ -1,6 +1,7 @@
 ﻿#region
 
 using Common.Database;
+using Common.Database.Models;
 using Common.Network;
 using Common.Resources.Config;
 using Common.Utilities;
@@ -8,6 +9,7 @@ using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 #endregion
@@ -49,6 +51,20 @@ public partial record Hello : IIncomingPacket
         {
             user.SendFailure(Failure.DEFAULT, "Invalid user state.");
             return;
+        }
+
+        if (acc.IsBanned)
+        {
+            // Check if ban has expired
+            if (acc.AccountBans.Any(b => b.ExpiresAt == null) || // Means the account is permanently banned
+                acc.AccountBans.Any(b => b.ExpiresAt > DateTime.UtcNow)) // Means the ban hasn't been lifted yet
+            {
+                user.SendFailure(Failure.DEFAULT, "Account is banned.");
+                return;
+            }
+
+            acc.IsBanned = false; // Update bool value 
+            await DbClient.Flush(acc, a => a.IsBanned);
         }
 
         if (RealmManager.UserAccIds.TryGetValue(user, out _) && user.State != ConnectionState.Reconnecting)

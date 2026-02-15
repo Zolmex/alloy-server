@@ -136,6 +136,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.ExpiresAt)
                 .HasColumnType("datetime")
                 .HasColumnName("expires_at");
+            entity.Property(e => e.Enabled).HasColumnName("enabled").HasDefaultValue(true);
             entity.Property(e => e.ModeratorId).HasColumnName("moderator_id");
             entity.Property(e => e.Reason)
                 .HasMaxLength(255)
