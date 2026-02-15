@@ -193,7 +193,7 @@ public class CharacterEntity : Entity
                         proj.Dead = true;
                     else
                         proj.Position = projPos;
-                    // proj.CheckCollisions(_targetCache[proj.TargetType], time.TotalElapsedMs);
+                    proj.CheckCollisions(_targetCache[proj.TargetType], time.TotalElapsedMs);
                 }
 
                 EmptyEntityCache();

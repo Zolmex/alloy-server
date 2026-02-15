@@ -81,15 +81,14 @@ public abstract class CommandManager
             return;
         }
 
-        // if (cmd.PermissionLevel == Command.CommandPermissionLevel.Admin && (!player.User.Account.IsAdmin ||
-        //                                                                     (int)cmd.PermissionLevel > player.User.Account.Rank))
-        // {
-        //     player.SendError("You're not authorized to use this command.");
-        //     return;
-        // }
+        if (cmd.PermissionLevel == Command.CommandPermissionLevel.Admin && (!player.User.Account.IsAdmin ||
+                                                                            (int)cmd.PermissionLevel > player.User.Account.Rank))
+        {
+            player.SendError("You're not authorized to use this command.");
+            return;
+        }
 
         cmd.Execute(player, args);
-        Logger.Debug($"Executing {cmd} {args}");
     }
 
     public static IEnumerable<string> GetCommandList(Player player)

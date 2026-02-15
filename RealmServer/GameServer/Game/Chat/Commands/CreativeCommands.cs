@@ -392,11 +392,11 @@ public class SpawnCommand : Command
 {
     public override void Execute(Player player, string args)
     {
-        // if (player.AccRank < (int)CommandPermissionLevel.Moderator && player.World is not TestWorld)
-        // {
-        //     player.SendError("Can only use this command in a test world.");
-        //     return;
-        // }
+        if (player.AccRank < (int)CommandPermissionLevel.Moderator && player.World is not TestWorld)
+        {
+            player.SendError("Can only use this command in a test world.");
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(args))
         {
