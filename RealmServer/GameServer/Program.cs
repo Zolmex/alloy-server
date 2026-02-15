@@ -50,7 +50,7 @@ internal class Program
             WorldLibrary.Load(config.WorldsDir);
             BehaviorLibrary.Load();
 
-            await DbClient.Connect(DatabaseConfig.Config);
+            await DbClient.ConnectAsync(DatabaseConfig.Config);
 
             // ServerControl.Connect(MemberType.AppEngine, "GameServer", new ServerInfo { Port = config.Port, Address = config.Address, MaxPlayers = config.MaxPlayers, AdminOnly = config.AdminOnly });
             //

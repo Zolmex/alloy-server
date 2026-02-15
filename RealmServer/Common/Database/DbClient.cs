@@ -17,7 +17,7 @@ public static class DbClient
     private static readonly Logger _log = new(typeof(DbClient));
     private static readonly AppConnection _con = new();
 
-    public static async Task Connect(DatabaseConfig config)
+    public static async Task ConnectAsync(DatabaseConfig config)
     {
         _con.SetupNew();
         await _con.Connect(config.Host, config.Port);
@@ -35,7 +35,7 @@ public static class DbClient
         return !string.IsNullOrWhiteSpace(password) && password.Length > 8;
     }
 
-    public static async Task<RegisterStatus> Register(string username, string password, string ip)
+    public static async Task<RegisterStatus> RegisterAsync(string username, string password, string ip)
     {
         if (!IsValidUsername(username))
             return RegisterStatus.InvalidName;
@@ -47,14 +47,14 @@ public static class DbClient
         return ack.Status;
     }
 
-    public static async Task<VerifyAck> VerifyAccount(string username, string password)
+    public static async Task<VerifyAck> VerifyAccountAsync(string username, string password)
     {
         var ack = await _con.SendAndReceiveAsync<VerifyAck>(
             new VerifyMessage { Username = username, Password = password });
         return ack;
     }
 
-    public static async Task BuyCharSlot(Account acc)
+    public static async Task BuyCharSlotAsync(Account acc)
     {
         var cost = NewAccountsConfig.Config.CharSlotCost;
         Logger.Debug($"{acc.AccStats?.CurrentFame ?? 420}:{cost}");
@@ -64,57 +64,57 @@ public static class DbClient
         acc.AccStats!.CurrentFame -= (uint)cost;
         acc.MaxChars++;
 
-        await acc.AccStats.Flush<AccountStat, uint>(_con, stats => stats.CurrentFame);
-        await acc.Flush<Account, short>(_con, a => a.MaxChars);
+        await FlushAsync(acc.AccStats, stats => stats.CurrentFame);
+        await FlushAsync(acc, a => a.MaxChars);
     }
 
-    public static async Task<GetCharacterAck> GetCharacter(int accId, int accCharId)
+    public static async Task<GetCharacterAck> GetCharacterAsync(int accId, int accCharId)
     {
         var ack = await _con.SendAndReceiveAsync<GetCharacterAck>(
             new GetCharacterMessage { AccountId = accId, CharacterId = accCharId });
         return ack;
     }
 
-    public static async IAsyncEnumerable<IAppMessageAck> Flush(params DbModel[] models)
+    public static async IAsyncEnumerable<IAppMessageAck> FlushAsync(params DbModel[] models)
     {
         foreach (var model in models)
             yield return await model.FlushAll(_con);
     }
     
-    public static async Task<FlushAck> Flush<T, TValue>(T model, params Expression<Func<T,TValue>>[] expressions) where T : DbModel
+    public static async Task<FlushAck> FlushAsync<T, TValue>(T model, params Expression<Func<T,TValue>>[] expressions) where T : DbModel
     {
         return await model.Flush(_con, expressions);
     }
 
-    public static async Task<CreateCharacterAck> CreateCharacter(Account acc, ushort objectType, ushort skinType)
+    public static async Task<CreateCharacterAck> CreateCharacterAsync(Account acc, ushort objectType, ushort skinType)
     {
         var ack = await _con.SendAndReceiveAsync<CreateCharacterAck>(
             new CreateCharacterMessage { AccountId = acc.Id, ClassType = objectType, SkinType = skinType });
         return ack;
     }
 
-    public static async Task<bool> DeleteCharacter(int accId, int accCharId)
+    public static async Task<bool> DeleteCharacterAsync(int accId, int accCharId)
     {
         var ack = await _con.SendAndReceiveAsync<DeleteCharacterAck>(
             new DeleteCharacterMessage { AccountId = accId, CharacterId = accCharId });
         return ack.Success;
     }
 
-    public static async Task<Account> GetAccountByName(string name)
+    public static async Task<Account> GetAccountByNameAsync(string name)
     {
         var ack = await _con.SendAndReceiveAsync<GetAccountAck>(
             new GetAccountByNameMessage { Name = name });
         return ack.Account;
     }
 
-    public static async Task<Account> GetAccount(int accId)
+    public static async Task<Account> GetAccountAsync(int accId)
     {
         var ack = await _con.SendAndReceiveAsync<GetAccountAck>(
             new GetAccountByNameMessage { AccountId = accId });
         return ack.Account;
     }
 
-    public static async Task<BanAccountAck> BanAccount(string name, string reason, DateTime expiresAt, int moderatorId)
+    public static async Task<BanAccountAck> BanAccountAsync(string name, string reason, DateTime expiresAt, int moderatorId)
     {
         var ack = await _con.SendAndReceiveAsync<BanAccountAck>(
             new BanAccountMessage
@@ -127,16 +127,16 @@ public static class DbClient
         return ack;
     }
 
-    public static async Task<UnbanAccountAck> UnbanAccount(string name)
+    public static async Task<UnbanAccountAck> UnbanAccountAsync(string name)
     {
         var ack = await _con.SendAndReceiveAsync<UnbanAccountAck>(
             new UnbanAccountMessage { Name = name });
         return ack;
     }
 
-    public static async Task<(bool, string)> MuteAccount(string name) // TODO: proper muted model with "reason" and "muted by" fields
+    public static async Task<(bool, string)> MuteAccountAsync(string name) // TODO: proper muted model with "reason" and "muted by" fields
     {
-        var acc = await GetAccountByName(name);
+        var acc = await GetAccountByNameAsync(name);
         if (acc == null)
             return (false, $"Account {name} not found.");
         
@@ -157,9 +157,9 @@ public static class DbClient
         return (true, "");
     }
 
-    public static async Task<(bool, string)> UnmuteAccount(string name)
+    public static async Task<(bool, string)> UnmuteAccountAsync(string name)
     {
-        var acc = await GetAccountByName(name);
+        var acc = await GetAccountByNameAsync(name);
         if (acc == null)
             return (false, $"Account {name} not found.");
         
@@ -172,12 +172,12 @@ public static class DbClient
         return (true, "");
     }
 
-    public static async Task<CharacterDeath> GetDeathInfo(int accId, int charId)
+    public static async Task<CharacterDeath> GetDeathInfoAsync(int accId, int charId)
     {
         return null;
     }
 
-    public static async Task<Guild> GetGuild(int guildId)
+    public static async Task<Guild> GetGuildAsync(int guildId)
     {
         return null;
     }

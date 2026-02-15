@@ -92,7 +92,7 @@ public class BanCommand : Command
         var targetName = words[0];
         var durationInDays = int.Parse(words[2]);
         
-        var result = DbClient.BanAccount(targetName, reason, DateTime.Now + TimeSpan.FromDays(durationInDays), player.AccountId).Result;
+        var result = DbClient.BanAccountAsync(targetName, reason, DateTime.Now + TimeSpan.FromDays(durationInDays), player.AccountId).Result;
         var success = result.Success;
         var error = result.Error;
         if (success)
@@ -116,7 +116,7 @@ public class UnbanCommand : Command
             return;
         }
 
-        var unban = DbClient.UnbanAccount(args).Result;
+        var unban = DbClient.UnbanAccountAsync(args).Result;
         var success = unban.Success;
         var error = unban.Error;
         if (success)
@@ -158,7 +158,7 @@ public class MuteCommand : Command
             return;
         }
 
-        var mute = DbClient.MuteAccount(args).Result;
+        var mute = DbClient.MuteAccountAsync(args).Result;
         var success = mute.Item1;
         var error = mute.Item2;
         if (success)
@@ -179,7 +179,7 @@ public class UnmuteCommand : Command
             return;
         }
 
-        var unmute = DbClient.UnmuteAccount(args).Result;
+        var unmute = DbClient.UnmuteAccountAsync(args).Result;
         var success = unmute.Item1;
         var error = unmute.Item2;
         if (success)

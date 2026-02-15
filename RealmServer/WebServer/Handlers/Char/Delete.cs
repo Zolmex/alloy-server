@@ -15,7 +15,7 @@ public class Delete : RequestHandler
 
     public override async Task<string> Handle(string ip, NameValueCollection query)
     {
-        var verify = await DbClient.VerifyAccount(query["username"], query["password"]);
+        var verify = await DbClient.VerifyAccountAsync(query["username"], query["password"]);
 
         var acc = verify.Account;
         var status = verify.Status;
@@ -25,7 +25,7 @@ public class Delete : RequestHandler
         if (!int.TryParse(query["charId"], out var charId))
             return WriteError("A character Id is required to delete the character");
 
-        if (await DbClient.DeleteCharacter(acc.Id, charId))
+        if (await DbClient.DeleteCharacterAsync(acc.Id, charId))
             return WriteSuccess();
 
         return WriteError("Internal server error.");

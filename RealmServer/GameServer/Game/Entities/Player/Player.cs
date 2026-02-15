@@ -172,7 +172,7 @@ public partial class Player : CharacterEntity
         Inventory.Save(Char);
 
         if (saveToDb)
-            DbClient.Flush(Char);
+            DbClient.FlushAsync(Char);
     }
 
     public void RemoveReferenceTo(Entity ent)
@@ -280,7 +280,7 @@ public partial class Player : CharacterEntity
                 break;
         }
 
-        _ = DbClient.Flush(accStats);
+        _ = DbClient.FlushAsync(accStats);
     }
 
     public void SetLootBoost(double lootBoost)

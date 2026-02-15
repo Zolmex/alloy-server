@@ -50,7 +50,7 @@ internal class Program
             XmlLibrary.Load(config.XmlsDir);
 
             //DbClient.Connect(DatabaseConfig.Config); // Connect redis client used for communication with the database
-            await DbClient.Connect(DatabaseConfig.Config);
+            await DbClient.ConnectAsync(DatabaseConfig.Config);
 
             // ServerControl.Connect(MemberType.AppEngine, "WebServer",
             //     new ServerInfo { Address = config.Address });

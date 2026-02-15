@@ -37,7 +37,7 @@ public partial record Hello : IIncomingPacket
         var acc = user.Account;
         if (user.State != ConnectionState.Reconnecting)
         {
-            var verify = await DbClient.VerifyAccount(Username, Password);
+            var verify = await DbClient.VerifyAccountAsync(Username, Password);
             var status = verify.Status;
             acc = verify.Account;
             if (acc == null)
@@ -64,7 +64,7 @@ public partial record Hello : IIncomingPacket
             }
 
             acc.IsBanned = false; // Update bool value 
-            await DbClient.Flush(acc, a => a.IsBanned);
+            await DbClient.FlushAsync(acc, a => a.IsBanned);
         }
 
         if (RealmManager.UserAccIds.TryGetValue(user, out _) && user.State != ConnectionState.Reconnecting)

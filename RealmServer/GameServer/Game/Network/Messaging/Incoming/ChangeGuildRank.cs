@@ -31,7 +31,7 @@ public partial record ChangeGuildRank : IIncomingPacket
 
         targetAcc.GuildMember.GuildRank = (short)TargetRank;
         target.GuildRank = TargetRank;
-        _ = DbClient.Flush(targetAcc);
+        _ = DbClient.FlushAsync(targetAcc);
     }
 
     public void Read(NetworkReader rdr)

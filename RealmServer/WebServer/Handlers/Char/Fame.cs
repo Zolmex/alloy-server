@@ -17,7 +17,7 @@ public class Fame : RequestHandler
         var accId = int.Parse(query["accountId"]);
         var charId = int.Parse(query["charId"]);
 
-        var fameInfo = await DbClient.GetDeathInfo(accId, charId); // TODO: fix
+        var fameInfo = await DbClient.GetDeathInfoAsync(accId, charId); // TODO: fix
             return WriteError("No death info available");
 
         // return fameInfo.ToXml(await DbClient.GetCharacter(accId, charId)).ToString();
