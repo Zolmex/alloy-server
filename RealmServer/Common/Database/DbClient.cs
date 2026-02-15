@@ -114,66 +114,62 @@ public static class DbClient
         return ack.Account;
     }
 
-    public static async Task<(bool, string)> BanAccount(string name) // TODO: proper ban model with "reason" and "banned by" fields
+    public static async Task<BanAccountAck> BanAccount(string name, string reason, DateTime expiresAt, int moderatorId)
     {
-        var acc = await GetAccountByName(name);
-        if (acc == null)
-            return (false, $"Account {name} not found.");
-
-        if (acc.IsBanned)
-            return (false, $"Account {name} is already banned.");
-
-        acc.IsBanned = true;
-
-        await acc.Flush<Account, bool>(_con, a => a.IsBanned);
-        return (true, "");
+        var ack = await _con.SendAndReceiveAsync<BanAccountAck>(
+            new BanAccountMessage
+            {
+                Name = name,
+                Reason = reason,
+                ExpiresAt = expiresAt,
+                ModeratorId = moderatorId
+            });
+        return ack;
     }
 
-    public static async Task<(bool, string)> UnbanAccount(string name)
+    public static async Task<UnbanAccountAck> UnbanAccount(string name)
     {
-        var acc = await GetAccountByName(name);
-        if (acc == null)
-            return (false, $"Account {name} not found.");
-
-        if (!acc.IsBanned)
-            return (false, $"Account {name} is not banned.");
-
-        acc.IsBanned = false;
-
-        await acc.Flush<Account, bool>(_con, a => a.IsBanned);
-        return (true, "");
+        var ack = await _con.SendAndReceiveAsync<UnbanAccountAck>(
+            new UnbanAccountMessage { Name = name });
+        return ack;
     }
 
     public static async Task<(bool, string)> MuteAccount(string name) // TODO: proper muted model with "reason" and "muted by" fields
     {
-        // var acc = await GetAccountByName(name);
-        // if (acc == null)
-        //     return (false, $"Account {name} not found.");
-        //
-        // if (acc.IsMuted)
-        //     return (false, $"Account {name} is already muted.");
-        //
-        // acc.IsMuted = true;
-        //
-        // await acc.Flush<Account, bool>(_con, a => a.IsMuted);
-        // return (true, "");
-        return (false, "Not implemented.");
+        var acc = await GetAccountByName(name);
+        if (acc == null)
+            return (false, $"Account {name} not found.");
+        
+        if (acc.IsMuted) // If this is true, we need to check if the mute has expired
+        {
+            if (acc.AccountMutes.Any(b => b.ExpiresAt == null) || // Means the account is permanently muted
+                acc.AccountMutes.Any(b => b.ExpiresAt > DateTime.UtcNow)) // Means the mute hasn't been lifted yet
+            {
+                return (false, $"Account {name} is already muted.");
+            }
+            
+            // Account's mute was lifted, continue...
+        }
+        
+        acc.IsMuted = true;
+        
+        await acc.Flush<Account, bool>(_con, a => a.IsMuted);
+        return (true, "");
     }
 
     public static async Task<(bool, string)> UnmuteAccount(string name)
     {
-        // var acc = await GetAccountByName(name);
-        // if (acc == null)
-        //     return (false, $"Account {name} not found.");
-        //
-        // if (!acc.IsMuted)
-        //     return (false, $"Account {name} is not muted.");
-        //
-        // acc.IsMuted = false;
-        //
-        // await acc.Flush<Account, bool>(_con, a => a.IsMuted);
-        // return (true, "");
-        return (false, "Not implemented.");
+        var acc = await GetAccountByName(name);
+        if (acc == null)
+            return (false, $"Account {name} not found.");
+        
+        if (!acc.IsMuted)
+            return (false, $"Account {name} is not muted.");
+        
+        acc.IsMuted = false;
+        
+        await acc.Flush<Account, bool>(_con, a => a.IsMuted);
+        return (true, "");
     }
 
     public static async Task<CharacterDeath> GetDeathInfo(int accId, int charId)

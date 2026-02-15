@@ -5,6 +5,7 @@ Table Accounts {
   guild_name varchar(255)
   is_admin boolean [not null]
   is_banned boolean [not null]
+  is_muted boolean [not null]
   max_chars smallint [not null, default: 0]
   vault_count smallint [not null, default: 0]
   next_char_id smallint [not null, default: 0]
@@ -55,7 +56,6 @@ Table Account_Mutes {
 
 Table Account_Bans {
   id integer [pk, increment]
-  ban_type integer [not null, default: 0]
   reason varchar(255)
   banned_at datetime [not null, default: `NOW()`]
   expires_at datetime

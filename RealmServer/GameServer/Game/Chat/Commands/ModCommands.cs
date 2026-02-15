@@ -83,17 +83,22 @@ public class BanCommand : Command
     {
         if (string.IsNullOrEmpty(args))
         {
-            player.SendError("Usage: /ban {player}");
+            player.SendError("Usage: /ban {player} \"{reason}\" {duration in days}");
             return;
         }
 
-        var result = DbClient.BanAccount(args).Result;
-        var success = result.Item1;
-        var error = result.Item2;
+        var reason = args.Split('\"')[1]; // Splits the args in 3, the 2nd index is the text between the " "
+        var words = args.Replace(reason, "").Split(' '); // Remove the reason because it might contain spaces, and find the other arguments
+        var targetName = words[0];
+        var durationInDays = int.Parse(words[2]);
+        
+        var result = DbClient.BanAccount(targetName, reason, DateTime.Now + TimeSpan.FromDays(durationInDays), player.AccountId).Result;
+        var success = result.Success;
+        var error = result.Error;
         if (success)
         {
-            player.SendInfo($"Player {args} successfully banned.");
-            RealmManager.TryDisconnectUserByName(args);
+            player.SendInfo($"Player {targetName} successfully banned.");
+            RealmManager.TryDisconnectUserByName(targetName);
         }
         else
             player.SendError(error);
@@ -112,8 +117,8 @@ public class UnbanCommand : Command
         }
 
         var unban = DbClient.UnbanAccount(args).Result;
-        var success = unban.Item1;
-        var error = unban.Item2;
+        var success = unban.Success;
+        var error = unban.Error;
         if (success)
         {
             player.SendInfo($"Player {args} successfully unbanned.");

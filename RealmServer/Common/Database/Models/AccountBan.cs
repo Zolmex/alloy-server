@@ -12,8 +12,6 @@ public partial class AccountBan : DbModel, IDbQueryable
     
     public int Id { get; set; }
 
-    public int BanType { get; set; }
-
     public string? Reason { get; set; }
 
     public DateTime BannedAt { get; set; }
@@ -33,10 +31,6 @@ public partial class AccountBan : DbModel, IDbQueryable
         RegisterProperty("Id",
             wtr => wtr.Write(Id),
             rdr => Id = rdr.ReadInt32()
-        );
-        RegisterProperty("BanType",
-            wtr => wtr.Write(BanType),
-            rdr => BanType = rdr.ReadInt32()
         );
         RegisterProperty("Reason",
             wtr => wtr.Write(Reason ?? ""),

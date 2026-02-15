@@ -87,6 +87,7 @@ public partial class AlloyContext : DbContext
                 .HasColumnName("guild_name");
             entity.Property(e => e.IsAdmin).HasColumnName("is_admin");
             entity.Property(e => e.IsBanned).HasColumnName("is_banned");
+            entity.Property(e => e.IsMuted).HasColumnName("is_muted");
             entity.Property(e => e.LoginId).HasColumnName("login_id");
             entity.Property(e => e.MaxChars).HasColumnName("max_chars");
             entity.Property(e => e.Name)
@@ -127,7 +128,6 @@ public partial class AlloyContext : DbContext
             entity.HasIndex(e => e.ModeratorId, "moderator_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.BanType).HasColumnName("ban_type");
             entity.Property(e => e.BannedAt)
                 .HasDefaultValueSql("NOW()")
                 .HasColumnType("datetime")

@@ -22,8 +22,6 @@ public class Verify : RequestHandler
         if (acc == null)
             return status.GetDescription();
 
-        await DbClient.DeleteCharacter(acc.Id, 1);
-        
         return acc.ToXml().ToString();
     }
 }

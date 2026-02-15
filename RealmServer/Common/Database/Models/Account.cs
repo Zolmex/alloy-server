@@ -35,6 +35,8 @@ public partial class Account : DbModel, IDbQueryable
     public bool IsAdmin { get; set; }
 
     public bool IsBanned { get; set; }
+    
+    public bool IsMuted { get; set; }
 
     public short MaxChars { get; set; }
 
@@ -101,6 +103,10 @@ public partial class Account : DbModel, IDbQueryable
         RegisterProperty("IsBanned",
             wtr => wtr.Write(IsBanned),
             rdr => IsBanned = rdr.ReadBoolean()
+        );
+        RegisterProperty("IsMuted",
+            wtr => wtr.Write(IsMuted),
+            rdr => IsMuted = rdr.ReadBoolean()
         );
         RegisterProperty("MaxChars",
             wtr => wtr.Write(MaxChars),

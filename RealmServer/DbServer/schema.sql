@@ -5,6 +5,7 @@ CREATE TABLE `Accounts` (
   `guild_name` varchar(255),
   `is_admin` boolean NOT NULL,
   `is_banned` boolean NOT NULL,
+  `is_muted` boolean NOT NULL,
   `max_chars` smallint NOT NULL DEFAULT 0,
   `vault_count` smallint NOT NULL DEFAULT 0,
   `next_char_id` smallint NOT NULL DEFAULT 0,
@@ -47,7 +48,6 @@ CREATE TABLE `Account_Mutes` (
 
 CREATE TABLE `Account_Bans` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
-  `ban_type` integer NOT NULL DEFAULT 0,
   `reason` varchar(255),
   `banned_at` datetime NOT NULL DEFAULT (NOW()),
   `expires_at` datetime,
