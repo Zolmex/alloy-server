@@ -1,83 +1,78 @@
 using Common.Network.Messaging;
 using Common.Utilities;
 using System;
+using System.Buffers;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Common.Network;
 
-public class SocketReceiveState
+public class SocketReceiveState : IDisposable
 {
-    public readonly NetworkReader Reader;
-
-    public byte[] Buffer { get; } = new byte[0x10000]; // 64 KB
-    private int _bytesRead;
-    private int _lastStart;
+    private byte[] _buffer;
+    private int _writePos = 0;
+    private int _readPos = 0;
+    private const int BUFFER_SIZE = 0x20000;
 
     public SocketReceiveState()
     {
-        Reader = new NetworkReader(new MemoryStream(Buffer));
-    }
-    
-    public void Reset()
-    {
-        _bytesRead = 0;
-        _lastStart = 0;
-        Reader.BaseStream.Seek(0, SeekOrigin.Begin);
+        // Rent memory from the shared pool
+        _buffer = ArrayPool<byte>.Shared.Rent(BUFFER_SIZE);
     }
 
-    public void SetBuffer(SocketAsyncEventArgs args)
+    public void PrepareSAEA(SocketAsyncEventArgs args)
     {
-        args.SetBuffer(_bytesRead, Buffer.Length - _bytesRead);
+        if (_buffer.Length - _writePos < 4096) Compact();
+        args.SetBuffer(_buffer, _writePos, _buffer.Length - _writePos);
     }
 
-    public bool ReadMessage(ref int bytesNotRead, out IAppMessage msg)
+    public void OnDataReceived(int count) => _writePos += count;
+
+    public bool TryReadMessage(out IAppMessage msg)
     {
-        // Start reading a new packet
         msg = null;
-        if (bytesNotRead <= 0)
-        {
-            Reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            return false;
-        }
+        int available = _writePos - _readPos;
+        if (available < 4) return false;
 
-        if (_bytesRead != 0)
-        {
-            Reader.BaseStream.Seek(_lastStart + _bytesRead,
-                SeekOrigin.Begin); // In case we failed processing, go to the end of the packet
-            _bytesRead = 0;
-        }
+        int length = BitConverter.ToInt32(_buffer, _readPos);
         
-        _lastStart = (int)Reader.BaseStream.Position;
+        if (length < 10 || length > BUFFER_SIZE)
+            throw new InvalidDataException($"Invalid packet length: {length}");
 
-        var length = Reader.ReadInt32(); // We always start reading from the beginning
-        // Log.Debug($"Start: {start} Length: {length} BytesNotRead: {bytesNotRead} BytesRead: {_bytesRead}");
+        if (available < length) return false;
 
-        if (length == 0)
-            throw new InvalidDataException("Message length cannot be zero.");
+        _readPos += 4;
+        var packetId = (AppMessageId)_buffer[_readPos++];
+        var seq = BitConverter.ToInt32(_buffer, _readPos); _readPos += 4;
+        bool isAck = _buffer[_readPos++] != 0;
 
-        var read = Math.Min(length - _bytesRead, bytesNotRead); // Bytes read in this current iteration
-        _bytesRead += read;
-
-        if (_bytesRead < length) // This means we still have bytes to read that we haven't received in this call
-        {
-            System.Buffer.BlockCopy(Buffer, _lastStart, Buffer, 0,
-                _bytesRead); // Move this many bytes to the beginning of the buffer
-            Reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            return false;
-        }
-
-        var packetId = (AppMessageId)Reader.ReadByte();
-        msg = IAppMessage.Require(packetId);
-        
-        var seq = Reader.ReadInt32();
-        var isAck = Reader.ReadBoolean();
-        if (isAck)
-            msg = IAppMessage.RequireAck(packetId);
-        
+        msg = isAck ? IAppMessage.RequireAck(packetId) : IAppMessage.Require(packetId);
         msg.Sequence = seq;
 
-        bytesNotRead -= read;
+        using (var ms = new MemoryStream(_buffer, _readPos, length - 10))
+        using (var reader = new NetworkReader(ms))
+        {
+            msg.Read(reader);
+        }
+
+        _readPos += (length - 10);
         return true;
+    }
+
+    private void Compact()
+    {
+        int remaining = _writePos - _readPos;
+        if (remaining > 0)
+            Buffer.BlockCopy(_buffer, _readPos, _buffer, 0, remaining);
+        _writePos = remaining;
+        _readPos = 0;
+    }
+
+    public void Dispose()
+    {
+        // Return the buffer to the pool for other connections to use
+        var buf = Interlocked.Exchange(ref _buffer, null);
+        if (buf != null) ArrayPool<byte>.Shared.Return(buf);
     }
 }

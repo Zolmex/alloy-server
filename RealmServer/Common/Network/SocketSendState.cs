@@ -1,101 +1,57 @@
 using Common.Network.Messaging;
 using Common.Utilities;
+using System;
+using System.Buffers;
+using System.Buffers.Binary;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks.Dataflow;
 
 namespace Common.Network;
 
-public class SocketSendState
+public class SocketSendState : IDisposable
 {
-    public const int HEADER_SIZE = 10;
-    
-    private readonly MemoryStream _stream;
-
-    private readonly NetworkWriter _writer;
-    private TimedLock _lock;
-
-    public byte[] Buffer { get; } = new byte[0x10000]; // 64 KB
-    public int LastValidIndex { get; set; } // End position of the packet that still fits within buffer size
-    public int Offset { get; set; }
+    private byte[] _buffer;
+    public int LastValidIndex { get; private set; } = 0;
+    public bool HasData => LastValidIndex > 0;
 
     public SocketSendState()
     {
-        _stream = new MemoryStream(Buffer);
-        _writer = new NetworkWriter(_stream);
+        _buffer = ArrayPool<byte>.Shared.Rent(0x10000); // 64KB
     }
 
-    public void SetBuffer(SocketAsyncEventArgs args)
-    {
-        Logger.Debug($"Sending {LastValidIndex - Offset} Offset - {Offset}");
-        args.SetBuffer(Offset, LastValidIndex - Offset);
-    }
-
-    private int PacketBegin() // Returns the start of the packet bytes in the buffer. NEVER use this without locking the SocketSendState instance
-    {
-        var begin = (int)_stream.Position;
-        _stream.Position += HEADER_SIZE; // Leave HEADER_SIZE bytes for the header
-        return begin;
-    }
-
-    private void PacketEnd(int begin, IAppMessage msg)
-    {
-        var length = (int)_stream.Position - begin;
-        _stream.Position -= length; // Write the header [length][id][sequence][isAck]
-        _writer.Write(length);
-        _writer.Write((byte)msg.MessageId);
-        _writer.Write(msg.Sequence);
-        _writer.Write(msg.IsAck);
-        _stream.Position += length - HEADER_SIZE; // Go to the next position after packet body to write the next packet
-
-        if (_stream.Position - Offset < Buffer.Length)
-            LastValidIndex = (int)_stream.Position;
-
-        // Logger.Debug($"WRITING {pkt} DATA TO BUFFER");
-    }
-
-    public void Reset()
-    {
-        using (TimedLock.Lock(this))
-        {
-            LastValidIndex = 0;
-            Offset = 0;
-            _stream.Position = 0;
-        }
-    }
+    public void Reset() => LastValidIndex = 0;
 
     public void WriteMessage(IAppMessage msg)
     {
-        using (TimedLock.Lock(this))
-        {
-            var begin = PacketBegin();
+        int startPos = LastValidIndex;
+        int bodyPos = startPos + 10;
 
-            msg.Write(_writer);
+        using (var ms = new MemoryStream(_buffer, bodyPos, _buffer.Length - bodyPos))
+            using (var writer = new NetworkWriter(ms))
+            {
+                msg.Write(writer);
+                int bodyLen = (int)ms.Position;
+                int totalLen = bodyLen + 10;
 
-            PacketEnd(begin, msg);
-        }
+                BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(startPos), totalLen);
+                _buffer[startPos + 4] = (byte)msg.MessageId;
+                BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(startPos + 5), msg.Sequence);
+                _buffer[startPos + 9] = msg.IsAck ? (byte)1 : (byte)0;
+
+                LastValidIndex += totalLen;
+            }
     }
 
-    public void BeginSend(SocketAsyncEventArgs args)
+    public void PrepareSAEA(SocketAsyncEventArgs args)
     {
-        SetBuffer(args);
-        Lock();
+        args.SetBuffer(_buffer, 0, LastValidIndex);
     }
 
-    public void EndSend()
+    public void Dispose()
     {
-        // Entire buffer has been written, clear it
-        Reset();
-        Unlock();
-    }
-
-    public void Lock()
-    {
-        _lock = TimedLock.Lock(this);
-    }
-
-    public void Unlock()
-    {
-        _lock.Dispose();
+        var buf = Interlocked.Exchange(ref _buffer, null);
+        if (buf != null) ArrayPool<byte>.Shared.Return(buf);
     }
 }

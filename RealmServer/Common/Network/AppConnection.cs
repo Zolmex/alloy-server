@@ -4,9 +4,11 @@ using Common.Resources.Config;
 using Common.Utilities;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Common.Network;
@@ -15,7 +17,6 @@ namespace Common.Network;
 public class AppConnection
 {
     private const int RESPONSE_TTL_MS = 5000;
-
     private static readonly Logger _log = new(typeof(AppConnection));
 
     private readonly SocketAsyncEventArgs _receiveSAEA;
@@ -23,185 +24,174 @@ public class AppConnection
     private readonly SocketAsyncEventArgs _sendSAEA;
     private readonly SocketSendState _sendState;
     private readonly ConcurrentDictionary<int, TaskCompletionSource<IAppMessageAck>> _pendingAcks;
-
+    private readonly Channel<IAppMessage> _sendChannel = Channel.CreateUnbounded<IAppMessage>(
+        new UnboundedChannelOptions { SingleReader = true, AllowSynchronousContinuations = false });
+    
+    private readonly SemaphoreSlim _sendSignal = new(0);
+    
     public Socket Socket { get; private set; }
     public string HostName { get; set; }
     public string TargetName { get; set; }
 
     public AppConnection()
     {
+        ThreadPool.SetMinThreads(2000, 2000);
+        
         _sendState = new SocketSendState();
         _receiveState = new SocketReceiveState();
         _pendingAcks = new ConcurrentDictionary<int, TaskCompletionSource<IAppMessageAck>>();
 
         _sendSAEA = new SocketAsyncEventArgs();
-        _sendSAEA.SetBuffer(_sendState.Buffer, 0, _sendState.Buffer.Length);
         _sendSAEA.Completed += ProcessSend;
 
         _receiveSAEA = new SocketAsyncEventArgs();
-        _receiveSAEA.SetBuffer(_receiveState.Buffer, 0, _receiveState.Buffer.Length);
         _receiveSAEA.Completed += ProcessReceive;
     }
 
-    private void Reset()
+    private void Dispose()
     {
-        _sendState.Reset();
-        _receiveState.Reset();
+        _sendState.Dispose();
+        _receiveState.Dispose();
     }
 
-    public void Setup(Socket socket)
-    {
-        Socket = socket;
-        Socket.NoDelay = true;
-    }
-
-    public void SetupNew()
-    {
-        Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        Socket.NoDelay = true;
-    }
+    public void Setup(Socket socket) { Socket = socket; Socket.NoDelay = true; }
+    public void SetupNew() { Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); Socket.NoDelay = true; }
 
     public async Task Connect(string host, int port)
     {
         await Socket.ConnectAsync(host, port);
-
-        Start(Assembly.GetEntryAssembly()!.GetName().Name);
+        Start(Assembly.GetEntryAssembly()?.GetName().Name ?? "Unknown");
     }
 
     public void Start(string hostName)
     {
         HostName = hostName;
-        _log.Info($"Started a connection with the host name: {hostName}");
         Send(new HelloMessage() { AppName = hostName });
-
-        Task.Run(StartReceive);
-        _ = StartSend();
+        
+        // Start processing loops
+        Task.Run(ReceiveLoop);
+        Task.Run(SendLoop);
     }
 
     public void Send(IAppMessage msg)
     {
-        _sendState.WriteMessage(msg);
+        _sendChannel.Writer.TryWrite(msg);
     }
 
-    public async Task<T> SendAndReceiveAsync<T>(IAppMessage msg) where T : IAppMessageAck // Sends packet and completes when it receives a response
+    public async Task<T> SendAndReceiveAsync<T>(IAppMessage msg) where T : IAppMessageAck
     {
         IAppMessage.SetSequence(msg);
+        var tcs = new TaskCompletionSource<IAppMessageAck>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _pendingAcks[msg.Sequence] = tcs;
 
-        Logger.Debug($"Sending async {msg.MessageId}:{msg.Sequence}");
-        _sendState.WriteMessage(msg);
-
-        var tcs = _pendingAcks[msg.Sequence] = new TaskCompletionSource<IAppMessageAck>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Send(msg);
 
         using var cts = new CancellationTokenSource(RESPONSE_TTL_MS);
         try
         {
-            await using (cts.Token.Register(() =>
-                             tcs.TrySetException(new TimeoutException(
-                                 $"Response for {msg.MessageId} (Seq:{msg.Sequence}) timed out"))))
+            await using (cts.Token.Register(() => tcs.TrySetCanceled()))
             {
                 return (T)await tcs.Task;
             }
         }
-        catch (TimeoutException e)
+        catch (OperationCanceledException)
         {
-            _log.Error(e.Message);
+            _pendingAcks.TryRemove(msg.Sequence, out _);
+            _log.Error($"Response for {msg.MessageId} (Seq:{msg.Sequence}) timed out");
             return default;
         }
-    }
-
-    private async Task StartSend()
-    {
-        while (_sendState.LastValidIndex == 0) // Empty buffer
-            await Task.Delay(10); // Wait 10 milliseconds to retry
-
-        _sendState.BeginSend(_sendSAEA); // Block new write operations until the buffer is written to the socket
-        if (!Socket.SendAsync(_sendSAEA))
-            ProcessSend(null, _sendSAEA);
-    }
-
-    private void ProcessSend(object sender, SocketAsyncEventArgs args) // Handle errors
-    {
-        if (!Socket.Connected)
+        finally
         {
-            Disconnect("Unknown");
+            _pendingAcks.TryRemove(msg.Sequence, out _);
+        }
+    }
+
+    private async Task SendLoop()
+    {
+        // Local buffer to stage outgoing data without fighting locks
+        while (await _sendChannel.Reader.WaitToReadAsync())
+        {
+            // Reset state for a new batch
+            _sendState.Reset();
+
+            // Drain the channel into the buffer to send multiple messages in one TCP packet
+            while (_sendChannel.Reader.TryRead(out var msg))
+            {
+                _sendState.WriteMessage(msg);
+                // If buffer is 75% full, send it now to avoid overflow
+                if (_sendState.LastValidIndex > 48000) break; 
+            }
+
+            if (_sendState.HasData)
+            {
+                _sendState.PrepareSAEA(_sendSAEA);
+                
+                if (!Socket.SendAsync(_sendSAEA))
+                    ProcessSend(null, _sendSAEA);
+            }
+        }
+    }
+
+    private void ProcessSend(object sender, SocketAsyncEventArgs args)
+    {
+        if (args.SocketError != SocketError.Success)
+        {
+            Disconnect($"Send Error: {args.SocketError}");
             return;
         }
 
-        var error = args.SocketError;
-        if (error is SocketError.Success or SocketError.IOPending) // Everything good
-        {
-            _sendState.EndSend(); // Buffer was successfully written to the socket, continue write operations
-            _ = StartSend();
-            return;
-        }
-
-        string msg = null;
-        if (error != SocketError.ConnectionReset)
-            msg = $"Send SocketError.{error}";
-        Disconnect(msg);
+        lock (_sendState)
+            _sendState.Reset();
+        
+        // Check if more messages were added while we were sending
+        if (_sendState.HasData) _sendSignal.Release();
     }
 
-    private void StartReceive()
+    private void ReceiveLoop()
     {
-        _receiveState.SetBuffer(_receiveSAEA); // Prepare buffer for next batch of packets
+        if (Socket == null || !Socket.Connected) return;
+        _receiveState.PrepareSAEA(_receiveSAEA);
+        
         if (!Socket.ReceiveAsync(_receiveSAEA))
             ProcessReceive(null, _receiveSAEA);
     }
 
     private void ProcessReceive(object sender, SocketAsyncEventArgs args)
     {
-        if (!Socket.Connected)
+        if (args.SocketError != SocketError.Success || args.BytesTransferred == 0)
         {
-            Disconnect("Unknown");
+            Disconnect("Receive Error or Connection Closed");
             return;
         }
 
-        var error = args.SocketError;
+        _receiveState.OnDataReceived(args.BytesTransferred);
 
-        // Check for any errors during the operation
-        if (error != SocketError.Success && error != SocketError.IOPending)
+        while (_receiveState.TryReadMessage(out var msg))
         {
-            string msg = null;
-            if (error != SocketError.ConnectionReset)
-                msg = $"Receive SocketError.{error}";
-            Disconnect(msg);
-            return;
-        }
+            if (msg.IsAck && _pendingAcks.TryRemove(msg.Sequence, out var tcs))
+                tcs.TrySetResult(msg as IAppMessageAck);
 
-        var bytesReceived = args.BytesTransferred;
-
-        // When using ReceiveAsync, this value is set to 0 when the connection is terminated by the user
-        if (bytesReceived == 0)
-        {
-            Disconnect();
-            return;
-        }
-
-        Logger.Debug($"Received {bytesReceived} bytes");
-        
-        var bytesNotRead = bytesReceived;
-        while (_receiveState.ReadMessage(ref bytesNotRead, out var msg)) // Returns false when it fails to read a packet
-        {
-            msg.Read(_receiveState.Reader); // Every message defines a read method and a write method
-            if (msg.IsAck)
+            try
             {
-                if (_pendingAcks.TryRemove(msg.Sequence, out var tcs))
-                    tcs.TrySetResult(msg as IAppMessageAck); // Completes SendAsync execution
+                _ = msg.HandleAsync(this);
             }
-            
-            Logger.Debug($"Received {msg.MessageId}:{msg.Sequence}(IsAck?{msg.IsAck})");
-
-            msg.Handle(this); // Handler is implemented by each individual app
+            catch (Exception ex)
+            {
+                _log.Error($"Error handling message {msg.MessageId}: {ex.Message}");
+            }
         }
 
-        _receiveState.Reset();
-        StartReceive();
+        ReceiveLoop();
     }
 
     public void Disconnect(string reason = "Shutdown")
     {
-        _log.Info($"Disconnected from app '{TargetName}'. Reason: {reason}");
-        Socket.Disconnect(false);
-        Reset();
+        if (Socket is { Connected: true })
+        {
+            _log.Info($"Disconnected from app '{TargetName}'. Reason: {reason}");
+            Socket.Shutdown(SocketShutdown.Both);
+            Socket.Close();
+        }
+        Dispose();
     }
 }

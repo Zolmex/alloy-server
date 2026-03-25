@@ -60,7 +60,6 @@ internal class Program
             _log.Fatal($"Unhandled exception: {exception}");
         };
 
-        
         using var app = builder.Build();
         app.Run();
     }

@@ -10,25 +10,25 @@ public class NetworkService : BackgroundService
 {
     public static IDbContextFactory<AlloyContext> ContextFactory; // Don't yell at me this is the closest to the correct way I could do
     
-    private readonly AppListener _listener;
+    public static AppListener Listener;
     
     public NetworkService(IDbContextFactory<AlloyContext> contextFactory, IConfiguration config)
     {
         ContextFactory = contextFactory;
         
-        _listener = new AppListener(int.Parse(config["Server:Port"]!));
+        Listener = new AppListener(int.Parse(config["Server:Port"]!));
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _ = _listener.Start(stoppingToken); // Start accepting connections
+        _ = Listener.Start(stoppingToken); // Start accepting connections
         
         while (!stoppingToken.IsCancellationRequested)
         {
             NetworkHealthMonitor();
             
             await using var context = await ContextFactory.CreateDbContextAsync(stoppingToken);
-            Console.WriteLine($"Connected: {await context.Database.CanConnectAsync(stoppingToken)} | Connection count: {_listener.AppConnections.Count}");
+            Console.WriteLine($"Connected: {await context.Database.CanConnectAsync(stoppingToken)} | Connection count: {Listener.AppConnections.Count}");
             
             await Task.Delay(5 * 1000, stoppingToken);
         }
@@ -37,15 +37,15 @@ public class NetworkService : BackgroundService
     private void NetworkHealthMonitor()
     {
         var remove = new List<string>();
-        foreach (var (ip, con) in _listener.AppConnections) // Mark for removal
+        foreach (var (name, con) in Listener.AppConnections) // Mark for removal
         {
             if (!con.Socket.Connected)
-                remove.Add(ip);
+                remove.Add(name);
         }
 
         foreach (var key in remove)
         {
-            _listener.AppConnections.Remove(key);
+            Listener.AppConnections.Remove(key);
         }
     }
 }

@@ -28,13 +28,18 @@ public class AppListener
         while (!ct.IsCancellationRequested)
         {
             var skt = await _socket.AcceptAsync(ct);
-            var ip = ((IPEndPoint)skt.RemoteEndPoint)!.Address.ToString();
-            _log.Info($"Received App connection from {ip}");
-
+        
             var con = new AppConnection();
             con.Setup(skt);
+        
             con.Start(Assembly.GetEntryAssembly()!.GetName().Name);
-            AppConnections.Add(ip, con);
+        
+            _log.Info($"Accepted connection from {skt.RemoteEndPoint}");
         }
+    }
+    
+    public void RegisterConnection(string appName, AppConnection con)
+    {
+        AppConnections[appName] = con; 
     }
 }

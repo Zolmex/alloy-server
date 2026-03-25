@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Common.Network.Messaging;
 
@@ -18,7 +19,7 @@ public interface IAppMessage
     void Write(NetworkWriter wtr);
     void Read(NetworkReader rdr);
 
-    void Handle(AppConnection con)
+    async Task HandleAsync(AppConnection con)
     {
         if (!_handlers.TryGetValue(MessageId, out var handler))
         {
@@ -26,7 +27,7 @@ public interface IAppMessage
             return;
         }
 
-        handler.HandleAsync(this, con).Wait(); // TODO: make this async too
+        await handler.HandleAsync(this, con);
     }
 
     #region Static members

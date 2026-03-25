@@ -61,52 +61,73 @@ internal class Program
             listener.Start();
         }
 
+        var semaphore = new SemaphoreSlim(200); // add this to your config, e.g. 200
+
         while (true)
         {
-            var context = listener.GetContext(); // Blocks thread until a request is received
-            var request = context.Request.Url.LocalPath;
-            var ip = GetContextIP(context);
-
-            if (!RequestHandler.Exists(request)) // Request handlers are identified by a request path. Like "/account/register"
+            HttpListenerContext context;
+            try
             {
-                Log.Warn($"Unknown request '{request}' from '{ip}'");
+                context = await listener.GetContextAsync(); // non-blocking — frees the loop immediately
+            }
+            catch (HttpListenerException)
+            {
+                break; // listener was stopped (e.g. on shutdown)
+            }
+
+            await semaphore.WaitAsync(); // back-pressure: don't accept unbounded work
+
+            _ = Task.Run(async () =>
+            {
                 try
                 {
-                    context.Response.Close();
+                    await HandleRequestAsync(context);
                 }
-                catch
-                { }
-
-                continue;
-            }
-
-            Log.Debug($"Received '{request}' from '{ip}'");
-
-            NameValueCollection query;
-            try
-            {
-                using (var inputStream = context.Request.InputStream)
-                    using (var reader = new StreamReader(inputStream, Encoding.UTF8))
-                        query = HttpUtility.ParseQueryString(reader.ReadToEnd());
-            }
-            catch (HttpListenerException)
-            {
-                continue;
-            }
-
-            var response = await RequestHandler.Handle(request, ip, query); // Request handlers will always return data in the form of an XML string
-            response ??= "<Error>Internal error.</Error>";
-
-            try
-            {
-                var data = Encoding.UTF8.GetBytes(response);
-                context.Response.ContentType = "text/*";
-                context.Response.OutputStream.Write(data, 0, data.Length);
-                context.Response.Close();
-            }
-            catch (HttpListenerException)
-            { }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
         }
+    }
+    
+    private static async Task HandleRequestAsync(HttpListenerContext context)
+    {
+        var request = context.Request.Url.LocalPath;
+        var ip = GetContextIP(context);
+
+        if (!RequestHandler.Exists(request))
+        {
+            Log.Warn($"Unknown request '{request}' from '{ip}'");
+            try { context.Response.Close(); } catch { }
+            return;
+        }
+
+        Log.Debug($"Received '{request}' from '{ip}'");
+
+        NameValueCollection query;
+        try
+        {
+            using var inputStream = context.Request.InputStream;
+            using var reader = new StreamReader(inputStream, Encoding.UTF8);
+            query = HttpUtility.ParseQueryString(await reader.ReadToEndAsync());
+        }
+        catch (HttpListenerException)
+        {
+            return;
+        }
+
+        var response = await RequestHandler.Handle(request, ip, query);
+        response ??= "<Error>Internal error.</Error>";
+
+        try
+        {
+            var data = Encoding.UTF8.GetBytes(response);
+            context.Response.ContentType = "text/*";
+            await context.Response.OutputStream.WriteAsync(data, 0, data.Length);
+            context.Response.Close();
+        }
+        catch (HttpListenerException) { }
     }
 
     private static async void OnShutdownRequested(object sender, ControlMessage<ShutdownInfo> e)
