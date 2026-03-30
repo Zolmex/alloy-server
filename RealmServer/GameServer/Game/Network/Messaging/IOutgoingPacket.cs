@@ -1,10 +1,9 @@
 ﻿using Common.Network;
+using Common.Network.Messaging;
 
 namespace GameServer.Game.Network.Messaging;
 
-public interface IOutgoingPacket<TSelf> where TSelf : IOutgoingPacket<TSelf>
+public interface IOutgoingPacket : IWritable
 {
-    static abstract PacketId PacketId { get; }
-    static abstract TSelf Read(NetworkReader rdr);
-    void Write(NetworkWriter wtr);
+    PacketId ID { get; }
 }

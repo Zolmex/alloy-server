@@ -27,8 +27,6 @@ public class AppConnection
     private readonly Channel<IAppMessage> _sendChannel = Channel.CreateUnbounded<IAppMessage>(
         new UnboundedChannelOptions { SingleReader = true, AllowSynchronousContinuations = false });
     
-    private readonly SemaphoreSlim _sendSignal = new(0);
-    
     public Socket Socket { get; private set; }
     public string HostName { get; set; }
     public string TargetName { get; set; }
@@ -111,18 +109,12 @@ public class AppConnection
         // Local buffer to stage outgoing data without fighting locks
         while (await _sendChannel.Reader.WaitToReadAsync())
         {
-            // Reset state for a new batch
-            _sendState.Reset();
-
             // Drain the channel into the buffer to send multiple messages in one TCP packet
             while (_sendChannel.Reader.TryRead(out var msg))
-            {
-                _sendState.WriteMessage(msg);
-                // If buffer is 75% full, send it now to avoid overflow
-                if (_sendState.LastValidIndex > 48000) break; 
-            }
+                if (!_sendState.WriteMessage(msg))
+                    break;
 
-            if (_sendState.HasData)
+            if (_sendState.BeginSend())
             {
                 _sendState.PrepareSAEA(_sendSAEA);
                 
@@ -140,16 +132,14 @@ public class AppConnection
             return;
         }
 
-        lock (_sendState)
-            _sendState.Reset();
-        
-        // Check if more messages were added while we were sending
-        if (_sendState.HasData) _sendSignal.Release();
+        _sendState.OnDataSent(args.BytesTransferred);
     }
 
     private void ReceiveLoop()
     {
-        if (Socket == null || !Socket.Connected) return;
+        if (Socket == null || !Socket.Connected)
+            return;
+        
         _receiveState.PrepareSAEA(_receiveSAEA);
         
         if (!Socket.ReceiveAsync(_receiveSAEA))

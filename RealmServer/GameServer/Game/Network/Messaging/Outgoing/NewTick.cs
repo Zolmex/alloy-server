@@ -10,8 +10,10 @@ using System.IO;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> Statuses) : IOutgoingPacket<NewTick>
+public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> Statuses) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.NEWTICK;
+    
     public void Write(NetworkWriter wtr)
     {
         var begin = wtr.BaseStream.Position;

@@ -10,8 +10,10 @@ using System.Collections.Generic;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectData> NewEntities, List<ObjectDropData> OldEntities, Dictionary<int, ObjectStatusData> Updates) : IOutgoingPacket<Update>
+public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectData> NewEntities, List<ObjectDropData> OldEntities, Dictionary<int, ObjectStatusData> Updates) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.UPDATE;
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((short)Tiles.Count);

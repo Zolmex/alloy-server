@@ -177,7 +177,7 @@ partial record struct {typeSymbol.Name}
             return null;
         }
 
-        var inter = context.SemanticModel.Compilation.GetTypeByMetadataName("GameServer.Game.Network.Messaging.IOutgoingPacket`1");
+        var inter = context.SemanticModel.Compilation.GetTypeByMetadataName("GameServer.Game.Network.Messaging.IOutgoingPacket");
         //foreach(var i in symbol.Interfaces)
         //{
         //    debugStuff.AppendLine(i.MetadataName);
@@ -187,11 +187,11 @@ partial record struct {typeSymbol.Name}
         //debugStuff.AppendLine("");
         //return new(syn, symbol, true, true);
 
-        if (symbol.Interfaces.Any(n => n.MetadataName == "IOutgoingPacket`1"))
+        if (symbol.Interfaces.Any(n => n.MetadataName == "IOutgoingPacket"))
         {
             var write = symbol.GetMembers("Write");
             var read = symbol.GetMembers("Read");
-            var packetIdImpl = symbol.GetMembers("GameServer.Game.Network.Messaging.IOutgoingPacket.PacketId");
+            var packetIdImpl = symbol.GetMembers("GameServer.Game.Network.Messaging.IOutgoingPacket.ID");
             //
             //static PacketId IOutgoingPacket.PacketId => ;
             //foreach (var item in bonus)

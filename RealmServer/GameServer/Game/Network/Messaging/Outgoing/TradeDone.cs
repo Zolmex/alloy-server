@@ -7,8 +7,10 @@ using GameServer.Game.Entities;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct TradeDone(Player.TradeResult Result) : IOutgoingPacket<TradeDone>
+public readonly partial record struct TradeDone(Player.TradeResult Result) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.TRADEDONE;
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((byte)Result);

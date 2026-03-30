@@ -29,6 +29,8 @@ internal class Program
 
     private static async Task Main(string[] args)
     {
+        ThreadPool.SetMinThreads(1000, 1000);
+        
         Console.Title = $"Realm Server v{Assembly.GetExecutingAssembly().GetName().Version} - WebServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 

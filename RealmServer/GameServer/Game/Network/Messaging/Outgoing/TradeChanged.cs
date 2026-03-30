@@ -2,8 +2,10 @@
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct TradeChanged(bool[] Offer) : IOutgoingPacket<TradeChanged>
+public readonly partial record struct TradeChanged(bool[] Offer) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.TRADECHANGED;
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((byte)Offer.Length);

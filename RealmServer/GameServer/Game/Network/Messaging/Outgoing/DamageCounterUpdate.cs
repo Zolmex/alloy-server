@@ -8,8 +8,10 @@ using System.Collections.Generic;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct DamageCounterUpdate(int TargetId, int PlayerDamage, List<KeyValuePair<Player, int>> TopDamagers) : IOutgoingPacket<DamageCounterUpdate>
+public readonly partial record struct DamageCounterUpdate(int TargetId, int PlayerDamage, List<KeyValuePair<Player, int>> TopDamagers) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.DAMAGECOUNTERUPDATE;
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write(TargetId);

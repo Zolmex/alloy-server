@@ -7,8 +7,10 @@ using Common.Network;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[] TheirItems, string Name) : IOutgoingPacket<TradeStart>
+public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[] TheirItems, string Name) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.TRADESTART;
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write((byte)MyItems.Length);

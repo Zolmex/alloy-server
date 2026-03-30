@@ -13,8 +13,10 @@ public readonly partial record struct ServerPlayerShoot(
     float AngleInc,
     int[] DamageList,
     float[] CritList,
-    int ItemType = -1) : IOutgoingPacket<ServerPlayerShoot>
+    int ItemType = -1) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.SERVERPLAYERSHOOT;
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write(StartPos);

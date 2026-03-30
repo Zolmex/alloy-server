@@ -6,5 +6,7 @@ using Common;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct ShowEffect(byte EffectType, int TargetId, int Color, float EffectParam, WorldPosData Pos1, WorldPosData Pos2) : IOutgoingPacket<ShowEffect>
-{ }
+public readonly partial record struct ShowEffect(byte EffectType, int TargetId, int Color, float EffectParam, WorldPosData Pos1, WorldPosData Pos2) : IOutgoingPacket
+{
+    public PacketId ID => PacketId.SHOWEFFECT;
+}

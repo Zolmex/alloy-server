@@ -161,18 +161,8 @@ public class User : IIdentifiable
         ReconnectTo(world);
     }
 
-    public void SendPacket<T>(T packet)
-        where T : IOutgoingPacket<T>
+    public void SendPacket(IOutgoingPacket packet)
     {
-        var state = Network.SendState;
-        var wtr = state.Writer;
-        using (TimedLock.Lock(state))
-        {
-            var begin = state.PacketBegin();
-
-            packet.Write(wtr);
-
-            state.PacketEnd(begin, T.PacketId);
-        }
+        Network.WritePacket(packet);
     }
 }

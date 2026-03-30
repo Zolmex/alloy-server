@@ -10,5 +10,7 @@ public readonly partial record struct MapInfo(
     bool ShowDisplays,
     bool AllowPlayerTeleport,
     string Music,
-    int Difficulty) : IOutgoingPacket<MapInfo>
-{ }
+    int Difficulty) : IOutgoingPacket
+{
+    public PacketId ID => PacketId.MAPINFO;
+}

@@ -25,8 +25,10 @@ public readonly partial record struct EnemyShoot(
     bool ArmorPiercing,
     int Size,
     (ConditionEffectIndex, int)[] Effects,
-    int PropId = -1) : IOutgoingPacket<EnemyShoot>
+    int PropId = -1) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.ENEMYSHOOT;
+    
     public void Write(NetworkWriter wtr)
     {
         wtr.Write(BulletId);

@@ -12,46 +12,108 @@ namespace Common.Network;
 
 public class SocketSendState : IDisposable
 {
-    private byte[] _buffer;
-    public int LastValidIndex { get; private set; } = 0;
-    public bool HasData => LastValidIndex > 0;
-
+    private readonly MemoryStream _stream;
+    private readonly NetworkWriter _writer;
+    private int _bytesWritten;
+    private int _pending;
+    private int _bytesSent;
+    
     public SocketSendState()
     {
-        _buffer = ArrayPool<byte>.Shared.Rent(0x10000); // 64KB
+        _stream = new MemoryStream(0x20000);
+        _writer = new NetworkWriter(_stream);
     }
 
-    public void Reset() => LastValidIndex = 0;
-
-    public void WriteMessage(IAppMessage msg)
+    public void Reset()
     {
-        int startPos = LastValidIndex;
-        int bodyPos = startPos + 10;
+        _bytesWritten = 0;
+        _pending = 0;
+        _bytesSent = 0;
+    }
 
-        using (var ms = new MemoryStream(_buffer, bodyPos, _buffer.Length - bodyPos))
-            using (var writer = new NetworkWriter(ms))
-            {
-                msg.Write(writer);
-                int bodyLen = (int)ms.Position;
-                int totalLen = bodyLen + 10;
+    public bool WriteMessage(IAppMessage msg)
+    {
+        using (TimedLock.Lock(this))
+        {
+            int startPos = _bytesWritten;
+            var bodyStart = startPos + 10;
+            _stream.Seek(bodyStart, SeekOrigin.Begin);
+            msg.Write(_writer);
 
-                BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(startPos), totalLen);
-                _buffer[startPos + 4] = (byte)msg.MessageId;
-                BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(startPos + 5), msg.Sequence);
-                _buffer[startPos + 9] = msg.IsAck ? (byte)1 : (byte)0;
+            int totalLen = (int)(_stream.Position - startPos);
 
-                LastValidIndex += totalLen;
-            }
+            _stream.Seek(startPos, SeekOrigin.Begin);
+            _writer.Write(totalLen);
+            _writer.Write((byte)msg.MessageId);
+            _writer.Write(msg.Sequence);
+            _writer.Write((byte)(msg.IsAck ? 1 : 0));
+
+            _bytesWritten += totalLen;
+        }
+
+        return _bytesWritten < 48000;
+    }
+    
+    public void WritePacket(IWritable pkt, byte pktId)
+    {
+        using (TimedLock.Lock(this))
+        {
+            int startPos = _bytesWritten;
+            
+            var bodyStart = startPos + 5;
+            _stream.Seek(bodyStart, SeekOrigin.Begin);
+            pkt.Write(_writer);
+
+            int totalLen = (int)(_stream.Position - startPos);
+
+            _stream.Seek(startPos, SeekOrigin.Begin);
+            _writer.Write(totalLen);
+            _writer.Write(pktId);
+
+            _bytesWritten += totalLen;
+        }
+    }
+    
+    public bool BeginSend() {
+        using (TimedLock.Lock(this)) {
+            if (_pending != 0 || _bytesWritten == 0)
+                return false;
+            
+            _pending++;
+        }
+
+        return true;
     }
 
     public void PrepareSAEA(SocketAsyncEventArgs args)
     {
-        args.SetBuffer(_buffer, 0, LastValidIndex);
+        using (TimedLock.Lock(this))
+        {
+            _bytesSent += _bytesWritten;
+            args.SetBuffer(_stream.GetBuffer(), 0, _bytesSent);
+        }
     }
 
+    public void OnDataSent(int bytesTransferred) // If all bytes were transferred, lastvalidindex will be 0 again
+    {
+        using (TimedLock.Lock(this))
+        {
+            _pending--;
+            var bytesNotSent = _bytesSent - bytesTransferred;
+            if (bytesNotSent > 0)
+            {
+                var buffer = _stream.GetBuffer();
+                Buffer.BlockCopy(buffer, bytesTransferred, buffer, 0, _bytesWritten - bytesTransferred);
+            }
+
+            _bytesWritten -= bytesTransferred;
+            _bytesSent -= bytesTransferred;
+        }
+    }
+    
     public void Dispose()
     {
-        var buf = Interlocked.Exchange(ref _buffer, null);
-        if (buf != null) ArrayPool<byte>.Shared.Return(buf);
+        _stream.Dispose();
+        _writer.Dispose();
     }
 }
