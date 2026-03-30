@@ -26,7 +26,9 @@ public class AppConnection
     private readonly ConcurrentDictionary<int, TaskCompletionSource<IAppMessageAck>> _pendingAcks;
     private readonly Channel<IAppMessage> _sendChannel = Channel.CreateUnbounded<IAppMessage>(
         new UnboundedChannelOptions { SingleReader = true, AllowSynchronousContinuations = false });
-    
+
+    private readonly SemaphoreSlim _sendLock = new(1, 1);
+
     public Socket Socket { get; private set; }
     public string HostName { get; set; }
     public string TargetName { get; set; }
@@ -83,18 +85,13 @@ public class AppConnection
         _pendingAcks[msg.Sequence] = tcs;
 
         Send(msg);
-
-        using var cts = new CancellationTokenSource(RESPONSE_TTL_MS);
+        
         try
         {
-            await using (cts.Token.Register(() => tcs.TrySetCanceled()))
-            {
-                return (T)await tcs.Task;
-            }
+            return (T)await tcs.Task.WaitAsync(TimeSpan.FromMilliseconds(RESPONSE_TTL_MS));
         }
-        catch (OperationCanceledException)
+        catch (TimeoutException)
         {
-            _pendingAcks.TryRemove(msg.Sequence, out _);
             _log.Error($"Response for {msg.MessageId} (Seq:{msg.Sequence}) timed out");
             return default;
         }
@@ -109,6 +106,8 @@ public class AppConnection
         // Local buffer to stage outgoing data without fighting locks
         while (await _sendChannel.Reader.WaitToReadAsync())
         {
+            await _sendLock.WaitAsync();
+            
             // Drain the channel into the buffer to send multiple messages in one TCP packet
             while (_sendChannel.Reader.TryRead(out var msg))
                 if (!_sendState.WriteMessage(msg))
@@ -117,10 +116,12 @@ public class AppConnection
             if (_sendState.BeginSend())
             {
                 _sendState.PrepareSAEA(_sendSAEA);
-                
+
                 if (!Socket.SendAsync(_sendSAEA))
                     ProcessSend(null, _sendSAEA);
             }
+            else
+                _sendLock.Release();
         }
     }
 
@@ -133,25 +134,35 @@ public class AppConnection
         }
 
         _sendState.OnDataSent(args.BytesTransferred);
+        _sendLock.Release();
     }
 
     private void ReceiveLoop()
     {
-        if (Socket == null || !Socket.Connected)
-            return;
-        
-        _receiveState.PrepareSAEA(_receiveSAEA);
-        
-        if (!Socket.ReceiveAsync(_receiveSAEA))
-            ProcessReceive(null, _receiveSAEA);
+        while (Socket != null && Socket.Connected)
+        {
+            _receiveState.PrepareSAEA(_receiveSAEA);
+
+            if (Socket.ReceiveAsync(_receiveSAEA))
+                break;
+
+            if (!HandleReceive(_receiveSAEA))
+                break;
+        }
     }
 
     private void ProcessReceive(object sender, SocketAsyncEventArgs args)
     {
+        if (HandleReceive(args))
+            ReceiveLoop();
+    }
+
+    private bool HandleReceive(SocketAsyncEventArgs args)
+    {
         if (args.SocketError != SocketError.Success || args.BytesTransferred == 0)
         {
             Disconnect("Receive Error or Connection Closed");
-            return;
+            return false;
         }
 
         _receiveState.OnDataReceived(args.BytesTransferred);
@@ -171,7 +182,7 @@ public class AppConnection
             }
         }
 
-        ReceiveLoop();
+        return true;
     }
 
     public void Disconnect(string reason = "Shutdown")
