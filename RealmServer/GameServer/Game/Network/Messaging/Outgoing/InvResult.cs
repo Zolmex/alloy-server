@@ -1,6 +1,13 @@
-﻿namespace GameServer.Game.Network.Messaging.Outgoing;
+﻿using Common.Network;
 
-public readonly partial record struct InvResult(int Result) : IOutgoingPacket
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly record struct InvResult(int Result) : IOutgoingPacket
 {
     public PacketId ID => PacketId.INVRESULT;
+
+    public void Write(ref SpanWriter wtr)
+    {
+        wtr.Write(Result);
+    }
 }

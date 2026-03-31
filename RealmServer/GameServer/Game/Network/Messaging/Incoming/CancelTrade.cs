@@ -19,6 +19,6 @@ public partial record CancelTrade : IIncomingPacket
         player.OnTradeDone(Player.TradeResult.Canceled);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     { }
 }

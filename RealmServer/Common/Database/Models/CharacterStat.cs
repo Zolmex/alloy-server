@@ -37,48 +37,48 @@ public partial class CharacterStat : DbModel, IDbQueryable
     public CharacterStat()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("Hp",
-            wtr => wtr.Write(Hp),
-            rdr => Hp = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Hp),
+            (ref rdr) => Hp = rdr.ReadUInt32()
         );
         RegisterProperty("Mp",
-            wtr => wtr.Write(Mp),
-            rdr => Mp = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Mp),
+            (ref rdr) => Mp = rdr.ReadUInt32()
         );
         RegisterProperty("MaxHp",
-            wtr => wtr.Write(MaxHp),
-            rdr => MaxHp = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(MaxHp),
+            (ref rdr) => MaxHp = rdr.ReadUInt32()
         );
         RegisterProperty("MaxMp",
-            wtr => wtr.Write(MaxMp),
-            rdr => MaxMp = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(MaxMp),
+            (ref rdr) => MaxMp = rdr.ReadUInt32()
         );
         RegisterProperty("Attack",
-            wtr => wtr.Write(Attack),
-            rdr => Attack = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Attack),
+            (ref rdr) => Attack = rdr.ReadUInt32()
         );
         RegisterProperty("Defense",
-            wtr => wtr.Write(Defense),
-            rdr => Defense = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Defense),
+            (ref rdr) => Defense = rdr.ReadUInt32()
         );
         RegisterProperty("Speed",
-            wtr => wtr.Write(Speed),
-            rdr => Speed = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Speed),
+            (ref rdr) => Speed = rdr.ReadUInt32()
         );
         RegisterProperty("Dexterity",
-            wtr => wtr.Write(Dexterity),
-            rdr => Dexterity = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Dexterity),
+            (ref rdr) => Dexterity = rdr.ReadUInt32()
         );
         RegisterProperty("Vitality",
-            wtr => wtr.Write(Vitality),
-            rdr => Vitality = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Vitality),
+            (ref rdr) => Vitality = rdr.ReadUInt32()
         );
         RegisterProperty("Wisdom",
-            wtr => wtr.Write(Wisdom),
-            rdr => Wisdom = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Wisdom),
+            (ref rdr) => Wisdom = rdr.ReadUInt32()
         );
     }
 

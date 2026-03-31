@@ -3,6 +3,7 @@
 using Common.Network;
 using Common.Resources.Xml.Descriptors;
 using System;
+using System.IO;
 using System.Numerics;
 
 #endregion
@@ -42,9 +43,9 @@ public class AmplitudePath : ProjectilePathSegment
         return p;
     }
 
-    public override void Write(NetworkWriter wtr)
+    public override void Write(ref SpanWriter wtr)
     {
-        base.Write(wtr);
+        base.Write(ref wtr);
         wtr.Write(amplitude);
         wtr.Write(frequency);
     }

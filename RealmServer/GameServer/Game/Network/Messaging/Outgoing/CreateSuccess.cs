@@ -1,6 +1,14 @@
-﻿namespace GameServer.Game.Network.Messaging.Outgoing;
+﻿using Common.Network;
 
-public readonly partial record struct CreateSuccess(int ObjectId, int CharId) : IOutgoingPacket
+namespace GameServer.Game.Network.Messaging.Outgoing;
+
+public readonly record struct CreateSuccess(int ObjectId, int CharId) : IOutgoingPacket
 {
     public PacketId ID => PacketId.CREATESUCCESS;
+
+    public void Write(ref SpanWriter wtr)
+    {
+        wtr.Write(ObjectId);
+        wtr.Write(CharId);
+    }
 }

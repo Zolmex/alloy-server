@@ -23,20 +23,20 @@ public partial class AccountGift : DbModel, IDbQueryable
     public AccountGift()
     {
         RegisterProperty("AccountId",
-            wtr => wtr.Write(AccountId),
-            rdr => AccountId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(AccountId),
+            (ref rdr) => AccountId = rdr.ReadInt32()
         );
         RegisterProperty("SlotId",
-            wtr => wtr.Write(SlotId),
-            rdr => SlotId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(SlotId),
+            (ref rdr) => SlotId = rdr.ReadInt32()
         );
         RegisterProperty("ItemType",
-            wtr => wtr.Write(ItemType),
-            rdr => ItemType = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(ItemType),
+            (ref rdr) => ItemType = rdr.ReadUInt16()
         );
         RegisterProperty("ItemData",
-            wtr => wtr.Write(ItemData ?? []),
-            rdr => ItemData = rdr.Read<byte>()
+           (ref wtr) => wtr.Write(ItemData ?? []),
+            (ref rdr) => ItemData = rdr.ReadBytes(rdr.ReadUInt16()).ToArray()
         );
     }
     

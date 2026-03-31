@@ -2,6 +2,7 @@
 
 using Common.Network;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 
@@ -121,13 +122,13 @@ public class ProjectilePath
     ///     Write all of the segment data to the client so it can be parsed.
     /// </summary>
     /// <param name="wtr">Network Writer.</param>
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(SegmentCount);
         foreach (var segment in projectilePathSegments)
         {
             wtr.Write((byte)segment.Type);
-            segment.Write(wtr);
+            segment.Write(ref wtr);
         }
     }
 }

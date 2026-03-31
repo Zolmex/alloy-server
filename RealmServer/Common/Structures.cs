@@ -65,24 +65,24 @@ public struct ObjectStatusData
     public StatData[] UpdatedStats;
     public bool Update;
 
-    public static ObjectStatusData Read(NetworkReader rdr)
+    public static ObjectStatusData Read(ref SpanReader rdr)
     {
         var ret = new ObjectStatusData();
         ret.ObjectId = rdr.ReadInt32();
-        ret.Pos = WorldPosData.Read(rdr);
+        ret.Pos = WorldPosData.Read(ref rdr);
         ret.UpdatedStats = new StatData[rdr.ReadByte()];
         for (var i = 0; i < ret.UpdatedStats.Length; i++)
-            ret.UpdatedStats[i] = StatData.Read(rdr);
+            ret.UpdatedStats[i] = StatData.Read(ref rdr);
 
         return ret;
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(ObjectId);
         wtr.Write(Pos);
         var statCount = 0;
-        var pos = wtr.BaseStream.Position;
+        var pos = wtr.Position;
         wtr.Write((byte)0); // Placeholder
         using (TimedLock.Lock(Stats))
         {
@@ -92,15 +92,15 @@ public struct ObjectStatusData
                 if (value != null)
                 {
                     statCount++;
-                    StatData.Write(wtr, (StatType)i, value);
+                    StatData.Write(ref wtr, (StatType)i, value);
                 }
             }
         }
 
-        var endPos = wtr.BaseStream.Position;
-        wtr.BaseStream.Seek(pos, SeekOrigin.Begin); // Write in the placeholder the real amount of stat counts
+        var endPos = wtr.Position;
+        wtr.Position = pos; // Write in the placeholder the real amount of stat counts
         wtr.Write((byte)statCount);
-        wtr.BaseStream.Seek(endPos, SeekOrigin.Begin);
+        wtr.Position = endPos;
 
         Update = false;
     }
@@ -133,7 +133,7 @@ public struct WorldPosData : IEquatable<WorldPosData>
         Y = y;
     }
 
-    public static WorldPosData Read(NetworkReader rdr)
+    public static WorldPosData Read(ref SpanReader rdr)
     {
         return new WorldPosData { X = rdr.ReadSingle(), Y = rdr.ReadSingle() };
     }
@@ -273,7 +273,7 @@ public struct StatData
         }
     }
 
-    public static StatData Read(NetworkReader rdr)
+    public static StatData Read(ref SpanReader rdr)
     {
         var ret = new StatData();
         ret.Type = (StatType)rdr.ReadByte();
@@ -300,18 +300,18 @@ public struct StatData
     {
         wtr.Write((byte)Type);
         if (IsStringStat(Type))
-            wtr.Write(TextValue);
+            wtr.WriteUTF(TextValue);
         else if (IsFloatStat(Type))
             wtr.Write(FloatValue);
         else
             wtr.Write(IntValue);
     }
 
-    public static void Write(NetworkWriter wtr, StatType type, object value)
+    public static void Write(ref SpanWriter wtr, StatType type, object value)
     {
         wtr.Write((byte)type);
         if (IsStringStat(type))
-            wtr.Write((string)value);
+            wtr.WriteUTF((string)value);
         else if (IsFloatStat(type))
         {
             var floatValue = value is int intValue ? intValue : (float)value;
@@ -346,15 +346,15 @@ public struct ObjectData
     public ushort ObjectType;
     public ObjectStatusData Status;
 
-    public static ObjectData Read(NetworkReader rdr)
+    public static ObjectData Read(ref SpanReader rdr)
     {
-        return new ObjectData { ObjectType = rdr.ReadUInt16(), Status = ObjectStatusData.Read(rdr) };
+        return new ObjectData { ObjectType = rdr.ReadUInt16(), Status = ObjectStatusData.Read(ref rdr) };
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(ObjectType);
-        Status.Write(wtr);
+        Status.Write(ref wtr);
     }
 }
 
@@ -368,7 +368,7 @@ public struct ObjectDropData
         return new ObjectDropData { ObjectId = rdr.ReadInt32(), Explode = rdr.ReadBoolean() };
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(ObjectId);
         wtr.Write(Explode);
@@ -383,7 +383,7 @@ public struct SlotObjectData
 
 public static class SlotObjectDataExtensions
 {
-    extension(NetworkReader rdr)
+    extension(ref SpanReader rdr)
     {
         public SlotObjectData ReadSlotObjectData()
         {

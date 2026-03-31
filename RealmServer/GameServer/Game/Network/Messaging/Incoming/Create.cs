@@ -37,7 +37,7 @@ public partial record Create : IIncomingPacket
         }
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         ClassType = rdr.ReadInt16();
         SkinType = rdr.ReadInt16();

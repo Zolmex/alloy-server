@@ -6,114 +6,146 @@ using System.Buffers.Binary;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
 namespace Common.Network;
 
 public class SocketSendState : IDisposable
 {
-    private readonly MemoryStream _stream;
-    private readonly NetworkWriter _writer;
-    private int _bytesWritten;
-    private int _pending;
-    private int _bytesSent;
+    private byte[] _writeBuffer;
+    private byte[] _sendBuffer;
+
+    private int _writeLength;
+    private int _sendLength;
+    private int _sendOffset;
+    private bool _pending;
     
     public SocketSendState()
     {
-        _stream = new MemoryStream(0x20000);
-        _writer = new NetworkWriter(_stream);
+        _sendBuffer = ArrayPool<byte>.Shared.Rent(0x20000);
+        Array.Clear(_sendBuffer);
+        _writeBuffer = ArrayPool<byte>.Shared.Rent(0x20000);
+        Array.Clear(_writeBuffer);
     }
 
     public void Reset()
     {
-        _bytesWritten = 0;
-        _pending = 0;
-        _bytesSent = 0;
+        _writeLength = 0;
+        _sendLength = 0;
+        _sendOffset = 0;
+        _pending = false;
     }
 
     public bool WriteMessage(IAppMessage msg)
     {
         using (TimedLock.Lock(this))
         {
-            int startPos = _bytesWritten;
+            int startPos = _writeLength;
             var bodyStart = startPos + 10;
-            _stream.Seek(bodyStart, SeekOrigin.Begin);
-            msg.Write(_writer);
 
-            int totalLen = (int)(_stream.Position - startPos);
+            var span = _writeBuffer.AsSpan();
+            var writer = new SpanWriter(span);
+            writer.Position = bodyStart;
+            
+            msg.Write(ref writer);
 
-            _stream.Seek(startPos, SeekOrigin.Begin);
-            _writer.Write(totalLen);
-            _writer.Write((byte)msg.MessageId);
-            _writer.Write(msg.Sequence);
-            _writer.Write((byte)(msg.IsAck ? 1 : 0));
+            int totalLen = writer.Position - startPos;
 
-            _bytesWritten += totalLen;
+            writer.Position = startPos;
+            writer.Write(totalLen);
+            writer.Write((byte)msg.MessageId);
+            writer.Write(msg.Sequence);
+            writer.Write((byte)(msg.IsAck ? 1 : 0));
+
+            _writeLength += totalLen;
         }
 
-        return _bytesWritten < 48000;
+        return _writeLength < 48000;
     }
     
     public void WritePacket(IWritable pkt, byte pktId)
     {
         using (TimedLock.Lock(this))
         {
-            int startPos = _bytesWritten;
-            
-            var bodyStart = startPos + 5;
-            _stream.Seek(bodyStart, SeekOrigin.Begin);
-            pkt.Write(_writer);
+            int start = _writeLength;
 
-            int totalLen = (int)(_stream.Position - startPos);
+            var span = _writeBuffer.AsSpan();
 
-            _stream.Seek(startPos, SeekOrigin.Begin);
-            _writer.Write(totalLen);
-            _writer.Write(pktId);
+            int bodyStart = start + 5;
 
-            _bytesWritten += totalLen;
+            var writer = new SpanWriter(span); // assume you have or can make one
+            writer.Position = bodyStart;
+
+            pkt.Write(ref writer);
+
+            int totalLen = writer.Position - start;
+
+            writer.Position = start;
+            writer.Write(totalLen);
+            writer.Write(pktId);
+
+            _writeLength += totalLen;
         }
     }
     
-    public bool BeginSend() {
+    public bool TryBeginSend(SocketAsyncEventArgs args) {
         using (TimedLock.Lock(this)) {
-            if (_pending != 0 || _bytesWritten == 0)
+            if (_pending)
                 return false;
+
+            if (_writeLength == 0)
+            {
+                _pending = false;
+                return false;
+            }
             
-            _pending++;
+            _pending = true;
+            
+            var tmp = _sendBuffer;
+            _sendBuffer = _writeBuffer;
+            _writeBuffer = tmp;
+
+            _sendLength = _writeLength;
+            _writeLength = 0;
+            _sendOffset = 0;
+
+            args.SetBuffer(_sendBuffer, 0, _sendLength);
         }
 
         return true;
     }
 
-    public void PrepareSAEA(SocketAsyncEventArgs args)
+    public bool OnDataSent(SocketAsyncEventArgs args) // If all bytes were transferred, lastvalidindex will be 0 again
     {
         using (TimedLock.Lock(this))
         {
-            _bytesSent += _bytesWritten;
-            args.SetBuffer(_stream.GetBuffer(), 0, _bytesSent);
-        }
-    }
+            _sendOffset += args.BytesTransferred;
 
-    public void OnDataSent(int bytesTransferred) // If all bytes were transferred, lastvalidindex will be 0 again
-    {
-        using (TimedLock.Lock(this))
-        {
-            _pending--;
-            var bytesNotSent = _bytesSent - bytesTransferred;
-            if (bytesNotSent > 0)
+            if (_sendOffset < _sendLength)
             {
-                var buffer = _stream.GetBuffer();
-                Buffer.BlockCopy(buffer, bytesTransferred, buffer, 0, _bytesWritten - bytesTransferred);
+                // continue sending remaining bytes
+                args.SetBuffer(_sendBuffer, _sendOffset, _sendLength - _sendOffset);
+                return true; // continue send
             }
 
-            _bytesWritten -= bytesTransferred;
-            _bytesSent -= bytesTransferred;
+            // done
+            _sendLength = 0;
+            _sendOffset = 0;
+
+            _pending = false;
+            return false;
         }
     }
     
     public void Dispose()
     {
-        _stream.Dispose();
-        _writer.Dispose();
+        // Return the buffer to the pool for other connections to use
+        var buf = Interlocked.Exchange(ref _sendBuffer, null);
+        if (buf != null)
+            ArrayPool<byte>.Shared.Return(buf);
+        buf = Interlocked.Exchange(ref _writeBuffer, null);
+        if (buf != null)
+            ArrayPool<byte>.Shared.Return(buf);
     }
 }

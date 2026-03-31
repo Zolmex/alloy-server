@@ -29,11 +29,11 @@ public partial record EnemyHit : IIncomingPacket
         //target.ProjectileHit(player, ProjectileId);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         ProjectileId = rdr.ReadInt32();
         TargetId = rdr.ReadInt32();
         Elapsed = rdr.ReadInt32();
-        TargetPos = WorldPosData.Read(rdr);
+        TargetPos = WorldPosData.Read(ref rdr);
     }
 }

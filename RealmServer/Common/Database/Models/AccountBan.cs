@@ -31,24 +31,24 @@ public partial class AccountBan : DbModel, IDbQueryable
     public AccountBan()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("Reason",
-            wtr => wtr.Write(Reason ?? ""),
-            rdr => Reason = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(Reason ?? ""),
+            (ref rdr) => Reason = rdr.ReadUTF()
         );
         RegisterProperty("BannedAt",
-            wtr => wtr.Write(BannedAt.ToUnixTimestamp()),
-            rdr => BannedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write(BannedAt.ToUnixTimestamp()),
+            (ref rdr) => BannedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("ExpiresAt",
-            wtr => wtr.Write((ExpiresAt ?? DateTime.MaxValue).ToUnixTimestamp()),
-            rdr => ExpiresAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write((ExpiresAt ?? DateTime.MaxValue).ToUnixTimestamp()),
+            (ref rdr) => ExpiresAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("Enabled",
-            wtr => wtr.Write(Enabled),
-            rdr => Enabled = rdr.ReadBoolean()
+           (ref wtr) => wtr.Write(Enabled),
+            (ref rdr) => Enabled = rdr.ReadBoolean()
         );
     }
     

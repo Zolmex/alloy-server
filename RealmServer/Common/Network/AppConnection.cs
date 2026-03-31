@@ -16,7 +16,7 @@ namespace Common.Network;
 // Connection to other server apps
 public class AppConnection
 {
-    private const int RESPONSE_TTL_MS = 5000;
+    private const int RESPONSE_TTL_MS = 10000;
     private static readonly Logger _log = new(typeof(AppConnection));
 
     private readonly SocketAsyncEventArgs _receiveSAEA;
@@ -113,10 +113,8 @@ public class AppConnection
                 if (!_sendState.WriteMessage(msg))
                     break;
 
-            if (_sendState.BeginSend())
+            if (_sendState.TryBeginSend(_sendSAEA))
             {
-                _sendState.PrepareSAEA(_sendSAEA);
-
                 if (!Socket.SendAsync(_sendSAEA))
                     ProcessSend(null, _sendSAEA);
             }
@@ -127,14 +125,24 @@ public class AppConnection
 
     private void ProcessSend(object sender, SocketAsyncEventArgs args)
     {
-        if (args.SocketError != SocketError.Success)
+        while (true)
         {
-            Disconnect($"Send Error: {args.SocketError}");
-            return;
-        }
+            if (args.SocketError != SocketError.Success)
+            {
+                Disconnect($"Send Error: {args.SocketError}");
+                return;
+            }
 
-        _sendState.OnDataSent(args.BytesTransferred);
-        _sendLock.Release();
+            if (_sendState.OnDataSent(args))
+            {
+                if (!Socket.SendAsync(_sendSAEA))
+                    continue;
+                return;
+            }
+
+            _sendLock.Release();
+            break;
+        }
     }
 
     private void ReceiveLoop()

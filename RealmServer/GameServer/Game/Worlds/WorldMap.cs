@@ -7,6 +7,7 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using GameServer.Game.Entities;
 using System.Collections.Generic;
+using System.IO;
 
 #endregion
 
@@ -58,7 +59,7 @@ public class WorldTile
         Region = newTile.Region;
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write((short)X);
         wtr.Write((short)Y);

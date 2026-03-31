@@ -1,6 +1,7 @@
 using Common.Database;
 using Common.Utilities;
 using System;
+using System.IO;
 
 namespace Common.Network.Messaging.Impl;
 
@@ -16,22 +17,24 @@ public record struct FlushMessage : IAppMessage
     
     public byte[] PropertiesBuffer { get; set; }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
-        wtr.Write(Key);
+        wtr.WriteUTF(Key);
         wtr.Write(Version);
-        wtr.Write(Properties);
+        wtr.Write((ushort)Properties.Length);
+        foreach (var prop in Properties)
+            wtr.WriteUTF(prop);
 
         wtr.Write((ushort)0); // Placeholder for properties length
-        var begin = wtr.BaseStream.Position;
-        Entity.WriteProperties(wtr, Properties);
-        var length = wtr.BaseStream.Position - begin;
-        wtr.BaseStream.Position = begin - 2;
+        var begin = wtr.Position;
+        Entity.WriteProperties(ref wtr, Properties);
+        var length = wtr.Position - begin;
+        wtr.Position = begin - 2;
         wtr.Write((ushort)length);
-        wtr.BaseStream.Position += length;
+        wtr.Position += length;
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Key = rdr.ReadUTF();
         Version = rdr.ReadInt32();
@@ -40,6 +43,6 @@ public record struct FlushMessage : IAppMessage
         for (var i = 0; i < len; i++)
             Properties[i] = rdr.ReadUTF();
         
-        PropertiesBuffer = rdr.ReadBytes(rdr.ReadUInt16());
+        PropertiesBuffer = rdr.ReadBytes(rdr.ReadUInt16()).ToArray();
     }
 }

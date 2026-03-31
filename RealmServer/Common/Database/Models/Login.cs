@@ -27,28 +27,28 @@ public partial class Login : DbModel, IDbQueryable
     public Login()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("Name",
-            wtr => wtr.Write(Name),
-            rdr => Name = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(Name),
+            (ref rdr) => Name = rdr.ReadUTF()
         );
         RegisterProperty("PasswordHash",
-            wtr => wtr.Write(PasswordHash ?? ""),
-            rdr => PasswordHash = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(PasswordHash ?? ""),
+            (ref rdr) => PasswordHash = rdr.ReadUTF()
         );
         RegisterProperty("PasswordSalt",
-            wtr => wtr.Write(PasswordSalt ?? ""),
-            rdr => PasswordSalt = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(PasswordSalt ?? ""),
+            (ref rdr) => PasswordSalt = rdr.ReadUTF()
         );
         RegisterProperty("LastLoginAt",
-            wtr => wtr.Write((LastLoginAt ?? DateTime.MinValue).ToUnixTimestamp()),
-            rdr => LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write((LastLoginAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            (ref rdr) => LastLoginAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("IPAddress",
-            wtr => wtr.Write(IPAddress ?? ""),
-            rdr => IPAddress = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(IPAddress ?? ""),
+            (ref rdr) => IPAddress = rdr.ReadUTF()
         );
     }
 

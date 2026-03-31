@@ -29,32 +29,32 @@ public partial class ExplorationStat : DbModel, IDbQueryable
     public ExplorationStat()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("TilesUncovered",
-            wtr => wtr.Write(TilesUncovered),
-            rdr => TilesUncovered = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(TilesUncovered),
+            (ref rdr) => TilesUncovered = rdr.ReadUInt32()
         );
         RegisterProperty("QuestsCompleted",
-            wtr => wtr.Write(QuestsCompleted),
-            rdr => QuestsCompleted = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(QuestsCompleted),
+            (ref rdr) => QuestsCompleted = rdr.ReadUInt32()
         );
         RegisterProperty("Escapes",
-            wtr => wtr.Write(Escapes),
-            rdr => Escapes = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Escapes),
+            (ref rdr) => Escapes = rdr.ReadUInt32()
         );
         RegisterProperty("NearDeathEscapes",
-            wtr => wtr.Write(NearDeathEscapes),
-            rdr => NearDeathEscapes = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(NearDeathEscapes),
+            (ref rdr) => NearDeathEscapes = rdr.ReadUInt32()
         );
         RegisterProperty("MinutesActive",
-            wtr => wtr.Write(MinutesActive),
-            rdr => Teleports = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(MinutesActive),
+            (ref rdr) => Teleports = rdr.ReadUInt32()
         );
         RegisterProperty("Teleports",
-            wtr => wtr.Write(Teleports),
-            rdr => Teleports = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(Teleports),
+            (ref rdr) => Teleports = rdr.ReadUInt32()
         );
     }
 

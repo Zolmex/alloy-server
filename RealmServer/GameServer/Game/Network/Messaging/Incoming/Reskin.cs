@@ -19,7 +19,7 @@ public partial record Reskin : IIncomingPacket
         user.GameInfo.Player.Skin = (ushort)SkinType;
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         SkinType = rdr.ReadInt32();
     }

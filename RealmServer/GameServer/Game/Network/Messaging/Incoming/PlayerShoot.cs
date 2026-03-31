@@ -85,10 +85,10 @@ public partial record PlayerShoot : IIncomingPacket
         player.LastClientShootTime = Time;
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Angle = rdr.ReadSingle();
-        Pos = WorldPosData.Read(rdr);
+        Pos = WorldPosData.Read(ref rdr);
         Time = rdr.ReadInt32();
         IsServerShoot = rdr.ReadBoolean();
         if (IsServerShoot)

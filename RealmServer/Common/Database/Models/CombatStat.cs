@@ -31,36 +31,36 @@ public partial class CombatStat : DbModel, IDbQueryable
     public CombatStat()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("Shots",
-            wtr => wtr.Write(Shots),
-            rdr => Shots = rdr.ReadUInt64()
+           (ref wtr) => wtr.Write(Shots),
+            (ref rdr) => Shots = rdr.ReadUInt64()
         );
         RegisterProperty("ShotsHit",
-            wtr => wtr.Write(ShotsHit),
-            rdr => ShotsHit = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(ShotsHit),
+            (ref rdr) => ShotsHit = rdr.ReadUInt32()
         );
         RegisterProperty("LevelUpAssists",
-            wtr => wtr.Write(LevelUpAssists),
-            rdr => LevelUpAssists = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(LevelUpAssists),
+            (ref rdr) => LevelUpAssists = rdr.ReadUInt32()
         );
         RegisterProperty("PotionsDrank",
-            wtr => wtr.Write(PotionsDrank),
-            rdr => PotionsDrank = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(PotionsDrank),
+            (ref rdr) => PotionsDrank = rdr.ReadUInt16()
         );
         RegisterProperty("AbilitiesUsed",
-            wtr => wtr.Write(AbilitiesUsed),
-            rdr => AbilitiesUsed = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(AbilitiesUsed),
+            (ref rdr) => AbilitiesUsed = rdr.ReadUInt16()
         );
         RegisterProperty("DamageTaken",
-            wtr => wtr.Write(DamageTaken),
-            rdr => DamageTaken = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(DamageTaken),
+            (ref rdr) => DamageTaken = rdr.ReadUInt32()
         );
         RegisterProperty("DamageDealt",
-            wtr => wtr.Write(DamageDealt),
-            rdr => DamageDealt = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(DamageDealt),
+            (ref rdr) => DamageDealt = rdr.ReadUInt32()
         );
     }
 

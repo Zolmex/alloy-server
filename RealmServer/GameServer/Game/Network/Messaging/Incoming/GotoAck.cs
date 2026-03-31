@@ -21,6 +21,6 @@ public partial record GotoAck : IIncomingPacket
         plr.FinishTeleport();
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     { }
 }

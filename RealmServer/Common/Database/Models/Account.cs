@@ -81,107 +81,107 @@ public partial class Account : DbModel, IDbQueryable
     public Account()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("Name",
-            wtr => wtr.Write(Name),
-            rdr => Name = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(Name),
+            (ref rdr) => Name = rdr.ReadUTF()
         );
         RegisterProperty("Rank",
-            wtr => wtr.Write(Rank),
-            rdr => Rank = rdr.ReadInt16()
+           (ref wtr) => wtr.Write(Rank),
+            (ref rdr) => Rank = rdr.ReadInt16()
         );
         RegisterProperty("GuildName",
-            wtr => wtr.Write(GuildName ?? ""),
-            rdr => GuildName = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(GuildName ?? ""),
+            (ref rdr) => GuildName = rdr.ReadUTF()
         );
         RegisterProperty("IsAdmin",
-            wtr => wtr.Write(IsAdmin),
-            rdr => IsAdmin = rdr.ReadBoolean()
+           (ref wtr) => wtr.Write(IsAdmin),
+            (ref rdr) => IsAdmin = rdr.ReadBoolean()
         );
         RegisterProperty("IsBanned",
-            wtr => wtr.Write(IsBanned),
-            rdr => IsBanned = rdr.ReadBoolean()
+           (ref wtr) => wtr.Write(IsBanned),
+            (ref rdr) => IsBanned = rdr.ReadBoolean()
         );
         RegisterProperty("IsMuted",
-            wtr => wtr.Write(IsMuted),
-            rdr => IsMuted = rdr.ReadBoolean()
+           (ref wtr) => wtr.Write(IsMuted),
+            (ref rdr) => IsMuted = rdr.ReadBoolean()
         );
         RegisterProperty("MaxChars",
-            wtr => wtr.Write(MaxChars),
-            rdr => MaxChars = rdr.ReadInt16()
+           (ref wtr) => wtr.Write(MaxChars),
+            (ref rdr) => MaxChars = rdr.ReadInt16()
         );
         RegisterProperty("VaultCount",
-            wtr => wtr.Write(VaultCount),
-            rdr => VaultCount = rdr.ReadInt16()
+           (ref wtr) => wtr.Write(VaultCount),
+            (ref rdr) => VaultCount = rdr.ReadInt16()
         );
         RegisterProperty("NextCharId",
-            wtr => wtr.Write(NextCharId),
-            rdr => NextCharId = rdr.ReadInt16()
+           (ref wtr) => wtr.Write(NextCharId),
+            (ref rdr) => NextCharId = rdr.ReadInt16()
         );
         RegisterProperty("CreatedAt",
-            wtr => wtr.Write(CreatedAt.ToUnixTimestamp()),
-            rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write(CreatedAt.ToUnixTimestamp()),
+            (ref rdr) => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("AccStats",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = AccStats != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    AccStats.WriteProperties(wtr);
+                    AccStats.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                AccStats = AccountStat.Read(rdr);
+                AccStats = AccountStat.Read(ref rdr);
                 AccStatsId = AccStats?.Id ?? 0;
             }
         );
         RegisterProperty("Login",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = Login != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    Login.WriteProperties(wtr);
+                    Login.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                Login = DbModel.Read<Login>(rdr);
+                Login = DbModel.Read<Login>(ref rdr);
                 LoginId = Login?.Id ?? 0;
             }
         );
         RegisterProperty("GuildMember",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = GuildMember != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    GuildMember.WriteProperties(wtr);
+                    GuildMember.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                GuildMember = DbModel.Read<GuildMember>(rdr);
+                GuildMember = DbModel.Read<GuildMember>(ref rdr);
                 GuildMemberId = GuildMember?.Id ?? 0;
             }
         );
         RegisterProperty("Guild",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = Guild != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    Guild.WriteProperties(wtr);
+                    Guild.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                Guild = DbModel.Read<Guild>(rdr);
+                Guild = DbModel.Read<Guild>(ref rdr);
                 GuildId = Guild?.Id ?? 0;
             }
         );
         RegisterProperty("AccountSkins",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)AccountSkins.Count);
                 foreach (var skin in AccountSkins)
@@ -189,23 +189,23 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = skin != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        skin.WriteProperties(wtr);
+                        skin.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 AccountSkins.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var skin = DbModel.Read<AccountSkin>(rdr);
+                    var skin = DbModel.Read<AccountSkin>(ref rdr);
                     if (skin != null)
                         AccountSkins.Add(skin);
                 }
             }
         );
         RegisterProperty("AccountIgnores",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)AccountIgnores.Count);
                 foreach (var ignored in AccountIgnores)
@@ -213,23 +213,23 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = ignored != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        ignored.WriteProperties(wtr);
+                        ignored.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 AccountIgnores.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var ign = DbModel.Read<AccountIgnore>(rdr);
+                    var ign = DbModel.Read<AccountIgnore>(ref rdr);
                     if (ign != null)
                         AccountIgnores.Add(ign);
                 }
             }
         );
         RegisterProperty("AccountLocks",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)AccountLocks.Count);
                 foreach (var locked in AccountLocks)
@@ -237,23 +237,23 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = locked != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        locked.WriteProperties(wtr);
+                        locked.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 AccountLocks.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var locks = DbModel.Read<AccountLock>(rdr);
+                    var locks = DbModel.Read<AccountLock>(ref rdr);
                     if (locks != null)
                         AccountLocks.Add(locks);
                 }
             }
         );
         RegisterProperty("Characters",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)Characters.Count);
                 foreach (var chr in Characters)
@@ -261,23 +261,23 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = chr != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        chr.WriteProperties(wtr);
+                        chr.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 Characters.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var chr = DbModel.Read<Character>(rdr);
+                    var chr = DbModel.Read<Character>(ref rdr);
                     if (chr != null)
                         Characters.Add(chr);
                 }
             }
         );
         RegisterProperty("AccountVaults",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)AccountVaults.Count);
                 foreach (var vault in AccountVaults)
@@ -285,23 +285,23 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = vault != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        vault.WriteProperties(wtr);
+                        vault.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 AccountVaults.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var vault = DbModel.Read<AccountVault>(rdr);
+                    var vault = DbModel.Read<AccountVault>(ref rdr);
                     if (vault != null)
                         AccountVaults.Add(vault);
                 }
             }
         );
         RegisterProperty("AccountGifts",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)AccountGifts.Count);
                 foreach (var gift in AccountGifts)
@@ -309,23 +309,23 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = gift != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        gift.WriteProperties(wtr);
+                        gift.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 AccountGifts.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var gift = DbModel.Read<AccountGift>(rdr);
+                    var gift = DbModel.Read<AccountGift>(ref rdr);
                     if (gift != null)
                         AccountGifts.Add(gift);
                 }
             }
         );
         RegisterProperty("AccountMutes",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)AccountMutes.Count);
                 foreach (var mute in AccountMutes)
@@ -333,23 +333,23 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = mute != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        mute.WriteProperties(wtr);
+                        mute.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 AccountMutes.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var mute = DbModel.Read<AccountMute>(rdr);
+                    var mute = DbModel.Read<AccountMute>(ref rdr);
                     if (mute != null)
                         AccountMutes.Add(mute);
                 }
             }
         );
         RegisterProperty("AccountBans",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)AccountBans.Count);
                 foreach (var bans in AccountBans)
@@ -357,16 +357,16 @@ public partial class Account : DbModel, IDbQueryable
                     var hasValue = bans != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        bans.WriteProperties(wtr);
+                        bans.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 AccountBans.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var ban = DbModel.Read<AccountBan>(rdr);
+                    var ban = DbModel.Read<AccountBan>(ref rdr);
                     if (ban != null)
                         AccountBans.Add(ban);
                 }

@@ -24,7 +24,7 @@ public partial record JoinGuild : IIncomingPacket
         player.JoinGuild(GuildName);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         GuildName = rdr.ReadUTF();
     }

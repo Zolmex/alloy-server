@@ -22,10 +22,10 @@ public partial record UseItem : IIncomingPacket
         user.GameInfo.Player.UseItem(Slot, UsePos, Time);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Slot = rdr.ReadSlotObjectData();
-        UsePos = WorldPosData.Read(rdr);
+        UsePos = WorldPosData.Read(ref rdr);
         Time = rdr.ReadInt32();
     }
 }

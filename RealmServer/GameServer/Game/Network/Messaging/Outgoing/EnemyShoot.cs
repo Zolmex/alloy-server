@@ -3,6 +3,7 @@
 using Common;
 using Common.Network;
 using Common.ProjectilePaths;
+using System.IO;
 
 #endregion
 
@@ -29,7 +30,7 @@ public readonly partial record struct EnemyShoot(
 {
     public PacketId ID => PacketId.ENEMYSHOOT;
     
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(BulletId);
         wtr.Write(OwnerId);
@@ -42,7 +43,7 @@ public readonly partial record struct EnemyShoot(
         {
             // Write custom projectile properties
             wtr.Write(ProjType);
-            Path.Write(wtr);
+            Path.Write(ref wtr);
             wtr.Write(Lifetime);
             wtr.Write(MultiHit);
             wtr.Write(PassesCover);

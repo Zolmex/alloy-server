@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,25 +23,28 @@ public abstract class DbModel
     protected DbModel()
     {
         RegisterProperty("Version",
-            wtr => wtr.Write(Version),
-            rdr => Version = rdr.ReadInt32()
+            (ref wtr) => wtr.Write(Version),
+            (ref rdr) => Version = rdr.ReadInt32()
         );
     }
     
-    protected void RegisterProperty(string propName, Action<NetworkWriter> writer, Action<NetworkReader> reader)
+    public delegate void SpanWriterAction(ref SpanWriter writer);
+    public delegate void SpanReaderAction(ref SpanReader reader);
+    
+    protected void RegisterProperty(string propName, SpanWriterAction writer, SpanReaderAction reader)
     {
         _serializers.Add(propName, new PropertySerializer(propName, writer, reader));
     }
     
-    public void WriteProperties(NetworkWriter wtr, params string[] properties)
+    public void WriteProperties(ref SpanWriter wtr, params string[] properties)
     {
         if (properties == null || properties.Length == 0)
         {
             wtr.Write((byte)_serializers.Count);
             foreach (var kvp in _serializers)
             {
-                wtr.Write(kvp.Key);
-                kvp.Value.Writer(wtr);
+                wtr.WriteUTF(kvp.Key);
+                kvp.Value.Writer(ref wtr);
             }
 
             return;
@@ -51,20 +55,20 @@ public abstract class DbModel
         {
             if (_serializers.TryGetValue(prop, out var serializer))
             {
-                wtr.Write(prop);
-                serializer.Writer(wtr);
+                wtr.WriteUTF(prop);
+                serializer.Writer(ref wtr);
             }
         }
     }
     
-    public void ReadProperties(NetworkReader rdr)
+    public void ReadProperties(ref SpanReader rdr)
     {
         var count = rdr.ReadByte();
         for (var i = 0; i < count; i++)
         {
             var propName = rdr.ReadUTF();
             if (_serializers.TryGetValue(propName, out var serializer))
-                serializer.Reader(rdr);
+                serializer.Reader(ref rdr);
         }
     }
 
@@ -107,15 +111,15 @@ public abstract class DbModel
         });
     }
 
-    public static T Read<T>(NetworkReader rdr) where T : DbModel, new()
+    public static T Read<T>(ref SpanReader rdr) where T : DbModel, new()
     {
         if (!rdr.ReadBoolean())
             return null;
 
         var ret = new T();
-        ret.ReadProperties(rdr);
+        ret.ReadProperties(ref rdr);
         return ret;
     }
 
-    private record PropertySerializer(string Property, Action<NetworkWriter> Writer, Action<NetworkReader> Reader);
+    private record PropertySerializer(string Property, SpanWriterAction Writer, SpanReaderAction Reader);
 }

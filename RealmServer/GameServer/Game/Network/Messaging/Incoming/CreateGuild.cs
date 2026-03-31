@@ -26,7 +26,7 @@ public partial record CreateGuild : IIncomingPacket
         // user.SendPacket(new GuildResult(result == GuildResult.SUCCESS, result));
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Name = rdr.ReadUTF();
     }

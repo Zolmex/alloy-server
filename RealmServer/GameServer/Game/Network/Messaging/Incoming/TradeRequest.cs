@@ -16,7 +16,7 @@ public partial record TradeRequest : IIncomingPacket
         player.TradeRequest(Name);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Name = rdr.ReadUTF();
     }

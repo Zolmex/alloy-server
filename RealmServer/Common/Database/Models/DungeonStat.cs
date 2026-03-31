@@ -1,4 +1,5 @@
 ﻿using Common.Network;
+using Common.Utilities;
 using System;
 using System.Collections.Generic;
 
@@ -21,16 +22,16 @@ public partial class DungeonStat : DbModel, IDbQueryable
     public DungeonStat()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("DungeonName",
-            wtr => wtr.Write(DungeonName ?? ""),
-            rdr => DungeonName = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(DungeonName ?? ""),
+            (ref rdr) => DungeonName = rdr.ReadUTF()
         );
         RegisterProperty("CompletedCount",
-            wtr => wtr.Write(CompletedCount),
-            rdr => CompletedCount = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(CompletedCount),
+            (ref rdr) => CompletedCount = rdr.ReadUInt16()
         );
     }
 

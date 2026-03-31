@@ -81,30 +81,35 @@ public class NetworkHandler
         if (User.State == ConnectionState.Disconnected || !Socket.Connected)
             return;
 
-        if (_sendState.BeginSend())
-        {
-            _sendState.PrepareSAEA(_sendSAEA);
+        if (!_sendState.TryBeginSend(_sendSAEA))
+            return;
 
-            if (Socket.SendAsync(_sendSAEA))
-                ProcessSend(null, _sendSAEA);
-        }
+        if (!Socket.SendAsync(_sendSAEA))
+            ProcessSend(null, _sendSAEA);
     }
 
     private void ProcessSend(object sender, SocketAsyncEventArgs args)
     {
-        if (User.State == ConnectionState.Disconnected)
+        while (true)
         {
-            User.Disconnect(reason: DisconnectReason.Unknown);
-            return;
-        }
+            if (User.State == ConnectionState.Disconnected)
+            {
+                User.Disconnect(reason: DisconnectReason.Unknown);
+                break;
+            }
 
-        if (args.SocketError != SocketError.Success)
-        {
-            User.Disconnect($"Send Error: {args.SocketError}", DisconnectReason.NetworkError);
-            return;
-        }
+            if (args.SocketError != SocketError.Success)
+            {
+                User.Disconnect($"Send Error: {args.SocketError}", DisconnectReason.NetworkError);
+                break;
+            }
 
-        _sendState.OnDataSent(args.BytesTransferred);
+            if (_sendState.OnDataSent(args))
+                if (Socket.SendAsync(_sendSAEA))
+                    break;
+
+            break;
+        }
     }
 
     public void StartReceive()
@@ -157,15 +162,15 @@ public class NetworkHandler
 
         _receiveState.OnDataReceived(args.BytesTransferred);
 
-        while (_receiveState.TryReadPacket(out var result))
+        while (_receiveState.PacketReady())
         {
-            var pktId = (PacketId)result.Item1;
+            var pktId = (PacketId)_receiveState.ReadPacket(out var rdr);
             try
             {
                 // Console.WriteLine($"RECEIVING {pktId}");
                 if (_incomingPackets.TryGetValue(pktId, out var pkt))
                 {
-                    pkt.Read(result.Item2);
+                    pkt.Read(ref rdr);
                     pkt.Handle(User);
                 }
             }

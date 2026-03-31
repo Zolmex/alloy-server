@@ -24,28 +24,28 @@ public partial class CharacterDeath : DbModel, IDbQueryable
     public CharacterDeath()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("DeadAt",
-            wtr => wtr.Write((DeadAt ?? DateTime.MinValue).ToUnixTimestamp()),
-            rdr => DeadAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write((DeadAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            (ref rdr) => DeadAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("DeathFame",
-            wtr => wtr.Write(DeathFame),
-            rdr => DeathFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(DeathFame),
+            (ref rdr) => DeathFame = rdr.ReadUInt32()
         );
         RegisterProperty("Char",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = Char != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    Char.WriteProperties(wtr);
+                    Char.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                Char = DbModel.Read<Character>(rdr);
+                Char = DbModel.Read<Character>(ref rdr);
                 CharId = Char?.Id ?? 0;
             }
         );

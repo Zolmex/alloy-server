@@ -22,7 +22,7 @@ public partial record PlayerText : IIncomingPacket
         user.GameInfo.Player.Speak(Text);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Text = rdr.ReadUTF();
     }

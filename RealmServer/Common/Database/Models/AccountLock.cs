@@ -22,12 +22,12 @@ public partial class AccountLock : DbModel, IDbQueryable
     public AccountLock()
     {
         RegisterProperty("AccountId",
-            wtr => wtr.Write(AccountId),
-            rdr => AccountId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(AccountId),
+            (ref rdr) => AccountId = rdr.ReadInt32()
         );
         RegisterProperty("LockedId",
-            wtr => wtr.Write(LockedId),
-            rdr => LockedId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(LockedId),
+            (ref rdr) => LockedId = rdr.ReadInt32()
         );
     }
 

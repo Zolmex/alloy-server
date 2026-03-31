@@ -2,6 +2,7 @@ using Common.Network.Messaging;
 using Common.Utilities;
 using System;
 using System.Buffers;
+using System.Buffers.Binary;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -15,15 +16,10 @@ public class SocketReceiveState : IDisposable
     private int _bytesRead;
     private const int BUFFER_SIZE = 0x20000;
 
-    private readonly MemoryStream _stream;
-    private readonly NetworkReader _reader;
-    
     public SocketReceiveState()
     {
         // Rent memory from the shared pool
         _buffer = ArrayPool<byte>.Shared.Rent(BUFFER_SIZE);
-        _stream = new MemoryStream(_buffer);
-        _reader = new NetworkReader(_stream);
     }
 
     public void Reset()
@@ -53,9 +49,10 @@ public class SocketReceiveState : IDisposable
         if (_bytesAvailable < 4)
             return false;
 
-        _stream.Seek(_bytesRead, SeekOrigin.Begin); // Make sure we are at the next packet position
+        var span = _buffer.AsSpan(_bytesRead, _bytesAvailable);
+        var rdr = new SpanReader(span);
         
-        int length = _reader.ReadInt32();
+        int length = rdr.ReadInt32();
         // Console.WriteLine($"Length {length} bytes");
         if (length < 10 || length > BUFFER_SIZE)
             throw new InvalidDataException($"Invalid packet length: {length}");
@@ -63,14 +60,14 @@ public class SocketReceiveState : IDisposable
         if (length > _bytesAvailable)
             return false;
 
-        var packetId = (AppMessageId)_reader.ReadByte();
-        var seq = _reader.ReadInt32();
-        bool isAck = _reader.ReadByte() != 0;
+        var packetId = (AppMessageId)rdr.ReadByte();
+        var seq = rdr.ReadInt32();
+        bool isAck = rdr.ReadByte() != 0;
 
         msg = isAck ? IAppMessage.RequireAck(packetId) : IAppMessage.Require(packetId);
         msg.Sequence = seq;
 
-        msg.Read(_reader);
+        msg.Read(ref rdr);
 
         _bytesAvailable -= length;
         _bytesRead += length;
@@ -80,15 +77,15 @@ public class SocketReceiveState : IDisposable
         return true;
     }
     
-    public bool TryReadPacket(out (byte, NetworkReader) ret)
+    public bool PacketReady()
     {
-        ret = default;
         if (_bytesAvailable < 4)
             return false;
 
-        _stream.Seek(_bytesRead, SeekOrigin.Begin); // Make sure we are at the next packet position
+        var span = _buffer.AsSpan(_bytesRead, _bytesAvailable);
+        var rdr = new SpanReader(span);
         
-        int length = _reader.ReadInt32();
+        int length = rdr.ReadInt32();
         
         if (length < 5 || length > BUFFER_SIZE)
             throw new InvalidDataException($"Invalid packet length: {length}");
@@ -96,18 +93,25 @@ public class SocketReceiveState : IDisposable
         if (length > _bytesAvailable)
             return false;
 
-        var packetId = _reader.ReadByte();
+        return true;
+    }
+
+    public byte ReadPacket(out SpanReader bodyReader)
+    {
+        var span = _buffer.AsSpan(_bytesRead, _bytesAvailable);
+        var rdr = new SpanReader(span);
         
-        ret.Item2 = _reader;
-
-        ret.Item1 = packetId;
-
+        int length = rdr.ReadInt32();
+        var packetId = rdr.ReadByte();
+        
         _bytesAvailable -= length;
         _bytesRead += length;
         if (_bytesAvailable == 0)
             _bytesRead = 0;
+
+        bodyReader = new SpanReader(span.Slice(5, length - 5));
         
-        return true;
+        return packetId;
     }
 
     public void Dispose()
@@ -116,7 +120,5 @@ public class SocketReceiveState : IDisposable
         var buf = Interlocked.Exchange(ref _buffer, null);
         if (buf != null)
             ArrayPool<byte>.Shared.Return(buf);
-        _stream.Dispose();
-        _reader.Dispose();
     }
 }

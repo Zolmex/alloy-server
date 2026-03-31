@@ -54,7 +54,7 @@ public partial record Load : IIncomingPacket
         user.Load(chr, world);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         CharId = rdr.ReadInt32();
     }

@@ -2,6 +2,7 @@
 
 using Common.Network;
 using GameServer.Game.Entities;
+using System.IO;
 
 #endregion
 
@@ -11,7 +12,7 @@ public readonly partial record struct TradeDone(Player.TradeResult Result) : IOu
 {
     public PacketId ID => PacketId.TRADEDONE;
     
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write((byte)Result);
     }

@@ -26,16 +26,16 @@ public partial class GuildMember : DbModel, IDbQueryable
     public GuildMember()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("GuildRank",
-            wtr => wtr.Write(GuildRank),
-            rdr => GuildRank = rdr.ReadInt16()
+           (ref wtr) => wtr.Write(GuildRank),
+            (ref rdr) => GuildRank = rdr.ReadInt16()
         );
         RegisterProperty("LastSeenAt",
-            wtr => wtr.Write(LastSeenAt.ToUnixTimestamp()),
-            rdr => LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write(LastSeenAt.ToUnixTimestamp()),
+            (ref rdr) => LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
     }
 

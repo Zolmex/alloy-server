@@ -2,6 +2,7 @@
 
 using Common;
 using Common.Network;
+using System.IO;
 
 #endregion
 
@@ -17,7 +18,7 @@ public readonly partial record struct ServerPlayerShoot(
 {
     public PacketId ID => PacketId.SERVERPLAYERSHOOT;
     
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(StartPos);
         wtr.Write(Angle);

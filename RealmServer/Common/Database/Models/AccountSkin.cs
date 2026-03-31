@@ -20,12 +20,12 @@ public partial class AccountSkin : DbModel, IDbQueryable
     public AccountSkin()
     {
         RegisterProperty("AccountId",
-            wtr => wtr.Write(AccountId),
-            rdr => AccountId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(AccountId),
+            (ref rdr) => AccountId = rdr.ReadInt32()
         );
         RegisterProperty("SkinType",
-            wtr => wtr.Write(SkinType),
-            rdr => SkinType = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(SkinType),
+            (ref rdr) => SkinType = rdr.ReadInt32()
         );
     }
 

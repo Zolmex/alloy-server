@@ -25,8 +25,8 @@ public partial record Move : IIncomingPacket
         player.LastMoveAck = RealmManager.RealTime.ElapsedMilliseconds; // Setting the last move ack here allows the new position to be valid at one point (e.g. the server lagged)
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
-        Pos = WorldPosData.Read(rdr);
+        Pos = WorldPosData.Read(ref rdr);
     }
 }

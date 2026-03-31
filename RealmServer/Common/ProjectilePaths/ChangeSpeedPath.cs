@@ -3,6 +3,7 @@
 using Common.Network;
 using Common.Resources.Xml.Descriptors;
 using System;
+using System.IO;
 using System.Numerics;
 
 #endregion
@@ -53,9 +54,9 @@ public class ChangeSpeedPath : ProjectilePathSegment
         return p;
     }
 
-    public override void Write(NetworkWriter wtr)
+    public override void Write(ref SpanWriter wtr)
     {
-        base.Write(wtr);
+        base.Write(ref wtr);
         wtr.Write(Increment);
         wtr.Write(Cooldown);
         wtr.Write(CooldownOffset);

@@ -36,7 +36,7 @@ public partial record PlayerHit : IIncomingPacket
         proj.TryHitEntity(user.GameInfo.Player);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         OwnerId = rdr.ReadInt32();
         ProjectileId = rdr.ReadUInt16();

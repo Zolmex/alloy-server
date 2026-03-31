@@ -29,20 +29,20 @@ public partial class AccountMute : DbModel, IDbQueryable
     public AccountMute()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("Reason",
-            wtr => wtr.Write(Reason ?? ""),
-            rdr => Reason = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(Reason ?? ""),
+            (ref rdr) => Reason = rdr.ReadUTF()
         );
         RegisterProperty("MutedAt",
-            wtr => wtr.Write(MutedAt.ToUnixTimestamp()),
-            rdr => MutedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write(MutedAt.ToUnixTimestamp()),
+            (ref rdr) => MutedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("ExpiresAt",
-            wtr => wtr.Write((ExpiresAt ?? DateTime.MaxValue).ToUnixTimestamp()),
-            rdr => ExpiresAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write((ExpiresAt ?? DateTime.MaxValue).ToUnixTimestamp()),
+            (ref rdr) => ExpiresAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
     }
     

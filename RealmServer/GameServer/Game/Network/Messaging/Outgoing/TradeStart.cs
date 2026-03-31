@@ -2,6 +2,8 @@
 
 using Common;
 using Common.Network;
+using Common.Utilities;
+using System.IO;
 
 #endregion
 
@@ -11,15 +13,15 @@ public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[
 {
     public PacketId ID => PacketId.TRADESTART;
     
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write((byte)MyItems.Length);
         foreach (var item in MyItems)
-            item.Write(wtr);
-        wtr.Write(Name);
+            item.Write(ref wtr);
+        wtr.WriteUTF(Name);
         wtr.Write((byte)TheirItems.Length);
         foreach (var item in TheirItems)
-            item.Write(wtr);
+            item.Write(ref wtr);
     }
 
     public static TradeStart Read(NetworkReader rdr)

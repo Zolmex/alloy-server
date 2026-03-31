@@ -25,20 +25,20 @@ public partial class ClassStat : DbModel, IDbQueryable
     public ClassStat()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("ObjectType",
-            wtr => wtr.Write(ObjectType),
-            rdr => ObjectType = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(ObjectType),
+            (ref rdr) => ObjectType = rdr.ReadUInt16()
         );
         RegisterProperty("BestLevel",
-            wtr => wtr.Write(BestLevel),
-            rdr => BestLevel = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(BestLevel),
+            (ref rdr) => BestLevel = rdr.ReadUInt16()
         );
         RegisterProperty("BestFame",
-            wtr => wtr.Write(BestFame),
-            rdr => BestFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(BestFame),
+            (ref rdr) => BestFame = rdr.ReadUInt32()
         );
     }
 

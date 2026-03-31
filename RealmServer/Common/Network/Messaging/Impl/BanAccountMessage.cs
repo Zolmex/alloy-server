@@ -1,5 +1,6 @@
 using Common.Utilities;
 using System;
+using System.IO;
 
 namespace Common.Network.Messaging.Impl;
 
@@ -13,15 +14,15 @@ public record struct BanAccountMessage : IAppMessage
     public DateTime ExpiresAt { get; set; }
     public int ModeratorId { get; set; }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
-        wtr.Write(Name);
-        wtr.Write(Reason);
+        wtr.WriteUTF(Name);
+        wtr.WriteUTF(Reason);
         wtr.Write(ExpiresAt.ToUnixTimestamp());
         wtr.Write(ModeratorId);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Name = rdr.ReadUTF();
         Reason = rdr.ReadUTF();

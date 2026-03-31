@@ -1,6 +1,7 @@
 using Common.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -16,8 +17,8 @@ public interface IAppMessage
     int Sequence { get; set; }
     bool IsAck => this is IAppMessageAck;
 
-    void Write(NetworkWriter wtr);
-    void Read(NetworkReader rdr);
+    void Write(ref SpanWriter wtr);
+    void Read(ref SpanReader rdr);
 
     async Task HandleAsync(AppConnection con)
     {

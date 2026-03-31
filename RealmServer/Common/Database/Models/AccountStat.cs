@@ -29,31 +29,31 @@ public partial class AccountStat : DbModel, IDbQueryable
     public AccountStat()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("BestCharFame",
-            wtr => wtr.Write(BestCharFame),
-            rdr => BestCharFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(BestCharFame),
+            (ref rdr) => BestCharFame = rdr.ReadUInt32()
         );
         RegisterProperty("CurrentFame",
-            wtr => wtr.Write(CurrentFame),
-            rdr => CurrentFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(CurrentFame),
+            (ref rdr) => CurrentFame = rdr.ReadUInt32()
         );
         RegisterProperty("TotalFame",
-            wtr => wtr.Write(TotalFame),
-            rdr => TotalFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(TotalFame),
+            (ref rdr) => TotalFame = rdr.ReadUInt32()
         );
         RegisterProperty("CurrentCredits",
-            wtr => wtr.Write(CurrentCredits),
-            rdr => CurrentCredits = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(CurrentCredits),
+            (ref rdr) => CurrentCredits = rdr.ReadUInt32()
         );
         RegisterProperty("TotalCredits",
-            wtr => wtr.Write(TotalCredits),
-            rdr => TotalCredits = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(TotalCredits),
+            (ref rdr) => TotalCredits = rdr.ReadUInt32()
         );
         RegisterProperty("ClassStats",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)ClassStats.Count);
                 foreach (var stat in ClassStats)
@@ -61,15 +61,15 @@ public partial class AccountStat : DbModel, IDbQueryable
                     var hasValue = stat != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        stat.WriteProperties(wtr);
+                        stat.WriteProperties(ref wtr);
                 }
             },
-            rdr => {
+            (ref rdr) => {
                 ClassStats.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var classStat = DbModel.Read<ClassStat>(rdr);
+                    var classStat = DbModel.Read<ClassStat>(ref rdr);
                     if (classStat != null)
                         ClassStats.Add(classStat);
                 }
@@ -77,13 +77,13 @@ public partial class AccountStat : DbModel, IDbQueryable
         );
     }
 
-    public static AccountStat Read(NetworkReader rdr)
+    public static AccountStat Read(ref SpanReader rdr)
     {
         if (!rdr.ReadBoolean())
             return null;
         
         var ret = new AccountStat();
-        ret.ReadProperties(rdr);
+        ret.ReadProperties(ref rdr);
         return ret;
     }
     

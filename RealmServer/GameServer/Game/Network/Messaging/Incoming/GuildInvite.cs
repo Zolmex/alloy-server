@@ -31,7 +31,7 @@ public partial record GuildInvite : IIncomingPacket
         // target.GuildInvite(user, acc.GuildName);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         TargetName = rdr.ReadUTF();
     }

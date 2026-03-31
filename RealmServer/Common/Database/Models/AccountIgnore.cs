@@ -22,12 +22,12 @@ public partial class AccountIgnore : DbModel, IDbQueryable
     public AccountIgnore()
     {
         RegisterProperty("AccountId",
-            wtr => wtr.Write(AccountId),
-            rdr => AccountId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(AccountId),
+            (ref rdr) => AccountId = rdr.ReadInt32()
         );
         RegisterProperty("IgnoredId",
-            wtr => wtr.Write(IgnoredId),
-            rdr => IgnoredId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(IgnoredId),
+            (ref rdr) => IgnoredId = rdr.ReadInt32()
         );
     }
 

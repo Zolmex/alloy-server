@@ -39,7 +39,7 @@ public partial record GuildRemove : IIncomingPacket
         //     target.User.ReconnectTo(RealmManager.NexusInstance);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         TargetName = rdr.ReadUTF();
     }

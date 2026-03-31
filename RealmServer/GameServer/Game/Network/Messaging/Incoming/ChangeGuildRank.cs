@@ -34,7 +34,7 @@ public partial record ChangeGuildRank : IIncomingPacket
         _ = DbClient.FlushAsync(targetAcc);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         TargetName = rdr.ReadUTF();
         TargetRank = rdr.ReadInt32();

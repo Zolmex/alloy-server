@@ -37,7 +37,7 @@ public partial record InvSwap : IIncomingPacket
         user.SendPacket(new InvResult(success ? 0 : 1));
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         SlotObject1 = rdr.ReadSlotObjectData();
         SlotObject2 = rdr.ReadSlotObjectData();

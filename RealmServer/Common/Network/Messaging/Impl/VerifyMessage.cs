@@ -1,5 +1,6 @@
 using Common.Utilities;
 using System;
+using System.IO;
 
 namespace Common.Network.Messaging.Impl;
 
@@ -10,13 +11,13 @@ public record struct VerifyMessage : IAppMessage
     public string Username { get; set; }
     public string Password { get; set; }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
-        wtr.Write(Username);
-        wtr.Write(Password);
+        wtr.WriteUTF(Username);
+        wtr.WriteUTF(Password);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Username = rdr.ReadUTF();
         Password = rdr.ReadUTF();

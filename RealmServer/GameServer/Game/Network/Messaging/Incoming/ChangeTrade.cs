@@ -16,7 +16,7 @@ public partial record ChangeTrade : IIncomingPacket
         player.ChangeTrade(Offer);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         Offer = new bool[rdr.ReadByte()];
         for (var i = 0; i < Offer.Length; i++)

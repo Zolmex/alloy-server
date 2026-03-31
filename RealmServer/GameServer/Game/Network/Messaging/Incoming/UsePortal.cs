@@ -35,7 +35,7 @@ public partial record UsePortal : IIncomingPacket
             user.ReconnectTo(portal.PortalWorld);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         ObjectId = rdr.ReadInt32();
     }

@@ -80,7 +80,7 @@ public class NetworkWriter : BinaryWriter
                 case long @long: Write(@long); break;
                 case sbyte @sbyte: Write(@sbyte); break;
                 case float @float: Write(@float); break;
-                case string @string: Write(@string); break;
+                case string @string: WriteUTF(@string); break;
                 case ushort @ushort: Write(@ushort); break;
                 case uint @uint: Write(@uint); break;
                 case ulong @ulong: Write(@ulong); break;
@@ -93,7 +93,7 @@ public class NetworkWriter : BinaryWriter
         Write((ushort)value.Length);
         for (var i = 0; i < value.Length; i++)
         {
-            Write(value[i]);
+            WriteUTF(value[i]);
         }
     }
 
@@ -162,11 +162,6 @@ public class NetworkWriter : BinaryWriter
             Write((ushort)str.Length);
             base.Write(str);
         }
-    }
-
-    public override void Write(string str)
-    {
-        WriteUTF(str);
     }
 
     public void Write(WorldPosData wp)

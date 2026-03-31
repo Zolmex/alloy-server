@@ -2,6 +2,7 @@
 
 using Common.Network;
 using Common.Resources.Xml.Descriptors;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 
@@ -51,13 +52,13 @@ public class CombinedPath : ProjectilePathSegment
         return p;
     }
 
-    public override void Write(NetworkWriter wtr)
+    public override void Write(ref SpanWriter wtr)
     {
         wtr.Write((byte)_segments.Length);
         foreach (var segment in _segments)
         {
             wtr.Write((byte)segment.Type);
-            segment.Write(wtr);
+            segment.Write(ref wtr);
         }
 
         wtr.Write(TimeOffset);

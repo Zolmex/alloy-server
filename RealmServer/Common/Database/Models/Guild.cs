@@ -32,35 +32,35 @@ public partial class Guild : DbModel, IDbQueryable
     public Guild()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("Name",
-            wtr => wtr.Write(Name ?? ""),
-            rdr => Name = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(Name ?? ""),
+            (ref rdr) => Name = rdr.ReadUTF()
         );
         RegisterProperty("Level",
-            wtr => wtr.Write(Level),
-            rdr => Level = rdr.ReadInt16()
+           (ref wtr) => wtr.Write(Level),
+            (ref rdr) => Level = rdr.ReadInt16()
         );
         RegisterProperty("CurrentFame",
-            wtr => wtr.Write(CurrentFame),
-            rdr => CurrentFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(CurrentFame),
+            (ref rdr) => CurrentFame = rdr.ReadUInt32()
         );
         RegisterProperty("TotalFame",
-            wtr => wtr.Write(TotalFame),
-            rdr => TotalFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(TotalFame),
+            (ref rdr) => TotalFame = rdr.ReadUInt32()
         );
         RegisterProperty("GuildBoard",
-            wtr => wtr.Write(GuildBoard ?? ""),
-            rdr => GuildBoard = rdr.ReadUTF()
+           (ref wtr) => wtr.WriteUTF(GuildBoard ?? ""),
+            (ref rdr) => GuildBoard = rdr.ReadUTF()
         );
         RegisterProperty("CreatedAt",
-            wtr => wtr.Write(CreatedAt.ToUnixTimestamp()),
-            rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write(CreatedAt.ToUnixTimestamp()),
+            (ref rdr) => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("GuildMembers",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)GuildMembers.Count);
                 foreach (var guildMember in GuildMembers)
@@ -68,16 +68,16 @@ public partial class Guild : DbModel, IDbQueryable
                     var hasValue = guildMember != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        guildMember.WriteProperties(wtr);
+                        guildMember.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 GuildMembers.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var member = DbModel.Read<GuildMember>(rdr);
+                    var member = DbModel.Read<GuildMember>(ref rdr);
                     if (member != null)
                         GuildMembers.Add(member);
                 }

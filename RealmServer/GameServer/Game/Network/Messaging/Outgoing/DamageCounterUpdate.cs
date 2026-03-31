@@ -3,6 +3,7 @@
 using Common.Network;
 using GameServer.Game.Entities;
 using System.Collections.Generic;
+using System.IO;
 
 #endregion
 
@@ -12,7 +13,7 @@ public readonly partial record struct DamageCounterUpdate(int TargetId, int Play
 {
     public PacketId ID => PacketId.DAMAGECOUNTERUPDATE;
     
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(TargetId);
 

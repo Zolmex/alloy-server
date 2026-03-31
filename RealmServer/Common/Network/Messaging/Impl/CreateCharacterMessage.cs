@@ -1,5 +1,6 @@
 using Common.Utilities;
 using System;
+using System.IO;
 
 namespace Common.Network.Messaging.Impl;
 
@@ -12,14 +13,14 @@ public record struct CreateCharacterMessage : IAppMessage
     public ushort ClassType { get; set; }
     public ushort SkinType { get; set; }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(AccountId);
         wtr.Write(ClassType);
         wtr.Write(SkinType);
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         AccountId = rdr.ReadInt32();
         ClassType = rdr.ReadUInt16();

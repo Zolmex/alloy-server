@@ -129,7 +129,7 @@ public partial record Hello : IIncomingPacket
             world.Config.Difficulty));
     }
 
-    public void Read(NetworkReader rdr)
+    public void Read(ref SpanReader rdr)
     {
         BuildVersion = rdr.ReadUTF();
         GameId = rdr.ReadInt32();

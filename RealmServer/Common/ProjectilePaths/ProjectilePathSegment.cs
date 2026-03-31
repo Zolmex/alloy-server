@@ -4,6 +4,7 @@ using Common.Network;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using System;
+using System.IO;
 using System.Numerics;
 using System.Xml.Linq;
 
@@ -113,7 +114,7 @@ public class ProjectilePathSegment
     ///     Speed, LifetimeMS, and Angle.
     /// </summary>
     /// <param name="wtr">Network Writer.</param>
-    public virtual void Write(NetworkWriter wtr)
+    public virtual void Write(ref SpanWriter wtr)
     {
         wtr.Write(Speed);
         wtr.Write(LifetimeMs);

@@ -31,8 +31,8 @@ public class FlushHandler : IMessageHandler
             status = FlushStatus.VersionMismatch;
         else
         {
-            using var rdr = new NetworkReader(new MemoryStream(pkt.PropertiesBuffer));
-            pkt.Entity.ReadProperties(rdr);
+            var rdr = new SpanReader(pkt.PropertiesBuffer.AsSpan());
+            pkt.Entity.ReadProperties(ref rdr);
             DbCache.Update(pkt.Key, pkt.Entity, pkt.Properties);
 
             if (await DbCache.SaveChanges() == 0)

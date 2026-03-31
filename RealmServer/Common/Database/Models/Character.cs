@@ -76,145 +76,145 @@ public partial class Character : DbModel, IDbQueryable
     public Character()
     {
         RegisterProperty("Id",
-            wtr => wtr.Write(Id),
-            rdr => Id = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
         );
         RegisterProperty("AccCharId",
-            wtr => wtr.Write(AccCharId),
-            rdr => AccCharId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(AccCharId),
+            (ref rdr) => AccCharId = rdr.ReadInt32()
         );
         RegisterProperty("ObjectType",
-            wtr => wtr.Write(ObjectType),
-            rdr => ObjectType = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(ObjectType),
+            (ref rdr) => ObjectType = rdr.ReadUInt16()
         );
         RegisterProperty("Level",
-            wtr => wtr.Write(Level),
-            rdr => Level = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(Level),
+            (ref rdr) => Level = rdr.ReadUInt16()
         );
         RegisterProperty("CurrentFame",
-            wtr => wtr.Write(CurrentFame),
-            rdr => CurrentFame = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(CurrentFame),
+            (ref rdr) => CurrentFame = rdr.ReadUInt32()
         );
         RegisterProperty("XpPoints",
-            wtr => wtr.Write(XpPoints),
-            rdr => XpPoints = rdr.ReadUInt32()
+           (ref wtr) => wtr.Write(XpPoints),
+            (ref rdr) => XpPoints = rdr.ReadUInt32()
         );
         RegisterProperty("SkinType",
-            wtr => wtr.Write(SkinType),
-            rdr => SkinType = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(SkinType),
+            (ref rdr) => SkinType = rdr.ReadUInt16()
         );
         RegisterProperty("TextureOne",
-            wtr => wtr.Write(TextureOne),
-            rdr => TextureOne = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(TextureOne),
+            (ref rdr) => TextureOne = rdr.ReadUInt16()
         );
         RegisterProperty("TextureTwo",
-            wtr => wtr.Write(TextureTwo),
-            rdr => TextureTwo = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(TextureTwo),
+            (ref rdr) => TextureTwo = rdr.ReadUInt16()
         );
         RegisterProperty("PetType",
-            wtr => wtr.Write(PetType),
-            rdr => PetType = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(PetType),
+            (ref rdr) => PetType = rdr.ReadUInt16()
         );
         RegisterProperty("HealthPotions",
-            wtr => wtr.Write(HealthPotions),
-            rdr => HealthPotions = rdr.ReadUInt16()
+           (ref wtr) => wtr.Write(HealthPotions),
+            (ref rdr) => HealthPotions = rdr.ReadUInt16()
         );
         RegisterProperty("IsDead",
-            wtr => wtr.Write(IsDead),
-            rdr => IsDead = rdr.ReadBoolean()
+           (ref wtr) => wtr.Write(IsDead),
+            (ref rdr) => IsDead = rdr.ReadBoolean()
         );
         RegisterProperty("IsDeleted",
-            wtr => wtr.Write(IsDeleted),
-            rdr => IsDeleted = rdr.ReadBoolean()
+           (ref wtr) => wtr.Write(IsDeleted),
+            (ref rdr) => IsDeleted = rdr.ReadBoolean()
         );
         RegisterProperty("HasBackpack",
-            wtr => wtr.Write(HasBackpack),
-            rdr => HasBackpack = rdr.ReadBoolean()
+           (ref wtr) => wtr.Write(HasBackpack),
+            (ref rdr) => HasBackpack = rdr.ReadBoolean()
         );
         RegisterProperty("CreatedAt",
-            wtr => wtr.Write(CreatedAt.ToUnixTimestamp()),
-            rdr => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write(CreatedAt.ToUnixTimestamp()),
+            (ref rdr) => CreatedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("DeletedAt",
-            wtr => wtr.Write((DeletedAt ?? DateTime.MinValue).ToUnixTimestamp()),
-            rdr => DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+           (ref wtr) => wtr.Write((DeletedAt ?? DateTime.MinValue).ToUnixTimestamp()),
+            (ref rdr) => DeletedAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
         );
         RegisterProperty("AccId",
-            wtr => wtr.Write(AccId),
-            rdr => AccId = rdr.ReadInt32()
+           (ref wtr) => wtr.Write(AccId),
+            (ref rdr) => AccId = rdr.ReadInt32()
         );
         RegisterProperty("CharStats",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = CharStats != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    CharStats.WriteProperties(wtr);
+                    CharStats.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                CharStats = DbModel.Read<CharacterStat>(rdr);
+                CharStats = DbModel.Read<CharacterStat>(ref rdr);
                 CharStatsId = CharStats?.Id ?? 0;
             }
         );
         RegisterProperty("CombatStats",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = CombatStats != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    CombatStats.WriteProperties(wtr);
+                    CombatStats.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                CombatStats = DbModel.Read<CombatStat>(rdr);
+                CombatStats = DbModel.Read<CombatStat>(ref rdr);
                 CombatStatsId = CombatStats?.Id ?? 0;
             }
         );
         RegisterProperty("DungeonStats",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = DungeonStats != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    DungeonStats.WriteProperties(wtr);
+                    DungeonStats.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                DungeonStats = DbModel.Read<DungeonStat>(rdr);
+                DungeonStats = DbModel.Read<DungeonStat>(ref rdr);
                 DungeonStatsId = DungeonStats?.Id ?? 0;
             }
         );
         RegisterProperty("ExploStats",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = ExploStats != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    ExploStats.WriteProperties(wtr);
+                    ExploStats.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                ExploStats = DbModel.Read<ExplorationStat>(rdr);
+                ExploStats = DbModel.Read<ExplorationStat>(ref rdr);
                 ExploStatsId = ExploStats?.Id ?? 0;
             }
         );
         RegisterProperty("KillStats",
-            wtr =>
+            (ref wtr) =>
             {
                 var hasValue = KillStats != null;
                 wtr.Write(hasValue);
                 if (hasValue)
-                    KillStats.WriteProperties(wtr);
+                    KillStats.WriteProperties(ref wtr);
             },
-            rdr =>
+            (ref rdr) =>
             {
-                KillStats = DbModel.Read<KillStat>(rdr);
+                KillStats = DbModel.Read<KillStat>(ref rdr);
                 KillStatsId = KillStats?.Id ?? 0;
             }
         );
         RegisterProperty("CharacterInventories",
-            wtr =>
+            (ref wtr) =>
             {
                 wtr.Write((short)CharacterInventories.Count);
                 foreach (var inv in CharacterInventories)
@@ -222,16 +222,16 @@ public partial class Character : DbModel, IDbQueryable
                     var hasValue = inv != null;
                     wtr.Write(hasValue);
                     if (hasValue)
-                        inv.WriteProperties(wtr);
+                        inv.WriteProperties(ref wtr);
                 }
             },
-            rdr =>
+            (ref rdr) =>
             {
                 CharacterInventories.Clear();
                 var count = rdr.ReadInt16();
                 for (var i = 0; i < count; i++)
                 {
-                    var inv = DbModel.Read<CharacterInventory>(rdr);
+                    var inv = DbModel.Read<CharacterInventory>(ref rdr);
                     if (inv != null)
                         CharacterInventories.Add(inv);
                 }
