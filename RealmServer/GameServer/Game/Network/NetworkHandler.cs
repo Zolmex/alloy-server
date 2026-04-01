@@ -119,7 +119,7 @@ public class NetworkHandler
     
     private void ReceiveLoop()
     {
-        while (User.State == ConnectionState.Connected && Socket != null && Socket.Connected)
+        while (User.State != ConnectionState.Disconnected && Socket != null && Socket.Connected)
         {
             if (Socket == null || !Socket.Connected)
                 return;
