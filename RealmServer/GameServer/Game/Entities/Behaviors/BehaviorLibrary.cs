@@ -1,8 +1,9 @@
 ﻿#region
 
 using Common;
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using Common.Resources.World;
+using Common.Resources.Xml;
 using Common.Utilities;
 using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Entities.Behaviors.Actions;
@@ -89,7 +90,17 @@ public static class BehaviorLibrary
                 continue;
             }
 
-            ClassicBehaviors[attribute.ObjectId] = (State)prop.GetValue(lib);
+            var desc = XmlLibrary.Id2Object(attribute.ObjectId);
+            if (desc == null)
+            {
+                _log.Warn($"Missing descriptor for {attribute.ObjectId}");
+                continue;
+            }
+
+            var state = (State)prop.GetValue(lib);
+            state.Setup(desc);
+            
+            ClassicBehaviors[attribute.ObjectId] = state;
             _log.Debug($"Loading classic behavior '{attribute.ObjectId}'");
         }
 

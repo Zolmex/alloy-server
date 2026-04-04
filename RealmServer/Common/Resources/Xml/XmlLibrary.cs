@@ -27,7 +27,6 @@ public static class XmlLibrary
     private static readonly ConcurrentDictionary<string, Item> _id2Item = new(StringComparer.CurrentCultureIgnoreCase);
     public static readonly ConcurrentDictionary<ushort, TileDesc> TileDescs = new();
     private static readonly ConcurrentDictionary<string, TileDesc> _id2Tile = new();
-    public static readonly ConcurrentDictionary<ushort, ProjectileDesc> ProjectileDescs = new();
     public static readonly ConcurrentDictionary<TerrainType, List<ObjectDesc>> TerrainEnemies = new();
     public static readonly ConcurrentDictionary<ushort, Item> Gemstones = new();
 

@@ -1,6 +1,6 @@
 ﻿#region
 
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
 using System;
 
@@ -64,13 +64,13 @@ public class PannyDemo : EntityBehavior
             if (gapAngle)
             {
                 shootAngleDeg += (ShockwaveProjectileSafeGap / 2) + (ShockwaveProjectileGap / 2);
-                owner.ShootProjectiles(new ChangeSpeedPath(-15, 16, 2000, 5000, 1).ToPath(), projName: "Blue Star", damage: 5, angle: shootAngleDeg.Deg2Rad());
+                owner.ShootProjectiles(new ChangeSpeedPath(-15, 16, 2000, 5000, 1).ToPath(), 0, damage: 5, angle: shootAngleDeg.Deg2Rad());
                 shootAngleDeg += (ShockwaveProjectileSafeGap / 2) - (ShockwaveProjectileGap / 2);
             }
             else
             {
                 shootAngleDeg += ShockwaveProjectileGap;
-                owner.ShootProjectiles(new ChangeSpeedPath(-15, 16, 2000, 5000, 1).ToPath(), projName: "Red Star", damage: 5, angle: shootAngleDeg.Deg2Rad());
+                owner.ShootProjectiles(new ChangeSpeedPath(-15, 16, 2000, 5000, 1).ToPath(), 0, damage: 5, angle: shootAngleDeg.Deg2Rad());
             }
         }
     }

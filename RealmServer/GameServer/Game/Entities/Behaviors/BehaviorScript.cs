@@ -1,4 +1,6 @@
-﻿namespace GameServer.Game.Entities.Behaviors;
+﻿using Common.Resources.Xml.Descriptors;
+
+namespace GameServer.Game.Entities.Behaviors;
 
 /// <summary>
 ///     Base class for all BehaviorScripts, a collection of classes that perform common behavior logic on a given entity.
@@ -78,6 +80,10 @@ public record BehaviorScript : IStateChild
         Entity
     }
 
+    // Setup any ObjectDesc data here
+    public virtual void Setup(ObjectDesc desc)
+    { }
+    
     /// <summary>
     ///     Function that will contain any logic for starting a behavior, for anything that is required to be initialized
     ///     before the behavior runs on tick.

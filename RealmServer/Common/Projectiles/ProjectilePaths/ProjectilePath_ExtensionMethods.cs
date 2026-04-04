@@ -1,4 +1,4 @@
-﻿namespace Common.ProjectilePaths;
+﻿namespace Common.Projectiles.ProjectilePaths;
 
 /// <summary>
 ///     Extension methods for the <see cref="ProjectilePath" /> class.

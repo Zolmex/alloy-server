@@ -6,12 +6,12 @@ using System.Numerics;
 
 #endregion
 
-namespace Common.ProjectilePaths;
+namespace Common.Projectiles.ProjectilePaths;
 
-public class LinePath : ProjectilePathSegment
+public class BoomerangPath : ProjectilePathSegment
 {
-    public LinePath(float speed, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods)
-        : base(PathType.LinePath, speed, angle, lifetimeMs, timeOffset, mods)
+    public BoomerangPath(float speed, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods)
+        : base(PathType.BoomerangPath, speed, angle, lifetimeMs, timeOffset, mods)
     { }
 
     public override Vector2 PositionAt(int elapsedLifetimeMs)
@@ -22,8 +22,8 @@ public class LinePath : ProjectilePathSegment
 
         elapsedLifetimeMs -= TimeOffset;
 
-        ApplyModifiers(ref elapsedLifetimeMs);
-
+        if (elapsedLifetimeMs > LifetimeMs / 2)
+            elapsedLifetimeMs = LifetimeMs - elapsedLifetimeMs;
         var dist = elapsedLifetimeMs * (Speed / 1000f);
         p.X = dist * MathF.Cos(Angle);
         p.Y = dist * MathF.Sin(Angle);
@@ -32,6 +32,6 @@ public class LinePath : ProjectilePathSegment
 
     public override ProjectilePathSegment Clone()
     {
-        return new LinePath(Speed, _angle, _lifetimeMs, TimeOffset);
+        return new BoomerangPath(Speed, _angle, _lifetimeMs, TimeOffset);
     }
 }

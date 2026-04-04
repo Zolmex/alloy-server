@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 #endregion
 
-namespace Common.ProjectilePaths;
+namespace Common.Projectiles.ProjectilePaths;
 
 /// <summary>
 ///     Class for a segment as part of a chained sequence of segments that form a <see cref="ProjectilePath" />.

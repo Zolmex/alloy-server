@@ -1,7 +1,7 @@
 ﻿#region
 
 using Common;
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
@@ -45,7 +45,7 @@ public class CharacterEntity : Entity
     public readonly Random Rand = new();
     public readonly StackController Stacks;
     protected List<Entity> _hitEntities = new();
-    protected ushort _nextProjectileId;
+    protected ushort _nextBulletId;
     public EntityBehavior Behavior;
     public BehaviorController ClassicBehavior;
 
@@ -348,37 +348,29 @@ public class CharacterEntity : Entity
         return entities.Where(x => x.Id != Id); // i think this is more performant than casting to list then removing. if not then change it.
     }
 
-    public List<Projectile> ShootProjectiles(ProjectilePath path, ushort projType = 0, int minDamage = 0, int maxDamage = 0,
-        byte numShots = 1, float angle = 0, float? x = null, float? y = null, float angleInc = 0,
-        bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
-        Action<CharacterEntity, CharacterEntity> onHitEvent = null, int size = 100,
-        (ConditionEffectIndex, int)[] effects = null,
-        int propId = -1, float radiusSqr = SIGHT_RADIUS_SQR,
-        string projName = null, int? damage = null)
+    public void ShootProjectiles(ProjectilePath path, byte projectileIndex = 0, int minDamage = 0, int maxDamage = 0,
+        byte numShots = 1, float angle = 0, float? offsetX = null, float? offsetY = null, float angleInc = 0,
+        Action<CharacterEntity, CharacterEntity> onHitEvent = null, float radiusSqr = SIGHT_RADIUS_SQR,
+        int? damage = null)
     {
-        x ??= Position.X;
-        y ??= Position.Y;
-
-        if (projName != null)
-            projType = XmlLibrary.Id2Object(projName).ObjectType;
-
         if (damage != null)
         {
             minDamage = damage.Value;
             maxDamage = damage.Value;
         }
 
-        var projectiles = new List<Projectile>();
-        var firstProjId = _nextProjectileId++;
-        _nextProjectileId += (ushort)(numShots - 1);
+        var props = Desc.Projectiles[projectileIndex];
+        var firstBulletId = _nextBulletId;
+        _nextBulletId += numShots;
+
+        Projectile proj = null;
         var dmg = (short)Rand.Next(minDamage, maxDamage);
         for (var i = 0; i < numShots; i++)
         {
-            var proj = new Projectile(this, firstProjId + i, RealmManager.WorldTime.TotalElapsedMs,
-                angle + (angleInc * i), new Vector2(x.Value, y.Value), dmg, path.Clone(),
-                path.LifetimeMs, multiHit, passesCover, armorPiercing, ProjectileTargetType.Player,
-                onHitEvent, effects);
-            projectiles.Add(proj);
+            proj = new Projectile(this, firstBulletId + i, RealmManager.WorldTime.TotalElapsedMs,
+                angle + (angleInc * i), Position + new Vector2(offsetX ?? 0, offsetY ?? 0), dmg, path.Clone(),
+                ProjectileTargetType.Player, onHitEvent);
+            proj.SetProps(props.Props);
             QueueProjectile(proj);
         }
 
@@ -387,27 +379,18 @@ public class CharacterEntity : Entity
             if (plr.DistSqr(this) <= Math.Max(radiusSqr, SIGHT_RADIUS_SQR))
             {
                 plr.User.SendPacket(new EnemyShoot(
-                    firstProjId,
+                    firstBulletId,
                     Id,
-                    projType,
-                    x.Value,
-                    y.Value,
-                    angle.Deg2Rad(),
+                    projectileIndex,
+                    offsetX ?? 0,
+                    offsetY ?? 0,
+                    angle,
                     dmg,
                     numShots,
-                    angleInc.Deg2Rad(),
-                    path,
-                    path.LifetimeMs,
-                    multiHit,
-                    passesCover,
-                    armorPiercing,
-                    size,
-                    effects,
-                    propId));
+                    angleInc,
+                    proj.Path));
             }
         });
-
-        return projectiles;
     }
 
     public void QueueProjectile(Projectile projectile)
@@ -684,7 +667,7 @@ public class CharacterEntity : Entity
     public override void Dispose()
     {
         base.Dispose();
-        _nextProjectileId = 0;
+        _nextBulletId = 0;
         Projectiles.Clear();
         StateResources.ClearResources();
         DamageStorage.Clear();

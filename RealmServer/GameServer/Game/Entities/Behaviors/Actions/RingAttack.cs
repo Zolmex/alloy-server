@@ -1,7 +1,7 @@
 ﻿#region
 
 using Common;
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
 using System;
 
@@ -25,13 +25,13 @@ public record RingAttack : BehaviorScript
     private readonly int _coolDownMS;
     private readonly int _count;
     private readonly float _fixedAngle;
-    private readonly int _projectileIndex;
+    private readonly byte _projectileIndex;
     private readonly float _radius;
     private readonly bool _seeInvis;
     private readonly bool _targeted;
     private readonly bool _useSavedAngle;
 
-    public RingAttack(float radius, int count, float offset, int projectileIndex, float angleToIncrement,
+    public RingAttack(float radius, int count, float offset, byte projectileIndex, float angleToIncrement,
         float fixedAngle = 0, bool targeted = false, int coolDownMS = 0, bool seeInvis = false,
         bool useSavedAngle = false)
     {
@@ -70,7 +70,7 @@ public record RingAttack : BehaviorScript
 
         var entity = _radius == 0 ? null : host.GetNearestOtherEnemyByName(null, _radius);
         var angleInc = 2 * MathF.PI / _count;
-        var desc = host.Desc.Projectiles[(byte)_projectileIndex];
+        var desc = host.Desc.Projectiles[(byte)_projectileIndex].Props;
 
         float angle = 0;
         if (state.Targeted)
@@ -96,9 +96,8 @@ public record RingAttack : BehaviorScript
         var dmg = Random.Shared.Next(desc.MinDamage, desc.MaxDamage);
         var startAngle = angle * (count - 1) / 2;
 
-        host.ShootProjectiles(ProjectilePathSegment.ParsePath(desc).ToPath(), desc.ObjectType, dmg, dmg, (byte)count, startAngle.Rad2Deg(),
-            host.Position.X, host.Position.Y, angleInc.Rad2Deg(), desc.MultiHit,
-            desc.PassesCover, desc.ArmorPiercing);
+        host.ShootProjectiles(ProjectilePathSegment.ParsePath(desc).ToPath(), _projectileIndex, dmg, dmg, (byte)count, startAngle.Rad2Deg(),
+            host.Position.X, host.Position.Y, angleInc.Rad2Deg());
 
         state.CoolDownLeft = time.ElapsedMsDelta;
         return BehaviorTickState.BehaviorActive;

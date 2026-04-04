@@ -1,7 +1,7 @@
 #region
 
 using Common;
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Behaviors.Classic;
 using GameServer.Game.Entities.Behaviors.Transitions;

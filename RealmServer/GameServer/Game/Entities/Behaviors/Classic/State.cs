@@ -1,5 +1,6 @@
 ﻿#region
 
+using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Entities.Loot;
 using System.Collections.Generic;
@@ -82,6 +83,15 @@ public class State : IStateChild
         if (ChildStates.Count != 0)
             return ChildStates[0].GetDeepState();
         return this;
+    }
+
+    public void Setup(ObjectDesc desc)
+    {
+        foreach (var script in Scripts)
+            script.Setup(desc);
+        
+        foreach (var child in ChildStates)
+            child.Setup(desc);
     }
 
     public void Enter(CharacterEntity host) // Perform any initial setups we need for current and child states

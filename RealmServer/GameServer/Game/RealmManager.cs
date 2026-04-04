@@ -2,12 +2,15 @@
 
 using Common.Database;
 using Common.Resources.Config;
+using Common.Resources.Xml;
 using Common.Utilities;
 using GameServer.Game.Chat;
 using GameServer.Game.Chat.Commands;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Behaviors;
+using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Network.API;
+using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities.Collections;
 using System;
@@ -171,6 +174,22 @@ public static class RealmManager
     private static void OnUserAdded(User user)
     {
         user.StartNetwork();
+        SendServerProjectiles(user);
+    }
+
+    private static void SendServerProjectiles(User user)
+    {
+        foreach (var type in Shoot.CustomProjectileOwners)
+        {
+            var desc = XmlLibrary.ObjectDescs[type];
+            foreach (var conProps in desc.Projectiles.Custom)
+            {
+                var props = conProps.Props;
+                user.SendPacket(new ServerProjectileProps(
+                    type, conProps.ProjectileIndex, props.ObjectId, props.LifetimeMS, props.MultiHit, props.PassesCover, props.ArmorPiercing, props.Size, props.Effects)
+                );
+            }
+        }
     }
 
     public static void DisconnectUser(User user)

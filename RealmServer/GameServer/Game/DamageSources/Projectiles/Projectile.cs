@@ -1,7 +1,8 @@
 ﻿#region
 
 using Common;
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
+using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Entities;
 using System;
@@ -27,60 +28,74 @@ public class Projectile : DamageSource, IIdentifiable
     public const float SERVER_LENIENCY_RADIUS = PROJECTILE_RADIUS + 0.15f;
 
     public const int MOVEMENT_TIME_FRAME = 50;
+    
     private static readonly Logger _log = new(typeof(Projectile));
 
-    private readonly Action<CharacterEntity, CharacterEntity> _onHitEvent; // hit, hit by
-
-    private readonly HashSet<(Player p, WorldPosData pos, long time)> _unconfirmedHits = new();
+    
+    public int Id { get; set; }
+    
     public readonly float Angle;
-    public readonly bool ArmorPiercing;
     public readonly HashSet<int> Hit;
-    public readonly long Lifetime;
-    public readonly bool MultiHit;
     public readonly CharacterEntity Owner;
-    public readonly bool PassesCover;
-    private readonly ProjectilePath Path;
+    public readonly ProjectilePath Path;
     public readonly Vector2 StartPosition;
     private readonly long startTime;
     public readonly ProjectileTargetType TargetType;
+    public bool PassesCover;
+    public bool ArmorPiercing;
+    public long Lifetime;
+    public bool MultiHit;
     public int Damage;
     public bool Dead;
 
     public Vector2 Position;
 
     public long Time;
+    
+    private readonly Action<CharacterEntity, CharacterEntity> _onHitEvent; // hit, hit by
+    private readonly HashSet<(Player p, WorldPosData pos, long time)> _unconfirmedHits = new();
 
     public Projectile(CharacterEntity owner, int id, long time, float angle, Vector2 startPos, int damage,
-        ProjectilePath path,
-        int lifetimeMS, bool multiHit, bool passesCover, bool armorPiercing, ProjectileTargetType targetType,
-        Action<CharacterEntity, CharacterEntity> onHitEvent = null, (ConditionEffectIndex, int)[] effects = null)
+        ProjectilePath path, ProjectileTargetType targetType, Action<CharacterEntity, CharacterEntity> onHitEvent = null)
     {
         Owner = owner;
         Id = id;
-        Lifetime = time + lifetimeMS;
         Angle = angle.Deg2Rad();
         StartPosition = startPos;
         Position = startPos;
         Damage = damage;
         Hit = new HashSet<int>();
-        //LifetimeMS = lifetimeMS;
-        MultiHit = multiHit;
-        PassesCover = passesCover;
-        ArmorPiercing = armorPiercing;
         TargetType = targetType;
         startTime = time;
 
-        // Setup our path info
-        var pathInfo = new ProjectileInfo { StartPos = startPos, ShootAngle = angle.Deg2Rad(), LifetimeMs = lifetimeMS, ProjId = id };
-
         Path = path;
-        Path.SetInfo(pathInfo);
 
-        Effects = effects;
         _onHitEvent = onHitEvent;
     }
 
-    public int Id { get; set; }
+    public void SetProps(ProjectileProps props)
+    {
+        Lifetime = startTime + props.LifetimeMS;
+        MultiHit = props.MultiHit;
+        PassesCover = props.PassesCover;
+        ArmorPiercing = props.ArmorPiercing;
+        Effects = props.Effects;
+        
+        var pathInfo = new ProjectileInfo { StartPos = StartPosition, ShootAngle = Angle, LifetimeMs = props.LifetimeMS, ProjId = Id };
+        Path.SetInfo(pathInfo);
+    }
+    
+    public void SetProps(ProjectileDesc desc)
+    {
+        Lifetime = startTime + desc.LifetimeMS;
+        MultiHit = desc.MultiHit;
+        PassesCover = desc.PassesCover;
+        ArmorPiercing = desc.ArmorPiercing;
+        Effects = desc.Effects.Select(i => (i.Effect, i.DurationMS)).ToArray();
+        
+        var pathInfo = new ProjectileInfo { StartPos = StartPosition, ShootAngle = Angle, LifetimeMs = desc.LifetimeMS, ProjId = Id };
+        Path.SetInfo(pathInfo);
+    }
 
     public bool CanHit(Entity en)
     {

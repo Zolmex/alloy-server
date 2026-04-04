@@ -92,7 +92,7 @@ public partial class Player
     public void FailedShoot(int projCount)
     {
         using (TimedLock.Lock(_projIdLock))
-            _nextProjectileId += (ushort)projCount;
+            _nextBulletId += (ushort)projCount;
     }
 }
 

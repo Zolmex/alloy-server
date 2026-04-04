@@ -6,12 +6,12 @@ using System.Numerics;
 
 #endregion
 
-namespace Common.ProjectilePaths;
+namespace Common.Projectiles.ProjectilePaths;
 
-public class DeceleratePath : ProjectilePathSegment
+public class AcceleratePath : ProjectilePathSegment
 {
-    public DeceleratePath(float speed, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods)
-        : base(PathType.DeceleratePath, speed, angle, lifetimeMs, timeOffset, mods)
+    public AcceleratePath(float speed, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods)
+        : base(PathType.AcceleratePath, speed, angle, lifetimeMs, timeOffset, mods)
     { }
 
     public override Vector2 PositionAt(int elapsedLifetimeMs)
@@ -25,7 +25,7 @@ public class DeceleratePath : ProjectilePathSegment
 
         ApplyModifiers(ref elapsedLifetimeMs);
 
-        speed *= 2 - (elapsedLifetimeMs / (LifetimeMs + 10f));
+        speed *= elapsedLifetimeMs / (float)LifetimeMs;
         var dist = elapsedLifetimeMs * (speed / 1000f);
 
         p.X = dist * MathF.Cos(Angle);
@@ -35,6 +35,6 @@ public class DeceleratePath : ProjectilePathSegment
 
     public override ProjectilePathSegment Clone()
     {
-        return new DeceleratePath(Speed, _angle, _lifetimeMs, TimeOffset);
+        return new AcceleratePath(Speed, _angle, _lifetimeMs, TimeOffset);
     }
 }

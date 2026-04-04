@@ -1,4 +1,4 @@
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
 using System;
 using System.Collections.Generic;

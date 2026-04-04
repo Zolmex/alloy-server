@@ -6,7 +6,7 @@ using System.Numerics;
 
 #endregion
 
-namespace Common.ProjectilePaths;
+namespace Common.Projectiles.ProjectilePaths;
 
 public class WavyPath : ProjectilePathSegment
 {

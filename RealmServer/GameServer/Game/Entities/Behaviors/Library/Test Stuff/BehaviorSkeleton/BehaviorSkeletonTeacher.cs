@@ -1,6 +1,6 @@
 ﻿#region
 
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 
 #endregion

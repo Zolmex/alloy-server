@@ -8,7 +8,7 @@ using System.Numerics;
 
 #endregion
 
-namespace Common.ProjectilePaths;
+namespace Common.Projectiles.ProjectilePaths;
 
 /// <summary>
 ///     Movement mapping for a projectile, consisting of a collection of <see cref="ProjectilePathSegment" />.

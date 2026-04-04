@@ -1,6 +1,6 @@
 ﻿#region
 
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Utilities;
@@ -48,7 +48,7 @@ public class DashDemo : EntityBehavior
             {
                 var dashInfo = owner.ResolveResource<DashInfo>(Dash);
                 owner.World.Taunt(owner, $"I'm out here dashing at {dashInfo.DashAngle.Rad2Deg()} degrees man I got tiles under my feet im a freak man");
-                owner.ShootProjectiles(new LinePath(10, 1000).ToPath(), projName: "Green Star", damage: 10, angle: owner.GetAngleBetween(owner.GetNearestPlayer(252)));
+                owner.ShootProjectiles(new LinePath(10, 1000).ToPath(), 0, damage: 10, angle: owner.GetAngleBetween(owner.GetNearestPlayer(252)));
             }
             else if (tickState == BehaviorTickState.BehaviorActive)
             {

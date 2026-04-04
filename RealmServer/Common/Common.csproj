@@ -1835,6 +1835,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Projectiles\" />
         <Folder Include="Resources\Xml\Data\"/>
     </ItemGroup>
 

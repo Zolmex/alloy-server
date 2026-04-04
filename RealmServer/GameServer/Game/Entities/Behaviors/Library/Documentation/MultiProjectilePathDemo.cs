@@ -1,6 +1,6 @@
 ﻿#region
 
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 using static GameServer.Game.Entities.Behaviors.BehaviorScript;
 
@@ -32,15 +32,7 @@ public class MultiProjectilePathDemo : EntityBehavior
                 new DeceleratePath(1, lifetimeMs: 5000))
             .ToPath();
 
-        LineIntoCircle = new Shoot(12, new ShootConfig
-        {
-            CooldownMs = 50,
-            Count = 1,
-            TargetType = TargetType.ClosestPlayer,
-            FixedAngle = 0,
-            ProjName = "Red Star",
-            Damage = 25
-        }, _path);
+        LineIntoCircle = new Shoot(12, _path);
         base.RegisterBehaviors();
     }
 

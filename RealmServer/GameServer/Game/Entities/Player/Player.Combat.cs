@@ -18,7 +18,7 @@ public partial class Player
     private const float MAX_ATTACK_MULT = 2f;
     private const float MIN_ATTACK_FREQ = 0.0015f;
     private const float MAX_ATTACK_FREQ = 0.008f;
-    
+
     public CharacterEntity DamageCounterTarget;
 
     public CharacterEntity LastHitTarget;
@@ -65,12 +65,11 @@ public partial class Player
 
             ushort projIndex;
             using (TimedLock.Lock(_projIdLock))
-                projIndex = _nextProjectileId++;
+                projIndex = _nextBulletId++;
 
             var proj = new Projectile(this, projIndex, RealmManager.WorldTime.TotalElapsedMs, angle.Rad2Deg(),
-                startPos, (int)(dmg * crit), projDesc.Path.Clone(),
-                projDesc.LifetimeMS, projDesc.MultiHit, projDesc.PassesCover, projDesc.ArmorPiercing,
-                Projectile.ProjectileTargetType.Enemy);
+                startPos, (int)(dmg * crit), projDesc.Path.Clone(), Projectile.ProjectileTargetType.Enemy);
+            proj.SetProps(projDesc);
             QueueProjectile(proj);
             OnShoot?.Invoke(proj);
             angle += arcGap;

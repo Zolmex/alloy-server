@@ -5,12 +5,29 @@ using System.Xml.Linq;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class ProjectileProps
+public class ContainerProjectileProps
+{
+    public readonly byte ProjectileIndex;
+    public readonly ProjectileProps Props;
+    
+    public ContainerProjectileProps(XElement e)
+    {
+        ProjectileIndex = e.GetAttribute<byte>("id");
+        Props = new ProjectileProps(e);
+    }
+
+    public ContainerProjectileProps(byte projectileIndex, ProjectileProps props)
+    {
+        ProjectileIndex = projectileIndex;
+        Props = props;
+    }
+}
+
+public record ProjectileProps
 {
     public readonly float Amplitude;
     public readonly bool ArmorPiercing;
     public readonly bool Boomerang;
-    public readonly byte BulletId;
     public readonly int Damage;
     public readonly (ConditionEffectIndex, int)[] Effects;
     public readonly float Frequency;
@@ -23,18 +40,12 @@ public class ProjectileProps
     public readonly bool Parametric;
     public readonly bool PassesCover;
     public readonly PathType PathType;
-    public readonly XElement PathXML;
-    public readonly XElement Root;
     public readonly int Size;
     public readonly float Speed;
     public readonly bool Wavy;
 
-    public ushort ObjectType; // To be set by Shoot behavior
-
     public ProjectileProps(XElement e)
     {
-        Root = e;
-        BulletId = (byte)e.GetAttribute<int>("id");
         ObjectId = e.GetValue<string>("ObjectId");
         LifetimeMS = (int)e.GetValue<float>("LifetimeMS");
         Speed = e.GetValue<float>("Speed") / 10;
@@ -59,9 +70,7 @@ public class ProjectileProps
         Frequency = e.GetValue<float>("Frequency", 1);
         Magnitude = e.GetValue<float>("Magnitude", 3);
 
-        if (e.Element("Path") != null)
-            PathXML = e.Element("Path");
-        else
+        if (e.Element("Path") == null)
         {
             if (e.HasElement("Amplitude") || e.HasElement("Frequency"))
                 PathType = PathType.AmplitudePath;
@@ -75,11 +84,10 @@ public class ProjectileProps
         }
     }
 
-    public ProjectileProps(byte bulletId, string objectId, int lifetimeMs, float speed, int damage = -1, int minDamage = -1,
+    public ProjectileProps(string objectId, int lifetimeMs, float speed, int damage = -1, int minDamage = -1,
         int maxDamage = -1, (ConditionEffectIndex, int)[] effects = null, bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
         bool wavy = false, bool parametric = false, bool boomerang = false, float amplitude = 0, float frequency = 1, float magnitude = 3, int size = 100)
     {
-        BulletId = bulletId;
         ObjectId = objectId;
         LifetimeMS = lifetimeMs;
         Speed = speed;
@@ -115,5 +123,59 @@ public class ProjectileProps
         else if (Boomerang)
             PathType = PathType.BoomerangPath;
         else PathType = PathType.LinePath;
+    }
+    
+    public virtual bool Equals(ProjectileProps other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        return Amplitude == other.Amplitude
+               && ArmorPiercing == other.ArmorPiercing
+               && Boomerang == other.Boomerang
+               && Damage == other.Damage
+               && Frequency == other.Frequency
+               && LifetimeMS == other.LifetimeMS
+               && Magnitude == other.Magnitude
+               && MaxDamage == other.MaxDamage
+               && MinDamage == other.MinDamage
+               && MultiHit == other.MultiHit
+               && ObjectId == other.ObjectId
+               && Parametric == other.Parametric
+               && PassesCover == other.PassesCover
+               && PathType == other.PathType
+               && Size == other.Size
+               && Speed == other.Speed
+               && Wavy == other.Wavy
+               && (Effects == other.Effects || (Effects != null && other.Effects != null && Effects.SequenceEqual(other.Effects)));
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(Amplitude);
+        hash.Add(ArmorPiercing);
+        hash.Add(Boomerang);
+        hash.Add(Damage);
+        hash.Add(Frequency);
+        hash.Add(LifetimeMS);
+        hash.Add(Magnitude);
+        hash.Add(MaxDamage);
+        hash.Add(MinDamage);
+        hash.Add(MultiHit);
+        hash.Add(ObjectId);
+        hash.Add(Parametric);
+        hash.Add(PassesCover);
+        hash.Add(PathType);
+        hash.Add(Size);
+        hash.Add(Speed);
+        hash.Add(Wavy);
+
+        // Fold each element into the hash so order matters
+        if (Effects != null)
+            foreach (var effect in Effects)
+                hash.Add(effect);
+
+        return hash.ToHashCode();
     }
 }
