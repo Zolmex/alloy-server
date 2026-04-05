@@ -21,14 +21,14 @@ public partial class Player
     }
 
     private const int TradeCooldown = 3000;
-
-    public Player TradePartner;
-    public Player PotentialPartner;
-    public HashSet<int> TradedWith;
-    public HashSet<int> PendingTrades;
-    public bool[] Trade;
     public bool IsTradeAccepted;
     public long NextTradeTime;
+    public HashSet<int> PendingTrades;
+    public Player PotentialPartner;
+    public bool[] Trade;
+    public HashSet<int> TradedWith;
+
+    public Player TradePartner;
 
     public void TradeRequest(string name)
     {

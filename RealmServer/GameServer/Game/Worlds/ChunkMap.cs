@@ -4,39 +4,38 @@ using System;
 
 #endregion
 
-namespace GameServer.Game.Worlds
+namespace GameServer.Game.Worlds;
+
+public class ChunkMap
 {
-    public class ChunkMap
+    public const float CHUNK_SIZE = 16;
+    private readonly MapChunk[,] _chunks;
+
+    private readonly World _world;
+    public readonly int Height;
+    public readonly int Width;
+
+    public ChunkMap(World world, int width, int height)
     {
-        public const float CHUNK_SIZE = 16;
-
-        public MapChunk this[int x, int y]
-        {
-            get
+        _world = world;
+        Width = (int)Math.Ceiling(width / CHUNK_SIZE);
+        Height = (int)Math.Ceiling(height / CHUNK_SIZE);
+        _chunks = new MapChunk[Width, Height];
+        for (var cY = 0; cY < Height; cY++)
+            for (var cX = 0; cX < Width; cX++)
             {
-                if (x >= 0 && y >= 0 && x < Width && y < Height)
-                    return _chunks[x, y];
-                return null;
+                var chunk = new MapChunk(world, cX, cY);
+                _chunks[cX, cY] = chunk;
             }
-        }
+    }
 
-        private readonly World _world;
-        private readonly MapChunk[,] _chunks;
-        public readonly int Width;
-        public readonly int Height;
-
-        public ChunkMap(World world, int width, int height)
+    public MapChunk this[int x, int y]
+    {
+        get
         {
-            _world = world;
-            Width = (int)Math.Ceiling(width / CHUNK_SIZE);
-            Height = (int)Math.Ceiling(height / CHUNK_SIZE);
-            _chunks = new MapChunk[Width, Height];
-            for (var cY = 0; cY < Height; cY++)
-                for (var cX = 0; cX < Width; cX++)
-                {
-                    var chunk = new MapChunk(world, cX, cY);
-                    _chunks[cX, cY] = chunk;
-                }
+            if (x >= 0 && y >= 0 && x < Width && y < Height)
+                return _chunks[x, y];
+            return null;
         }
     }
 }

@@ -14,10 +14,10 @@ public class HealGroupInfo
 
 public record HealGroup : BehaviorScript
 {
-    private readonly float _range;
-    private readonly string _group;
     private readonly int _cooldownMS;
+    private readonly string _group;
     private readonly int _healAmount;
+    private readonly float _range;
 
     public HealGroup(float range, string group, int cooldownMS = 1000, int healAmount = 0)
     {
@@ -27,13 +27,13 @@ public record HealGroup : BehaviorScript
         _healAmount = healAmount;
     }
 
-    public override void Start(Character host)
+    public override void Start(CharacterEntity host)
     {
         var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
         healGroupInfo.RemainingTime = 0; // Make sure the behavior runs once
     }
 
-    public override BehaviorTickState Tick(Character host, RealmTime time)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
     {
         var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
         if (healGroupInfo.RemainingTime <= 0)
@@ -43,7 +43,7 @@ public record HealGroup : BehaviorScript
 
             foreach (var entity in host.GetOtherEnemiesByName(_group, _range))
             {
-                if (entity is not Character character)
+                if (entity is not CharacterEntity character)
                     continue;
 
                 var newHp = entity.MaxHP;
@@ -80,7 +80,7 @@ public record HealGroup : BehaviorScript
                             entity.Id,
                             "+" + n,
                             0x00FF00)
-                    ));
+                        ));
                 }
             }
 

@@ -7,6 +7,27 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class SheathDesc : ItemData
 {
+    public SheathDesc(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        Capacity = e.GetValue<int>("Capacity");
+        SlashDamage = e.GetValue<int>("SlashDamage");
+        Efficiency = e.GetValue<float>("Efficiency", 1);
+        ManaPerSlash = e.GetValue<int>("ManaPerSlash");
+        SlashCooldownMS = e.GetValue("SlashCooldownMS", 200);
+        Radius = e.GetValue<float>("Radius");
+        Effects = e.Elements("ConditionEffect").Select(i => new ConditionEffectDesc(i)).ToArray();
+        StanceDuration = e.GetValue("StanceDuration", 1000);
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(SheathDescField);
 
     public int Capacity
@@ -32,49 +53,28 @@ public class SheathDesc : ItemData
         get => GetValue<int>(3);
         set => SetValue(3, value);
     }
-    
+
     public int SlashCooldownMS
     {
         get => GetValue<int>(4);
         set => SetValue(4, value);
     }
-    
+
     public float Radius
     {
         get => GetValue<float>(5);
         set => SetValue(5, value);
     }
-    
+
     public ConditionEffectDesc[] Effects
     {
         get => GetValue<ConditionEffectDesc[]>(6);
         set => SetValue(6, value);
     }
-    
+
     public int StanceDuration
     {
         get => GetValue<int>(7);
         set => SetValue(7, value);
-    }
-
-    public SheathDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        Capacity = e.GetValue<int>("Capacity");
-        SlashDamage = e.GetValue<int>("SlashDamage");
-        Efficiency = e.GetValue<float>("Efficiency", 1);
-        ManaPerSlash = e.GetValue<int>("ManaPerSlash");
-        SlashCooldownMS = e.GetValue<int>("SlashCooldownMS", 200);
-        Radius = e.GetValue<float>("Radius");
-        Effects = e.Elements("ConditionEffect").Select(i => new ConditionEffectDesc(i)).ToArray();
-        StanceDuration = e.GetValue<int>("StanceDuration", 1000);
-
-        _initialized = true;
     }
 }

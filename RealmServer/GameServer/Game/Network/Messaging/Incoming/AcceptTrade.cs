@@ -1,34 +1,29 @@
-﻿#region
+﻿using Common.Network;
 
-using Common.Utilities.Net;
+namespace GameServer.Game.Network.Messaging.Incoming;
 
-#endregion
-
-namespace GameServer.Game.Network.Messaging.Incoming
+[Packet(PacketId.ACCEPTTRADE)]
+public partial record AcceptTrade : IIncomingPacket
 {
-    [Packet(PacketId.ACCEPTTRADE)]
-    public partial record AcceptTrade : IIncomingPacket
+    public bool[] MyOffer;
+    public bool[] TheirOffer;
+
+    public void Handle(User user)
     {
-        public bool[] MyOffer;
-        public bool[] TheirOffer;
+        var player = user.GameInfo.Player;
+        if (user.State != ConnectionState.Ready || user.GameInfo.State != GameState.Playing)
+            return;
 
-        public void Read(NetworkReader rdr)
-        {
-            MyOffer = new bool[rdr.ReadByte()];
-            for (var i = 0; i < MyOffer.Length; i++)
-                MyOffer[i] = rdr.ReadBoolean();
-            TheirOffer = new bool[rdr.ReadByte()];
-            for (var i = 0; i < TheirOffer.Length; i++)
-                TheirOffer[i] = rdr.ReadBoolean();
-        }
+        player.AcceptTrade(MyOffer, TheirOffer);
+    }
 
-        public void Handle(User user)
-        {
-            var player = user.GameInfo.Player;
-            if (user.State != ConnectionState.Ready || user.GameInfo.State != GameState.Playing)
-                return;
-
-            player.AcceptTrade(MyOffer, TheirOffer);
-        }
+    public void Read(ref SpanReader rdr)
+    {
+        MyOffer = new bool[rdr.ReadByte()];
+        for (var i = 0; i < MyOffer.Length; i++)
+            MyOffer[i] = rdr.ReadBoolean();
+        TheirOffer = new bool[rdr.ReadByte()];
+        for (var i = 0; i < TheirOffer.Length; i++)
+            TheirOffer[i] = rdr.ReadBoolean();
     }
 }

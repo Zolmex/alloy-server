@@ -6,6 +6,22 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class LevelIncreaseDesc : ItemData
 {
+    public LevelIncreaseDesc(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        Field = e.Value;
+        Rate = e.GetAttribute<int>("rate");
+        Amount = e.GetAttribute<float>("amount");
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(LevelIncreaseField);
 
     public string Field
@@ -24,21 +40,5 @@ public class LevelIncreaseDesc : ItemData
     {
         get => GetValue<float>(2);
         set => SetValue(2, value);
-    }
-
-    public LevelIncreaseDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        Field = e.Value;
-        Rate = e.GetAttribute<int>("rate");
-        Amount = e.GetAttribute<float>("amount");
-
-        _initialized = true;
     }
 }

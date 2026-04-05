@@ -7,5 +7,10 @@
   "MaxPlayers": -1,
   "Blocksight": 0,
   "LongLasting": false,
-  "Maps": [ "HauntedCemetery.jm", "HauntedCemeteryGates.jm", "HauntedCemeteryGraves.jm", "HauntedCemeteryFinalBattle.jm" ]
+  "Maps": [
+    "HauntedCemetery.jm",
+    "HauntedCemeteryGates.jm",
+    "HauntedCemeteryGraves.jm",
+    "HauntedCemeteryFinalBattle.jm"
+  ]
 }

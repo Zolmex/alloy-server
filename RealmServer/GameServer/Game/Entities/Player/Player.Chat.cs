@@ -20,7 +20,7 @@ public partial class Player
             "",
             0,
             -1,
-            (byte)0,
+            0,
             null,
             text));
     }
@@ -39,10 +39,10 @@ public partial class Player
     public void SendError(string text)
     {
         User.SendPacket(new Text(
-                    "*Error*",
+            "*Error*",
             0,
             -1,
-            (byte)0,
+            0,
             null,
             text));
     }
@@ -50,22 +50,22 @@ public partial class Player
     public void SendHelp(string text)
     {
         User.SendPacket(new Text(
-                    "*Help*",
+            "*Help*",
             0,
             -1,
-            (byte)0,
+            0,
             null,
             text));
     }
 
     public void SendEnemy(Entity entity, string text)
     {
-        User.SendPacket(new Text($"#{entity.Desc.DisplayName}", entity.Id, -1, (byte)3, null, text));
+        User.SendPacket(new Text($"#{entity.Desc.DisplayName}", entity.Id, -1, 3, null, text));
     }
 
     public void SendEnemy(string name, string text)
     {
-        User.SendPacket(new Text($"#{name}", -1, -1, (byte)3, null, text));
+        User.SendPacket(new Text($"#{name}", -1, -1, 3, null, text));
     }
 
     public void Speak(string text)
@@ -89,14 +89,14 @@ public partial class Player
         World.BroadcastAll(plr =>
         {
             var user = plr.User;
-            if (!user.Account.IgnoredIds?.Contains(acc.AccountId) ?? true)
-                User.SendPacket(new Text(acc.Admin ? $"@{acc.Name}" : acc.Name, Id, NumStars, (byte)5, null, text));
+            if (!user.Account.AccountIgnores?.Any(i => i.IgnoredId == acc.Id) ?? true)
+                User.SendPacket(new Text(acc.IsAdmin ? $"@{acc.Name}" : acc.Name, Id, NumStars, 5, null, text));
         });
     }
 
     private bool ValidateSpeak(RealmTime time, string text)
     {
-        if (User.Account.Admin)
+        if (User.Account.IsAdmin)
             return true;
 
         // If desired, word filter goes here

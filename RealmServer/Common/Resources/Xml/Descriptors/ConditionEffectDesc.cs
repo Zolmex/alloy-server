@@ -6,20 +6,6 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class ConditionEffectDesc : ItemData
 {
-    public override Type FieldsEnum => typeof(ConditionEffectField);
-
-    public ConditionEffectIndex Effect
-    {
-        get => GetValue<ConditionEffectIndex>(0);
-        set => SetValue(0, value);
-    }
-
-    public int DurationMS
-    {
-        get => GetValue<int>(1);
-        set => SetValue(1, value);
-    }
-
     public ConditionEffectDesc(ConditionEffectIndex effect, int durationMs)
     {
         Effect = effect;
@@ -41,5 +27,19 @@ public class ConditionEffectDesc : ItemData
         DurationMS = (int)(e.GetAttribute<float>("duration") * 1000);
 
         _initialized = true;
+    }
+
+    public override Type FieldsEnum => typeof(ConditionEffectField);
+
+    public ConditionEffectIndex Effect
+    {
+        get => GetValue<ConditionEffectIndex>(0);
+        set => SetValue(0, value);
+    }
+
+    public int DurationMS
+    {
+        get => GetValue<int>(1);
+        set => SetValue(1, value);
     }
 }

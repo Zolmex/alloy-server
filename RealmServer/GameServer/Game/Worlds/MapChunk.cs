@@ -6,78 +6,77 @@ using System.Threading.Tasks;
 
 #endregion
 
-namespace GameServer.Game.Worlds
+namespace GameServer.Game.Worlds;
+
+public class MapChunk
 {
-    public class MapChunk
+    private readonly World _world;
+
+    public LazyCollection<Entity> Entities; // Excluding players
+    public LazyCollection<Player> Players;
+
+    public MapChunk(World world, int cX, int cY)
     {
-        public long TickCount { get; private set; }
-        public int CX { get; }
-        public int CY { get; }
+        _world = world;
 
-        public LazyCollection<Entity> Entities; // Excluding players
-        public LazyCollection<Player> Players;
+        CX = cX;
+        CY = cY;
+        Entities = new LazyCollection<Entity>();
+        Players = new LazyCollection<Player>();
+    }
 
-        private readonly World _world;
+    public long TickCount { get; private set; }
+    public int CX { get; }
+    public int CY { get; }
 
-        public MapChunk(World world, int cX, int cY)
+    public void Update()
+    {
+        Entities.Update();
+        Players.Update();
+    }
+
+    public void Tick(RealmTime time)
+    {
+        TickCount = time.TickCount;
+        Parallel.ForEach(Entities, kvp =>
         {
-            _world = world;
+            var en = kvp.Value;
+            if (en.Dead)
+                return;
 
-            CX = cX;
-            CY = cY;
-            Entities = new LazyCollection<Entity>();
-            Players = new LazyCollection<Player>();
-        }
+            _world.ActiveEntities.Add(en); // Here we put into a list the entities that belong to active chunks
 
-        public void Update()
-        {
-            Entities.Update();
-            Players.Update();
-        }
+            if (en is CharacterEntity chr)
+                chr.Tick(time);
+            else if (en is Container c)
+                c.Tick(time);
+            else if (en.Lifetime != -1)
+                en.Tick(time);
 
-        public void Tick(RealmTime time)
-        {
-            TickCount = time.TickCount;
-            Parallel.ForEach(Entities, kvp =>
-            {
-                var en = kvp.Value;
-                if (en.Dead)
-                    return;
+            _world.InvokeEntityTick(en);
+        });
+    }
 
-                _world.ActiveEntities.Add(en); // Here we put into a list the entities that belong to active chunks
+    public void Insert(Entity en)
+    {
+        if (en.IsPlayer)
+            Players.Add(en as Player);
+        else
+            Entities.Add(en);
+    }
 
-                if (en is Character chr)
-                    chr.Tick(time);
-                else if (en is Container c)
-                    c.Tick(time);
-                else if (en.Lifetime != -1)
-                    en.Tick(time);
+    public void Remove(Entity en)
+    {
+        if (en.IsPlayer)
+            Players.Remove(en as Player);
+        else
+            Entities.Remove(en);
+    }
 
-                _world.InvokeEntityTick(en);
-            });
-        }
-
-        public void Insert(Entity en)
-        {
-            if (en.IsPlayer)
-                Players.Add(en as Player);
-            else
-                Entities.Add(en);
-        }
-
-        public void Remove(Entity en)
-        {
-            if (en.IsPlayer)
-                Players.Remove(en as Player);
-            else
-                Entities.Remove(en);
-        }
-
-        public int DistSqr(MapChunk chunk)
-        {
-            var dx = CX - chunk.CX;
-            var dy = CY - chunk.CY;
-            return (dx * dx) + (dy * dy);
-        }
+    public int DistSqr(MapChunk chunk)
+    {
+        var dx = CX - chunk.CX;
+        var dy = CY - chunk.CY;
+        return (dx * dx) + (dy * dy);
     }
 }

@@ -4,36 +4,35 @@ using System.Linq;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors.Transitions
+namespace GameServer.Game.Entities.Behaviors.Transitions;
+
+public class EntitiesNotWithinTransition : BehaviorTransition
 {
-    public class EntitiesNotWithinTransition : BehaviorTransition
+    private readonly float _radius;
+    private readonly string[] _targets;
+
+    public EntitiesNotWithinTransition(float radius, string targetStates, params string[] targets)
+        : base()
     {
-        private readonly string[] _targets;
-        private readonly float _radius;
+        RegisterTargetStates(targetStates);
+        _targets = targets;
+        _radius = radius;
+    }
 
-        public EntitiesNotWithinTransition(float radius, string targetStates, params string[] targets)
-            : base(TransitionType.Random)
+    public override string Tick(CharacterEntity host, RealmTime time)
+    {
+        if (_targets == null)
         {
-            RegisterTargetStates(targetStates);
-            _targets = targets;
-            _radius = radius;
-        }
-
-        public override string Tick(Character host, RealmTime time)
-        {
-            if (_targets == null)
-            {
-                if (!host.GetEnemiesWithin(_radius).Any())
-                    return GetTargetState();
-                return null;
-            }
-
-            if (!host.GetOtherEnemiesByName(_targets, _radius).Any())
-            {
+            if (!host.GetEnemiesWithin(_radius).Any())
                 return GetTargetState();
-            }
-
             return null;
         }
+
+        if (!host.GetOtherEnemiesByName(_targets, _radius).Any())
+        {
+            return GetTargetState();
+        }
+
+        return null;
     }
 }

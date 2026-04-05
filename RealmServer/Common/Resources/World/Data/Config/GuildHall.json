@@ -8,5 +8,10 @@
   "Blocksight": 0,
   "LongLasting": false,
   "ShowDisplays": true,
-  "Maps": [ "Guild0.jm", "Guild1.jm", "Guild2.jm", "Guild3.jm" ]
+  "Maps": [
+    "Guild0.jm",
+    "Guild1.jm",
+    "Guild2.jm",
+    "Guild3.jm"
+  ]
 }

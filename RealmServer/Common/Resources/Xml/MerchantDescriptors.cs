@@ -7,62 +7,61 @@ using System.Xml.Linq;
 
 #endregion
 
-namespace Common.Resources.Xml
+namespace Common.Resources.Xml;
+
+public class MerchantDesc
 {
-    public class MerchantDesc
-    {
-        public readonly string Region;
-        public readonly MerchandiseEntry[] Entries;
+    public readonly MerchandiseEntry[] Entries;
+    public readonly string Region;
 
-        public MerchantDesc(XElement e, string region)
-        {
-            Region = region;
-            Entries = e.Elements("Entry").Select(x => new MerchandiseEntry(x)).ToArray();
-        }
+    public MerchantDesc(XElement e, string region)
+    {
+        Region = region;
+        Entries = e.Elements("Entry").Select(x => new MerchandiseEntry(x)).ToArray();
     }
+}
 
-    public class MerchandiseEntry
+public class MerchandiseEntry
+{
+    public readonly CurrencyType Currency;
+    public readonly MerchandiseDiscount[] Discounts;
+    public readonly int MaxDuration;
+    public readonly int MaxStock;
+    public readonly int MinDuration;
+
+    public readonly int MinStock;
+    public readonly string ObjectId;
+    public readonly int Price;
+    public readonly int RankReq;
+
+    public MerchandiseEntry(XElement e)
     {
-        public readonly string ObjectId;
-        public readonly int Price;
-        public readonly int RankReq;
-        public readonly CurrencyType Currency;
+        ObjectId = e.GetAttribute<string>("id");
+        Price = e.GetAttribute<int>("price");
+        RankReq = e.GetAttribute<int>("rankReq");
+        var currency = e.GetAttribute<string>("currency");
+        Currency = currency == null ? CurrencyType.Fame : (CurrencyType)Enum.Parse(typeof(CurrencyType), currency);
 
-        public readonly int MinStock;
-        public readonly int MaxStock;
-        public readonly int MinDuration;
-        public readonly int MaxDuration;
-        public readonly MerchandiseDiscount[] Discounts;
+        var stock = e.Element("Stock");
+        MinStock = stock.GetAttribute<int>("min");
+        MaxStock = stock.GetAttribute<int>("max");
 
-        public MerchandiseEntry(XElement e)
-        {
-            ObjectId = e.GetAttribute<string>("id");
-            Price = e.GetAttribute<int>("price");
-            RankReq = e.GetAttribute<int>("rankReq");
-            var currency = e.GetAttribute<string>("currency");
-            Currency = currency == null ? CurrencyType.Fame : (CurrencyType)Enum.Parse(typeof(CurrencyType), currency);
+        var duration = e.Element("Duration");
+        MinDuration = duration.GetAttribute<int>("min");
+        MaxDuration = duration.GetAttribute<int>("max");
 
-            var stock = e.Element("Stock");
-            MinStock = stock.GetAttribute<int>("min");
-            MaxStock = stock.GetAttribute<int>("max");
-
-            var duration = e.Element("Duration");
-            MinDuration = duration.GetAttribute<int>("min");
-            MaxDuration = duration.GetAttribute<int>("max");
-
-            Discounts = e.Elements("Discount").Select(x => new MerchandiseDiscount(x)).ToArray();
-        }
+        Discounts = e.Elements("Discount").Select(x => new MerchandiseDiscount(x)).ToArray();
     }
+}
 
-    public class MerchandiseDiscount
+public class MerchandiseDiscount
+{
+    public readonly float Probability;
+    public readonly int Value;
+
+    public MerchandiseDiscount(XElement e)
     {
-        public readonly int Value;
-        public readonly float Probability;
-
-        public MerchandiseDiscount(XElement e)
-        {
-            Value = int.Parse(e.Value);
-            Probability = e.GetAttribute<float>("prob");
-        }
+        Value = int.Parse(e.Value);
+        Probability = e.GetAttribute<float>("prob");
     }
 }

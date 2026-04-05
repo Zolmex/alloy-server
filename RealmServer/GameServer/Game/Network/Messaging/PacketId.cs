@@ -50,7 +50,7 @@ public enum PacketId : byte
     PLAYSOUND = 45,
     RESKIN = 46,
     GOTOACK = 47,
-    UNUSED = 48,
+    SERVER_PROJECTILE_PROPS = 48,
     UNUSED2 = 49,
     OPTIONSCHANGED = 50,
     STATSAPPLY = 51,
@@ -67,5 +67,5 @@ public enum PacketId : byte
     ACCEPTTRADE = 62,
     TRADEACCEPTED = 63,
     GEMSTONESWAP = 64,
-    PARTYINVITE = 65
+    PARTYINVITE = 65,
 }

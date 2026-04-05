@@ -7,33 +7,32 @@ using GameServer.Game.Worlds;
 
 #endregion
 
-namespace GameServer.Game.Entities
+namespace GameServer.Game.Entities;
+
+public class ClosedVaultChest : SellableObject
 {
-    public class ClosedVaultChest : SellableObject
+    public ClosedVaultChest(ushort objType)
+        : base(objType)
     {
-        public ClosedVaultChest(ushort objType)
-            : base(objType)
-        {
-            Price = NewAccountsConfig.Config.VaultSlotCost;
-            Currency = CurrencyType.Fame;
-        }
+        Price = NewAccountsConfig.Config.VaultSlotCost;
+        Currency = CurrencyType.Fame;
+    }
 
-        public override string Purchase(Player plr)
-        {
-            if (World is not Vault vault)
-                return "Not in Vault.";
+    public override string Purchase(Player plr)
+    {
+        if (World is not Vault vault)
+            return "Not in Vault.";
 
-            var acc = plr.User.Account;
-            if (acc.Stats.Fame < Price)
-                return "Not enough fame.";
+        var acc = plr.User.Account;
+        if (acc.AccStats.CurrentFame < Price)
+            return "Not enough fame.";
 
-            plr.AddCurrency(Currency, -Price);
-            acc.VaultCount++;
-            acc.Vault.AddVaultChest();
-            DbClient.Save(acc);
+        plr.AddCurrency(Currency, -Price);
+        acc.VaultCount++;
+        // acc.Vault.AddVaultChest(); // TODO: fix
+        _ = DbClient.FlushAsync(acc);
 
-            vault.OpenChest(this);
-            return SUCCESS;
-        }
+        vault.OpenChest(this);
+        return SUCCESS;
     }
 }

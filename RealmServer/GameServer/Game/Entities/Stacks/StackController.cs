@@ -5,97 +5,95 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace GameServer.Game.Entities.Stacks
+namespace GameServer.Game.Entities.Stacks;
+
+public class StackController
 {
-    public class StackController
+    private readonly CharacterEntity _host;
+    public ConcurrentDictionary<ModStacks, Stack> AllStacks = new();
+    public List<PendingStack> PendingStacks = new();
+    public ConcurrentDictionary<ModStacks, int[]> SpecialStackDatas = new();
+
+    public StackController(CharacterEntity host)
     {
-        public ConcurrentDictionary<ModStacks, Stack> AllStacks = new();
-        public ConcurrentDictionary<ModStacks, int[]> SpecialStackDatas = new();
-        public List<PendingStack> PendingStacks = new();
+        _host = host;
+    }
 
-        private readonly Character _host;
-
-        public StackController(Character host)
+    public void Update(RealmTime time)
+    {
+        foreach (var stack in
+                 PendingStacks) //only need to use PendingStacks if you are adding or removing stacks in the middle of enumeration (aka during tick)
         {
-            _host = host;
+            if (stack.Duration == 0)
+                RemoveStack(stack.StackId, stack.Count, stack.All);
+            else
+                AddStack(stack.StackId, stack.Duration, stack.Count);
         }
 
-        public void Update(RealmTime time)
-        {
-            foreach (var stack in
-                     PendingStacks) //only need to use PendingStacks if you are adding or removing stacks in the middle of enumeration (aka during tick)
+        PendingStacks.Clear();
+
+        var toRemove = new List<ModStacks>();
+        foreach (var stack in AllStacks.Values)
+            if (stack.Tick(time))
             {
-                if (stack.Duration == 0)
-                    RemoveStack(stack.StackId, stack.Count, stack.All);
-                else
-                    AddStack(stack.StackId, stack.Duration, stack.Count);
+                stack.OnAllStacksRemoved();
+                toRemove.Add(stack.Type);
             }
 
-            PendingStacks.Clear();
+        toRemove.ForEach(i => AllStacks.Remove(i, out _));
+    }
 
-            var toRemove = new List<ModStacks>();
-            foreach (var stack in AllStacks.Values)
-                if (stack.Tick(time))
-                {
-                    stack.OnAllStacksRemoved();
-                    toRemove.Add(stack.Type);
-                }
+    public int GetStackCount(ModStacks stackId)
+    {
+        var currentStacks = 0;
+        if (AllStacks.TryGetValue(stackId, out var stack))
+            currentStacks = stack.Count;
 
-            toRemove.ForEach(i => AllStacks.Remove(i, out _));
-        }
+        return currentStacks;
+    }
 
-        public int GetStackCount(ModStacks stackId)
+    public Stack GetStack(ModStacks stackId)
+    {
+        if (!AllStacks.TryGetValue(stackId, out var stack))
+            return null;
+        return stack;
+    }
+
+    public void AddStack(ModStacks stackId, float duration, int amount = 1, CharacterEntity from = null,
+        params object[] additionalData)
+    {
+        if (!AllStacks.TryGetValue(stackId, out var stack))
         {
-            var currentStacks = 0;
-            if (AllStacks.TryGetValue(stackId, out var stack))
-                currentStacks = stack.Count;
-
-            return currentStacks;
+            stack = StackGetter.ResolveStack(_host, stackId);
+            AllStacks.TryAdd(stackId, stack);
         }
 
-        public Stack GetStack(ModStacks stackId)
+        stack.AddStack(amount, duration, from, additionalData);
+    }
+
+    public void UpdateStack(ModStacks stackId)
+    {
+        if (AllStacks.TryGetValue(stackId, out var stack))
         {
-            if (!AllStacks.TryGetValue(stackId, out var stack))
-                return null;
-            return stack;
+            stack.OnSpecialUpdate();
         }
+    }
 
-        public void AddStack(ModStacks stackId, float duration, int amount = 1, Character from = null,
-            params object[] additionalData)
+    public int RemoveStack(ModStacks stackId, int amount = 1, bool all = false)
+    {
+        var removedStacks = -1;
+        if (AllStacks.TryGetValue(stackId, out var stack))
         {
-            if (!AllStacks.TryGetValue(stackId, out var stack))
-            {
-                stack = StackGetter.ResolveStack(_host, stackId);
-                AllStacks.TryAdd(stackId, stack);
-            }
-
-            stack.AddStack(amount, duration, from, additionalData);
+            removedStacks = all ? stack.Count : amount;
+            stack.RemoveStack(removedStacks);
         }
 
-        public void UpdateStack(ModStacks stackId)
-        {
-            if (AllStacks.TryGetValue(stackId, out var stack))
-            {
-                stack.OnSpecialUpdate();
-            }
-        }
+        return removedStacks;
+    }
 
-        public int RemoveStack(ModStacks stackId, int amount = 1, bool all = false)
-        {
-            var removedStacks = -1;
-            if (AllStacks.TryGetValue(stackId, out var stack))
-            {
-                removedStacks = all ? stack.Count : amount;
-                stack.RemoveStack(removedStacks);
-            }
-
-            return removedStacks;
-        }
-
-        public void RemoveAllStacks()
-        {
-            foreach (var stack in AllStacks)
-                stack.Value.RemoveStack(stack.Value.Count);
-        }
+    public void RemoveAllStacks()
+    {
+        foreach (var stack in AllStacks)
+            stack.Value.RemoveStack(stack.Value.Count);
     }
 }

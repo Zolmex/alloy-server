@@ -1,19 +1,14 @@
 using Common;
-using Common.Resources.Config;
-using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using GameServer.Game.Network.Messaging.Outgoing;
-using GameServer.Game.Worlds;
 using System;
-using System.Diagnostics.Metrics;
 using System.Numerics;
 
 namespace GameServer.Game.Entities;
 
 public class RogueCloakAbility : Ability
 {
-    private static readonly Logger _log = new Logger(typeof(RogueCloakAbility));
+    private static readonly Logger _log = new(typeof(RogueCloakAbility));
 
     private long _cooldownReset;
     private bool _invisible;
@@ -44,16 +39,16 @@ public class RogueCloakAbility : Ability
 
     private void InvisibilityEnd()
     {
-        if (_invisible == false)
+        if (!_invisible)
             return;
-        
+
         if (_player.HasConditionEffect(ConditionEffectIndex.Invisible))
             _player.RemoveConditionEffect(ConditionEffectIndex.Invisible);
-            
+
         _invisible = false;
-        float efficiency = (float)(RealmManager.WorldTime.TotalElapsedMs - _useTime) / (float)_item.Cloak.Duration;
+        var efficiency = (RealmManager.WorldTime.TotalElapsedMs - _useTime) / (float)_item.Cloak.Duration;
         efficiency = efficiency < _item.Cloak.MinStatEfficiency ? _item.Cloak.MinStatEfficiency : efficiency;
-        
+
         foreach (var modifier in _item.Cloak.StatsModifier)
         {
             var stat = Enum.Parse<StatType>(modifier.Stat);
@@ -67,6 +62,7 @@ public class RogueCloakAbility : Ability
                     break;
             }
         }
+
         _player.SendNotif("Efficiency: " + Math.Truncate(efficiency * 100) + "%");
         RealmManager.AddTimedAction(_item.Cloak.BoostDuration, () => RemoveBoosts(_item.Cloak.StatsModifier, efficiency));
     }
@@ -99,9 +95,9 @@ public class RogueCloakAbility : Ability
         if (slot != 1 || _item == item)
             return;
 
-        if (_player.HasConditionEffect(ConditionEffectIndex.Invisible) && _invisible == true)
+        if (_player.HasConditionEffect(ConditionEffectIndex.Invisible) && _invisible)
             _player.RemoveConditionEffect(ConditionEffectIndex.Invisible);
-        
+
         _invisible = false;
         _item = item; // Can be null
         _player.AbilityDataA = 0;

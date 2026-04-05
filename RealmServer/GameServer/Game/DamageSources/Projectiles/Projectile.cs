@@ -1,7 +1,8 @@
 ﻿#region
 
 using Common;
-using Common.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
+using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Entities;
 using System;
@@ -11,261 +12,270 @@ using System.Numerics;
 
 #endregion
 
-namespace GameServer.Game.DamageSources.Projectiles
+namespace GameServer.Game.DamageSources.Projectiles;
+
+public class Projectile : DamageSource, IIdentifiable
 {
-    public class Projectile : DamageSource, IIdentifiable
+    public enum ProjectileTargetType
     {
-        private static readonly Logger _log = new(typeof(Projectile));
+        Player,
+        Enemy,
+        All
+    }
 
-        public int Id { get; set; }
+    public const float PROJECTILE_RADIUS = 0.5f;
+    public const float PROJECTILE_RADIUS_PLAYER = 0.5f;
+    public const float SERVER_LENIENCY_RADIUS = PROJECTILE_RADIUS + 0.15f;
 
-        public Vector2 Position;
-        public readonly long Lifetime;
-        public readonly Character Owner;
-        public readonly float Angle;
-        public readonly Vector2 StartPosition;
-        public readonly HashSet<int> Hit;
-        public readonly bool MultiHit;
-        public readonly bool PassesCover;
-        public readonly bool ArmorPiercing;
-        public readonly ProjectileTargetType TargetType;
-        public int Damage;
-        public bool Dead;
-        private readonly ProjectilePath Path;
-        private readonly long startTime;
+    public const int MOVEMENT_TIME_FRAME = 50;
+    
+    private static readonly Logger _log = new(typeof(Projectile));
 
-        private Action<Character, Character> _onHitEvent; // hit, hit by
+    
+    public int Id { get; set; }
+    
+    public readonly float Angle;
+    public readonly HashSet<int> Hit;
+    public readonly CharacterEntity Owner;
+    public readonly ProjectilePath Path;
+    public readonly Vector2 StartPosition;
+    private readonly long startTime;
+    public readonly ProjectileTargetType TargetType;
+    public bool PassesCover;
+    public bool ArmorPiercing;
+    public long Lifetime;
+    public bool MultiHit;
+    public int Damage;
+    public bool Dead;
 
-        public const float PROJECTILE_RADIUS = 0.5f;
-        public const float PROJECTILE_RADIUS_PLAYER = 0.5f;
-        public const float SERVER_LENIENCY_RADIUS = PROJECTILE_RADIUS + 0.15f;
+    public Vector2 Position;
 
-        public long Time;
+    public long Time;
+    
+    private readonly Action<CharacterEntity, CharacterEntity> _onHitEvent; // hit, hit by
+    private readonly HashSet<(Player p, WorldPosData pos, long time)> _unconfirmedHits = new();
 
-        public Projectile(Character owner, int id, long time, float angle, Vector2 startPos, int damage,
-            ProjectilePath path,
-            int lifetimeMS, bool multiHit, bool passesCover, bool armorPiercing, ProjectileTargetType targetType,
-            Action<Character, Character> onHitEvent = null, (ConditionEffectIndex, int)[] effects = null)
+    public Projectile(CharacterEntity owner, int id, long time, float angle, Vector2 startPos, int damage,
+        ProjectilePath path, ProjectileTargetType targetType, Action<CharacterEntity, CharacterEntity> onHitEvent = null)
+    {
+        Owner = owner;
+        Id = id;
+        Angle = angle.Deg2Rad();
+        StartPosition = startPos;
+        Position = startPos;
+        Damage = damage;
+        Hit = new HashSet<int>();
+        TargetType = targetType;
+        startTime = time;
+
+        Path = path;
+
+        _onHitEvent = onHitEvent;
+    }
+
+    public void SetProps(ProjectileProps props)
+    {
+        Lifetime = startTime + props.LifetimeMS;
+        MultiHit = props.MultiHit;
+        PassesCover = props.PassesCover;
+        ArmorPiercing = props.ArmorPiercing;
+        Effects = props.Effects;
+        
+        var pathInfo = new ProjectileInfo { StartPos = StartPosition, ShootAngle = Angle, LifetimeMs = props.LifetimeMS, ProjId = Id };
+        Path.SetInfo(pathInfo);
+    }
+    
+    public void SetProps(ProjectileDesc desc)
+    {
+        Lifetime = startTime + desc.LifetimeMS;
+        MultiHit = desc.MultiHit;
+        PassesCover = desc.PassesCover;
+        ArmorPiercing = desc.ArmorPiercing;
+        Effects = desc.Effects.Select(i => (i.Effect, i.DurationMS)).ToArray();
+        
+        var pathInfo = new ProjectileInfo { StartPos = StartPosition, ShootAngle = Angle, LifetimeMs = desc.LifetimeMS, ProjId = Id };
+        Path.SetInfo(pathInfo);
+    }
+
+    public bool CanHit(Entity en)
+    {
+        // if (en.HasConditionEffect(ConditionEffectIndex.Invincible) || en.HasConditionEffect(ConditionEffectIndex.Stasis))
+        //    return false;
+
+        using (TimedLock.Lock(this))
+            return !Hit.Add(en.Id);
+    }
+
+    public Vector2 PositionAt(long totalElapsedMs)
+    {
+        Vector2 moveVec;
+        if (totalElapsedMs > Lifetime) // Projectile lifetime grace period
         {
-            Owner = owner;
-            Id = id;
-            Lifetime = time + lifetimeMS;
-            Angle = angle.Deg2Rad();
-            StartPosition = startPos;
-            Position = startPos;
-            Damage = damage;
-            Hit = new HashSet<int>();
-            //LifetimeMS = lifetimeMS;
-            MultiHit = multiHit;
-            PassesCover = passesCover;
-            ArmorPiercing = armorPiercing;
-            TargetType = targetType;
-            startTime = time;
-
-            // Setup our path info
-            var pathInfo = new ProjectileInfo() { StartPos = startPos, ShootAngle = angle.Deg2Rad(), LifetimeMs = lifetimeMS, ProjId = id };
-
-            Path = path;
-            Path.SetInfo(pathInfo);
-
-            Effects = effects;
-            _onHitEvent = onHitEvent;
+            moveVec = Path.PositionAt((int)(Lifetime - startTime));
+        }
+        else
+        {
+            moveVec = Path.PositionAt((int)(totalElapsedMs - startTime));
         }
 
-        public bool CanHit(Entity en)
+        return Path.Info.StartPos + moveVec;
+    }
+
+    // Server-side projectile collision
+    public void CheckCollisions(IEnumerable<CharacterEntity> entitiesInRadius, long serverTime)
+    {
+        foreach (var entity in entitiesInRadius)
         {
-            // if (en.HasConditionEffect(ConditionEffectIndex.Invincible) || en.HasConditionEffect(ConditionEffectIndex.Stasis))
-            //    return false;
-
-            using (TimedLock.Lock(this))
-                return !Hit.Add(en.Id);
-        }
-
-        public Vector2 PositionAt(long totalElapsedMs)
-        {
-            Vector2 moveVec;
-            if (totalElapsedMs > Lifetime) // Projectile lifetime grace period
-            {
-                moveVec = Path.PositionAt((int)(Lifetime - startTime));
-            }
-            else
-            {
-                moveVec = Path.PositionAt((int)(totalElapsedMs - startTime));
-            }
-            
-            return Path.Info.StartPos + moveVec;
-        }
-
-        // Server-side projectile collision
-        public void CheckCollisions(IEnumerable<Character> entitiesInRadius, long serverTime)
-        {
-            foreach (var entity in entitiesInRadius)
-            {
-                using (TimedLock.Lock(this))
-                    if (Hit.Contains(entity.Id))
-                        continue;
-
-                if (CheckProjectileInHitRange(entity.Position.X, entity.Position.Y, PROJECTILE_RADIUS_PLAYER) &&
-                    CheckServerEntityHit(entity, serverTime))
-                    HitEntity(entity);
-            }
-        }
-
-        // EnemyHit packet
-        public void CheckClientCollision(Character entity, long elapsedLifetimeMs, WorldPosData targetPos)
-        {
-            var elapsed = startTime + elapsedLifetimeMs;
-            Position = PositionAt(elapsed);
-
             using (TimedLock.Lock(this))
                 if (Hit.Contains(entity.Id))
-                    return;
+                    continue;
 
-            if (entity.DistSqr(targetPos.X, targetPos.Y) > 16)
-            { // 16 => 4 tiles radius
-                Console.WriteLine("Failed enemyhit: entity position check");
+            if (CheckProjectileInHitRange(entity.Position.X, entity.Position.Y, PROJECTILE_RADIUS_PLAYER) &&
+                CheckServerEntityHit(entity, serverTime))
+                HitEntity(entity);
+        }
+    }
+
+    // EnemyHit packet
+    public void CheckClientCollision(CharacterEntity entity, long elapsedLifetimeMs, WorldPosData targetPos)
+    {
+        var elapsed = startTime + elapsedLifetimeMs;
+        Position = PositionAt(elapsed);
+
+        using (TimedLock.Lock(this))
+            if (Hit.Contains(entity.Id))
+                return;
+
+        if (entity.DistSqr(targetPos.X, targetPos.Y) > 16)
+        { // 16 => 4 tiles radius
+            Console.WriteLine("Failed enemyhit: entity position check");
+            return;
+        }
+
+        if (CheckProjectileInHitRange(targetPos.X, targetPos.Y, SERVER_LENIENCY_RADIUS))
+            HitEntity(entity);
+        else
+            Console.WriteLine($"projectile {Id} pos ({Position.X}, {Position.Y}, startPos: {Path.Info.StartPos} angle: {Angle.Rad2Deg()}) target pos ({targetPos.X}, {targetPos.Y})");
+    }
+
+    public bool CheckProjectileInHitRange(float x, float y, float radius)
+    {
+        var xDiff = MathF.Abs(x - Position.X);
+        var yDiff = MathF.Abs(y - Position.Y);
+        if ((xDiff * xDiff) + (yDiff * yDiff) <= radius)
+            return true;
+        return false;
+    }
+
+    public bool CheckServerEntityHit(CharacterEntity entity, long serverTime)
+    {
+        if (Dead)
+            return false;
+        // if this isnt a player, we dont really care about this precision
+        if (entity is not Player p)
+            return true;
+
+        var pos = p.Position;
+        // check if pos.Item1 is within MOVEMENT_TIME_FRAME of serverTime
+        if (p.LastMoveAck > serverTime - MOVEMENT_TIME_FRAME &&
+            p.LastMoveAck < serverTime + MOVEMENT_TIME_FRAME)
+        {
+            if (CheckProjectileInHitRange(pos.X, pos.Y,
+                    PROJECTILE_RADIUS)) // great. we thought we hit. and we have a movement packet that confirms we do
+                return true;
+            // okay we thought we hit, and we have a movement packet within a reasonable time frame that suggests we didn't. fine
+            return false;
+        }
+
+        // okay so, we thought we hit, but we havent received an ack recently enough to confirm it, so store this last movement,
+        // then in either MAX_PING_TIME ms or when we next receive a move, validate this collision.
+        using (TimedLock.Lock(this))
+        {
+            _unconfirmedHits.Add((p, new WorldPosData(Position.X, Position.Y), serverTime));
+            p.StoreUnconfirmedHit(this);
+            Hit.Add(p.Id); // we dont want to store multiple unconfirmed hits from the same projectile
+            return false;
+        }
+    }
+
+    public bool CheckUnconfirmedHit(CharacterEntity hit, float posX, float posY)
+    {
+        (Player, WorldPosData pos, long) hitData;
+        using (TimedLock.Lock(this))
+            hitData = _unconfirmedHits.Where(p => p.p == hit).FirstOrDefault();
+        var xDiff = MathF.Abs(posX - hitData.pos.X);
+        var yDiff = MathF.Abs(posY - hitData.pos.Y);
+        if (xDiff < PROJECTILE_RADIUS && yDiff < PROJECTILE_RADIUS)
+            return true;
+        return false;
+    }
+
+    public void RemoveHit(CharacterEntity notHit)
+    {
+        using (TimedLock.Lock(this))
+            Hit.Remove(notHit.Id);
+    }
+
+    public long GetUnconfirmedHitTime(Player p)
+    {
+        using (TimedLock.Lock(this))
+            return _unconfirmedHits.Where(player => player.p == p).FirstOrDefault().time;
+    }
+
+    public void ConfirmHit(CharacterEntity hit)
+    {
+        // a player has reported back that a collision did go through, hit that mf
+        HitEntity(hit);
+        using (TimedLock.Lock(this))
+            _unconfirmedHits.RemoveWhere(p => p.p == hit);
+    }
+
+    public void TryHitEntity(CharacterEntity entity)
+    {
+        using (TimedLock.Lock(this))
+        {
+            var confirmedHits = _unconfirmedHits.RemoveWhere(p => p.p == entity);
+            if (confirmedHits != 0)
+            {
+                HitEntity(entity);
                 return;
             }
 
-            if (CheckProjectileInHitRange(targetPos.X, targetPos.Y, SERVER_LENIENCY_RADIUS))
-                HitEntity(entity);
-            else
-                Console.WriteLine($"projectile {Id} pos ({Position.X}, {Position.Y}, startPos: {Path.Info.StartPos} angle: {Angle.Rad2Deg()}) target pos ({targetPos.X}, {targetPos.Y})");
+            if (Hit.Contains(entity.Id))
+                return;
         }
 
-        public bool CheckProjectileInHitRange(float x, float y, float radius)
-        {
-            var xDiff = MathF.Abs(x - Position.X);
-            var yDiff = MathF.Abs(y - Position.Y);
-            if (xDiff * xDiff + yDiff * yDiff <= radius)
-                return true;
-            return false;
-        }
+        HitEntity(entity);
+    }
 
-        private HashSet<(Player p, WorldPosData pos, long time)> _unconfirmedHits = new();
+    public void HitEntity(CharacterEntity entity)
+    {
+        _onHitEvent?.Invoke(entity, Owner);
+        using (TimedLock.Lock(this))
+            Hit.Add(entity.Id);
+        Owner.Hit(entity, this);
+        entity.HitBy(Owner, this);
+    }
 
-        public const int MOVEMENT_TIME_FRAME = 50;
+    public bool ShouldBeRemoved(RealmTime time)
+    {
+        if (!Dead)
+            Dead = time.TotalElapsedMs > Lifetime + 3000; // 3 seconds to account for lag
+        return Dead;
+    }
 
-        public bool CheckServerEntityHit(Character entity, long serverTime)
-        {
-            if (Dead)
-                return false;
-            // if this isnt a player, we dont really care about this precision
-            if (entity is not Player p)
-                return true;
+    public override int GetDamage()
+    {
+        return Damage;
+    }
 
-            var pos = p.Position;
-            // check if pos.Item1 is within MOVEMENT_TIME_FRAME of serverTime
-            if (p.LastMoveAck > serverTime - MOVEMENT_TIME_FRAME &&
-                p.LastMoveAck < serverTime + MOVEMENT_TIME_FRAME)
-            {
-                if (CheckProjectileInHitRange(pos.X, pos.Y,
-                        PROJECTILE_RADIUS)) // great. we thought we hit. and we have a movement packet that confirms we do
-                    return true;
-                else
-                {
-                    // okay we thought we hit, and we have a movement packet within a reasonable time frame that suggests we didn't. fine
-                    return false;
-                }
-            }
+    public override void SetDamage(int dmg)
+    {
+        Damage = dmg;
+    }
 
-            // okay so, we thought we hit, but we havent received an ack recently enough to confirm it, so store this last movement,
-            // then in either MAX_PING_TIME ms or when we next receive a move, validate this collision.
-            using (TimedLock.Lock(this))
-            {
-                _unconfirmedHits.Add((p, new WorldPosData(Position.X, Position.Y), serverTime));
-                p.StoreUnconfirmedHit(this);
-                Hit.Add(p.Id); // we dont want to store multiple unconfirmed hits from the same projectile
-                return false;
-            }
-        }
-
-        public bool CheckUnconfirmedHit(Character hit, float posX, float posY)
-        {
-            (Player, WorldPosData pos, long) hitData;
-            using (TimedLock.Lock(this))
-                hitData = _unconfirmedHits.Where(p => p.p == hit).FirstOrDefault();
-            var xDiff = MathF.Abs(posX - hitData.pos.X);
-            var yDiff = MathF.Abs(posY - hitData.pos.Y);
-            if (xDiff < PROJECTILE_RADIUS && yDiff < PROJECTILE_RADIUS)
-                return true;
-            return false;
-        }
-
-        public void RemoveHit(Character notHit)
-        {
-            using (TimedLock.Lock(this))
-                Hit.Remove(notHit.Id);
-        }
-
-        public long GetUnconfirmedHitTime(Player p)
-        {
-            using (TimedLock.Lock(this))
-                return _unconfirmedHits.Where(player => player.p == p).FirstOrDefault().time;
-        }
-
-        public void ConfirmHit(Character hit)
-        {
-            // a player has reported back that a collision did go through, hit that mf
-            HitEntity(hit);
-            using (TimedLock.Lock(this))
-                _unconfirmedHits.RemoveWhere(p => p.p == hit);
-        }
-
-        public void TryHitEntity(Character entity)
-        {
-            using (TimedLock.Lock(this))
-            {
-                var confirmedHits = _unconfirmedHits.RemoveWhere(p => p.p == entity);
-                if (confirmedHits != 0)
-                {
-                    HitEntity(entity);
-                    return;
-                }
-
-                if (Hit.Contains(entity.Id))
-                    return;
-            }
-
-            HitEntity(entity);
-        }
-
-        public void HitEntity(Character entity)
-        {
-            _onHitEvent?.Invoke(entity, Owner);
-            using (TimedLock.Lock(this))
-                Hit.Add(entity.Id);
-            Owner.Hit(entity, this);
-            entity.HitBy(Owner, this);
-        }
-
-        public bool ShouldBeRemoved(RealmTime time)
-        {
-            if (!Dead)
-                Dead = time.TotalElapsedMs > Lifetime + 3000; // 3 seconds to account for lag
-            return Dead;
-        }
-
-        public override int GetDamage()
-        {
-            return Damage;
-        }
-
-        public override void SetDamage(int dmg)
-        {
-            Damage = dmg;
-        }
-
-        public override int GetTotalDamage()
-        {
-            return (int)((Damage * Bonus.ProportionalBonus) + Bonus.FlatBonus);
-        }
-
-        public enum ProjectileTargetType
-        {
-            Player,
-            Enemy,
-            All
-        }
+    public override int GetTotalDamage()
+    {
+        return (int)((Damage * Bonus.ProportionalBonus) + Bonus.FlatBonus);
     }
 }

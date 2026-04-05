@@ -1,13 +1,17 @@
-﻿#region
-
-#endregion
-
-using Common.Utilities.Net;
+﻿using Common.Network;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct AccountList(int AccountListId, int[] AccountIDs) : IOutgoingPacket<AccountList>
+public readonly record struct AccountList(int AccountListId, int[] AccountIDs) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.ACCOUNTLIST;
+    
     public const int Locked = 0;
     public const int Ignored = 1;
+
+    public void Write(ref SpanWriter wtr)
+    {
+        wtr.Write(AccountListId);
+        wtr.Write(AccountIDs);
+    }
 }

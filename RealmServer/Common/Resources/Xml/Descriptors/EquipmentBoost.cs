@@ -6,6 +6,24 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class EquipmentBoost : ItemData
 {
+    public EquipmentBoost(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        Stat = e.GetAttribute<int>("stat");
+        Amount = e.GetAttribute<int>("amount");
+        LevelIncrease = e.HasElement("LevelIncrease")
+            ? new LevelIncreaseDesc(e.Element("LevelIncrease"), this, (byte)EquipmentBoostField.LevelIncrease)
+            : null;
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(EquipmentBoostField);
 
     public int Stat
@@ -24,23 +42,5 @@ public class EquipmentBoost : ItemData
     {
         get => GetValue<LevelIncreaseDesc>(2);
         set => SetValue(2, value);
-    }
-
-    public EquipmentBoost(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        Stat = e.GetAttribute<int>("stat");
-        Amount = e.GetAttribute<int>("amount");
-        LevelIncrease = e.HasElement("LevelIncrease")
-            ? new LevelIncreaseDesc(e.Element("LevelIncrease"), this, (byte)EquipmentBoostField.LevelIncrease)
-            : null;
-
-        _initialized = true;
     }
 }

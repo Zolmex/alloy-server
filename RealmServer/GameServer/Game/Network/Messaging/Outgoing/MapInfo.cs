@@ -1,10 +1,9 @@
-﻿#region
-
-#endregion
+﻿using Common.Network;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct MapInfo(int MapWidth,
+public readonly record struct MapInfo(
+    int MapWidth,
     int MapHeight,
     string Name,
     string DisplayName,
@@ -13,7 +12,21 @@ public readonly partial record struct MapInfo(int MapWidth,
     bool ShowDisplays,
     bool AllowPlayerTeleport,
     string Music,
-    int Difficulty) : IOutgoingPacket<MapInfo>
+    int Difficulty) : IOutgoingPacket
 {
+    public PacketId ID => PacketId.MAPINFO;
 
+    public void Write(ref SpanWriter wtr)
+    {
+        wtr.Write(MapWidth);
+        wtr.Write(MapHeight);
+        wtr.WriteUTF(Name);
+        wtr.WriteUTF(DisplayName);
+        wtr.Write(Seed);
+        wtr.Write(Background);
+        wtr.Write(ShowDisplays);
+        wtr.Write(AllowPlayerTeleport);
+        wtr.WriteUTF(Music);
+        wtr.Write(Difficulty);
+    }
 }

@@ -1,7 +1,11 @@
 ﻿<DatabaseConfig>
-  <Host>127.0.0.1</Host>
-  <Port>6379</Port> 
-  <Password></Password>
-  <DbIndex>0</DbIndex>
-  <MaxAccountsPerIP>5000</MaxAccountsPerIP>
+    <Host>127.0.0.1</Host>
+    <Port>7001</Port>
+    <Password></Password>
+    <Redis>
+        <Host>127.0.0.1</Host>
+        <Port>6379</Port>
+        <DbIndex>0</DbIndex>
+        <Password></Password>
+    </Redis>
 </DatabaseConfig>

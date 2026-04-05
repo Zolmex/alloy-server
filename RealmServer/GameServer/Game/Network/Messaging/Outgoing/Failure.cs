@@ -1,12 +1,11 @@
-﻿#region
-
-#endregion
+﻿using Common.Network;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct Failure(int ErrorId, string ErrorDescription) : IOutgoingPacket<Failure>
+public readonly record struct Failure(int ErrorId, string ErrorDescription) : IOutgoingPacket
 {
-
+    public PacketId ID => PacketId.FAILURE;
+    
     public const string DEFAULT_MESSAGE = "An error occured while processing data from your client.";
     public const int DEFAULT = 0;
     public const int INCORRECT_VERSION = 1;
@@ -14,4 +13,10 @@ public readonly partial record struct Failure(int ErrorId, string ErrorDescripti
     public const int INVALID_TELEPORT_TARGET = 3;
     public const int ACCOUNT_IN_USE = 4;
     public const int PORTAL_DISABLED = 5;
+
+    public void Write(ref SpanWriter wtr)
+    {
+        wtr.Write(ErrorId);
+        wtr.WriteUTF(ErrorDescription);
+    }
 }

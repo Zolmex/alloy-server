@@ -2,9 +2,11 @@
 
 using Common;
 using Common.Database;
+using Common.Database.Models;
 using GameServer.Game.Chat;
 using GameServer.Game.Network.Messaging.Outgoing;
 using System;
+using System.Linq;
 
 #endregion
 
@@ -14,8 +16,10 @@ public partial class Player
 {
     public const int LevelCap = 50; //for testing
     public const int XPPerFame = 500;
-    public static readonly int[] Stars = [20, 150, 400, 800, 2000];
     private const int FIND_QUEST_COOLDOWN = 5000; // Find new quest every 10 seconds
+    public static readonly int[] Stars = [20, 150, 400, 800, 2000];
+
+    private long _findNewQuestTime;
 
     public Enemy Quest { get; private set; }
 
@@ -25,27 +29,21 @@ public partial class Player
         set => Stats.Set(StatType.QuestId, value, true);
     }
 
-    public int Experience
+    public uint Experience
     {
-        get => Stats.Get<int>(StatType.Experience);
+        get => Stats.Get<uint>(StatType.Experience);
         set => Stats.Set(StatType.Experience, value, true);
     }
 
-    public int Level
+    public ushort Level
     {
-        get => Stats.Get<int>(StatType.Level);
+        get => Stats.Get<ushort>(StatType.Level);
         set => Stats.Set(StatType.Level, value);
     }
 
-    public int StatPoints
+    public uint CharFame
     {
-        get => Stats.Get<int>(StatType.StatPoints);
-        set => Stats.Set(StatType.StatPoints, value, true);
-    }
-
-    public int CharFame
-    {
-        get => Stats.Get<int>(StatType.CharFame);
+        get => Stats.Get<uint>(StatType.CharFame);
         set => Stats.Set(StatType.CharFame, value, true);
     }
 
@@ -66,8 +64,6 @@ public partial class Player
         get => Stats.Get<int>(StatType.NumStars);
         set => Stats.Set(StatType.NumStars, value);
     }
-
-    private long _findNewQuestTime;
 
     public void FindNewQuest(RealmTime time)
     {
@@ -112,14 +108,14 @@ public partial class Player
             Quest = null;
     }
 
-    public bool GainXP(Character en, int baseXp)
+    public bool GainXP(CharacterEntity en, int baseXp)
     {
-        var xp = CalculateXPGain(en, baseXp);
+        var xp = CalculateXPGain(en, (uint)baseXp);
 
         Experience += xp;
         CharFame += xp / XPPerFame;
 
-        var classStat = User.Account.Stats.GetClassStats(Char.ClassType);
+        var classStat = User.Account.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == Char.ObjectType);
         classStat.BestFame = CharFame > classStat.BestFame ? CharFame : classStat.BestFame;
 
         var newClassQuestFame = GetNextClassQuestFame(classStat.BestFame);
@@ -136,17 +132,15 @@ public partial class Player
             Level++;
             classStat.BestLevel = Level > classStat.BestLevel ? Level : classStat.BestLevel;
 
-            Experience -= NextLevelXpGoal;
+            Experience -= (uint)NextLevelXpGoal;
 
             NextLevelXpGoal = GetNextLevelXPGoal(Level);
-            StatPoints += 5;
             HP = MaxHP;
             MP = MaxMP;
-            MS = MaxMS;
 
             if (Level == LevelCap)
             {
-                ChatManager.Announce($"{Name} has reached the maximum level!", false, World.Id, false);
+                ChatManager.Announce($"{Name} has reached the maximum level!", false, World.Id);
                 break;
             }
         }
@@ -154,7 +148,7 @@ public partial class Player
         return levelledUp;
     }
 
-    private int CalculateXPGain(Character en, int baseXp)
+    private uint CalculateXPGain(CharacterEntity en, uint baseXp)
     {
         if (en == null)
             return baseXp;
@@ -163,14 +157,14 @@ public partial class Player
         if (Quest == en)
             max = NextLevelXpGoal * 0.5f;
 
-        return (int)Math.Min(baseXp, max);
+        return (uint)Math.Min(baseXp, max);
     }
 
-    public void InitLevel(DbChar @char)
+    public void InitLevel(Character chr)
     {
-        CharFame = @char.CharFame;
-        Experience = @char.Experience;
-        var classStat = User.Account.Stats.GetClassStats(@char.ClassType);
+        CharFame = chr.CurrentFame;
+        Experience = chr.XpPoints;
+        var classStat = User.Account.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
         NextClassQuestFame = GetNextClassQuestFame(classStat.BestFame > CharFame ? classStat.BestFame : CharFame);
         NextLevelXpGoal = GetNextLevelXPGoal(Level);
     }
@@ -180,7 +174,7 @@ public partial class Player
         return (int)(50f + ((level - 1f) * 100f * (1f + (level / 10f))));
     }
 
-    public static int GetNextClassQuestFame(int fame)
+    public static int GetNextClassQuestFame(uint fame)
     {
         for (var i = 0; i < Stars.Length; i++)
         {
@@ -196,7 +190,7 @@ public partial class Player
     public int GetStars()
     {
         var stars = 0;
-        foreach (var classStat in User.Account.Stats.ClassStats)
+        foreach (var classStat in User.Account.AccStats.ClassStats)
             for (var i = 0; i < Stars.Length; i++)
                 if (classStat.BestFame >= Stars[i])
                     stars++;

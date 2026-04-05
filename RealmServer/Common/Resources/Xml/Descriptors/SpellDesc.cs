@@ -6,8 +6,24 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class SpellDesc : ItemData
 {
+    public SpellDesc(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        MpCost = e.GetValue<short>("MpCost");
+        NumProjectiles = e.GetValue<byte>("NumProjectiles", 20);
+        ProjectileId = e.GetValue<byte>("ProjectileId");
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(SpellDescField);
-    
+
     public short MpCost
     {
         get => GetValue<short>(0);
@@ -24,21 +40,5 @@ public class SpellDesc : ItemData
     {
         get => GetValue<byte>(2);
         set => SetValue(2, value);
-    }
-    
-    public SpellDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        MpCost = e.GetValue<short>("MpCost", 0);
-        NumProjectiles = e.GetValue<byte>("NumProjectiles", 20);
-        ProjectileId = e.GetValue<byte>("ProjectileId", 0);
-
-        _initialized = true;
     }
 }

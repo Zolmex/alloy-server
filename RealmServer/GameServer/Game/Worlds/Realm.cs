@@ -7,63 +7,62 @@ using System.Linq;
 
 #endregion
 
-namespace GameServer.Game.Worlds
+namespace GameServer.Game.Worlds;
+
+public class Realm : World
 {
-    public class Realm : World
+    public Realm()
+        : base(REALM, -1)
     {
-        public bool Closed { get; set; }
+        DisplayName = GetRealmName();
 
-        public Oryx Oryx { get; }
+        Oryx = new Oryx(this);
+    }
 
-        public Realm()
-            : base(REALM, -1)
-        {
-            DisplayName = GetRealmName();
+    public bool Closed { get; set; }
 
-            Oryx = new Oryx(this);
-        }
+    public Oryx Oryx { get; }
 
-        public override void Initialize()
-        {
-            base.Initialize();
+    public override void Initialize()
+    {
+        base.Initialize();
 
-            Oryx.Initialize();
-            RealmManager.OnRealmAdded(this);
-        }
+        Oryx.Initialize();
+        RealmManager.OnRealmAdded(this);
+    }
 
-        public override void Tick(RealmTime time)
-        {
-            if (!Initialized)
-                return;
+    public override void Tick(RealmTime time)
+    {
+        if (!Initialized)
+            return;
 
-            base.Tick(time);
+        base.Tick(time);
 
-            Oryx.Tick(time);
-        }
+        Oryx.Tick(time);
+    }
 
-        public override void RemoveEntity(Entity en)
-        {
-            base.RemoveEntity(en);
+    public override void RemoveEntity(Entity en)
+    {
+        base.RemoveEntity(en);
 
-            Oryx.OnEnemyKilled(en);
-        }
+        Oryx.OnEnemyKilled(en);
+    }
 
-        public void CloseRealm()
-        {
-            Oryx.Close();
-        }
+    public void CloseRealm()
+    {
+        Oryx.Close();
+    }
 
-        public Entity GetActiveEvent()
-        {
-            return Oryx.ActiveEvent;
-        }
+    public Entity GetActiveEvent()
+    {
+        return Oryx.ActiveEvent;
+    }
 
-        public string GetRealmName()
-        {
-            string ret = null;
-            while (ret == null || RealmManager.ActiveRealms.Values.Any(i => i.EqualsIgnoreCase(ret)))
-                ret = RealmConfig.Config.Names.RandomElement();
-            return ret;
-        }
+    public string GetRealmName()
+    {
+        string ret = null;
+        while (ret == null || RealmManager.ActiveRealms.Values.Any(i => i.EqualsIgnoreCase(ret)))
+            ret = RealmConfig.Config.Names.RandomElement();
+        return ret;
     }
 }

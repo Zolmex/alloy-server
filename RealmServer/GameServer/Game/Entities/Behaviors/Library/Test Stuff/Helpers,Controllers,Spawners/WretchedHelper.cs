@@ -4,42 +4,41 @@ using GameServer.Game.Entities.Behaviors.Actions;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors
+namespace GameServer.Game.Entities.Behaviors;
+
+public class WretchedHelper : EntityBehavior
 {
-    public class WretchedHelper : EntityBehavior
+    public enum WretchedHelperState
     {
-        public override void RegisterStates()
+        CreateSquare
+    }
+
+    private Taunt Taunt { get; set; }
+
+    public override void RegisterStates()
+    {
+        StateManager.RegisterState(WretchedHelperState.CreateSquare, CreateSquareTick);
+    }
+
+    public override void RegisterBehaviors()
+    {
+        //Taunt = new Taunt(text: "YOOO WE HERE");
+    }
+
+    public override void Initialize(CharacterEntity owner)
+    {
+        StateManager.SetCurrentState(owner, WretchedHelperState.CreateSquare);
+        base.Initialize(owner);
+    }
+
+    public void CreateSquareTick(RealmTime time, CharacterEntity owner, StateTick state)
+    {
+        if (state == StateTick.Start)
         {
-            StateManager.RegisterState(WretchedHelperState.CreateSquare, CreateSquareTick);
+            // Taunt.RegisterResources(owner);
         }
 
-        public override void RegisterBehaviors()
-        {
-            //Taunt = new Taunt(text: "YOOO WE HERE");
-        }
-
-        private Taunt Taunt { get; set; }
-
-        public override void Initialize(Character owner)
-        {
-            StateManager.SetCurrentState(owner, WretchedHelperState.CreateSquare);
-            base.Initialize(owner);
-        }
-
-        public void CreateSquareTick(RealmTime time, Character owner, StateTick state)
-        {
-            if (state == StateTick.Start)
-            {
-                // Taunt.RegisterResources(owner);
-            }
-
-            else if (state == StateTick.Tick)
-            { }
-        }
-
-        public enum WretchedHelperState
-        {
-            CreateSquare
-        }
+        else if (state == StateTick.Tick)
+        { }
     }
 }

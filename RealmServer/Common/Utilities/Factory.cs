@@ -5,61 +5,60 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace Common.Utilities
+namespace Common.Utilities;
+
+public class Factory<T>
 {
-    public class Factory<T>
+    private readonly Queue<T> _pool;
+
+    public Factory(int size, params object[] args)
     {
-        private readonly Queue<T> _pool;
-
-        public Factory(int size, params object[] args)
-        {
-            _pool = new Queue<T>();
-            for (var i = 0; i < size; i++)
-                _pool.Enqueue((T)Activator.CreateInstance(typeof(T), args));
-        }
-
-        public T Pop()
-        {
-            if (_pool.Count < 1)
-                throw new Exception("Object pool is empty.");
-
-            if (!_pool.TryDequeue(out var ret))
-                throw new Exception("Failed to remove object from the beginning of the queue.");
-
-            return ret;
-        }
-
-        public void Push(T obj)
-        {
-            _pool.Enqueue(obj);
-        }
+        _pool = new Queue<T>();
+        for (var i = 0; i < size; i++)
+            _pool.Enqueue((T)Activator.CreateInstance(typeof(T), args));
     }
 
-    public class Factory
+    public T Pop()
     {
-        private readonly Queue<object> _pool;
+        if (_pool.Count < 1)
+            throw new Exception("Object pool is empty.");
 
-        public Factory(Type type, int size, params object[] args)
-        {
-            _pool = new Queue<object>();
-            for (var i = 0; i < size; i++)
-                _pool.Enqueue(Activator.CreateInstance(type, args));
-        }
+        if (!_pool.TryDequeue(out var ret))
+            throw new Exception("Failed to remove object from the beginning of the queue.");
 
-        public object Pop()
-        {
-            if (_pool.Count < 1)
-                throw new Exception("Object pool is empty.");
+        return ret;
+    }
 
-            if (!_pool.TryDequeue(out var ret))
-                throw new Exception("Failed to remove object from the beginning of the queue.");
+    public void Push(T obj)
+    {
+        _pool.Enqueue(obj);
+    }
+}
 
-            return ret;
-        }
+public class Factory
+{
+    private readonly Queue<object> _pool;
 
-        public void Push(object obj)
-        {
-            _pool.Enqueue(obj);
-        }
+    public Factory(Type type, int size, params object[] args)
+    {
+        _pool = new Queue<object>();
+        for (var i = 0; i < size; i++)
+            _pool.Enqueue(Activator.CreateInstance(type, args));
+    }
+
+    public object Pop()
+    {
+        if (_pool.Count < 1)
+            throw new Exception("Object pool is empty.");
+
+        if (!_pool.TryDequeue(out var ret))
+            throw new Exception("Failed to remove object from the beginning of the queue.");
+
+        return ret;
+    }
+
+    public void Push(object obj)
+    {
+        _pool.Enqueue(obj);
     }
 }

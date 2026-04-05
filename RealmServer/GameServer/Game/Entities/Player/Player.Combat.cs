@@ -16,9 +16,12 @@ public partial class Player
 {
     private const float MIN_ATTACK_MULT = 0.5f;
     private const float MAX_ATTACK_MULT = 2f;
+    private const float MIN_ATTACK_FREQ = 0.0015f;
+    private const float MAX_ATTACK_FREQ = 0.008f;
 
-    public Character LastHitTarget;
-    public Character DamageCounterTarget;
+    public CharacterEntity DamageCounterTarget;
+
+    public CharacterEntity LastHitTarget;
 
     public bool ShotsVisible(Player player)
     {
@@ -62,12 +65,11 @@ public partial class Player
 
             ushort projIndex;
             using (TimedLock.Lock(_projIdLock))
-                projIndex = _nextProjectileId++;
+                projIndex = _nextBulletId++;
 
             var proj = new Projectile(this, projIndex, RealmManager.WorldTime.TotalElapsedMs, angle.Rad2Deg(),
-                startPos, (int)(dmg * crit), projDesc.Path.Clone(),
-                projDesc.LifetimeMS, projDesc.MultiHit, projDesc.PassesCover, projDesc.ArmorPiercing,
-                Projectile.ProjectileTargetType.Enemy);
+                startPos, (int)(dmg * crit), projDesc.Path.Clone(), Projectile.ProjectileTargetType.Enemy);
+            proj.SetProps(projDesc);
             QueueProjectile(proj);
             OnShoot?.Invoke(proj);
             angle += arcGap;
@@ -116,7 +118,7 @@ public partial class Player
         var critMult = GetCritMultiplier(normalRandom, forceCrit);
         damage *= critMult;
 
-        return new float[] { damage, critMult };
+        return new[] { damage, critMult };
     }
 
     public float GetAttackFrequency()
@@ -124,7 +126,7 @@ public partial class Player
         if (HasConditionEffect(ConditionEffectIndex.Dazed))
             return 1;
 
-        var freq = AttackSpeed;
+        var freq = MIN_ATTACK_FREQ + (Dexterity / 75f) * (MAX_ATTACK_FREQ - MIN_ATTACK_FREQ);
         if (HasConditionEffect(ConditionEffectIndex.Berserk))
             freq *= 1.5f;
         return freq;
@@ -149,7 +151,7 @@ public partial class Player
         var topDealers = User.GameInfo.DamageCounter switch
         {
             < 3 => DamageCounterTarget.DamageStorage.GetTopDamageDealers(5),
-            _ => new List<KeyValuePair<Player, int>>(),
+            _ => new List<KeyValuePair<Player, int>>()
         };
         User.SendPacket(new DamageCounterUpdate(targetId, plrDamage, topDealers));
     }

@@ -7,6 +7,24 @@ namespace Common.Resources.Xml.Descriptors;
 
 public class GemstoneDesc : ItemData
 {
+    public GemstoneDesc(XElement e, ItemData parent = null, byte parentField = 0)
+    {
+        SetParent(parent, parentField);
+        if (e == null) // Null when instance by itemdata import
+        {
+            _initialized = true;
+            return;
+        }
+
+        SlotTypes = e.GetAttribute<string>("slotTypes").CommaToArray<int>();
+        Origin = e.GetAttribute<string>("origin");
+        Boosts = e.Elements("Boost")
+            .Select(i => new GemstoneBoost(i))
+            .ToArray();
+
+        _initialized = true;
+    }
+
     public override Type FieldsEnum => typeof(GemstoneField);
 
     public int[] SlotTypes
@@ -25,23 +43,5 @@ public class GemstoneDesc : ItemData
     {
         get => GetValue<GemstoneBoost[]>(2);
         set => SetValue(2, value);
-    }
-
-    public GemstoneDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
-        SetParent(parent, parentField);
-        if (e == null) // Null when instance by itemdata import
-        {
-            _initialized = true;
-            return;
-        }
-
-        SlotTypes = e.GetAttribute<string>("slotTypes").CommaToArray<int>(",");
-        Origin = e.GetAttribute<string>("origin");
-        Boosts = e.Elements("Boost")
-            .Select(i => new GemstoneBoost(i))
-            .ToArray();
-
-        _initialized = true;
     }
 }

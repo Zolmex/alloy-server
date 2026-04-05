@@ -6,22 +6,21 @@ using System.Net.Http;
 
 #endregion
 
-namespace Common.API.Requests.SubscriptionRequests
+namespace Common.API.Requests.SubscriptionRequests;
+
+/// <summary>
+///     Unsubscription model for loot drop.
+/// </summary>
+public class LootDropUnsubscriptionRequest : APISubscription, IAPIRequest
 {
     /// <summary>
-    /// Unsubscription model for loot drop.
+    ///     Gets or sets the rarity to unsubscribe from.
     /// </summary>
-    public class LootDropUnsubscriptionRequest : APISubscription, IAPIRequest
-    {
-        /// <inheritdoc/>
-        public string Uri => "/api/Loot/LootDropUnsubscribe";
+    public LootDropRarity LootDropRarity { get; set; }
 
-        /// <inheritdoc/>
-        public HttpMethod Method => HttpMethod.Post;
+    /// <inheritdoc />
+    public string Uri => "/api/Loot/LootDropUnsubscribe";
 
-        /// <summary>
-        /// Gets or sets the rarity to unsubscribe from.
-        /// </summary>
-        public LootDropRarity LootDropRarity { get; set; }
-    }
+    /// <inheritdoc />
+    public HttpMethod Method => HttpMethod.Post;
 }

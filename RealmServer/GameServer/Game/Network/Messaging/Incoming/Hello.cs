@@ -1,13 +1,15 @@
 ﻿#region
 
 using Common.Database;
+using Common.Database.Models;
+using Common.Network;
 using Common.Resources.Config;
 using Common.Utilities;
-using Common.Utilities.Net;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 #endregion
@@ -19,20 +21,10 @@ public partial record Hello : IIncomingPacket
 {
     public string BuildVersion;
     public int GameId;
-    public string Username;
-    public string Password;
-    public int MapJSONLength;
     public string MapJSON;
-
-    public void Read(NetworkReader rdr)
-    {
-        BuildVersion = rdr.ReadUTF();
-        GameId = rdr.ReadInt32();
-        Username = rdr.ReadUTF();
-        Password = rdr.ReadUTF();
-        MapJSONLength = rdr.ReadInt32();
-        MapJSON = Encoding.UTF8.GetString(rdr.ReadBytes(MapJSONLength));
-    }
+    public int MapJSONLength;
+    public string Password;
+    public string Username;
 
     public async void Handle(User user)
     {
@@ -45,9 +37,9 @@ public partial record Hello : IIncomingPacket
         var acc = user.Account;
         if (user.State != ConnectionState.Reconnecting)
         {
-            var verify = await DbClient.VerifyAccount(Username, Password);
-            var status = verify.Item2;
-            acc = verify.Item1;
+            var verify = await DbClient.VerifyAccountAsync(Username, Password);
+            var status = verify.Status;
+            acc = verify.Account;
             if (acc == null)
             {
                 user.SendFailure(Failure.DEFAULT, status.GetDescription());
@@ -61,13 +53,27 @@ public partial record Hello : IIncomingPacket
             return;
         }
 
+        if (acc.IsBanned)
+        {
+            // Check if ban has expired
+            if (acc.AccountBans.Any(b => b.ExpiresAt == null) || // Means the account is permanently banned
+                acc.AccountBans.Any(b => b.ExpiresAt > DateTime.UtcNow)) // Means the ban hasn't been lifted yet
+            {
+                user.SendFailure(Failure.DEFAULT, "Account is banned.");
+                return;
+            }
+
+            acc.IsBanned = false; // Update bool value 
+            await DbClient.FlushAsync(acc, a => a.IsBanned);
+        }
+
         if (RealmManager.UserAccIds.TryGetValue(user, out _) && user.State != ConnectionState.Reconnecting)
         {
-            user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.AccountId}");
+            user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.Id}");
             return;
         }
 
-        if (GameServerConfig.Config.AdminOnly && !acc.Admin)
+        if (GameServerConfig.Config.AdminOnly && !acc.IsAdmin)
         {
             user.SendFailure(Failure.DEFAULT, "Admin only server.");
             return;
@@ -77,7 +83,7 @@ public partial record Hello : IIncomingPacket
 
         if (GameId == World.TEST_ID)
         {
-            if (!acc.Admin)
+            if (!acc.IsAdmin)
             {
                 user.SendFailure(Failure.FORCE_CLOSE_GAME, "Only players with admin permissions can make test maps.");
                 return;
@@ -121,5 +127,15 @@ public partial record Hello : IIncomingPacket
             world.Config.AllowTeleport,
             world.Music,
             world.Config.Difficulty));
+    }
+
+    public void Read(ref SpanReader rdr)
+    {
+        BuildVersion = rdr.ReadUTF();
+        GameId = rdr.ReadInt32();
+        Username = rdr.ReadUTF();
+        Password = rdr.ReadUTF();
+        MapJSONLength = rdr.ReadInt32();
+        MapJSON = Encoding.UTF8.GetString(rdr.ReadBytes(MapJSONLength));
     }
 }

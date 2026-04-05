@@ -1,11 +1,10 @@
 ﻿#region
 
+using Common.Network;
 using Common.Utilities;
-using Common.Utilities.Net;
 using System;
 using System.IO;
 using System.Numerics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 #endregion
 
@@ -66,24 +65,24 @@ public struct ObjectStatusData
     public StatData[] UpdatedStats;
     public bool Update;
 
-    public static ObjectStatusData Read(NetworkReader rdr)
+    public static ObjectStatusData Read(ref SpanReader rdr)
     {
         var ret = new ObjectStatusData();
         ret.ObjectId = rdr.ReadInt32();
-        ret.Pos = WorldPosData.Read(rdr);
+        ret.Pos = WorldPosData.Read(ref rdr);
         ret.UpdatedStats = new StatData[rdr.ReadByte()];
         for (var i = 0; i < ret.UpdatedStats.Length; i++)
-            ret.UpdatedStats[i] = StatData.Read(rdr);
+            ret.UpdatedStats[i] = StatData.Read(ref rdr);
 
         return ret;
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(ObjectId);
         wtr.Write(Pos);
         var statCount = 0;
-        var pos = wtr.BaseStream.Position;
+        var pos = wtr.Position;
         wtr.Write((byte)0); // Placeholder
         using (TimedLock.Lock(Stats))
         {
@@ -93,15 +92,15 @@ public struct ObjectStatusData
                 if (value != null)
                 {
                     statCount++;
-                    StatData.Write(wtr, (StatType)i, value);
+                    StatData.Write(ref wtr, (StatType)i, value);
                 }
             }
         }
 
-        var endPos = wtr.BaseStream.Position;
-        wtr.BaseStream.Seek(pos, SeekOrigin.Begin); // Write in the placeholder the real amount of stat counts
+        var endPos = wtr.Position;
+        wtr.Position = pos; // Write in the placeholder the real amount of stat counts
         wtr.Write((byte)statCount);
-        wtr.BaseStream.Seek(endPos, SeekOrigin.Begin);
+        wtr.Position = endPos;
 
         Update = false;
     }
@@ -134,11 +133,10 @@ public struct WorldPosData : IEquatable<WorldPosData>
         Y = y;
     }
 
-    public static WorldPosData Read(NetworkReader rdr)
+    public static WorldPosData Read(ref SpanReader rdr)
     {
         return new WorldPosData { X = rdr.ReadSingle(), Y = rdr.ReadSingle() };
     }
-
 
 
     public override int GetHashCode()
@@ -167,18 +165,14 @@ public struct WorldPosData : IEquatable<WorldPosData>
         return !pos1.Equals(pos2);
     }
 
-    public static implicit operator Vector2(WorldPosData pos) => new(pos.X, pos.Y);
+    public static implicit operator Vector2(WorldPosData pos)
+    {
+        return new Vector2(pos.X, pos.Y);
+    }
 }
 
 public static class WorldPosDataExtensions
 {
-    extension(NetworkReader rdr)
-    {
-        public WorldPosData ReadWorldPosData()
-        {
-            return new WorldPosData(rdr.ReadSingle(), rdr.ReadSingle());
-        }
-    }
     public static Vector2 ToVec2(this WorldPosData data)
     {
         return new Vector2(data.X, data.Y);
@@ -193,12 +187,20 @@ public static class WorldPosDataExtensions
 
     public static float AngleDegrees(this WorldPosData pos1, WorldPosData pos2)
     {
-        return AngleRadians(pos1, pos2) * 180f / (float)Math.PI;
+        return pos1.AngleRadians(pos2) * 180f / (float)Math.PI;
     }
 
     public static float AngleRadians(this WorldPosData pos1, WorldPosData pos2)
     {
         return (float)Math.Atan2(pos2.Y - pos1.Y, pos2.X - pos1.X);
+    }
+
+    extension(NetworkReader rdr)
+    {
+        public WorldPosData ReadWorldPosData()
+        {
+            return new WorldPosData(rdr.ReadSingle(), rdr.ReadSingle());
+        }
     }
 }
 
@@ -231,14 +233,6 @@ public struct StatData
     {
         return type switch
         {
-            StatType.CriticalChance => true,
-            StatType.DodgeChance => true,
-            StatType.CriticalChanceBonus => true,
-            StatType.DodgeChanceBonus => true,
-            StatType.AttackSpeed => true,
-            StatType.AttackSpeedBonus => true,
-            StatType.MovementSpeed => true,
-            StatType.MovementSpeedBonus => true,
             _ => false
         };
     }
@@ -279,7 +273,7 @@ public struct StatData
         }
     }
 
-    public static StatData Read(NetworkReader rdr)
+    public static StatData Read(ref SpanReader rdr)
     {
         var ret = new StatData();
         ret.Type = (StatType)rdr.ReadByte();
@@ -306,18 +300,18 @@ public struct StatData
     {
         wtr.Write((byte)Type);
         if (IsStringStat(Type))
-            wtr.Write(TextValue);
+            wtr.WriteUTF(TextValue);
         else if (IsFloatStat(Type))
             wtr.Write(FloatValue);
         else
             wtr.Write(IntValue);
     }
 
-    public static void Write(NetworkWriter wtr, StatType type, object value)
+    public static void Write(ref SpanWriter wtr, StatType type, object value)
     {
         wtr.Write((byte)type);
         if (IsStringStat(type))
-            wtr.Write((string)value);
+            wtr.WriteUTF((string)value);
         else if (IsFloatStat(type))
         {
             var floatValue = value is int intValue ? intValue : (float)value;
@@ -352,15 +346,15 @@ public struct ObjectData
     public ushort ObjectType;
     public ObjectStatusData Status;
 
-    public static ObjectData Read(NetworkReader rdr)
+    public static ObjectData Read(ref SpanReader rdr)
     {
-        return new ObjectData { ObjectType = rdr.ReadUInt16(), Status = ObjectStatusData.Read(rdr) };
+        return new ObjectData { ObjectType = rdr.ReadUInt16(), Status = ObjectStatusData.Read(ref rdr) };
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(ObjectType);
-        Status.Write(wtr);
+        Status.Write(ref wtr);
     }
 }
 
@@ -374,7 +368,7 @@ public struct ObjectDropData
         return new ObjectDropData { ObjectId = rdr.ReadInt32(), Explode = rdr.ReadBoolean() };
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write(ObjectId);
         wtr.Write(Explode);
@@ -386,14 +380,17 @@ public struct SlotObjectData
     public int ObjectId;
     public byte SlotId;
 }
-public static class SlotObjectDataExtensions{
-    extension(NetworkReader rdr)
+
+public static class SlotObjectDataExtensions
+{
+    extension(ref SpanReader rdr)
     {
         public SlotObjectData ReadSlotObjectData()
         {
             return new SlotObjectData { ObjectId = rdr.ReadInt32(), SlotId = rdr.ReadByte() };
         }
     }
+
     extension(NetworkWriter wtr)
     {
         public void Write(SlotObjectData data)

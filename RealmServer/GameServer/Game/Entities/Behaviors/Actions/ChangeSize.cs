@@ -1,51 +1,50 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Actions
+﻿namespace GameServer.Game.Entities.Behaviors.Actions;
+
+public class SizeInfo
 {
-    public class SizeInfo
+    public int CooldownLeft;
+}
+
+public record ChangeSize : BehaviorScript
+{
+    private readonly int _rate;
+    private readonly int _target;
+
+    public ChangeSize(int rate, int target)
     {
-        public int CooldownLeft;
+        _rate = rate;
+        _target = target;
     }
 
-    public record ChangeSize : BehaviorScript
+    public override void Start(CharacterEntity host)
     {
-        private readonly int _rate;
-        private readonly int _target;
+        var state = host.ResolveResource<SizeInfo>(this);
+        state.CooldownLeft = 0;
+    }
 
-        public ChangeSize(int rate, int target)
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
+    {
+        var state = host.ResolveResource<SizeInfo>(this);
+
+        if (state.CooldownLeft > 0)
         {
-            _rate = rate;
-            _target = target;
+            state.CooldownLeft -= time.ElapsedMsDelta;
+            return BehaviorTickState.OnCooldown;
         }
 
-        public override void Start(Character host)
+        if (state.CooldownLeft <= 0)
         {
-            var state = host.ResolveResource<SizeInfo>(this);
-            state.CooldownLeft = 0;
-        }
-
-        public override BehaviorTickState Tick(Character host, RealmTime time)
-        {
-            var state = host.ResolveResource<SizeInfo>(this);
-
-            if (state.CooldownLeft > 0)
+            if (host.Size != _target)
             {
-                state.CooldownLeft -= time.ElapsedMsDelta;
-                return BehaviorTickState.OnCooldown;
+                host.Size += _rate;
+                if ((_rate > 0 && host.Size > _target) ||
+                    (_rate < 0 && host.Size < _target))
+                    host.Size = _target;
             }
 
-            if (state.CooldownLeft <= 0)
-            {
-                if (host.Size != _target)
-                {
-                    host.Size += _rate;
-                    if ((_rate > 0 && host.Size > _target) ||
-                        (_rate < 0 && host.Size < _target))
-                        host.Size = _target;
-                }
-
-                state.CooldownLeft = 150;
-            }
-
-            return BehaviorTickState.BehaviorActive;
+            state.CooldownLeft = 150;
         }
+
+        return BehaviorTickState.BehaviorActive;
     }
 }

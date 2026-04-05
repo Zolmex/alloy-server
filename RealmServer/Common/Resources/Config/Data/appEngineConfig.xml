@@ -1,6 +1,6 @@
 ﻿<AppEngineConfig>
-  <XmlsDir>Resources/Xml/Data/</XmlsDir>
-  <WorldsDir>Resources/World/Data/</WorldsDir>
-  <Port>80</Port>
-  <Address>127.0.0.1</Address>
+    <XmlsDir>Resources/Xml/Data/</XmlsDir>
+    <WorldsDir>Resources/World/Data/</WorldsDir>
+    <Port>8080</Port>
+    <Address>127.0.0.1</Address>
 </AppEngineConfig>

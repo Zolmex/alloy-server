@@ -1,7 +1,6 @@
 ﻿#region
 
-using Common.Utilities;
-using Common.Utilities.Net;
+using Common.Network;
 using GameServer.Game.Entities;
 using GameServer.Game.Network.Messaging.Outgoing;
 
@@ -14,10 +13,10 @@ public partial record Buy : IIncomingPacket
 {
     public int ObjectId;
 
-    //public void Read(NetworkReader rdr)
-    //{
-    //    ObjectId = rdr.ReadInt32();
-    //}
+    public void Read(ref SpanReader rdr)
+    {
+        ObjectId = rdr.ReadInt32();
+    }
 
     public void Handle(User user)
     {

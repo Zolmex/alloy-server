@@ -6,55 +6,54 @@ using System.Linq;
 
 #endregion
 
-namespace GameServer.Game.Chat
+namespace GameServer.Game.Chat;
+
+public static class ChatManager
 {
-    public static class ChatManager
+    private static readonly Logger _log = new(typeof(ChatManager));
+
+    public static void Announce(string text, bool announcement = true, int worldId = 0, bool help = false, params int[] ignoreAccounts)
     {
-        private static readonly Logger _log = new(typeof(ChatManager));
+        var msg = announcement ? $"<ANNOUNCEMENT> {text}" : text;
 
-        public static void Announce(string text, bool announcement = true, int worldId = 0, bool help = false, params int[] ignoreAccounts)
+        RealmManager.BroadcastAllUsers(user =>
         {
-            var msg = announcement ? $"<ANNOUNCEMENT> {text}" : text;
+            if (worldId != 0 && (user.GameInfo.State != GameState.Playing || user.GameInfo.Player.World.Id != worldId))
+                return;
 
-            RealmManager.BroadcastAllUsers(user =>
+            if (ignoreAccounts.Length > 0 && ignoreAccounts.Contains(user.Account.Id))
+                return;
+
+            if (user.State == ConnectionState.Ready && user.GameInfo.State == GameState.Playing)
             {
-                if (worldId != 0 && (user.GameInfo.State != GameState.Playing || user.GameInfo.Player.World.Id != worldId))
-                    return;
+                var plr = user.GameInfo.Player;
 
-                if (ignoreAccounts.Length > 0 && ignoreAccounts.Contains(user.Account.AccountId))
-                    return;
+                if (help) plr.SendHelp(msg);
+                else plr.SendInfo(msg);
+            }
+        });
+        _log.Debug(msg);
+    }
 
-                if (user.State == ConnectionState.Ready && user.GameInfo.State == GameState.Playing)
-                {
-                    var plr = user.GameInfo.Player;
-
-                    if (help) plr.SendHelp(msg);
-                    else plr.SendInfo(msg);
-                }
-            });
-            _log.Debug(msg);
-        }
-
-        public static void Realm(string name, string text)
+    public static void Realm(string name, string text)
+    {
+        RealmManager.BroadcastAllUsers(user =>
         {
-            RealmManager.BroadcastAllUsers(user =>
+            if (user.GameInfo.State != GameState.Playing)
+                return;
+
+            if (user.State == ConnectionState.Ready && user.GameInfo.State == GameState.Playing)
             {
-                if (user.GameInfo.State != GameState.Playing)
-                    return;
+                var plr = user.GameInfo.Player;
+                plr.SendInfo($"<{name}> {text}");
+            }
+        });
+        _log.Debug($"<{name}> {text}");
+    }
 
-                if (user.State == ConnectionState.Ready && user.GameInfo.State == GameState.Playing)
-                {
-                    var plr = user.GameInfo.Player;
-                    plr.SendInfo($"<{name}> {text}");
-                }
-            });
-            _log.Debug($"<{name}> {text}");
-        }
-
-        public static void Oryx(World world, string text)
-        {
-            world.BroadcastAll(plr => plr.SendEnemy("Oryx the Mad God", text));
-            _log.Debug($"<Oryx the Mad God> {text}");
-        }
+    public static void Oryx(World world, string text)
+    {
+        world.BroadcastAll(plr => plr.SendEnemy("Oryx the Mad God", text));
+        _log.Debug($"<Oryx the Mad God> {text}");
     }
 }

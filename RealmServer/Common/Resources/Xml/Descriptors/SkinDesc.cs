@@ -6,9 +6,9 @@ namespace Common.Resources.Xml.Descriptors;
 public class SkinDesc
 {
     public readonly string Id;
-    public readonly ushort Type;
 
     public readonly ushort PlayerClassType;
+    public readonly ushort Type;
 
     public SkinDesc(XElement e, string id, ushort type)
     {

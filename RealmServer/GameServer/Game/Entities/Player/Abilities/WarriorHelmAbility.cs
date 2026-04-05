@@ -1,24 +1,19 @@
 using Common;
-using Common.Resources.Config;
-using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using GameServer.Game.Network.Messaging.Outgoing;
-using GameServer.Game.Worlds;
 using System;
-using System.Diagnostics.Metrics;
 
 namespace GameServer.Game.Entities;
 
 public class WarriorHelmAbility : Ability
 {
-    private static readonly Logger _log = new Logger(typeof(WarriorHelmAbility));
+    private static readonly Logger _log = new(typeof(WarriorHelmAbility));
 
     private long _cooldownReset;
-    private bool _hold;
     private long _drainCooldown;
-    private int _stacks;
     private long _helmDuration;
+    private bool _hold;
+    private int _stacks;
     private GemstoneBoost[] _statsModifierSave;
 
     public WarriorHelmAbility(Player player) : base(player)
@@ -80,7 +75,7 @@ public class WarriorHelmAbility : Ability
 
         if (realmTime.TotalElapsedMs < _drainCooldown)
             return;
-        
+
         if (_player.MP > 0)
             return;
 
@@ -95,7 +90,7 @@ public class WarriorHelmAbility : Ability
     {
         if (slot != 1 || _item == item)
             return;
-        
+
         foreach (var modifier in _statsModifierSave)
         {
             var stat = Enum.Parse<StatType>(modifier.Stat);
@@ -116,7 +111,7 @@ public class WarriorHelmAbility : Ability
         _statsModifierSave = _item == null ? new GemstoneBoost[0] : _item.Helm.StatsModifier;
     }
 
-    private void OnDamageDealt(Character target, int damage)
+    private void OnDamageDealt(CharacterEntity target, int damage)
     {
         if (RealmManager.WorldTime.TotalElapsedMs > _helmDuration)
             return;
@@ -139,7 +134,7 @@ public class WarriorHelmAbility : Ability
         }
     }
 
-    private void OnDamagedBy(Character arg1, Character arg2, int arg3)
+    private void OnDamagedBy(CharacterEntity arg1, CharacterEntity arg2, int arg3)
     {
         if (RealmManager.WorldTime.TotalElapsedMs > _helmDuration)
             return;

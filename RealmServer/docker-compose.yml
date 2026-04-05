@@ -1,0 +1,80 @@
+services:
+  alloy-mysql:
+    image: mysql
+    container_name: alloy-mysql
+    environment:
+      MYSQL_DATABASE: alloy
+      MYSQL_USER: alloy-db
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - alloy-data:/var/lib/mysql
+    networks:
+      - alloy-net
+    restart: unless-stopped
+
+  mysql-gui:
+    image: phpmyadmin
+    container_name: alloy-phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: alloy-mysql
+      PMA_USER: alloy-db
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - alloy-net
+    restart: unless-stopped
+    depends_on:
+      - alloy-mysql
+
+# TODO: Need to create the Dockerfile for these  
+#  alloy-dbserver:
+#    build:
+#      context: .
+#      dockerfile: dbserver.Dockerfile
+#    container_name: alloy-dbserver
+#    environment:
+#      ConnectionStrings__Default: server=localhost;database=alloy;user=alloy-db;password=${MYSQL_PASSWORD}
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - alloy-net
+#    restart: on-failure
+#    depends_on:
+#      - alloy-mysql
+#  
+#  alloy-webserver:
+#    build:
+#      context: .
+#      dockerfile: webserver.Dockerfile
+#    container_name: alloy-webserver
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - alloy-net
+#    restart: on-failure
+#    depends_on:
+#      - alloy-dbserver
+#  
+#  alloy-gameserver:
+#    build:
+#      context: .
+#      dockerfile: gameserver.Dockerfile
+#    container_name: alloy-gameserver
+#    ports:
+#      - "7001:7001"
+#    networks:
+#      - alloy-net
+#    restart: on-failure
+#    depends_on:
+#      - alloy-dbserver
+
+networks:
+  alloy-net:
+    driver: bridge
+
+volumes:
+  alloy-data:

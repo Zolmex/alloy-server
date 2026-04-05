@@ -4,51 +4,50 @@ using GameServer.Game.Entities.Behaviors.Actions;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors.Library
+namespace GameServer.Game.Entities.Behaviors.Library;
+
+public class MoveDemo : EntityBehavior
 {
-    public class MoveDemo : EntityBehavior
+    public enum DemoState
     {
-        private Move Move;
+        Tick
+    }
 
-        public override void RegisterStates()
+    private Move Move;
+
+    public override void RegisterStates()
+    {
+        StateManager.RegisterState(DemoState.Tick, TestTick);
+    }
+
+    public override void RegisterBehaviors()
+    {
+        Move = new Move(4, 2, 1000, 4f);
+    }
+
+    public override void Initialize(CharacterEntity owner)
+    {
+        StateManager.SetCurrentState(owner, DemoState.Tick);
+        base.Initialize(owner);
+    }
+
+    public void TestTick(RealmTime time, CharacterEntity owner, StateTick state)
+    {
+        if (state == StateTick.Start)
         {
-            StateManager.RegisterState(DemoState.Tick, TestTick);
+            Move.Start(owner);
         }
-
-        public override void RegisterBehaviors()
+        else if (state == StateTick.Tick)
         {
-            Move = new Move(4, 2, 1000, 4f);
-        }
-
-        public override void Initialize(Character owner)
-        {
-            StateManager.SetCurrentState(owner, DemoState.Tick);
-            base.Initialize(owner);
-        }
-
-        public void TestTick(RealmTime time, Character owner, StateTick state)
-        {
-            if (state == StateTick.Start)
+            var tickState = Move.Tick(owner, time);
+            if (tickState == BehaviorScript.BehaviorTickState.BehaviorActivate)
             {
-                Move.Start(owner);
+                owner.World.Taunt(owner, "Started Moving!");
             }
-            else if (state == StateTick.Tick)
+            else if (tickState == BehaviorScript.BehaviorTickState.BehaviorDeactivate)
             {
-                var tickState = Move.Tick(owner, time);
-                if (tickState == BehaviorScript.BehaviorTickState.BehaviorActivate)
-                {
-                    owner.World.Taunt(owner, "Started Moving!");
-                }
-                else if (tickState == BehaviorScript.BehaviorTickState.BehaviorDeactivate)
-                {
-                    owner.World.Taunt(owner, "Stopped Moving!");
-                }
+                owner.World.Taunt(owner, "Stopped Moving!");
             }
-        }
-
-        public enum DemoState
-        {
-            Tick
         }
     }
 }

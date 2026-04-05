@@ -6,80 +6,80 @@ using System.Xml.Linq;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors.Transitions
+namespace GameServer.Game.Entities.Behaviors.Transitions;
+
+#region
+
+using static BehaviorScript;
+
+#endregion
+
+/// <summary>
+///     A class for transitioning to a given state after a target is within a radius.
+/// </summary>
+public class EntityWithinTransition : BehaviorTransition
 {
-    #region
-
-    using static BehaviorScript;
-
-    #endregion
+    private readonly float radius;
+    private readonly string target;
+    private readonly TargetType targetType;
 
     /// <summary>
-    /// A class for transitioning to a given state after a target is within a radius.
+    ///     Initializes a new instance of the <see cref="EntityWithinTransition" /> class.
     /// </summary>
-    public class EntityWithinTransition : BehaviorTransition
+    /// <param name="xml">Behavior XML.</param>
+    public EntityWithinTransition(XElement xml)
     {
-        private readonly string target;
-        private readonly float radius;
-        private readonly TargetType targetType;
+        RegisterTargetStates(xml.GetAttribute<string>("targetStates").Split(','));
+        target = xml.GetAttribute<string>("target");
+        radius = xml.GetAttribute<float>("radius");
+        targetType = target == "player" ? TargetType.Player : TargetType.Entity;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EntityWithinTransition"/> class.
-        /// </summary>
-        /// <param name="xml">Behavior XML.</param>
-        public EntityWithinTransition(XElement xml)
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="EntityWithinTransition" /> class.
+    /// </summary>
+    /// <param name="targetState">Target state to transition to.</param>
+    /// <param name="target">"player" if the target should be a player, or name of the entity if the target is an entity.</param>
+    /// <param name="radius">Radius within which the transition should be considered completed if the entity is found.</param>
+    /// <param name="transitionType">How the transition should decide which state to transition to.</param>
+    public EntityWithinTransition(string targetState, string target = "player", float radius = 8f, TransitionType transitionType = TransitionType.Random)
+        : base(transitionType)
+    {
+        RegisterTargetStates(targetState);
+        this.target = target;
+        this.radius = radius;
+        targetType = this.target == "player" ? TargetType.Player : TargetType.Entity;
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="EntityWithinTransition" /> class.
+    /// </summary>
+    /// <param name="target">"player" if the target should be a player, or name of the entity if the target is an entity.</param>
+    /// <param name="radius">Radius within which the transition should be considered completed if the entity is found.</param>
+    /// <param name="transitionType">How the transition should decide which state to transition to.</param>
+    /// <param name="targetStates">Target states that can be transitioned to. If multiple are set, it will pick a random state.</param>
+    public EntityWithinTransition(string target = "player", float radius = 8f, TransitionType transitionType = TransitionType.Random, params string[] targetStates)
+        : base(transitionType)
+    {
+        RegisterTargetStates(targetStates);
+        this.target = target;
+        this.radius = radius;
+        targetType = this.target == "player" ? TargetType.Player : TargetType.Entity;
+    }
+
+    /// <inheritdoc />
+    public override string Tick(CharacterEntity host, RealmTime time)
+    {
+        if (targetType == TargetType.Player && host.GetPlayersWithin(radius).Any())
         {
-            RegisterTargetStates(xml.GetAttribute<string>("targetStates").Split(','));
-            target = xml.GetAttribute<string>("target");
-            radius = xml.GetAttribute<float>("radius");
-            targetType = target == "player" ? TargetType.Player : TargetType.Entity;
+            return GetTargetState();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EntityWithinTransition"/> class.
-        /// </summary>
-        /// <param name="targetState">Target state to transition to.</param>
-        /// <param name="target">"player" if the target should be a player, or name of the entity if the target is an entity.</param>
-        /// <param name="radius">Radius within which the transition should be considered completed if the entity is found.</param>
-        /// <param name="transitionType">How the transition should decide which state to transition to.</param>
-        public EntityWithinTransition(string targetState, string target = "player", float radius = 8f, TransitionType transitionType = TransitionType.Random)
-            : base(transitionType)
+        if (targetType == TargetType.Entity && host.GetOtherEnemiesByName(target, radius).Any())
         {
-            RegisterTargetStates(targetState);
-            this.target = target;
-            this.radius = radius;
-            targetType = this.target == "player" ? TargetType.Player : TargetType.Entity;
+            return GetTargetState();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EntityWithinTransition"/> class.
-        /// </summary>
-        /// <param name="target">"player" if the target should be a player, or name of the entity if the target is an entity.</param>
-        /// <param name="radius">Radius within which the transition should be considered completed if the entity is found.</param>
-        /// <param name="transitionType">How the transition should decide which state to transition to.</param>
-        /// <param name="targetStates">Target states that can be transitioned to. If multiple are set, it will pick a random state.</param>
-        public EntityWithinTransition(string target = "player", float radius = 8f, TransitionType transitionType = TransitionType.Random, params string[] targetStates)
-            : base(transitionType)
-        {
-            RegisterTargetStates(targetStates);
-            this.target = target;
-            this.radius = radius;
-            targetType = this.target == "player" ? TargetType.Player : TargetType.Entity;
-        }
-
-        /// <inheritdoc/>
-        public override string Tick(Character host, RealmTime time)
-        {
-            if (targetType == TargetType.Player && host.GetPlayersWithin(radius).Any())
-            {
-                return GetTargetState();
-            }
-            else if (targetType == TargetType.Entity && host.GetOtherEnemiesByName(target, radius).Any())
-            {
-                return GetTargetState();
-            }
-
-            return null;
-        }
+        return null;
     }
 }

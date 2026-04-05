@@ -7,57 +7,56 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace GameServer.Utilities.Collections
+namespace GameServer.Utilities.Collections;
+
+public class LazyValueCollection<T> : IEnumerable<T> where T : IIdentifiable
 {
-    public class LazyValueCollection<T> : IEnumerable<T> where T : IIdentifiable
+    private readonly ConcurrentDictionary<int, T> _dict;
+
+    public LazyValueCollection(ref ConcurrentDictionary<int, T> dict)
     {
-        private readonly ConcurrentDictionary<int, T> _dict;
-
-        public LazyValueCollection(ref ConcurrentDictionary<int, T> dict)
-        {
-            _dict = dict;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            var dictEnum = _dict.Values.GetEnumerator();
-            while (dictEnum.MoveNext())
-                yield return dictEnum.Current;
-            dictEnum.Dispose();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            var dictEnum = _dict.Values.GetEnumerator();
-            while (dictEnum.MoveNext())
-                yield return dictEnum.Current;
-            dictEnum.Dispose();
-        }
+        _dict = dict;
     }
-    
-    public class LazyValueCollection<TKey, TValue> : IEnumerable<TValue>
+
+    public IEnumerator<T> GetEnumerator()
     {
-        private readonly ConcurrentDictionary<TKey, TValue> _dict;
+        var dictEnum = _dict.Values.GetEnumerator();
+        while (dictEnum.MoveNext())
+            yield return dictEnum.Current;
+        dictEnum.Dispose();
+    }
 
-        public LazyValueCollection(ref ConcurrentDictionary<TKey, TValue> dict)
-        {
-            _dict = dict;
-        }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        var dictEnum = _dict.Values.GetEnumerator();
+        while (dictEnum.MoveNext())
+            yield return dictEnum.Current;
+        dictEnum.Dispose();
+    }
+}
 
-        public IEnumerator<TValue> GetEnumerator()
-        {
-            var dictEnum = _dict.Values.GetEnumerator();
-            while (dictEnum.MoveNext())
-                yield return dictEnum.Current;
-            dictEnum.Dispose();
-        }
+public class LazyValueCollection<TKey, TValue> : IEnumerable<TValue>
+{
+    private readonly ConcurrentDictionary<TKey, TValue> _dict;
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            var dictEnum = _dict.Values.GetEnumerator();
-            while (dictEnum.MoveNext())
-                yield return dictEnum.Current;
-            dictEnum.Dispose();
-        }
+    public LazyValueCollection(ref ConcurrentDictionary<TKey, TValue> dict)
+    {
+        _dict = dict;
+    }
+
+    public IEnumerator<TValue> GetEnumerator()
+    {
+        var dictEnum = _dict.Values.GetEnumerator();
+        while (dictEnum.MoveNext())
+            yield return dictEnum.Current;
+        dictEnum.Dispose();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        var dictEnum = _dict.Values.GetEnumerator();
+        while (dictEnum.MoveNext())
+            yield return dictEnum.Current;
+        dictEnum.Dispose();
     }
 }

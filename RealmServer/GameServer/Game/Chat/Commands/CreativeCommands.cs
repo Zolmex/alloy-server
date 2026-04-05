@@ -3,6 +3,7 @@
 using Common;
 using Common.API.Helpers;
 using Common.API.Requests;
+using Common.Database.Models;
 using Common.Enums;
 using Common.Resources.World;
 using Common.Resources.Xml;
@@ -154,22 +155,38 @@ public class SetStatCommand : Command
             return;
         }
 
-        if (type == StatType.Attack || type == StatType.Defense || type == StatType.Dexterity ||
-            type == StatType.Wisdom)
-        {
-            player.Char.MainStats[type] = (int)amount;
-            player.RecalculateStats();
-        }
-        else
-        {
-            player.Char.BaseStats[type] = amount;
-            player.RecalculateStats();
-        }
+        UpdateStatValue(player.Char.CharStats, type, amount);
+        player.RecalculateStats();
 
         player.SaveCharacter(true);
 
         player.HandleEntityStatChanged(player, type, amount);
         player.SendInfo($"Set {type} to {amount}");
+    }
+
+    private void UpdateStatValue(CharacterStat stats, StatType type, float amount)
+    {
+        switch (type)
+        {
+            case StatType.Attack:
+                stats.Attack = (uint)amount;
+                break;
+            case StatType.Defense:
+                stats.Defense = (uint)amount;
+                break;
+            case StatType.Speed:
+                stats.Speed = (uint)amount;
+                break;
+            case StatType.Dexterity:
+                stats.Dexterity = (uint)amount;
+                break;
+            case StatType.Vitality:
+                stats.Vitality = (uint)amount;
+                break;
+            case StatType.Wisdom:
+                stats.Wisdom = (uint)amount;
+                break;
+        }
     }
 }
 
@@ -392,11 +409,11 @@ public class SpawnCommand : Command
 {
     public override void Execute(Player player, string args)
     {
-        if (player.AccRank < (int)CommandPermissionLevel.Moderator && player.World is not TestWorld)
-        {
-            player.SendError("Can only use this command in a test world.");
-            return;
-        }
+        // if (player.AccRank < (int)CommandPermissionLevel.Moderator && player.World is not TestWorld)
+        // {
+        //     player.SendError("Can only use this command in a test world.");
+        //     return;
+        // }
 
         if (string.IsNullOrWhiteSpace(args))
         {
@@ -420,7 +437,7 @@ public class SpawnCommand : Command
             return;
         }
 
-        if (desc.Player || desc.Static)
+        if (desc.Player)
         {
             player.SendError("Can't spawn this entity");
             return;
@@ -462,7 +479,6 @@ public class ModifyCommand : Command
         player.Inventory.UpdateSlots(slot);
     }
 }
-
 
 [Command("reloadbehaviors", CommandPermissionLevel.Developer)]
 public class ReloadBehaviorsCommand : Command

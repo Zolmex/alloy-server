@@ -1,39 +1,60 @@
-﻿namespace Common.Utilities
+﻿using Common.Database.Models;
+using System.Linq;
+
+namespace Common.Utilities;
+
+public static class GameUtils
 {
-    public static class GameUtils
+    public static string StatIndexToName(int index)
     {
-        public static string StatIndexToName(int index)
+        switch (index)
         {
-            switch (index)
-            {
-                case 0: return "MaxHitPoints";
-                case 1: return "MaxMagicPoints";
-                case 2: return "Attack";
-                case 3: return "Defense";
-                case 4: return "Speed";
-                case 5: return "Dexterity";
-                case 6: return "HpRegen";
-                case 7: return "MpRegen";
-            }
-
-            return null;
+            case 0: return "MaxHitPoints";
+            case 1: return "MaxMagicPoints";
+            case 2: return "Attack";
+            case 3: return "Defense";
+            case 4: return "Speed";
+            case 5: return "Dexterity";
+            case 6: return "HpRegen";
+            case 7: return "MpRegen";
         }
 
-        public static int StatNameToIndex(string name)
-        {
-            switch (name)
-            {
-                case "MaxHitPoints": return 0;
-                case "MaxMagicPoints": return 1;
-                case "Attack": return 2;
-                case "Defense": return 3;
-                case "Speed": return 4;
-                case "Dexterity": return 5;
-                case "HpRegen": return 6;
-                case "MpRegen": return 7;
-            }
+        return null;
+    }
 
-            return -1;
+    public static int StatNameToIndex(string name)
+    {
+        switch (name)
+        {
+            case "MaxHitPoints": return 0;
+            case "MaxMagicPoints": return 1;
+            case "Attack": return 2;
+            case "Defense": return 3;
+            case "Speed": return 4;
+            case "Dexterity": return 5;
+            case "HpRegen": return 6;
+            case "MpRegen": return 7;
         }
+
+        return -1;
+    }
+
+    public static int GetNextLevelXp(int level)
+    {
+        // TODO: return real value lol
+        return level + 10;
+    }
+
+    public static int GetNextClassQuestFame(Character chr, Account acc)
+    {
+        // TODO: based on chr.ObjectType and classStat.BestFame find the next class quest fame
+        var classStat = acc.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
+        if (classStat == null)
+        {
+            Logger.Debug($"BITCH {chr.ObjectType}");
+            return 0;
+        }
+
+        return (int)classStat!.BestFame;
     }
 }

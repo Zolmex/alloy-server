@@ -48,7 +48,7 @@ public class Program
             Receive();
         }
 
-        List<IAPIRequest> subscriptionRequests = new() { new LootDropSubscriptionRequest() { CallbackUrl = $"http://{config.Address}:{config.Port}/droploot/", LootDropRarity = LootDropRarity.All }, new EventSpawnSubscriptionRequest() { CallbackUrl = $"http://{config.Address}:{config.Port}/eventspawn/", Event = SubscribableEvent.All }, new EventDeathSubscriptionRequest() { CallbackUrl = $"http://{config.Address}:{config.Port}/eventdeath/", Event = SubscribableEvent.All }, new PlayerDeathSubscriptionRequest() { CallbackUrl = $"http://{config.Address}:{config.Port}/playerdeath/" } };
+        List<IAPIRequest> subscriptionRequests = new() { new LootDropSubscriptionRequest { CallbackUrl = $"http://{config.Address}:{config.Port}/droploot/", LootDropRarity = LootDropRarity.All }, new EventSpawnSubscriptionRequest { CallbackUrl = $"http://{config.Address}:{config.Port}/eventspawn/", Event = SubscribableEvent.All }, new EventDeathSubscriptionRequest { CallbackUrl = $"http://{config.Address}:{config.Port}/eventdeath/", Event = SubscribableEvent.All }, new PlayerDeathSubscriptionRequest { CallbackUrl = $"http://{config.Address}:{config.Port}/playerdeath/" } };
         var subscriptionRequestIndex = 0;
         do
         {
@@ -60,7 +60,7 @@ public class Program
             }
             else
             {
-                Console.WriteLine($"Could not subscribe to API... Retrying");
+                Console.WriteLine("Could not subscribe to API... Retrying");
                 await Task.Delay(500);
             }
         } while (subscriptionRequestIndex < subscriptionRequests.Count);
@@ -70,7 +70,7 @@ public class Program
 
     private static void Receive()
     {
-        _listener.BeginGetContext(new AsyncCallback(ListenerCallback), _listener);
+        _listener.BeginGetContext(ListenerCallback, _listener);
     }
 
     private static void ListenerCallback(IAsyncResult result)

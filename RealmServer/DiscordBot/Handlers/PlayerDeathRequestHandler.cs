@@ -5,16 +5,15 @@ using Newtonsoft.Json;
 
 #endregion
 
-namespace DiscordBot.Handlers
+namespace DiscordBot.Handlers;
+
+[Request("playerdeath")]
+public class PlayerDeathRequestHandler : IRequestHandler
 {
-    [Request("playerdeath")]
-    public class PlayerDeathRequestHandler : IRequestHandler
+    public bool Handle(string requestJson)
     {
-        public bool Handle(string requestJson)
-        {
-            var playerDeath = JsonConvert.DeserializeObject<PlayerDeathRequest>(requestJson);
-            DiscordBotOutput.SendMessage($"{playerDeath.PlayerName} was killed by {playerDeath.Killer}!");
-            return true;
-        }
+        var playerDeath = JsonConvert.DeserializeObject<PlayerDeathRequest>(requestJson);
+        DiscordBotOutput.SendMessage($"{playerDeath.PlayerName} was killed by {playerDeath.Killer}!");
+        return true;
     }
 }
