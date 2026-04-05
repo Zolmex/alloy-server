@@ -437,7 +437,7 @@ public class SpawnCommand : Command
             return;
         }
 
-        if (desc.Player || desc.Static)
+        if (desc.Player)
         {
             player.SendError("Can't spawn this entity");
             return;

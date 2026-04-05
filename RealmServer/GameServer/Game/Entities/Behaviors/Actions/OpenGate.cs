@@ -45,7 +45,7 @@ public record OpenGate : BehaviorScript
                     {
                         tile.ObjectType = 0;
                         tile.Object?.TryLeaveWorld();
-                        tile.Object = null;
+                        tile.SetObject(null);
                     }
                 }
             }
@@ -59,7 +59,7 @@ public record OpenGate : BehaviorScript
                     var tile = host.World.Map[x, y];
                     tile.ObjectType = 0;
                     tile.Object?.TryLeaveWorld();
-                    tile.Object = null;
+                    tile.SetObject(null);
                 }
             }
         }

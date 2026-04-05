@@ -357,8 +357,7 @@ public class World : IIdentifiable
         if (tile.ObjectType == 0 || tile.Object == null || tile.Object.Dead)
             return true;
 
-        return !tile.Object.Desc.FullOccupy && !tile.Object.Desc.EnemyOccupySquare &&
-               (!spawning || !tile.Object.Desc.OccupySquare);
+        return !tile.FullOccupy && !tile.EnemyOccupySquare && (spawning || !tile.OccupySquare);
     }
 
     public bool IsOccupied(double x, double y)
@@ -421,7 +420,7 @@ public class World : IIdentifiable
                     {
                         if (entity.Desc.BlocksSight)
                             tile.BlocksSight = true;
-                        tile.Object = entity;
+                        tile.SetObject(entity);
                     }
 
                     entity.Move(x + 0.5f, y + 0.5f);

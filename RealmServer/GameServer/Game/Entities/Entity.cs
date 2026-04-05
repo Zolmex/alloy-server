@@ -176,7 +176,12 @@ public class Entity : IIdentifiable
         if (World != null && Position.X >= 0 && Position.X < World.Map.Width && Position.Y >= 0 && Position.Y < World.Map.Height)
         {
             var oldChunk = Tile?.Chunk;
+            if (Desc.Static && Tile?.Object == this)
+                Tile.SetObject(null);
+            
             Tile = World.Map[(int)Position.X, (int)Position.Y];
+            if (Desc.Static && Tile.Object == null)
+                Tile.SetObject(this);
 
             var newChunk = Tile?.Chunk;
             if (newChunk != null && newChunk != oldChunk)
@@ -206,6 +211,9 @@ public class Entity : IIdentifiable
         DeathEvent?.Invoke(this);
         DeathEvent = null;
         Tile?.Chunk?.Remove(this);
+        if (Tile?.Object == this)
+            Tile?.SetObject(null);
+
         World.RemoveEntity(this);
 
         OnLeftWorld?.Invoke(World);

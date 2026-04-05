@@ -37,7 +37,7 @@ public class WorldTile
     public int Y { get; }
     public ushort ObjectType { get; set; }
     public TileRegion Region { get; set; }
-    public Entity Object { get; set; }
+    public Entity Object { get; private set; }
     public bool BlocksSight { get; set; }
     public MapChunk Chunk { get; set; }
     public Portal Portal { get; set; }
@@ -50,6 +50,19 @@ public class WorldTile
             _groundType = value;
             TileDesc = XmlLibrary.TileDescs[value];
         }
+    }
+    
+    public bool FullOccupy { get; private set; }
+    public bool EnemyOccupySquare { get; private set; }
+    public bool OccupySquare { get; private set; }
+
+    public void SetObject(Entity en)
+    {
+        ObjectType = en?.Desc.ObjectType ?? 0;
+        Object = en;
+        FullOccupy = en?.Desc.FullOccupy ?? false;
+        EnemyOccupySquare = en?.Desc.EnemyOccupySquare ?? false;
+        OccupySquare = en?.Desc.OccupySquare ?? false;
     }
 
     public void Update(MapTileData newTile)
@@ -98,7 +111,7 @@ public class WorldMap
                     {
                         if (entity.Desc.BlocksSight)
                             tile.BlocksSight = true;
-                        tile.Object = entity;
+                        tile.SetObject(entity);
                     }
 
                     entity.Move(x + 0.5f, y + 0.5f);
