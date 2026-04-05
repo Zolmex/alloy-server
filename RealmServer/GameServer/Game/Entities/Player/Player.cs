@@ -147,18 +147,18 @@ public partial class Player : CharacterEntity
         if (!Initialized) // Make sure we don't fuck up our character
             return;
 
-        Char.Level = Level;
-        Char.XpPoints = Experience;
-        Char.CurrentFame = CharFame;
+        Char.Level = (ushort)Level;
+        Char.XpPoints = (uint)Experience;
+        Char.CurrentFame = (uint)CharFame;
         // Char.NextLevelXp = NextLevelXpGoal; // TODO: fix
         // Char.NextClassQuestFame = NextClassQuestFame;
         if (Char.CharStats != null)
         {
             Char.CharStats.Hp = (uint)HP;
             Char.CharStats.Mp = (uint)MP;
-            Char.SkinType = Skin;
-            Char.HealthPotions = HealthPotions;
-            Char.MagicPotions = MagicPotions;
+            Char.SkinType = (ushort)Skin;
+            Char.HealthPotions = (ushort)HealthPotions;
+            Char.MagicPotions = (ushort)MagicPotions;
             Char.CharStats.MaxHp = (uint)MaxHP; // Save secondary stats
             Char.CharStats.MaxMp = (uint)MaxMP;
             Char.CharStats.Attack = (uint)Attack;

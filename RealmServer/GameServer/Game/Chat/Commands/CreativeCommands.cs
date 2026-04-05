@@ -160,7 +160,7 @@ public class SetStatCommand : Command
 
         player.SaveCharacter(true);
 
-        player.HandleEntityStatChanged(player, type, amount);
+        player.HandleEntityStatChanged(player, type, new StatValue() { Type = StatValueType.Float, FloatVal = amount });
         player.SendInfo($"Set {type} to {amount}");
     }
 

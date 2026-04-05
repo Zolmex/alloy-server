@@ -43,7 +43,7 @@ public partial class Player
         // {
         //     statPoints = Char.MainStats[baseStatType]; // Need to calculate the baseValue based on stat points
         //     if (baseStatType != statType) // Att, def, dex, wis shouldn't recalculate with their boosts, but the other stats should consider the total of the base stat
-        //         statPoints = Stats.Get<int>(baseStatType);
+        //         statPoints = Stats.GetInt(baseStatType);
         // }
         //
         // // Not all stats depend on a base stat
@@ -319,43 +319,43 @@ public partial class Player
 
     #region STATS
 
-    public int Fame { get => Stats.Get<int>(StatType.Fame); set => Stats.Set(StatType.Fame, value); }
-    public int Gold { get => Stats.Get<int>(StatType.Credits); set => Stats.Set(StatType.Credits, value); }
-    public string GuildName { get => Stats.Get<string>(StatType.GuildName); set => Stats.Set(StatType.GuildName, value); }
-    public int GuildRank { get => Stats.Get<int>(StatType.GuildRank); set => Stats.Set(StatType.GuildRank, value); }
-    public ushort Skin { get => Stats.Get<ushort>(StatType.Texture); set => Stats.Set(StatType.Texture, value); }
+    public int Fame { get => Stats.GetInt(StatType.Fame); set => Stats.Set(StatType.Fame, value); }
+    public int Gold { get => Stats.GetInt(StatType.Credits); set => Stats.Set(StatType.Credits, value); }
+    public string GuildName { get => Stats.GetString(StatType.GuildName); set => Stats.Set(StatType.GuildName, value); }
+    public int GuildRank { get => Stats.GetInt(StatType.GuildRank); set => Stats.Set(StatType.GuildRank, value); }
+    public int Skin { get => Stats.GetInt(StatType.Texture); set => Stats.Set(StatType.Texture, value); }
 
-    public int MaxMP { get => Stats.Get<int>(StatType.MaxMP); set => Stats.Set(StatType.MaxMP, value); }
-    public int MP { get => Stats.Get<int>(StatType.MP); set => Stats.Set(StatType.MP, value); }
+    public int MaxMP { get => Stats.GetInt(StatType.MaxMP); set => Stats.Set(StatType.MaxMP, value); }
+    public int MP { get => Stats.GetInt(StatType.MP); set => Stats.Set(StatType.MP, value); }
 
-    public int Attack { get => Stats.Get<int>(StatType.Attack); set => Stats.Set(StatType.Attack, value, true); }
-    public int Defense { get => Stats.Get<int>(StatType.Defense); set => Stats.Set(StatType.Defense, value, true); }
-    public int Speed { get => Stats.Get<int>(StatType.Speed); set => Stats.Set(StatType.Speed, value, true); }
-    public int Dexterity { get => Stats.Get<int>(StatType.Dexterity); set => Stats.Set(StatType.Dexterity, value, true); }
-    public int Vitality { get => Stats.Get<int>(StatType.Vitality); set => Stats.Set(StatType.Vitality, value, true); }
-    public int Wisdom { get => Stats.Get<int>(StatType.Wisdom); set => Stats.Set(StatType.Wisdom, value, true); }
+    public int Attack { get => Stats.GetInt(StatType.Attack); set => Stats.Set(StatType.Attack, value, true); }
+    public int Defense { get => Stats.GetInt(StatType.Defense); set => Stats.Set(StatType.Defense, value, true); }
+    public int Speed { get => Stats.GetInt(StatType.Speed); set => Stats.Set(StatType.Speed, value, true); }
+    public int Dexterity { get => Stats.GetInt(StatType.Dexterity); set => Stats.Set(StatType.Dexterity, value, true); }
+    public int Vitality { get => Stats.GetInt(StatType.Vitality); set => Stats.Set(StatType.Vitality, value, true); }
+    public int Wisdom { get => Stats.GetInt(StatType.Wisdom); set => Stats.Set(StatType.Wisdom, value, true); }
 
-    public int MaxHPBonus { get => Stats.Get<int>(StatType.MaxHPBonus); set => Stats.Set(StatType.MaxHPBonus, value); }
-    public int MaxMPBonus { get => Stats.Get<int>(StatType.MaxMPBonus); set => Stats.Set(StatType.MaxMPBonus, value); }
-    public int MaxMSBonus { get => Stats.Get<int>(StatType.MaxMSBonus); set => Stats.Set(StatType.MaxMSBonus, value); }
+    public int MaxHPBonus { get => Stats.GetInt(StatType.MaxHPBonus); set => Stats.Set(StatType.MaxHPBonus, value); }
+    public int MaxMPBonus { get => Stats.GetInt(StatType.MaxMPBonus); set => Stats.Set(StatType.MaxMPBonus, value); }
+    public int MaxMSBonus { get => Stats.GetInt(StatType.MaxMSBonus); set => Stats.Set(StatType.MaxMSBonus, value); }
 
-    public int AttackBonus { get => Stats.Get<int>(StatType.AttackBonus); set => Stats.Set(StatType.AttackBonus, value, true); }
-    public int DefenseBonus { get => Stats.Get<int>(StatType.DefenseBonus); set => Stats.Set(StatType.DefenseBonus, value, true); }
-    public float SpeedBonus { get => Stats.Get<float>(StatType.SpeedBonus); set => Stats.Set(StatType.SpeedBonus, value, true); }
-    public int DexterityBonus { get => Stats.Get<int>(StatType.DexterityBonus); set => Stats.Set(StatType.DexterityBonus, value, true); }
-    public int VitalityBonus { get => Stats.Get<int>(StatType.VitalityBonus); set => Stats.Set(StatType.VitalityBonus, value, true); }
-    public int WisdomBonus { get => Stats.Get<int>(StatType.WisdomBonus); set => Stats.Set(StatType.WisdomBonus, value, true); }
+    public int AttackBonus { get => Stats.GetInt(StatType.AttackBonus); set => Stats.Set(StatType.AttackBonus, value, true); }
+    public int DefenseBonus { get => Stats.GetInt(StatType.DefenseBonus); set => Stats.Set(StatType.DefenseBonus, value, true); }
+    public float SpeedBonus { get => Stats.GetFloat(StatType.SpeedBonus); set => Stats.Set(StatType.SpeedBonus, value, true); }
+    public int DexterityBonus { get => Stats.GetInt(StatType.DexterityBonus); set => Stats.Set(StatType.DexterityBonus, value, true); }
+    public int VitalityBonus { get => Stats.GetInt(StatType.VitalityBonus); set => Stats.Set(StatType.VitalityBonus, value, true); }
+    public int WisdomBonus { get => Stats.GetInt(StatType.WisdomBonus); set => Stats.Set(StatType.WisdomBonus, value, true); }
 
-    public int AccRank { get => Stats.Get<int>(StatType.AccRank); set => Stats.Set(StatType.AccRank, value); }
-    public int PartyId { get => Stats.Get<int>(StatType.PartyId); set => Stats.Set(StatType.PartyId, value); }
-    public ushort HealthPotions { get => Stats.Get<ushort>(StatType.HealthPotionStack); set => Stats.Set(StatType.HealthPotionStack, value); }
-    public ushort MagicPotions { get => Stats.Get<ushort>(StatType.MagicPotionStack); set => Stats.Set(StatType.MagicPotionStack, value); }
+    public int AccRank { get => Stats.GetInt(StatType.AccRank); set => Stats.Set(StatType.AccRank, value); }
+    public int PartyId { get => Stats.GetInt(StatType.PartyId); set => Stats.Set(StatType.PartyId, value); }
+    public int HealthPotions { get => Stats.GetInt(StatType.HealthPotionStack); set => Stats.Set(StatType.HealthPotionStack, value); }
+    public int MagicPotions { get => Stats.GetInt(StatType.MagicPotionStack); set => Stats.Set(StatType.MagicPotionStack, value); }
 
     // AbilityData is serialized as string
-    public object AbilityDataA { get => Stats.Get<string>(StatType.AbilityDataA); set => Stats.Set(StatType.AbilityDataA, value.ToString()); }
-    public object AbilityDataB { get => Stats.Get<string>(StatType.AbilityDataB); set => Stats.Set(StatType.AbilityDataB, value.ToString()); }
-    public object AbilityDataC { get => Stats.Get<string>(StatType.AbilityDataC); set => Stats.Set(StatType.AbilityDataC, value.ToString()); }
-    public object AbilityDataD { get => Stats.Get<string>(StatType.AbilityDataD); set => Stats.Set(StatType.AbilityDataD, value.ToString()); }
+    public object AbilityDataA { get => Stats.GetString(StatType.AbilityDataA); set => Stats.Set(StatType.AbilityDataA, value.ToString()); }
+    public object AbilityDataB { get => Stats.GetString(StatType.AbilityDataB); set => Stats.Set(StatType.AbilityDataB, value.ToString()); }
+    public object AbilityDataC { get => Stats.GetString(StatType.AbilityDataC); set => Stats.Set(StatType.AbilityDataC, value.ToString()); }
+    public object AbilityDataD { get => Stats.GetString(StatType.AbilityDataD); set => Stats.Set(StatType.AbilityDataD, value.ToString()); }
 
     #endregion
 }

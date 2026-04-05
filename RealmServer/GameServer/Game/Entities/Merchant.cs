@@ -23,10 +23,10 @@ internal class Merchant : SellableObject
     }
 
     public bool Respawn { get; private set; }
-    public int Stock { get => Stats.Get<int>(StatType.MerchandiseCount); set => Stats.Set(StatType.MerchandiseCount, value); }
-    public int MinutesLeft { get => Stats.Get<int>(StatType.MerchandiseMinsLeft); set => Stats.Set(StatType.MerchandiseMinsLeft, value); }
-    public int Discount { get => Stats.Get<int>(StatType.MerchandiseDiscount); set => Stats.Set(StatType.MerchandiseDiscount, value); }
-    public int RankReq { get => Stats.Get<int>(StatType.MerchandiseRankReq); set => Stats.Set(StatType.MerchandiseRankReq, value); }
+    public int Stock { get => Stats.GetInt(StatType.MerchandiseCount); set => Stats.Set(StatType.MerchandiseCount, value); }
+    public int MinutesLeft { get => Stats.GetInt(StatType.MerchandiseMinsLeft); set => Stats.Set(StatType.MerchandiseMinsLeft, value); }
+    public int Discount { get => Stats.GetInt(StatType.MerchandiseDiscount); set => Stats.Set(StatType.MerchandiseDiscount, value); }
+    public int RankReq { get => Stats.GetInt(StatType.MerchandiseRankReq); set => Stats.Set(StatType.MerchandiseRankReq, value); }
 
     private void Restock()
     {

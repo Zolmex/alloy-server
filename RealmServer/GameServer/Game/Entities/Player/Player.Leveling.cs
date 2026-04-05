@@ -25,43 +25,43 @@ public partial class Player
 
     public int QuestId
     {
-        get => Stats.Get<int>(StatType.QuestId);
+        get => Stats.GetInt(StatType.QuestId);
         set => Stats.Set(StatType.QuestId, value, true);
     }
 
-    public uint Experience
+    public int Experience
     {
-        get => Stats.Get<uint>(StatType.Experience);
+        get => Stats.GetInt(StatType.Experience);
         set => Stats.Set(StatType.Experience, value, true);
     }
 
-    public ushort Level
+    public int Level
     {
-        get => Stats.Get<ushort>(StatType.Level);
+        get => Stats.GetInt(StatType.Level);
         set => Stats.Set(StatType.Level, value);
     }
 
-    public uint CharFame
+    public int CharFame
     {
-        get => Stats.Get<uint>(StatType.CharFame);
+        get => Stats.GetInt(StatType.CharFame);
         set => Stats.Set(StatType.CharFame, value, true);
     }
 
     public int NextLevelXpGoal
     {
-        get => Stats.Get<int>(StatType.NextLevelXp);
+        get => Stats.GetInt(StatType.NextLevelXp);
         set => Stats.Set(StatType.NextLevelXp, value, true);
     }
 
     public int NextClassQuestFame
     {
-        get => Stats.Get<int>(StatType.NextClassQuestFame);
+        get => Stats.GetInt(StatType.NextClassQuestFame);
         set => Stats.Set(StatType.NextClassQuestFame, value, true);
     }
 
     public int NumStars
     {
-        get => Stats.Get<int>(StatType.NumStars);
+        get => Stats.GetInt(StatType.NumStars);
         set => Stats.Set(StatType.NumStars, value);
     }
 
@@ -110,15 +110,15 @@ public partial class Player
 
     public bool GainXP(CharacterEntity en, int baseXp)
     {
-        var xp = CalculateXPGain(en, (uint)baseXp);
+        var xp = CalculateXPGain(en, baseXp);
 
         Experience += xp;
         CharFame += xp / XPPerFame;
 
         var classStat = User.Account.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == Char.ObjectType);
-        classStat.BestFame = CharFame > classStat.BestFame ? CharFame : classStat.BestFame;
+        classStat.BestFame = CharFame > classStat.BestFame ? (uint)CharFame : classStat.BestFame;
 
-        var newClassQuestFame = GetNextClassQuestFame(classStat.BestFame);
+        var newClassQuestFame = GetNextClassQuestFame((int)classStat.BestFame);
         if (newClassQuestFame > NextClassQuestFame || (newClassQuestFame == 0 && NextClassQuestFame == 2000))
         {
             User.SendPacket(new Notification(Id, "Class QuestId Complete!", 0x00FF00));
@@ -130,9 +130,9 @@ public partial class Player
         {
             levelledUp = true;
             Level++;
-            classStat.BestLevel = Level > classStat.BestLevel ? Level : classStat.BestLevel;
+            classStat.BestLevel = Level > classStat.BestLevel ? (ushort)Level : classStat.BestLevel;
 
-            Experience -= (uint)NextLevelXpGoal;
+            Experience -= NextLevelXpGoal;
 
             NextLevelXpGoal = GetNextLevelXPGoal(Level);
             HP = MaxHP;
@@ -148,7 +148,7 @@ public partial class Player
         return levelledUp;
     }
 
-    private uint CalculateXPGain(CharacterEntity en, uint baseXp)
+    private int CalculateXPGain(CharacterEntity en, int baseXp)
     {
         if (en == null)
             return baseXp;
@@ -157,15 +157,15 @@ public partial class Player
         if (Quest == en)
             max = NextLevelXpGoal * 0.5f;
 
-        return (uint)Math.Min(baseXp, max);
+        return (int)Math.Min(baseXp, max);
     }
 
     public void InitLevel(Character chr)
     {
-        CharFame = chr.CurrentFame;
-        Experience = chr.XpPoints;
+        CharFame = (int)chr.CurrentFame;
+        Experience = (int)chr.XpPoints;
         var classStat = User.Account.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
-        NextClassQuestFame = GetNextClassQuestFame(classStat.BestFame > CharFame ? classStat.BestFame : CharFame);
+        NextClassQuestFame = GetNextClassQuestFame(classStat.BestFame > CharFame ? (int)classStat.BestFame : CharFame);
         NextLevelXpGoal = GetNextLevelXPGoal(Level);
     }
 
@@ -174,7 +174,7 @@ public partial class Player
         return (int)(50f + ((level - 1f) * 100f * (1f + (level / 10f))));
     }
 
-    public static int GetNextClassQuestFame(uint fame)
+    public static int GetNextClassQuestFame(int fame)
     {
         for (var i = 0; i < Stars.Length; i++)
         {

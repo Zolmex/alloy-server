@@ -13,7 +13,7 @@ public partial class Player
 {
     public const int InCombatDuration = 6000;
     public bool IsInCombat;
-    public int TimeInCombat { get => Stats.Get<int>(StatType.TimeInCombat); set => Stats.Set(StatType.TimeInCombat, value, true); }
+    public int TimeInCombat { get => Stats.GetInt(StatType.TimeInCombat); set => Stats.Set(StatType.TimeInCombat, value, true); }
 
     public void InCombatTick()
     {

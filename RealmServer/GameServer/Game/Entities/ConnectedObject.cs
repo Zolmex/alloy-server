@@ -37,7 +37,7 @@ public class ConnectedObject : Entity
 
     public int Connect
     {
-        get => Stats.Get<int>(StatType.Connect);
+        get => Stats.GetInt(StatType.Connect);
         set => Stats.Set(StatType.Connect, value);
     }
 

@@ -68,19 +68,19 @@ public class CharacterEntity : Entity
 
     public int Condition1
     {
-        get => Stats.Get<int>(StatType.Condition1);
+        get => Stats.GetInt(StatType.Condition1);
         set => Stats.Set(StatType.Condition1, value);
     }
 
     public int Condition2
     {
-        get => Stats.Get<int>(StatType.Condition2);
+        get => Stats.GetInt(StatType.Condition2);
         set => Stats.Set(StatType.Condition2, value);
     }
 
     public int AltTexture
     {
-        get => Stats.Get<int>(StatType.AltTexture);
+        get => Stats.GetInt(StatType.AltTexture);
         set => Stats.Set(StatType.AltTexture, value);
     }
 

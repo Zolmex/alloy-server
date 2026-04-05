@@ -5,6 +5,7 @@ using Common.Utilities;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 #endregion
 
@@ -12,67 +13,72 @@ namespace GameServer.Game.Entities;
 
 public class EntityStats
 {
-    private readonly Entity _entity;
-    private readonly object[] _prevStats = ArrayPool<object>.Shared.Rent((int)StatType.StatTypeCount);
-    private readonly object[] _publicStats = ArrayPool<object>.Shared.Rent((int)StatType.StatTypeCount);
-    private readonly object[] _stats = ArrayPool<object>.Shared.Rent((int)StatType.StatTypeCount);
     public readonly List<Player> StatChangedListeners = [];
+    private static readonly int _statCount = (int)StatType.StatTypeCount;
+    
+    private readonly Entity _entity;
+    private readonly StatValue[] _stats;
+    private readonly StatValue[] _publicStats;
+    private readonly StatValue[] _prevStats;
     private ObjectData _objData;
     private ObjectDropData _objDropData;
 
     public EntityStats(Entity entity)
     {
         _entity = entity;
+        _stats       = ArrayPool<StatValue>.Shared.Rent(_statCount);
+        _publicStats = ArrayPool<StatValue>.Shared.Rent(_statCount);
+        _prevStats   = ArrayPool<StatValue>.Shared.Rent(_statCount);
+
+        _stats.AsSpan(0, _statCount).Clear();
+        _publicStats.AsSpan(0, _statCount).Clear();
+        _prevStats.AsSpan(0, _statCount).Clear();
     }
 
     public bool Initializing { get; set; }
 
-    public T Get<T>(StatType statType)
+    public int GetInt(StatType s)
     {
-        var ret = _stats[(int)statType];
-        if (ret == null)
-            return default;
-
-        if (StatData.IsStringStat(statType))
-            return (T)ret;
-
-        if (StatData.IsFloatStat(statType) &&
-            ret is int) // Backwards compatibility if stat changed from int to float
-            return (T)(object)Convert.ToSingle(ret);
-
-        if (!StatData.IsFloatStat(statType) && ret is float) // Same case as previous but from float to int
-            return (T)(object)Convert.ToInt32(ret);
-
-        return (T)ret;
+        return _stats[(int)s].IntVal;
     }
 
-    // Initializing indicates that the stat is being set in LoadStats method, if it's true and the stat has already been set to a value, it will keep the original value
-    public void Set(StatType statType, object value, bool isPrivate = false)
+    public float GetFloat(StatType s)
     {
-        var realValue = value;
+        return _stats[(int)s].FloatVal;
+    }
 
-        if (StatData.IsFloatStat(statType) &&
-            value is int) // Backwards compatibility if stat changed from int to float
-            realValue = Convert.ToSingle(value);
+    public string GetString(StatType s)
+    {
+        return _stats[(int)s].StrVal;
+    }
 
-        if (!StatData.IsFloatStat(statType) && value is float) // Same case as previous but from float to int
-            realValue = Convert.ToInt32(value);
+    public void Set(StatType statType, int value, bool isPrivate = false)
+        => SetInternal(statType, StatValue.FromInt(value), isPrivate);
 
-        var statId = (int)statType;
-        if (Initializing &&
-            _stats[statId] != null) // Don't load the value if it's already been set
+    public void Set(StatType statType, float value, bool isPrivate = false)
+        => SetInternal(statType, StatValue.FromFloat(value), isPrivate);
+
+    public void Set(StatType statType, string value, bool isPrivate = false)
+        => SetInternal(statType, StatValue.FromString(value), isPrivate);
+    
+    // Initializing indicates that the stat is being set in LoadStats method, if it's true and the stat has already been set to a value, it will keep the original value
+    private void SetInternal(StatType statType, StatValue sv, bool isPrivate)
+    {
+        var id = (int)statType;
+
+        if (Initializing && _stats[id].HasValue)
             return;
 
-        _stats[statId] = realValue;
+        _stats[id] = sv;
 
         if (!isPrivate)
-            _publicStats[statId] = realValue;
+            _publicStats[id] = sv;
 
         if (!_entity.Dead && _entity.IsPlayer)
         {
             var plr = (Player)_entity;
             if (isPrivate)
-                plr.HandleEntityStatChanged(plr, statType, realValue);
+                plr.HandleEntityStatChanged(plr, statType, sv);
             plr.StatChanged(statType);
         }
     }
@@ -83,7 +89,7 @@ public class EntityStats
         for (var i = 0; i < _publicStats.Length; i++)
         {
             var newStatValue = _publicStats[i];
-            if (newStatValue != null && !newStatValue.Equals(_prevStats[i]))
+            if (newStatValue.HasValue && !newStatValue.Equals(_prevStats[i]))
             {
                 sentUpdate = true;
                 _prevStats[i] = newStatValue;
@@ -97,7 +103,7 @@ public class EntityStats
         if (!sentUpdate) // Make sure to send update
             using (TimedLock.Lock(StatChangedListeners))
                 foreach (var p in StatChangedListeners)
-                    p.HandleEntityStatChanged(_entity, StatType.None, 0);
+                    p.HandleEntityStatChanged(_entity, StatType.None, new StatValue());
     }
 
     public ObjectData GetObjectData(int objId)
@@ -116,7 +122,7 @@ public class EntityStats
     public ObjectDropData GetObjectDropData()
     {
         _objDropData.ObjectId = _entity.Id;
-        if (Get<int>(StatType.HP) <= 0)
+        if (GetInt(StatType.HP) <= 0)
             _objDropData.Explode = true;
 
         return _objDropData;
@@ -124,9 +130,9 @@ public class EntityStats
 
     public void Clear()
     {
-        _stats.Clear();
-        _publicStats.Clear();
-        _prevStats.Clear();
+        _stats.AsSpan(0, _statCount).Clear();
+        _publicStats.AsSpan(0, _statCount).Clear();
+        _prevStats.AsSpan(0, _statCount).Clear();
         StatChangedListeners.Clear();
     }
 }

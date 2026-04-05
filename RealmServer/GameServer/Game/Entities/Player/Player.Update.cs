@@ -24,7 +24,7 @@ public partial class Player
     public const int ACTIVE_RADIUS = 2; // Activate surrounding chunks
 
     private readonly ConcurrentQueue<Entity> _deadEntities = new();
-    private readonly Action<Entity, StatType, object> _entityStatChangedHandler;
+    private readonly Action<Entity, StatType, StatValue> _entityStatChangedHandler;
     private readonly List<ObjectData> _newEntities = new();
     private readonly List<WorldTile> _newTiles = new();
     private readonly List<ObjectDropData> _oldEntities = new();

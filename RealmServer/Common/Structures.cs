@@ -5,6 +5,7 @@ using Common.Utilities;
 using System;
 using System.IO;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 #endregion
 
@@ -61,7 +62,7 @@ public struct ObjectStatusData
 {
     public int ObjectId;
     public WorldPosData Pos;
-    public object[] Stats;
+    public StatValue[] Stats;
     public StatData[] UpdatedStats;
     public bool Update;
 
@@ -89,7 +90,7 @@ public struct ObjectStatusData
             for (var i = 0; i < Stats.Length; i++)
             {
                 var value = Stats[i];
-                if (value != null)
+                if (value.HasValue)
                 {
                     statCount++;
                     StatData.Write(ref wtr, (StatType)i, value);
@@ -105,7 +106,7 @@ public struct ObjectStatusData
         Update = false;
     }
 
-    public void SetStat(StatType type, object value)
+    public void SetStat(StatType type, StatValue value)
     {
         Update = true;
         if (type == StatType.None)
@@ -307,18 +308,15 @@ public struct StatData
             wtr.Write(IntValue);
     }
 
-    public static void Write(ref SpanWriter wtr, StatType type, object value)
+    public static void Write(ref SpanWriter wtr, StatType type, StatValue value)
     {
         wtr.Write((byte)type);
         if (IsStringStat(type))
-            wtr.WriteUTF((string)value);
+            wtr.WriteUTF(value.StrVal);
         else if (IsFloatStat(type))
-        {
-            var floatValue = value is int intValue ? intValue : (float)value;
-            wtr.Write(floatValue);
-        }
+            wtr.Write(value.FloatVal);
         else
-            wtr.Write(Convert.ToInt32(value));
+            wtr.Write(value.IntVal);
     }
 }
 
@@ -379,6 +377,37 @@ public struct SlotObjectData
 {
     public int ObjectId;
     public byte SlotId;
+}
+
+[StructLayout(LayoutKind.Explicit)]
+public struct StatValue
+{
+    [FieldOffset(0)] public StatValueType Type;    // 1 byte
+    [FieldOffset(4)] public int   IntVal;          // overlaps with Float
+    [FieldOffset(4)] public float FloatVal;        // overlaps with Int
+    [FieldOffset(8)] public string StrVal;         // reference, separate slot
+
+    public bool HasValue => Type != StatValueType.None;
+
+    public static StatValue FromInt(int v)
+    {
+        return new StatValue { Type = StatValueType.Int, IntVal = v };
+    }
+
+    public static StatValue FromFloat(float v)
+    {
+        return new StatValue { Type = StatValueType.Float, FloatVal = v };
+    }
+
+    public static StatValue FromString(string v)
+    {
+        return new StatValue { Type = StatValueType.Str,  StrVal   = v };
+    }
+}
+
+public enum StatValueType : byte
+{
+    None, Int, Float, Str
 }
 
 public static class SlotObjectDataExtensions

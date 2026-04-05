@@ -258,25 +258,25 @@ public class Entity : IIdentifiable
 
     public string Name
     {
-        get => Stats.Get<string>(StatType.Name);
+        get => Stats.GetString(StatType.Name);
         set => Stats.Set(StatType.Name, value);
     }
 
     public int MaxHP
     {
-        get => Stats.Get<int>(StatType.MaxHP);
+        get => Stats.GetInt(StatType.MaxHP);
         set => Stats.Set(StatType.MaxHP, value);
     }
 
     public int HP
     {
-        get => Stats.Get<int>(StatType.HP);
+        get => Stats.GetInt(StatType.HP);
         set => Stats.Set(StatType.HP, value);
     }
 
     public int Size
     {
-        get => Stats.Get<int>(StatType.Size);
+        get => Stats.GetInt(StatType.Size);
         set => Stats.Set(StatType.Size, value);
     }
 
