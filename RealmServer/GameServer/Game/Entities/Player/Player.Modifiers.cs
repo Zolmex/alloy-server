@@ -38,7 +38,6 @@ public partial class Player
 
     public void AddActiveModifiers()
     {
-        TickStatChanges = true;
         foreach (var type in GetActivatedMods())
         {
             var mod = ModifierRegistry.Get(type);
@@ -55,7 +54,6 @@ public partial class Player
 
     public void RemoveActiveModifiers()
     {
-        TickStatChanges = false;
         DisposeMods();
         ResetBonuses();
     }

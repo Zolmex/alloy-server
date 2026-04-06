@@ -13,8 +13,8 @@ namespace GameServer.Game.Entities;
 
 public class EntityStats
 {
-    public readonly List<Player> StatChangedListeners = [];
-    private static readonly int _statCount = (int)StatType.StatTypeCount;
+    public readonly HashSet<Player> StatChangedListeners = [];
+    public static readonly int StatCount = (int)StatType.StatTypeCount;
     
     private readonly Entity _entity;
     private readonly StatValue[] _stats;
@@ -26,13 +26,13 @@ public class EntityStats
     public EntityStats(Entity entity)
     {
         _entity = entity;
-        _stats       = ArrayPool<StatValue>.Shared.Rent(_statCount);
-        _publicStats = ArrayPool<StatValue>.Shared.Rent(_statCount);
-        _prevStats   = ArrayPool<StatValue>.Shared.Rent(_statCount);
+        _stats = ArrayPool<StatValue>.Shared.Rent(StatCount);
+        _publicStats = ArrayPool<StatValue>.Shared.Rent(StatCount);
+        _prevStats = ArrayPool<StatValue>.Shared.Rent(StatCount);
 
-        _stats.AsSpan(0, _statCount).Clear();
-        _publicStats.AsSpan(0, _statCount).Clear();
-        _prevStats.AsSpan(0, _statCount).Clear();
+        _stats.AsSpan(0, StatCount).Clear();
+        _publicStats.AsSpan(0, StatCount).Clear();
+        _prevStats.AsSpan(0, StatCount).Clear();
     }
 
     public bool Initializing { get; set; }
@@ -84,25 +84,20 @@ public class EntityStats
 
     public void Update()
     {
-        var sentUpdate = false;
-        for (var i = 0; i < _publicStats.Length; i++)
+        foreach (var p in StatChangedListeners)
+            p.HandleEntityStatChanged(_entity, StatType.None, new StatValue());
+        
+        for (var i = 0; i < StatCount; i++)
         {
-            var newStatValue = _publicStats[i];
-            if (newStatValue.HasValue && !newStatValue.Equals(_prevStats[i]))
+            var type = (StatType)i;
+            var newValue = _publicStats[i];
+            if (newValue.HasValue && !newValue.Equals(_prevStats[i]))
             {
-                sentUpdate = true;
-                _prevStats[i] = newStatValue;
-
-                using (TimedLock.Lock(StatChangedListeners))
-                    foreach (var p in StatChangedListeners)
-                        p.HandleEntityStatChanged(_entity, (StatType)i, newStatValue);
+                _prevStats[i] = newValue;
+                foreach (var plr in StatChangedListeners)
+                    plr.HandleEntityStatChanged(_entity, type, newValue);
             }
         }
-
-        if (!sentUpdate) // Make sure to send update
-            using (TimedLock.Lock(StatChangedListeners))
-                foreach (var p in StatChangedListeners)
-                    p.HandleEntityStatChanged(_entity, StatType.None, new StatValue());
     }
 
     public ObjectData GetObjectData(int objId)
@@ -129,9 +124,9 @@ public class EntityStats
 
     public void Clear()
     {
-        _stats.AsSpan(0, _statCount).Clear();
-        _publicStats.AsSpan(0, _statCount).Clear();
-        _prevStats.AsSpan(0, _statCount).Clear();
+        _stats.AsSpan(0, StatCount).Clear();
+        _publicStats.AsSpan(0, StatCount).Clear();
+        _prevStats.AsSpan(0, StatCount).Clear();
         StatChangedListeners.Clear();
     }
 }

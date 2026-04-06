@@ -82,19 +82,18 @@ public struct ObjectStatusData
     {
         wtr.Write(ObjectId);
         wtr.Write(Pos);
+        
         var statCount = 0;
         var pos = wtr.Position;
         wtr.Write((byte)0); // Placeholder
-        using (TimedLock.Lock(Stats))
+        
+        for (var i = 0; i < (int)StatType.StatTypeCount; i++)
         {
-            for (var i = 0; i < Stats.Length; i++)
+            var value = Stats[i];
+            if (value.HasValue)
             {
-                var value = Stats[i];
-                if (value.HasValue)
-                {
-                    statCount++;
-                    StatData.Write(ref wtr, (StatType)i, value);
-                }
+                statCount++;
+                StatData.Write(ref wtr, (StatType)i, value);
             }
         }
 
@@ -113,8 +112,7 @@ public struct ObjectStatusData
             return;
 
         var id = (int)type;
-        using (TimedLock.Lock(Stats))
-            Stats[id] = value;
+        Stats[id] = value;
     }
 
     public void SetPos(WorldPosData pos)
@@ -205,29 +203,15 @@ public static class WorldPosDataExtensions
     }
 }
 
-public struct StatData
+public struct StatData : IEquatable<StatData>
 {
     public StatType Type;
-    public object Value;
-    public int IntValue;
-    public float FloatValue;
-    public string TextValue;
+    public StatValue Value;
 
-    public StatData(StatType type, object value)
+    public StatData(StatType type, StatValue value)
     {
         Type = type;
-        SetValue(value);
-    }
-
-    public void SetValue(object value)
-    {
         Value = value;
-        if (IsStringStat(Type))
-            TextValue = (string)value;
-        else if (IsFloatStat(Type))
-            FloatValue = (float)value;
-        else
-            IntValue = (int)value;
     }
 
     public static bool IsFloatStat(StatType type)
@@ -279,33 +263,24 @@ public struct StatData
         var ret = new StatData();
         ret.Type = (StatType)rdr.ReadByte();
         if (IsStringStat(ret.Type))
-        {
-            ret.TextValue = rdr.ReadUTF();
-            ret.Value = ret.TextValue;
-        }
+            ret.Value = new StatValue() { Type = StatValueType.Str, StrVal = rdr.ReadUTF() };
         else if (IsFloatStat(ret.Type))
-        {
-            ret.FloatValue = rdr.ReadSingle();
-            ret.Value = ret.FloatValue;
-        }
+            ret.Value = new StatValue() { Type = StatValueType.Float, FloatVal = rdr.ReadSingle() };
         else
-        {
-            ret.IntValue = rdr.ReadInt32();
-            ret.Value = ret.IntValue;
-        }
+            ret.Value = new StatValue() { Type = StatValueType.Int, IntVal = rdr.ReadInt32() };
 
         return ret;
     }
 
-    public void Write(NetworkWriter wtr)
+    public void Write(ref SpanWriter wtr)
     {
         wtr.Write((byte)Type);
         if (IsStringStat(Type))
-            wtr.WriteUTF(TextValue);
+            wtr.WriteUTF(Value.StrVal);
         else if (IsFloatStat(Type))
-            wtr.Write(FloatValue);
+            wtr.Write(Value.FloatVal);
         else
-            wtr.Write(IntValue);
+            wtr.Write(Value.IntVal);
     }
 
     public static void Write(ref SpanWriter wtr, StatType type, StatValue value)
@@ -318,6 +293,17 @@ public struct StatData
         else
             wtr.Write(value.IntVal);
     }
+    
+    public bool Equals(StatData other)
+    {
+        if (Type != other.Type) return false;
+
+        return Value.Equals(other.Value);
+    }
+
+    public override bool Equals(object obj) => obj is StatData other && Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(Type, Value);
 }
 
 public struct TileData
@@ -380,7 +366,7 @@ public struct SlotObjectData
 }
 
 [StructLayout(LayoutKind.Explicit)]
-public struct StatValue
+public struct StatValue : IEquatable<StatValue>
 {
     [FieldOffset(0)] public StatValueType Type;    // 1 byte
     [FieldOffset(4)] public int   IntVal;          // overlaps with Float
@@ -403,6 +389,32 @@ public struct StatValue
     {
         return new StatValue { Type = StatValueType.Str,  StrVal   = v };
     }
+    
+    public bool Equals(StatValue other)
+    {
+        if (Type != other.Type) return false;
+
+        return Type switch
+        {
+            StatValueType.Int   => IntVal == other.IntVal,
+            StatValueType.Float => FloatVal.Equals(other.FloatVal),
+            StatValueType.Str   => string.Equals(StrVal, other.StrVal, StringComparison.Ordinal),
+            _                   => true // both None
+        };
+    }
+
+    public override bool Equals(object obj) => obj is StatValue other && Equals(other);
+
+    public override int GetHashCode() => Type switch
+    {
+        StatValueType.Int   => HashCode.Combine(Type, IntVal),
+        StatValueType.Float => HashCode.Combine(Type, FloatVal),
+        StatValueType.Str   => HashCode.Combine(Type, StrVal),
+        _                   => 0
+    };
+
+    public static bool operator ==(StatValue left, StatValue right) => left.Equals(right);
+    public static bool operator !=(StatValue left, StatValue right) => !left.Equals(right);
 }
 
 public enum StatValueType : byte

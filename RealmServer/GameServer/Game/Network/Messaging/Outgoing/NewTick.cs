@@ -21,20 +21,14 @@ public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> 
         var updateCount = 0;
         wtr.Write((short)0); // Placeholder
 
-        using (TimedLock.Lock(Statuses))
+        foreach (var status in Statuses.Values)
         {
-            foreach (var status in Statuses.Values)
-            {
-                if (!status.Update)
-                    continue;
+            if (!status.Update)
+                continue;
 
-                updateCount++;
-                using (TimedLock.Lock(status.Stats))
-                {
-                    status.Write(ref wtr);
-                    status.Stats.Clear();
-                }
-            }
+            updateCount++;
+            status.Write(ref wtr);
+            status.Stats.Clear();
         }
 
         var end = wtr.Position;

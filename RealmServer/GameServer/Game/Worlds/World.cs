@@ -321,6 +321,9 @@ public class World : IIdentifiable
 
         using (TimedLock.Lock(_playerTickLock))
         {
+            foreach (var plr in Players.Values)
+                plr.Stats.Update();
+            
             Parallel.ForEach(Players, kvp =>
             {
                 var plr = kvp.Value;
