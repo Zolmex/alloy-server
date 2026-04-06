@@ -9,8 +9,11 @@ using GameServer.Game.Network.Messaging.Outgoing;
 using System;
 using System.Buffers;
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Reflection.Metadata;
 using System.Threading;
@@ -24,12 +27,14 @@ namespace GameServer.Game.Network;
 // Handles all of the network socket communication
 public class NetworkHandler
 {
-    public const int SEND_BUFFER_SIZE = 0x40000; // 256KB
-    public const int RECV_BUFFER_SIZE = 0x10000; // 64KB
-
     private static readonly Logger _log = new(typeof(NetworkHandler));
 
-    private readonly Dictionary<PacketId, IIncomingPacket> _incomingPackets = PacketLib.LoadIncoming();
+    private readonly Dictionary<PacketId, Func<IIncomingPacket>> _packetFactory = 
+        PacketLib.LoadIncoming()
+            .ToDictionary(kvp => kvp.Key, kvp => 
+                Expression.Lambda<Func<IIncomingPacket>>(
+                    Expression.New(kvp.Value)).Compile());
+    private readonly ConcurrentQueue<IIncomingPacket> _pendingReceive = [];
 
     private readonly SocketAsyncEventArgs _receiveSAEA;
     private readonly SocketReceiveState _receiveState;
@@ -80,7 +85,7 @@ public class NetworkHandler
     {
         if (User.State == ConnectionState.Disconnected || !Socket.Connected)
             return;
-
+        
         if (!_sendState.TryBeginSend(_sendSAEA))
             return;
 
@@ -104,40 +109,29 @@ public class NetworkHandler
                 break;
             }
 
-            if (_sendState.OnDataSent(args))
-                if (Socket.SendAsync(_sendSAEA))
-                    break;
-
-            break;
+            if (!_sendState.OnDataSent(args))
+                return;
+            
+            if (Socket.SendAsync(_sendSAEA))
+                break;
         }
-    }
-
-    public void StartReceive()
-    {
-        Task.Run(ReceiveLoop);
     }
     
-    private void ReceiveLoop()
+    public void StartReceive()
     {
-        while (User.State != ConnectionState.Disconnected && Socket != null && Socket.Connected)
-        {
-            if (Socket == null || !Socket.Connected)
-                return;
+        if (Socket == null || !Socket.Connected)
+            return;
 
-            _receiveState.PrepareSAEA(_receiveSAEA);
+        _receiveState.PrepareSAEA(_receiveSAEA);
 
-            if (Socket.ReceiveAsync(_receiveSAEA)) // Completed synchronously
-                break;
-
-            if (!HandleReceive(_receiveSAEA))
-                break;
-        }
+        if (!Socket.ReceiveAsync(_receiveSAEA)) // Completed synchronously
+            ProcessReceive(null, _receiveSAEA);
     }
 
     private void ProcessReceive(object sender, SocketAsyncEventArgs args)
     {
         if (HandleReceive(args))
-            ReceiveLoop();
+            StartReceive();
     }
 
     private bool HandleReceive(SocketAsyncEventArgs args)
@@ -168,10 +162,11 @@ public class NetworkHandler
             try
             {
                 // Console.WriteLine($"RECEIVING {pktId}");
-                if (_incomingPackets.TryGetValue(pktId, out var pkt))
+                if (_packetFactory.TryGetValue(pktId, out var pktGen))
                 {
+                    var pkt = pktGen();
                     pkt.Read(ref rdr);
-                    pkt.Handle(User);
+                    _pendingReceive.Enqueue(pkt);
                 }
             }
             catch (Exception ex)
@@ -181,5 +176,16 @@ public class NetworkHandler
         }
 
         return true;
+    }
+
+    public void HandleIncomingPackets()
+    {
+        while (_pendingReceive.TryDequeue(out var pkt))
+        {
+            if (User.State == ConnectionState.Disconnected || !Socket.Connected)
+                break;
+            
+            pkt.Handle(User);
+        }
     }
 }

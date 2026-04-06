@@ -22,14 +22,11 @@ public partial class Player
 
     public void HandleEntityStatChanged(Entity en, StatType type, StatValue value)
     {
-        using (TimedLock.Lock(_entityStatUpdates))
-        {
-            if (!_entityStatUpdates.TryGetValue(en.Id, out var status))
-                status = new ObjectStatusData { ObjectId = en.Id, Pos = en.Position, Stats = ArrayPool<StatValue>.Shared.Rent((int)StatType.StatTypeCount), Update = true };
+        if (!_entityStatUpdates.TryGetValue(en.Id, out var status))
+            status = new ObjectStatusData { ObjectId = en.Id, Pos = en.Position, Stats = ArrayPool<StatValue>.Shared.Rent((int)StatType.StatTypeCount), Update = true };
 
-            status.SetPos(en.Position);
-            status.SetStat(type, value);
-            _entityStatUpdates[en.Id] = status;
-        }
+        status.SetPos(en.Position);
+        status.SetStat(type, value);
+        _entityStatUpdates[en.Id] = status;
     }
 }

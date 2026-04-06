@@ -209,13 +209,10 @@ public partial class Player : CharacterEntity
 
     public override bool Death(string killer)
     {
-        using (TimedLock.Lock(_deathLock))
-        {
-            if (Dead)
-                return false;
+        if (Dead)
+            return false;
 
-            Dead = true;
-        }
+        Dead = true;
 
         OnDeath?.Invoke(this, killer);
 
@@ -298,8 +295,7 @@ public partial class Player : CharacterEntity
 
     public void StoreUnconfirmedHit(Projectile p)
     {
-        using (TimedLock.Lock(_unconfirmedHits))
-            _unconfirmedHits.Add(p);
+        _unconfirmedHits.Add(p);
     }
 
     public void GuildInvite(User invitedBy, string guildName)
@@ -377,16 +373,14 @@ public partial class Player : CharacterEntity
         while (_deadEntities.TryDequeue(out var en))
         {
             en.DeathEvent -= _onDeathHandler;
-            using (TimedLock.Lock(en.Stats.StatChangedListeners))
-                en.Stats.StatChangedListeners.Remove(this);
+            en.Stats.StatChangedListeners.Remove(this);
         }
 
         foreach (var kvp in _visibleEntities)
         {
             var en = kvp.Value;
             en.DeathEvent -= _onDeathHandler;
-            using (TimedLock.Lock(en.Stats.StatChangedListeners))
-                en.Stats.StatChangedListeners.Remove(this);
+            en.Stats.StatChangedListeners.Remove(this);
         }
 
         _visibleEntities.Clear();
@@ -394,8 +388,7 @@ public partial class Player : CharacterEntity
         {
             var en = kvp.Value;
             en.DeathEvent -= _onDeathHandler;
-            using (TimedLock.Lock(en.Stats.StatChangedListeners))
-                en.Stats.StatChangedListeners.Remove(this);
+            en.Stats.StatChangedListeners.Remove(this);
         }
 
         _visibleStaticEntities.Clear();

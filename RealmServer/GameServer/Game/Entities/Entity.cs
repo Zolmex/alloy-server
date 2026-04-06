@@ -195,13 +195,10 @@ public class Entity : IIdentifiable
 
     public virtual bool TryLeaveWorld()
     {
-        using (TimedLock.Lock(_deathLock))
-        {
-            if (Dead)
-                return false;
+        if (Dead)
+            return false;
 
-            Dead = true;
-        }
+        Dead = true;
 
         LeaveWorld();
         return true;

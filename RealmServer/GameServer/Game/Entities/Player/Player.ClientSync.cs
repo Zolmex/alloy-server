@@ -69,8 +69,7 @@ public partial class Player
             _serverShootAcks.TryAdd(itemType, list);
         }
 
-        using (TimedLock.Lock(list))
-            list.Add(new ServerShootInfo(itemType, pos, angle, angleInc, damageList, critList));
+        list.Add(new ServerShootInfo(itemType, pos, angle, angleInc, damageList, critList));
     }
 
     public bool ValidateServerShoot(int itemType, WorldPosData pos, float angle, float angleInc, int[] damageList,
@@ -80,8 +79,7 @@ public partial class Player
         if (!_serverShootAcks.TryGetValue(itemType, out var list))
             return false;
 
-        using (TimedLock.Lock(list))
-            return list.Remove(new ServerShootInfo(itemType, vecPos, angle, angleInc, damageList, critList));
+        return list.Remove(new ServerShootInfo(itemType, vecPos, angle, angleInc, damageList, critList));
     }
 
     public long TimeSinceLastMove()
@@ -91,8 +89,7 @@ public partial class Player
 
     public void FailedShoot(int projCount)
     {
-        using (TimedLock.Lock(_projIdLock))
-            _nextBulletId += (ushort)projCount;
+        _nextBulletId += (ushort)projCount;
     }
 }
 

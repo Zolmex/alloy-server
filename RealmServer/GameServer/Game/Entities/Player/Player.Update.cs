@@ -89,9 +89,7 @@ public partial class Player
 
     private void ProcessUnconfirmedHits(float posX, float posY)
     {
-        using (TimedLock.Lock(_unconfirmedHits))
-        {
-            var toRemove = new HashSet<Projectile>();
+        var toRemove = new HashSet<Projectile>();
             foreach (var unconfirmedHit in _unconfirmedHits)
             {
                 var timeOfUnconfirmation = unconfirmedHit.GetUnconfirmedHitTime(this);
@@ -151,7 +149,6 @@ public partial class Player
 
             foreach (var toRem in toRemove)
                 _unconfirmedHits.Remove(toRem);
-        }
     }
 
     private void SendUpdate()
@@ -254,16 +251,14 @@ public partial class Player
     private void OnEntityAdded(Entity en)
     {
         en.DeathEvent += _onDeathHandler;
-        using (TimedLock.Lock(en.Stats.StatChangedListeners))
-            en.Stats.StatChangedListeners.Add(this);
+        en.Stats.StatChangedListeners.Add(this);
         _newEntities.Add(en.Stats.GetObjectData(Id));
     }
 
     private void OnEntityRemoved(Entity en)
     {
         en.DeathEvent -= _onDeathHandler;
-        using (TimedLock.Lock(en.Stats.StatChangedListeners))
-            en.Stats.StatChangedListeners.Remove(this);
+        en.Stats.StatChangedListeners.Remove(this);
         _oldEntities.Add(en.Stats.GetObjectDropData());
     }
 

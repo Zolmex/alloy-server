@@ -66,36 +66,33 @@ public class SocketSendState : IDisposable
     
     public void WritePacket(IWritable pkt, byte pktId)
     {
-        using (TimedLock.Lock(this))
+        int start = _writeLength;
+
+        var span = _writeBuffer.AsSpan();
+
+        int bodyStart = start + 5;
+
+        var writer = new SpanWriter(span); // assume you have or can make one
+        writer.Position = bodyStart;
+
+        try
         {
-            int start = _writeLength;
-
-            var span = _writeBuffer.AsSpan();
-
-            int bodyStart = start + 5;
-
-            var writer = new SpanWriter(span); // assume you have or can make one
-            writer.Position = bodyStart;
-
-            try
-            {
-                pkt.Write(ref writer);
-            }
-            catch (Exception e) when (e is ArgumentOutOfRangeException or IndexOutOfRangeException)
-            {
-                ResizeBuffer(ref _writeBuffer, _writeLength);
-                WritePacket(pkt, pktId);
-                return;
-            }
-
-            int totalLen = writer.Position - start;
-
-            writer.Position = start;
-            writer.Write(totalLen);
-            writer.Write(pktId);
-
-            _writeLength += totalLen;
+            pkt.Write(ref writer);
         }
+        catch (Exception e) when (e is ArgumentOutOfRangeException or IndexOutOfRangeException)
+        {
+            ResizeBuffer(ref _writeBuffer, _writeLength);
+            WritePacket(pkt, pktId);
+            return;
+        }
+
+        int totalLen = writer.Position - start;
+
+        writer.Position = start;
+        writer.Write(totalLen);
+        writer.Write(pktId);
+
+        _writeLength += totalLen;
     }
 
     private void ResizeBuffer(ref byte[] buffer, int length)
@@ -108,55 +105,50 @@ public class SocketSendState : IDisposable
     }
     
     public bool TryBeginSend(SocketAsyncEventArgs args) {
-        using (TimedLock.Lock(this)) {
-            if (_pending)
-                return false;
+        if (_pending)
+            return false;
 
-            if (_writeLength == 0)
-            {
-                _pending = false;
-                return false;
-            }
-            
-            _pending = true;
-
-            if (_sendBuffer.Length < _writeBuffer.Length) // Make sure _sendBuffer is big enough
-                ResizeBuffer(ref _sendBuffer, _sendBuffer.Length);
-            
-            var tmp = _sendBuffer;
-            _sendBuffer = _writeBuffer;
-            _writeBuffer = tmp;
-
-            _sendLength = _writeLength;
-            _writeLength = 0;
-            _sendOffset = 0;
-
-            args.SetBuffer(_sendBuffer, 0, _sendLength);
+        if (_writeLength == 0)
+        {
+            _pending = false;
+            return false;
         }
+            
+        _pending = true;
+
+        if (_sendBuffer.Length < _writeBuffer.Length) // Make sure _sendBuffer is big enough
+            ResizeBuffer(ref _sendBuffer, _sendBuffer.Length);
+            
+        var tmp = _sendBuffer;
+        _sendBuffer = _writeBuffer;
+        _writeBuffer = tmp;
+
+        _sendLength = _writeLength;
+        _writeLength = 0;
+        _sendOffset = 0;
+
+        args.SetBuffer(_sendBuffer, 0, _sendLength);
 
         return true;
     }
 
     public bool OnDataSent(SocketAsyncEventArgs args) // If all bytes were transferred, lastvalidindex will be 0 again
     {
-        using (TimedLock.Lock(this))
+        _sendOffset += args.BytesTransferred;
+
+        if (_sendOffset < _sendLength)
         {
-            _sendOffset += args.BytesTransferred;
-
-            if (_sendOffset < _sendLength)
-            {
-                // continue sending remaining bytes
-                args.SetBuffer(_sendBuffer, _sendOffset, _sendLength - _sendOffset);
-                return true; // continue send
-            }
-
-            // done
-            _sendLength = 0;
-            _sendOffset = 0;
-
-            _pending = false;
-            return false;
+            // continue sending remaining bytes
+            args.SetBuffer(_sendBuffer, _sendOffset, _sendLength - _sendOffset);
+            return true; // continue send
         }
+
+        // done
+        _sendLength = 0;
+        _sendOffset = 0;
+
+        _pending = false;
+        return false;
     }
     
     public void Dispose()

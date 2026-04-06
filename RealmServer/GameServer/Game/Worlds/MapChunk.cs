@@ -38,9 +38,8 @@ public class MapChunk
     public void Tick(RealmTime time)
     {
         TickCount = time.TickCount;
-        Parallel.ForEach(Entities, kvp =>
+        foreach (var en in Entities.Values)
         {
-            var en = kvp.Value;
             if (en.Dead)
                 return;
 
@@ -54,7 +53,7 @@ public class MapChunk
                 en.Tick(time);
 
             _world.InvokeEntityTick(en);
-        });
+        }
     }
 
     public void Insert(Entity en)

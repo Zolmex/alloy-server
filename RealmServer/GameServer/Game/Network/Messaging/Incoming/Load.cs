@@ -2,6 +2,7 @@
 
 using Common.Database;
 using Common.Network;
+using Common.Utilities;
 using GameServer.Game.Network.Messaging.Outgoing;
 
 #endregion
@@ -13,7 +14,7 @@ public partial record Load : IIncomingPacket
 {
     public int CharId;
 
-    public async void Handle(User user)
+    public void Handle(User user)
     {
         if (user.Account.IsBanned)
         {
@@ -24,7 +25,7 @@ public partial record Load : IIncomingPacket
         var chr = user.GameInfo.Char;
         if (user.State != ConnectionState.Reconnecting)
         {
-            chr = (await DbClient.GetCharacterAsync(user.Account.Id, CharId)).Character;
+            chr = DbClient.GetCharacterAsync(user.Account.Id, CharId).SafeResult().Character;
             if (chr == null)
             {
                 user.SendFailure(Failure.DEFAULT, $"Failed to load character #{CharId}");

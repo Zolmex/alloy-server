@@ -102,8 +102,7 @@ public class Projectile : DamageSource, IIdentifiable
         // if (en.HasConditionEffect(ConditionEffectIndex.Invincible) || en.HasConditionEffect(ConditionEffectIndex.Stasis))
         //    return false;
 
-        using (TimedLock.Lock(this))
-            return !Hit.Add(en.Id);
+        return !Hit.Add(en.Id);
     }
 
     public Vector2 PositionAt(long totalElapsedMs)
@@ -126,9 +125,8 @@ public class Projectile : DamageSource, IIdentifiable
     {
         foreach (var entity in entitiesInRadius)
         {
-            using (TimedLock.Lock(this))
-                if (Hit.Contains(entity.Id))
-                    continue;
+            if (Hit.Contains(entity.Id))
+                continue;
 
             if (CheckProjectileInHitRange(entity.Position.X, entity.Position.Y, PROJECTILE_RADIUS_PLAYER) &&
                 CheckServerEntityHit(entity, serverTime))
@@ -142,9 +140,8 @@ public class Projectile : DamageSource, IIdentifiable
         var elapsed = startTime + elapsedLifetimeMs;
         Position = PositionAt(elapsed);
 
-        using (TimedLock.Lock(this))
-            if (Hit.Contains(entity.Id))
-                return;
+        if (Hit.Contains(entity.Id))
+            return;
 
         if (entity.DistSqr(targetPos.X, targetPos.Y) > 16)
         { // 16 => 4 tiles radius
@@ -189,20 +186,16 @@ public class Projectile : DamageSource, IIdentifiable
 
         // okay so, we thought we hit, but we havent received an ack recently enough to confirm it, so store this last movement,
         // then in either MAX_PING_TIME ms or when we next receive a move, validate this collision.
-        using (TimedLock.Lock(this))
-        {
-            _unconfirmedHits.Add((p, new WorldPosData(Position.X, Position.Y), serverTime));
-            p.StoreUnconfirmedHit(this);
-            Hit.Add(p.Id); // we dont want to store multiple unconfirmed hits from the same projectile
-            return false;
-        }
+        _unconfirmedHits.Add((p, new WorldPosData(Position.X, Position.Y), serverTime));
+        p.StoreUnconfirmedHit(this);
+        Hit.Add(p.Id); // we dont want to store multiple unconfirmed hits from the same projectile
+        return false;
     }
 
     public bool CheckUnconfirmedHit(CharacterEntity hit, float posX, float posY)
     {
         (Player, WorldPosData pos, long) hitData;
-        using (TimedLock.Lock(this))
-            hitData = _unconfirmedHits.Where(p => p.p == hit).FirstOrDefault();
+        hitData = _unconfirmedHits.FirstOrDefault(p => p.p == hit);
         var xDiff = MathF.Abs(posX - hitData.pos.X);
         var yDiff = MathF.Abs(posY - hitData.pos.Y);
         if (xDiff < PROJECTILE_RADIUS && yDiff < PROJECTILE_RADIUS)
@@ -212,38 +205,32 @@ public class Projectile : DamageSource, IIdentifiable
 
     public void RemoveHit(CharacterEntity notHit)
     {
-        using (TimedLock.Lock(this))
-            Hit.Remove(notHit.Id);
+        Hit.Remove(notHit.Id);
     }
 
     public long GetUnconfirmedHitTime(Player p)
     {
-        using (TimedLock.Lock(this))
-            return _unconfirmedHits.Where(player => player.p == p).FirstOrDefault().time;
+        return _unconfirmedHits.FirstOrDefault(player => player.p == p).time;
     }
 
     public void ConfirmHit(CharacterEntity hit)
     {
         // a player has reported back that a collision did go through, hit that mf
         HitEntity(hit);
-        using (TimedLock.Lock(this))
-            _unconfirmedHits.RemoveWhere(p => p.p == hit);
+        _unconfirmedHits.RemoveWhere(p => p.p == hit);
     }
 
     public void TryHitEntity(CharacterEntity entity)
     {
-        using (TimedLock.Lock(this))
+        var confirmedHits = _unconfirmedHits.RemoveWhere(p => p.p == entity);
+        if (confirmedHits != 0)
         {
-            var confirmedHits = _unconfirmedHits.RemoveWhere(p => p.p == entity);
-            if (confirmedHits != 0)
-            {
-                HitEntity(entity);
-                return;
-            }
-
-            if (Hit.Contains(entity.Id))
-                return;
+            HitEntity(entity);
+            return;
         }
+
+        if (Hit.Contains(entity.Id))
+            return;
 
         HitEntity(entity);
     }
@@ -251,8 +238,7 @@ public class Projectile : DamageSource, IIdentifiable
     public void HitEntity(CharacterEntity entity)
     {
         _onHitEvent?.Invoke(entity, Owner);
-        using (TimedLock.Lock(this))
-            Hit.Add(entity.Id);
+        Hit.Add(entity.Id);
         Owner.Hit(entity, this);
         entity.HitBy(Owner, this);
     }

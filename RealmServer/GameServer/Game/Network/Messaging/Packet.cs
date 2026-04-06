@@ -21,9 +21,9 @@ public class PacketAttribute : Attribute
 
 public static class PacketLib
 {
-    public static Dictionary<PacketId, IIncomingPacket> LoadIncoming()
+    public static Dictionary<PacketId, Type> LoadIncoming()
     {
-        var ret = new Dictionary<PacketId, IIncomingPacket>();
+        var ret = new Dictionary<PacketId, Type>();
         var types = Assembly.GetExecutingAssembly().GetTypes();
         for (var i = 0; i < types.Length; i++)
         {
@@ -31,7 +31,7 @@ public static class PacketLib
             if (!type.IsInterface && type.GetInterfaces().Contains(typeof(IIncomingPacket)))
             {
                 var pktId = type.GetCustomAttribute<PacketAttribute>().ID;
-                ret.Add(pktId, (IIncomingPacket)Activator.CreateInstance(type));
+                ret.Add(pktId, type);
             }
         }
 

@@ -64,8 +64,7 @@ public partial class Player
             }
 
             ushort projIndex;
-            using (TimedLock.Lock(_projIdLock))
-                projIndex = _nextBulletId++;
+            projIndex = _nextBulletId++;
 
             var proj = new Projectile(this, projIndex, RealmManager.WorldTime.TotalElapsedMs, angle.Rad2Deg(),
                 startPos, (int)(dmg * crit), projDesc.Path.Clone(), Projectile.ProjectileTargetType.Enemy);

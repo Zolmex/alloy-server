@@ -104,30 +104,26 @@ public static class RealmManager
 
             HandleTimers();
 
-            Parallel.ForEach(Worlds.Values, w => w.Tick(WorldTime));
-
-            // DbClientOld.SetPlayerCount(Users.Count); // TODO: honestly just remove this
+            foreach (var w in Worlds.Values)
+                w.Tick(WorldTime);
         }
     }
 
     private static void Update()
     {
-        using (TimedLock.Lock(_updateLock))
-        {
-            _onUpdate?.Invoke();
-            _onUpdate = null;
-        }
+        _onUpdate?.Invoke();
+        _onUpdate = null;
 
         foreach (var world in Worlds.Values)
             world.Update();
 
         Users.Update();
-        Parallel.ForEach(Users, kvp =>
+        foreach (var user in Users.Values)
         {
-            var user = kvp.Value;
             _userUpdate?.Invoke(user);
+            user.Network.HandleIncomingPackets();
             user.Network.SendSocketData();
-        });
+        }
         _userUpdate = null;
     }
 
@@ -147,8 +143,7 @@ public static class RealmManager
 
     public static void OnUpdate(Action act)
     {
-        using (TimedLock.Lock(_updateLock))
-            _onUpdate += act;
+        _onUpdate += act;
     }
 
     public static void BroadcastAllUsers(Action<User> act)
@@ -208,13 +203,13 @@ public static class RealmManager
         return true;
     }
 
-    public static async Task AddWorld(World world)
+    public static void AddWorld(World world)
     {
         Worlds.TryAdd(world.Id, world);
 
         world.Active = true;
         world.Reset();
-        await Task.Run(world.Initialize);
+        Task.Run(world.Initialize);
     }
 
     public static void RemoveWorld(World world)

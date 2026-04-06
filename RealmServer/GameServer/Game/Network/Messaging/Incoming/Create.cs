@@ -15,9 +15,9 @@ public partial record Create : IIncomingPacket
     public short ClassType;
     public short SkinType;
 
-    public async void Handle(User user)
+    public void Handle(User user)
     {
-        var createChar = await DbClient.CreateCharacterAsync(user.Account, (ushort)ClassType, (ushort)SkinType);
+        var createChar = DbClient.CreateCharacterAsync(user.Account, (ushort)ClassType, (ushort)SkinType).SafeResult();
         var chr = createChar.Character;
         var result = createChar.Status;
         if (chr == null)

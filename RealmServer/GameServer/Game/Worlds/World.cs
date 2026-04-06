@@ -109,8 +109,7 @@ public class World : IIdentifiable
         _lastActiveTime = RealmManager.WorldTime.TotalElapsedMs;
         Initialized = true;
 
-        using (TimedLock.Lock(_initializeLock))
-            _onInitialize?.Invoke();
+        _onInitialize?.Invoke();
     }
 
     protected virtual void InitializeEntities()
@@ -217,11 +216,8 @@ public class World : IIdentifiable
 
     public void Update() // Different from Tick, synchronizes collections and other stuff maybe
     {
-        using (TimedLock.Lock(_updateLock))
-        {
-            _onUpdate?.Invoke();
-            _onUpdate = null;
-        }
+        _onUpdate?.Invoke();
+        _onUpdate = null;
 
         Entities.Update();
         Players.Update();
@@ -232,37 +228,31 @@ public class World : IIdentifiable
 
     public void OnUpdate(Action act)
     {
-        using (TimedLock.Lock(_updateLock))
-            _onUpdate += act;
+        _onUpdate += act;
     }
 
     public void OnInitialize(Action act)
     {
-        using (TimedLock.Lock(_initializeLock))
-            _onInitialize += act;
+        _onInitialize += act;
     }
 
     private void HandleTimers()
     {
-        using (TimedLock.Lock(_timers))
+        for (var i = 0; i < _timers.Count; i++)
         {
-            for (var i = 0; i < _timers.Count; i++)
+            var timer = _timers[i];
+            if (timer.Item1 <= RealmManager.WorldTime.TickCount)
             {
-                var timer = _timers[i];
-                if (timer.Item1 <= RealmManager.WorldTime.TickCount)
-                {
-                    timer.Item2();
-                    _timers.RemoveAt(i);
-                    i--;
-                }
+                timer.Item2();
+                _timers.RemoveAt(i);
+                i--;
             }
         }
     }
 
     public void AddTimedAction(int time, Action act)
     {
-        using (TimedLock.Lock(_timers))
-            _timers.Add(Tuple.Create(RealmManager.WorldTime.TickCount + TicksFromTime(time), act));
+        _timers.Add(Tuple.Create(RealmManager.WorldTime.TickCount + TicksFromTime(time), act));
     }
 
     public static long TicksFromTime(long time)
@@ -319,22 +309,16 @@ public class World : IIdentifiable
 
         ActiveEntities.Update();
 
-        using (TimedLock.Lock(_playerTickLock))
+        foreach (var plr in Players.Values)
         {
-            foreach (var plr in Players.Values)
-                plr.Stats.Update();
+            if (plr.Dead)
+                continue;
             
-            Parallel.ForEach(Players, kvp =>
-            {
-                var plr = kvp.Value;
-                if (plr.Dead)
-                    return;
-
-                plr.Tick(time);
-                _playerTick?.Invoke(plr);
-            });
-            _playerTick = null;
+            plr.Stats.Update();
+            plr.Tick(time);
+            _playerTick?.Invoke(plr);
         }
+        _playerTick = null;
 
         ActiveEntities.Clear();
         SearchCache.Clear();
@@ -447,8 +431,7 @@ public class World : IIdentifiable
 
     public void BroadcastAll(Action<Player> act)
     {
-        using (TimedLock.Lock(_playerTickLock))
-            _playerTick += act;
+        _playerTick += act;
     }
 
     public void Delete()

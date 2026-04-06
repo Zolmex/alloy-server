@@ -35,8 +35,6 @@ public class AppConnection
 
     public AppConnection()
     {
-        ThreadPool.SetMinThreads(2000, 2000);
-        
         _sendState = new SocketSendState();
         _receiveState = new SocketReceiveState(0x40000);
         _pendingAcks = new ConcurrentDictionary<int, TaskCompletionSource<IAppMessageAck>>();
@@ -113,13 +111,16 @@ public class AppConnection
                 if (!_sendState.WriteMessage(msg))
                     break;
 
-            if (_sendState.TryBeginSend(_sendSAEA))
+            using (TimedLock.Lock(_sendState))
             {
-                if (!Socket.SendAsync(_sendSAEA))
-                    ProcessSend(null, _sendSAEA);
+                if (_sendState.TryBeginSend(_sendSAEA))
+                {
+                    if (!Socket.SendAsync(_sendSAEA))
+                        ProcessSend(null, _sendSAEA);
+                }
+                else
+                    _sendLock.Release();
             }
-            else
-                _sendLock.Release();
         }
     }
 
@@ -133,11 +134,13 @@ public class AppConnection
                 return;
             }
 
-            if (_sendState.OnDataSent(args))
-            {
-                if (!Socket.SendAsync(_sendSAEA))
-                    continue;
-                return;
+            using (TimedLock.Lock(_sendState)){
+                if (_sendState.OnDataSent(args))
+                {
+                    if (!Socket.SendAsync(_sendSAEA))
+                        continue;
+                    return;
+                }
             }
 
             _sendLock.Release();

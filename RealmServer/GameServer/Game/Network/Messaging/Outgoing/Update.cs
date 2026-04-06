@@ -27,8 +27,7 @@ public readonly partial record struct Update(List<WorldTile> Tiles, List<ObjectD
         for (var i = 0; i < OldEntities.Count; i++)
         {
             OldEntities[i].Write(ref wtr);
-            using (TimedLock.Lock(Updates))
-                Updates.Remove(OldEntities[i].ObjectId);
+            Updates.Remove(OldEntities[i].ObjectId);
         }
     }
 

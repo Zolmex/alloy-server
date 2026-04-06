@@ -26,7 +26,7 @@ public partial record Hello : IIncomingPacket
     public string Password;
     public string Username;
 
-    public async void Handle(User user)
+    public void Handle(User user)
     {
         if (BuildVersion != GameServerConfig.Config.Version)
         {
@@ -37,7 +37,7 @@ public partial record Hello : IIncomingPacket
         var acc = user.Account;
         if (user.State != ConnectionState.Reconnecting)
         {
-            var verify = await DbClient.VerifyAccountAsync(Username, Password);
+            var verify = DbClient.VerifyAccountAsync(Username, Password).SafeResult();
             var status = verify.Status;
             acc = verify.Account;
             if (acc == null)
@@ -64,7 +64,7 @@ public partial record Hello : IIncomingPacket
             }
 
             acc.IsBanned = false; // Update bool value 
-            await DbClient.FlushAsync(acc, a => a.IsBanned);
+            DbClient.FlushAsync(acc, a => a.IsBanned).SafeResult();
         }
 
         if (RealmManager.UserAccIds.TryGetValue(user, out _) && user.State != ConnectionState.Reconnecting)
@@ -105,7 +105,7 @@ public partial record Hello : IIncomingPacket
             world = new TestWorld("Test");
             world.DisplayName = $"{acc.Name}'s Test World";
             world.LoadJsonMap(MapJSON, world.DisplayName);
-            await RealmManager.AddWorld(world);
+            RealmManager.AddWorld(world);
         }
         else if (world == null)
         {

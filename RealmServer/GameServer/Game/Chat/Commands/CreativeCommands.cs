@@ -305,7 +305,7 @@ public class GotoEventCommand : Command
 [Command("recon", CommandPermissionLevel.Creative)]
 public class ReconnectCommand : Command
 {
-    public override async void Execute(Player player, string args)
+    public override void Execute(Player player, string args)
     {
         var options = args.Split(' ');
         if (args.Length < 1 || options.Length < 2)
@@ -345,7 +345,7 @@ public class ReconnectCommand : Command
                         return;
                     }
 
-                    await RealmManager.AddWorld(world);
+                    RealmManager.AddWorld(world);
                 }
                 catch (Exception e)
                 {

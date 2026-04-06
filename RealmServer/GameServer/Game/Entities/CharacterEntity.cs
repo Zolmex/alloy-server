@@ -447,13 +447,10 @@ public class CharacterEntity : Entity
 
     public override bool TryLeaveWorld()
     {
-        using (TimedLock.Lock(_deathLock))
-        {
-            if (Dead)
-                return false;
+        if (Dead)
+            return false;
 
-            Dead = true;
-        }
+        Dead = true;
 
         if (!IsPlayer)
         {
@@ -540,8 +537,7 @@ public class CharacterEntity : Entity
         if (!CanBeDamaged(ignoreInvincible))
             return;
 
-        using (TimedLock.Lock(damageSource.Hit))
-            damageSource.Hit.Add(Id);
+        damageSource.Hit.Add(Id);
 
         OnHitBy(from, damageSource);
     }
@@ -571,30 +567,27 @@ public class CharacterEntity : Entity
 
     public int Damage(int damage, CharacterEntity from = null)
     {
-        using (TimedLock.Lock(_dmgLock))
-        {
-            var dmgDealt = damage > HP ? HP : damage;
+        var dmgDealt = damage > HP ? HP : damage;
 
-            HP -= dmgDealt;
+        HP -= dmgDealt;
 
-            OnDamagedBy?.Invoke(this, from, dmgDealt);
+        OnDamagedBy?.Invoke(this, from, dmgDealt);
 
-            if (from is Player plr)
-                plr.DamageDealt(this, dmgDealt);
+        if (from is Player plr)
+            plr.DamageDealt(this, dmgDealt);
 
-            if (healthLock != null && healthLock.IsLockActive(this))
-                return dmgDealt;
-
-            if (HP <= 0)
-            {
-                if (this is Enemy e && from is Player p)
-                    p.OnKillInvoke(e);
-
-                Death(from != null ? from.Name : "Unknown");
-            }
-
+        if (healthLock != null && healthLock.IsLockActive(this))
             return dmgDealt;
+
+        if (HP <= 0)
+        {
+            if (this is Enemy e && from is Player p)
+                p.OnKillInvoke(e);
+
+            Death(from != null ? from.Name : "Unknown");
         }
+
+        return dmgDealt;
     }
 
     public void ApplyConditionEffects(IEnumerable<ConditionEffectDesc> effects)

@@ -22,6 +22,7 @@ internal class Program
     
     private static void Main(string[] args)
     {
+        ThreadPool.SetMinThreads(2000, 2000);
         
         var settings = new HostApplicationBuilderSettings { Args = args, ContentRootPath = Directory.GetCurrentDirectory(), ApplicationName = "DbServer" };
 
