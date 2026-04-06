@@ -41,7 +41,7 @@ public class NetworkHandler
         User = user;
 
         _sendState = new SocketSendState();
-        _receiveState = new SocketReceiveState();
+        _receiveState = new SocketReceiveState(0x20000);
 
         _sendSAEA = new SocketAsyncEventArgs();
         _sendSAEA.Completed += ProcessSend;

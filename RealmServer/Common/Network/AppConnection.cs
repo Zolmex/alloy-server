@@ -16,7 +16,7 @@ namespace Common.Network;
 // Connection to other server apps
 public class AppConnection
 {
-    private const int RESPONSE_TTL_MS = 10000;
+    private const int RESPONSE_TTL_MS = 20000;
     private static readonly Logger _log = new(typeof(AppConnection));
 
     private readonly SocketAsyncEventArgs _receiveSAEA;
@@ -38,14 +38,14 @@ public class AppConnection
         ThreadPool.SetMinThreads(2000, 2000);
         
         _sendState = new SocketSendState();
-        _receiveState = new SocketReceiveState();
+        _receiveState = new SocketReceiveState(0x40000);
         _pendingAcks = new ConcurrentDictionary<int, TaskCompletionSource<IAppMessageAck>>();
 
         _sendSAEA = new SocketAsyncEventArgs();
         _sendSAEA.Completed += ProcessSend;
 
         _receiveSAEA = new SocketAsyncEventArgs();
-        _receiveSAEA.Completed += ProcessReceive;
+        _receiveSAEA.Completed += async (sender, args) => await ProcessReceive(sender, args);
     }
 
     private void Dispose()
@@ -145,7 +145,7 @@ public class AppConnection
         }
     }
 
-    private void ReceiveLoop()
+    private async Task ReceiveLoop()
     {
         while (Socket != null && Socket.Connected)
         {
@@ -154,18 +154,18 @@ public class AppConnection
             if (Socket.ReceiveAsync(_receiveSAEA))
                 break;
 
-            if (!HandleReceive(_receiveSAEA))
+            if (!await HandleReceive(_receiveSAEA))
                 break;
         }
     }
 
-    private void ProcessReceive(object sender, SocketAsyncEventArgs args)
+    private async Task ProcessReceive(object sender, SocketAsyncEventArgs args)
     {
-        if (HandleReceive(args))
+        if (await HandleReceive(args))
             ReceiveLoop();
     }
 
-    private bool HandleReceive(SocketAsyncEventArgs args)
+    private async Task<bool> HandleReceive(SocketAsyncEventArgs args)
     {
         if (args.SocketError != SocketError.Success || args.BytesTransferred == 0)
         {
@@ -182,7 +182,7 @@ public class AppConnection
 
             try
             {
-                _ = msg.HandleAsync(this);
+                await msg.HandleAsync(this);
             }
             catch (Exception ex)
             {

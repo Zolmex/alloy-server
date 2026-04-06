@@ -23,9 +23,9 @@ public class SocketSendState : IDisposable
     
     public SocketSendState()
     {
-        _sendBuffer = ArrayPool<byte>.Shared.Rent(0x60000);
+        _sendBuffer = ArrayPool<byte>.Shared.Rent(0x80000);
         Array.Clear(_sendBuffer);
-        _writeBuffer = ArrayPool<byte>.Shared.Rent(0x60000);
+        _writeBuffer = ArrayPool<byte>.Shared.Rent(0x80000);
         Array.Clear(_writeBuffer);
     }
 
@@ -77,7 +77,16 @@ public class SocketSendState : IDisposable
             var writer = new SpanWriter(span); // assume you have or can make one
             writer.Position = bodyStart;
 
-            pkt.Write(ref writer);
+            try
+            {
+                pkt.Write(ref writer);
+            }
+            catch (Exception e) when (e is ArgumentOutOfRangeException or IndexOutOfRangeException)
+            {
+                ResizeBuffer(ref _writeBuffer, _writeLength);
+                WritePacket(pkt, pktId);
+                return;
+            }
 
             int totalLen = writer.Position - start;
 
@@ -87,6 +96,15 @@ public class SocketSendState : IDisposable
 
             _writeLength += totalLen;
         }
+    }
+
+    private void ResizeBuffer(ref byte[] buffer, int length)
+    {
+        var newSize = length * 2;
+        var newBuffer = ArrayPool<byte>.Shared.Rent(newSize);
+        buffer.AsSpan(0, length).CopyTo(newBuffer);
+        ArrayPool<byte>.Shared.Return(buffer);
+        buffer = newBuffer;
     }
     
     public bool TryBeginSend(SocketAsyncEventArgs args) {
@@ -101,6 +119,9 @@ public class SocketSendState : IDisposable
             }
             
             _pending = true;
+
+            if (_sendBuffer.Length < _writeBuffer.Length) // Make sure _sendBuffer is big enough
+                ResizeBuffer(ref _sendBuffer, _sendBuffer.Length);
             
             var tmp = _sendBuffer;
             _sendBuffer = _writeBuffer;

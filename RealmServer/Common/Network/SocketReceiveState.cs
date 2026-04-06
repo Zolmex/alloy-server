@@ -14,12 +14,11 @@ public class SocketReceiveState : IDisposable
     private byte[] _buffer;
     private int _bytesAvailable;
     private int _bytesRead;
-    private const int BUFFER_SIZE = 0x20000;
 
-    public SocketReceiveState()
+    public SocketReceiveState(int bufferSize)
     {
         // Rent memory from the shared pool
-        _buffer = ArrayPool<byte>.Shared.Rent(BUFFER_SIZE);
+        _buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
     }
 
     public void Reset()
@@ -54,7 +53,7 @@ public class SocketReceiveState : IDisposable
         
         int length = rdr.ReadInt32();
         // Console.WriteLine($"Length {length} bytes");
-        if (length < 10 || length > BUFFER_SIZE)
+        if (length < 10 || length > _buffer.Length)
             throw new InvalidDataException($"Invalid packet length: {length}");
 
         if (length > _bytesAvailable)
@@ -87,7 +86,7 @@ public class SocketReceiveState : IDisposable
         
         int length = rdr.ReadInt32();
         
-        if (length < 5 || length > BUFFER_SIZE)
+        if (length < 5 || length > _buffer.Length)
             throw new InvalidDataException($"Invalid packet length: {length}");
 
         if (length > _bytesAvailable)
