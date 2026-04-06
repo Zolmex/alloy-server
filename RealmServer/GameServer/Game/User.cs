@@ -122,17 +122,20 @@ public class User : IIdentifiable
 
     public void Disconnect(string message = null, DisconnectReason reason = DisconnectReason.Unknown)
     {
-        if (State == ConnectionState.Disconnected)
-            return;
+        using (TimedLock.Lock(_disconnectLock)) // Lock is needed to not call Unload twice at the same time
+        {
+            if (State == ConnectionState.Disconnected)
+                return;
 
-        _log.Debug($"Disconnecting user {Id} ({message}) (Reason:{reason})");
+            _log.Debug($"Disconnecting user {Id} ({message}) (Reason:{reason})");
 
-        State = ConnectionState.Disconnected;
+            State = ConnectionState.Disconnected;
 
-        Unload(false, reason == DisconnectReason.Death);
+            Unload(false, reason == DisconnectReason.Death);
 
-        RealmManager.DisconnectUser(this);
-        SocketServer.DisconnectUser(this);
+            RealmManager.DisconnectUser(this);
+            SocketServer.DisconnectUser(this);
+        }
     }
 
     public void ReconnectTo(World world)
