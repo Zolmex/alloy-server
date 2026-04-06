@@ -79,7 +79,6 @@ public class EntityStats
             var plr = (Player)_entity;
             if (isPrivate)
                 plr.HandleEntityStatChanged(plr, statType, sv);
-            plr.StatChanged(statType);
         }
     }
 

@@ -14,8 +14,6 @@ public partial class Player
 {
     private readonly Dictionary<int, ObjectStatusData> _entityStatUpdates = [];
 
-    public bool TickStatChanges = true;
-
     private void SendNewTick()
     {
         User.SendPacket(new NewTick(_entityStatUpdates));
@@ -32,11 +30,5 @@ public partial class Player
             status.SetStat(type, value);
             _entityStatUpdates[en.Id] = status;
         }
-    }
-
-    public void StatChanged(StatType type)
-    {
-        if (type != StatType.None && TickStatChanges)
-            OnStatChanged?.Invoke(type);
     }
 }

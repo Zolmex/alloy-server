@@ -356,7 +356,6 @@ public partial class Player : CharacterEntity
 
         StacksLost = null;
         OnKill = null;
-        OnStatChanged = null;
         OnHeal = null;
         InCombat = null;
         OnEnemyHit = null;

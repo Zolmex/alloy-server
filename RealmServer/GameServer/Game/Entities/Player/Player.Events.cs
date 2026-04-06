@@ -14,7 +14,6 @@ public partial class Player
     public event Action<CharacterEntity> OnKill;
     public event Action<int> OnHeal;
     public event Action InCombat;
-    public event Action<StatType> OnStatChanged;
     public event Action<CharacterEntity, DamageSource> OnEnemyHit;
     public event Action<CharacterEntity, int> OnDamageDealt;
     public event Action<int, Item> OnInvChanged; // slot, item
