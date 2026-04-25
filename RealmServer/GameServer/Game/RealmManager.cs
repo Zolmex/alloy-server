@@ -9,7 +9,6 @@ using GameServer.Game.Chat.Commands;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Behaviors.Actions;
-using GameServer.Game.Network.API;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities.Collections;
@@ -50,7 +49,6 @@ public static class RealmManager
     private static readonly Dictionary<int, World> _guildHalls = new();
 
     private static readonly object _updateLock = new();
-    private static APIEventManager apiEventManager;
 
     public static Nexus NexusInstance { get; private set; }
     private static event Action _onUpdate;
@@ -65,8 +63,6 @@ public static class RealmManager
 
         // DbClientOld.UpdateLegends(); // Update legends every day // TODO: fix
         // AddTimedAction((int)TimeSpan.FromDays(1).TotalMilliseconds, DbClientOld.UpdateLegends);
-
-        apiEventManager = new APIEventManager();
 
         NexusInstance = new Nexus();
         AddWorld(NexusInstance);

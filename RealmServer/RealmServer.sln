@@ -9,11 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServer", "WebServer\WebS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{00143584-07F8-4D2C-BEC9-E6393BA7F121}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordBot", "DiscordBot\DiscordBot.csproj", "{8A4C0A00-B584-444A-87CD-09F6020EBE96}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbServer", "DbServer\DbServer.csproj", "{3AC4102F-F6E7-488F-866A-1EA97E6C00E1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AstrumAPI", "AstrumAPI\AstrumAPI.csproj", "{050393C7-66E1-4F99-937E-8F254EA70A5E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12628FEB-82DF-4081-8F63-CCCFE2F07BC9}"
 	ProjectSection(SolutionItems) = preProject
@@ -47,18 +43,10 @@ Global
 		{00143584-07F8-4D2C-BEC9-E6393BA7F121}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00143584-07F8-4D2C-BEC9-E6393BA7F121}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00143584-07F8-4D2C-BEC9-E6393BA7F121}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8A4C0A00-B584-444A-87CD-09F6020EBE96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A4C0A00-B584-444A-87CD-09F6020EBE96}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A4C0A00-B584-444A-87CD-09F6020EBE96}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A4C0A00-B584-444A-87CD-09F6020EBE96}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3AC4102F-F6E7-488F-866A-1EA97E6C00E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3AC4102F-F6E7-488F-866A-1EA97E6C00E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AC4102F-F6E7-488F-866A-1EA97E6C00E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AC4102F-F6E7-488F-866A-1EA97E6C00E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{050393C7-66E1-4F99-937E-8F254EA70A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{050393C7-66E1-4F99-937E-8F254EA70A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{050393C7-66E1-4F99-937E-8F254EA70A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{050393C7-66E1-4F99-937E-8F254EA70A5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

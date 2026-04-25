@@ -1,8 +1,6 @@
 #region
 
 using Common;
-using Common.API.Helpers;
-using Common.API.Requests;
 using Common.Database.Models;
 using Common.Enums;
 using Common.Resources.World;
@@ -225,29 +223,6 @@ public class DropCommand : Command
 
         player.World.DropLoot(player.Position.X, player.Position.Y, new Item[1] { new(item.Root) },
             player);
-    }
-}
-
-[Command("droploot", CommandPermissionLevel.Creative)]
-public class DropLootCommand : Command
-{
-    public override void Execute(Player player, string args)
-    {
-        if (args == "0")
-        {
-            var eventSpawn = new EventSpawnRequest(player.Name, SubscribableEvent.Avatar);
-            APIHelper.SendRequestAuth(eventSpawn);
-        }
-        else if (args == "1")
-        {
-            var eventDeath = new EventDeathRequest(player.Name, SubscribableEvent.LordoftheLostLands);
-            APIHelper.SendRequestAuth(eventDeath);
-        }
-        else
-        {
-            var showMessage = new DropLootRequest(player.Name, args, LootDropRarity.All);
-            APIHelper.SendRequestAuth(showMessage);
-        }
     }
 }
 
