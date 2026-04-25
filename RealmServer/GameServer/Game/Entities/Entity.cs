@@ -125,8 +125,7 @@ public class Entity : IIdentifiable
         }
 
         UpdateTileChunk();
-        if (!IsPlayer)
-            Stats.Update();
+        Stats.Update();
         return true;
     }
 

@@ -314,7 +314,6 @@ public class World : IIdentifiable
             if (plr.Dead)
                 continue;
             
-            plr.Stats.Update();
             plr.Tick(time);
             _playerTick?.Invoke(plr);
         }
