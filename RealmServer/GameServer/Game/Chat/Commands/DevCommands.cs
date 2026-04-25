@@ -21,3 +21,15 @@ public class ChunkDataCommand : Command
         player.SendInfo($"CX: {chunk.CX}; CY: {chunk.CY}; Players: {chunk.Players.Count}; Entities: {chunk.Entities.Count}");
     }
 }
+
+[Command("reloadbehaviors", CommandPermissionLevel.Developer)]
+public class ReloadBehaviorsCommand : Command
+{
+    public override void Execute(Player player, string args)
+    {
+        player.SendInfo("Reloading behavior files...");
+        if (RealmManager.ReloadAllBehaviors())
+            player.SendInfo("Successfully reloaded behaviors.");
+        else player.SendError("Failed to reload behaviors. Check GameServer console for more information.");
+    }
+}

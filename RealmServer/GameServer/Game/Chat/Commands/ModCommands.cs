@@ -189,53 +189,6 @@ public class UnmuteCommand : Command
     }
 }
 
-[Command("gift", CommandPermissionLevel.Moderator)]
-public class GiftCommand : Command
-{
-    public override void Execute(Player player, string args)
-    {
-        player.SendError("Not implemented."); // TODO: fix gifts
-        return;
-        
-        // var txt = args.Split(' ');
-        //
-        // if (txt.Length != 2)
-        // {
-        //     player.SendInfo("Usage: /gift {player} {slot}");
-        //     return;
-        // }
-        //
-        // if (!int.TryParse(txt[0], out var accId))
-        // {
-        //     player.SendError("Invalid account id.");
-        //     return;
-        // }
-        //
-        // var targetAcc = DbClient.GetAccount(accId).Result;
-        // if (targetAcc == null)
-        // {
-        //     player.SendError("Invalid account id.");
-        //     return;
-        // }
-        //
-        // if (!int.TryParse(txt[1], out var slot))
-        // {
-        //     player.SendError("Invalid slot.");
-        //     return;
-        // }
-        //
-        // var item = player.Inventory[slot];
-        // if (item == null)
-        // {
-        //     player.SendError("Invalid slot.");
-        //     return;
-        // }
-        //
-        // targetAcc.Gifts.AddGift(item.ObjectType, item.Export().ToArray());
-        // DbClientOld.Save(targetAcc.Gifts);
-    }
-}
-
 [Command("summon", CommandPermissionLevel.Moderator)]
 public class SummonCommand : Command
 {

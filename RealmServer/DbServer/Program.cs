@@ -4,7 +4,6 @@ using Common.Network.Messaging;
 using Common.Resources.Xml;
 using Common.Utilities;
 using DbServer.Database;
-using DbServer.Interface;
 using DbServer.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -47,11 +46,6 @@ internal class Program
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // Default to no tracking, we handle cache manually
         });
         
-        //builder.Services.AddSingleton<IBackupManager, FileBackupManager>();
-        //builder.Services.AddSingleton<IRedisConnection, RedisClientConnection>();
-
-        // builder.Services.AddHostedService<BackupService>();
-
         builder.Services.AddHostedService<NetworkService>();
 
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>

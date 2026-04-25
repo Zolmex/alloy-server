@@ -383,11 +383,11 @@ public class SpawnCommand : Command
 {
     public override void Execute(Player player, string args)
     {
-        // if (player.AccRank < (int)CommandPermissionLevel.Moderator && player.World is not TestWorld)
-        // {
-        //     player.SendError("Can only use this command in a test world.");
-        //     return;
-        // }
+        if (player.AccRank < (int)CommandPermissionLevel.Moderator && player.World is not TestWorld)
+        {
+            player.SendError("Can only use this command in a test world.");
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(args))
         {
@@ -451,17 +451,5 @@ public class ModifyCommand : Command
         var field = Enum.Parse<ItemField>(fieldStr);
         item.UpdateField((byte)field, value);
         player.Inventory.UpdateSlots(slot);
-    }
-}
-
-[Command("reloadbehaviors", CommandPermissionLevel.Developer)]
-public class ReloadBehaviorsCommand : Command
-{
-    public override void Execute(Player player, string args)
-    {
-        player.SendInfo("Reloading behavior files...");
-        if (RealmManager.ReloadAllBehaviors())
-            player.SendInfo("Successfully reloaded behaviors.");
-        else player.SendError("Failed to reload behaviors. Check GameServer console for more information.");
     }
 }
