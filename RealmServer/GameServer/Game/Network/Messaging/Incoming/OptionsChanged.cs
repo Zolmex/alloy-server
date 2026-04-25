@@ -14,7 +14,6 @@ public partial record OptionsChanged : IIncomingPacket
     public byte AllyNotifs;
     public byte AllyParticles;
     public byte AllyShots;
-    public byte DamageCounter;
 
     public void Handle(User user)
     {
@@ -22,7 +21,6 @@ public partial record OptionsChanged : IIncomingPacket
             return;
 
         user.GameInfo.AllySettings(AllyShots, AllyDamage, AllyNotifs, AllyParticles, AllyEntities);
-        user.GameInfo.UiSettings(DamageCounter);
     }
 
     public void Read(ref SpanReader rdr)
@@ -32,6 +30,5 @@ public partial record OptionsChanged : IIncomingPacket
         AllyNotifs = rdr.ReadByte();
         AllyParticles = rdr.ReadByte();
         AllyShots = rdr.ReadByte();
-        DamageCounter = rdr.ReadByte();
     }
 }

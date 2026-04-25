@@ -10,7 +10,6 @@ using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Loot;
-using GameServer.Game.Entities.Stacks;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Utilities.Collections;
 using System;
@@ -30,9 +29,6 @@ public class CharacterEntity : Entity
 {
     public static readonly int PROJECTILE_DAMAGE_RANGE = 32;
 
-
-    protected readonly ConditionEffectStack _condEffects;
-
     protected readonly object _dmgLock = new();
     private readonly List<ItemLoot> _lootInfo = new();
     private readonly Dictionary<int, LootCache> _playerLootCaches = new();
@@ -43,7 +39,6 @@ public class CharacterEntity : Entity
     public readonly DamageStorage DamageStorage = new();
 
     public readonly Random Rand = new();
-    public readonly StackController Stacks;
     protected List<Entity> _hitEntities = new();
     protected ushort _nextBulletId;
     public EntityBehavior Behavior;
@@ -57,13 +52,7 @@ public class CharacterEntity : Entity
     {
         LoadBehavior();
 
-        Stacks = new StackController(this);
-        Stacks.AddStack(ModStacks.ConditionEffect, -1); // Condition effect stack needs to be permanent
-        _condEffects = (ConditionEffectStack)Stacks.GetStack(ModStacks.ConditionEffect);
-
         Name = Desc.DisplayName;
-
-        DeathEvent += CloseDamageCounterForAttackers;
     }
 
     public int Condition1
@@ -89,15 +78,6 @@ public class CharacterEntity : Entity
 
     public event Action<CharacterEntity, CharacterEntity, int> OnDamagedBy; // <This, From, DamageDealt>
     public event Action<CharacterEntity, Player, string> OnPlayerText; // <This, From, text>
-
-    private void CloseDamageCounterForAttackers(Entity en)
-    {
-        RealmManager.AddTimedAction(5000, () =>
-        {
-            foreach (var player in DamageStorage.GetAttackers())
-                player.User.SendPacket(new DamageCounterUpdate(-1, 0, null));
-        });
-    }
 
     public EntityBehavior GetBehavior()
     {
@@ -199,8 +179,6 @@ public class CharacterEntity : Entity
                 EmptyEntityCache();
             }
         }
-
-        Stacks.Update(time);
 
         return true;
     }
@@ -426,17 +404,17 @@ public class CharacterEntity : Entity
 
     public void ApplyConditionEffect(ConditionEffectIndex condEffIndex, int durationMS)
     {
-        _condEffects.ApplyConditionEffect(condEffIndex, durationMS);
+        // TODO: apply cond effect
     }
 
     public void RemoveConditionEffect(ConditionEffectIndex condEffIndex)
     {
-        _condEffects.RemoveConditionEffect(condEffIndex);
+        // TODO: remove cond effect
     }
 
     public bool HasConditionEffect(ConditionEffectIndex condEffIndex)
     {
-        return _condEffects.HasConditionEffect(condEffIndex);
+        return false; // TODO: has cond effect
     }
 
     public virtual bool Death(string killer = null)

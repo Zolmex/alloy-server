@@ -248,10 +248,6 @@ public struct StatData : IEquatable<StatData>
             case StatType.InventoryData17:
             case StatType.InventoryData18:
             case StatType.InventoryData19:
-            case StatType.AbilityDataA:
-            case StatType.AbilityDataB:
-            case StatType.AbilityDataC:
-            case StatType.AbilityDataD:
                 return true;
             default:
                 return false;

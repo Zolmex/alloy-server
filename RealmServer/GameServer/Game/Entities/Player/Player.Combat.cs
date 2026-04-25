@@ -21,8 +21,6 @@ public partial class Player
 
     public CharacterEntity DamageCounterTarget;
 
-    public CharacterEntity LastHitTarget;
-
     public bool ShotsVisible(Player player)
     {
         switch (User.GameInfo.AllyShots)
@@ -129,29 +127,5 @@ public partial class Player
         if (HasConditionEffect(ConditionEffectIndex.Berserk))
             freq *= 1.5f;
         return freq;
-    }
-
-    private void SendDamageCounterUpdate()
-    {
-        var target = LastHitTarget;
-
-        // Prioritize quest enemy if in range
-        var questDist = Quest?.DistSqr(this) ?? float.MaxValue;
-        if (questDist <= SIGHT_RADIUS_SQR)
-            target = Quest;
-
-        if (target == null || target.Dead || target.World != World)
-            return;
-
-        DamageCounterTarget = target;
-
-        var targetId = DamageCounterTarget.Id;
-        var plrDamage = DamageCounterTarget.DamageStorage.GetDamageForPlayer(this);
-        var topDealers = User.GameInfo.DamageCounter switch
-        {
-            < 3 => DamageCounterTarget.DamageStorage.GetTopDamageDealers(5),
-            _ => new List<KeyValuePair<Player, int>>()
-        };
-        User.SendPacket(new DamageCounterUpdate(targetId, plrDamage, topDealers));
     }
 }

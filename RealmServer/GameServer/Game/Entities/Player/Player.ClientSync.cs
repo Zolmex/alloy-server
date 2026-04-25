@@ -21,9 +21,6 @@ public partial class Player
     public long LastShootAck;
     // This file is used to synchronize player's state with the server and client. Also used for anticheat 
 
-    public int TimeSinceLastEnemyHit;
-    public int TimeSinceLastHit;
-
     public bool ValidateAttackSpeed(Item weapon, int clientTime)
     {
         if (LastShootAck == 0) // First time shooting

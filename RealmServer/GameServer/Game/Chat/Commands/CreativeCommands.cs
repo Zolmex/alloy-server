@@ -156,7 +156,6 @@ public class SetStatCommand : Command
         }
 
         UpdateStatValue(player.Char.CharStats, type, amount);
-        player.RecalculateStats();
 
         player.SaveCharacter(true);
 

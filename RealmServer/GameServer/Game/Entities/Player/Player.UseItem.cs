@@ -14,30 +14,6 @@ namespace GameServer.Game.Entities;
 
 public partial class Player
 {
-    private Ability _ability;
-
-    private Ability ResolveAbilityController(string objId)
-    {
-        return objId switch
-        {
-            "Rogue" => new RogueCloakAbility(this),
-            "Archer" => new ArcherQuiverAbility(this),
-            "Wizard" => new WizardSpellAbility(this),
-            // "Priest" => new PriestTomeController(this),
-            "Warrior" => new WarriorHelmAbility(this),
-            // "Knight" => new KnightShieldController(this),
-            "Paladin" => new PaladinSealAbility(this),
-            "Assassin" => new AssassinPoisonAbility(this),
-            // "Necromancer" => new NecroSkullController(this),
-            // "Huntress" => new HuntressTrapController(this),
-            // "Mystic" => new MysticOrbController(this),
-            // "Trickster" => new TricksterPrismController(this),
-            // "Sorcerer" => new SorcScepterController(this),
-            "Ninja" => new NinjaSheathAbility(this),
-            _ => null
-        };
-    }
-
     public void UseItem(SlotObjectData slot, WorldPosData usePos, int clientTime) // TODO: validate client time
     {
         var item = Inventory[slot.SlotId];
@@ -53,8 +29,7 @@ public partial class Player
             var result = HandleActivateEffect(item, usePos);
             Inventory[slot.SlotId] = result;
         }
-        else // Ability slot item
-            _ability?.Use(item, usePos, clientTime);
+        else{} // TODO: Use ability
 
         User.SendPacket(new InvResult(0));
     }
@@ -70,7 +45,7 @@ public partial class Player
         if ((en is Container container && container.OwnerId != Id) || (en is Player plr && plr.Id != Id))
             return false;
 
-        if (item.Usable && !(_ability?.Validate(item, en) ?? false))
+        if (item.Usable) // TODO: check ability cooldown or other params
             return false;
 
         return true;

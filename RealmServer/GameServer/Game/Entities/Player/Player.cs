@@ -10,7 +10,6 @@ using GameServer.Game.Chat;
 using GameServer.Game.DamageSources;
 using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Entities.Inventory;
-using GameServer.Game.Entities.Stacks;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using System;
@@ -35,7 +34,6 @@ public partial class Player : CharacterEntity
         IsPlayer = true;
 
         Inventory = new PlayerInventory(this);
-        ActiveModifiers = new Dictionary<ModTypes, Modifier>();
         TradedWith = new HashSet<int>();
         PendingTrades = new HashSet<int>();
 
@@ -48,7 +46,6 @@ public partial class Player : CharacterEntity
     public User User { get; }
     public Character Char { get; }
     public PlayerInventory Inventory { get; }
-    public Dictionary<ModTypes, Modifier> ActiveModifiers { get; set; }
     public double LootBoost { get; private set; } // todo: loot boost implementation.
 
     public int AccountId => User.Account.Id;
@@ -61,7 +58,6 @@ public partial class Player : CharacterEntity
         Dead = false; // Reset death state
         Position = new WorldPosData();
         PrevPosition = new WorldPosData();
-        Stacks.AddStack(ModStacks.ConditionEffect, -1);
     }
 
     public override void Initialize()
@@ -84,13 +80,8 @@ public partial class Player : CharacterEntity
         HealthPotions = Char.HealthPotions;
         MagicPotions = Char.MagicPotions;
 
-        // Load stat modifiers
-        AddActiveModifiers();
-        RecalculateStats();
-
         // Load inventory data
         Inventory.Load(Char);
-        _ability = ResolveAbilityController(Desc.ObjectId);
 
         if (World is Realm realm)
         {
@@ -192,17 +183,8 @@ public partial class Player : CharacterEntity
         TickRegens();
         FindNewQuest(time);
 
-        if (IsInCombat)
-            InCombatTick();
-
         if (TPCooldownLeft > 0)
             TPCooldownLeft -= time.ElapsedMsDelta;
-
-        TimeSinceLastEnemyHit += time.ElapsedMsDelta;
-        TimeSinceLastHit += time.ElapsedMsDelta;
-
-        if (User.GameInfo.DamageCounter > 0)
-            SendDamageCounterUpdate();
 
         return true;
     }
@@ -238,8 +220,6 @@ public partial class Player : CharacterEntity
     protected override void LeaveWorld()
     {
         World.OnEntityTick -= HandleEntityTick;
-        Stacks.RemoveAllStacks();
-        RemoveActiveModifiers();
         base.LeaveWorld();
     }
 
@@ -324,25 +304,15 @@ public partial class Player : CharacterEntity
             _hitEntities.Add(hit);
         }
 
-        TimeSinceLastEnemyHit = 0;
-        IsInCombat = true;
-        LastHitTarget = hit;
-
         if (hit is Enemy)
             EnemyHit(this, damageSource);
     }
 
     public override void OnHitBy(CharacterEntity from, DamageSource damageSource)
     {
-        IsInCombat = true;
-
-        if (!CheckDodge())
-        {
-            TimeSinceLastHit = 0;
-            Damage(damageSource.GetTotalDamage(), from);
-            if (damageSource.Effects != null)
-                ApplyConditionEffects(damageSource.Effects);
-        }
+        Damage(damageSource.GetTotalDamage(), from);
+        if (damageSource.Effects != null)
+            ApplyConditionEffects(damageSource.Effects);
     }
 
     public override void Dispose()
@@ -350,7 +320,6 @@ public partial class Player : CharacterEntity
         // Player instance is reused when moving between worlds, so this acts as a Reset() method. Called in RealmManager.Update()
         base.Dispose();
 
-        StacksLost = null;
         OnKill = null;
         OnHeal = null;
         InCombat = null;
@@ -360,12 +329,9 @@ public partial class Player : CharacterEntity
         OnShoot = null;
         OnDamageDealt = null;
 
-        DisposeMods();
-
         Quest = null;
 
         _unconfirmedHits.Clear();
-        _statBonuses.Clear();
 
         _visibleTiles.Clear();
         _tilesDiscovered.Clear();

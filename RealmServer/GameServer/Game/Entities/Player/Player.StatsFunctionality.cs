@@ -81,9 +81,4 @@ public partial class Player
 
         return critMult;
     }
-
-    public bool CheckDodge() // TODO: remove
-    {
-        return false;
-    }
 }

@@ -15,7 +15,7 @@ public static class EnumUtils
 {
     private static readonly Dictionary<Enum, string> _descriptors = new();
 
-    private static readonly Dictionary<string, StatType> TextToStatTypeMap = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, StatType> _textToStatTypeMap = new(StringComparer.OrdinalIgnoreCase)
     {
         ["hp"] = StatType.MaxHP,
         ["maxhp"] = StatType.MaxHP,
@@ -23,10 +23,6 @@ public static class EnumUtils
         ["mp"] = StatType.MaxMP,
         ["maxmp"] = StatType.MaxMP,
         ["mana"] = StatType.MaxMP,
-        ["ms"] = StatType.MaxMS,
-        ["maxms"] = StatType.MaxMS,
-        ["magicshield"] = StatType.MaxMS,
-        ["shield"] = StatType.MaxMS,
         ["att"] = StatType.Attack,
         ["atk"] = StatType.Attack,
         ["attack"] = StatType.Attack,
@@ -38,37 +34,8 @@ public static class EnumUtils
         ["wisdom"] = StatType.Wisdom,
         ["spd"] = StatType.Speed,
         ["speed"] = StatType.Speed,
-        ["movementspeed"] = StatType.Speed,
-        ["liferegen"] = StatType.Vitality,
-        ["liferegeneration"] = StatType.Vitality,
-        ["hpregen"] = StatType.Vitality,
-        ["hpregeneration"] = StatType.Vitality,
-        ["dodge"] = StatType.DodgeChance,
-        ["dodgechance"] = StatType.DodgeChance,
-        ["crit"] = StatType.CriticalChance,
-        ["critchance"] = StatType.CriticalChance,
-        ["criticalchance"] = StatType.CriticalChance,
-        ["critdmg"] = StatType.CriticalDamage,
-        ["critdamage"] = StatType.CriticalDamage,
-        ["crititcaldamage"] = StatType.CriticalDamage,
-        ["crititcaldmg"] = StatType.CriticalDamage,
-        ["manaregen"] = StatType.ManaRegeneration,
-        ["mpregen"] = StatType.ManaRegeneration,
-        ["manaregeneration"] = StatType.ManaRegeneration,
-        ["mpregeneration"] = StatType.ManaRegeneration,
-        ["msregen"] = StatType.MSRegenRate,
-        ["msregenrate"] = StatType.MSRegenRate,
-        ["magicshieldregen"] = StatType.MSRegenRate,
-        ["magicshieldregenrate"] = StatType.MSRegenRate,
-        ["dmgmult"] = StatType.DamageMultiplier,
-        ["dmgmultiplier"] = StatType.DamageMultiplier,
-        ["damagemultiplier"] = StatType.DamageMultiplier,
-        ["armor"] = StatType.Armor,
-        ["attspd"] = StatType.AttackSpeed,
-        ["attackspd"] = StatType.AttackSpeed,
-        ["attackspeed"] = StatType.AttackSpeed,
-        ["attspeed"] = StatType.AttackSpeed,
-        ["atkspd"] = StatType.AttackSpeed
+        ["vit"] = StatType.Vitality,
+        ["vitality"] = StatType.Vitality,
     };
 
     public static void Load()
@@ -172,6 +139,6 @@ public static class EnumUtils
     //technically an enum util :grin
     public static StatType TextToStatType(string txt)
     {
-        return TextToStatTypeMap.TryGetValue(txt, out var statType) ? statType : StatType.None;
+        return _textToStatTypeMap.TryGetValue(txt, out var statType) ? statType : StatType.None;
     }
 }

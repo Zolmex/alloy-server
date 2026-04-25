@@ -2,7 +2,6 @@ using Common;
 using Common.Resources.Xml.Descriptors;
 using GameServer.Game.DamageSources;
 using GameServer.Game.DamageSources.Projectiles;
-using GameServer.Game.Entities.Stacks;
 using System;
 using System.Numerics;
 
@@ -10,7 +9,6 @@ namespace GameServer.Game.Entities;
 
 public partial class Player
 {
-    public event Action<ModStacks, int> StacksLost;
     public event Action<CharacterEntity> OnKill;
     public event Action<int> OnHeal;
     public event Action InCombat;
@@ -19,11 +17,6 @@ public partial class Player
     public event Action<int, Item> OnInvChanged; // slot, item
     public event Action<ProjectileDesc, float, Vector2> OnDoShoot; // Triggers every time the weapon is fired
     public event Action<Projectile> OnShoot; // Triggers for every projectile
-
-    public void StacksLostInvoke(ModStacks type, int amount)
-    {
-        StacksLost?.Invoke(type, amount);
-    }
 
     public void OnKillInvoke(CharacterEntity killed)
     {

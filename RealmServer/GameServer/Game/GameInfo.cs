@@ -38,7 +38,6 @@ public class GameInfo
     public byte AllyNotifs { get; private set; }
     public byte AllyParticles { get; private set; }
     public byte AllyEntities { get; private set; }
-    public byte DamageCounter { get; private set; } // 0 = off, 1 = full, 2 = compact, 3 = minimal
 
     public Vault Vault { get; set; }
 
@@ -50,11 +49,6 @@ public class GameInfo
         AllyNotifs = allyNotifs;
         AllyParticles = allyParticles;
         AllyEntities = allyEntities;
-    }
-
-    public void UiSettings(byte damageCounter)
-    {
-        DamageCounter = damageCounter;
     }
 
     public void SetWorld(World world)

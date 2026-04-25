@@ -58,16 +58,16 @@ public class CreateCharacterHandler : IMessageHandler
                 HasBackpack = NewCharsConfig.Config.HasBackpack,
                 CharStats = new CharacterStat()
                 {
-                    Hp = (uint)classDesc.Stats[StatType.MaxHP],
-                    MaxHp = (uint)classDesc.Stats[StatType.MaxHP],
-                    Mp = (uint)classDesc.Stats[StatType.MaxMP],
-                    MaxMp = (uint)classDesc.Stats[StatType.MaxMP],
-                    Attack = (uint)classDesc.Stats[StatType.Attack],
-                    Defense = (uint)classDesc.Stats[StatType.Defense],
-                    Speed = (uint)classDesc.Stats[StatType.Speed],
-                    Dexterity = (uint)classDesc.Stats[StatType.Dexterity],
-                    Vitality = (uint)classDesc.Stats[StatType.Vitality],
-                    Wisdom = (uint)classDesc.Stats[StatType.Wisdom]
+                    Hp = (uint)classDesc.Stats[StatType.MaxHP].StartValue,
+                    MaxHp = (uint)classDesc.Stats[StatType.MaxHP].StartValue,
+                    Mp = (uint)classDesc.Stats[StatType.MaxMP].StartValue,
+                    MaxMp = (uint)classDesc.Stats[StatType.MaxMP].StartValue,
+                    Attack = (uint)classDesc.Stats[StatType.Attack].StartValue,
+                    Defense = (uint)classDesc.Stats[StatType.Defense].StartValue,
+                    Speed = (uint)classDesc.Stats[StatType.Speed].StartValue,
+                    Dexterity = (uint)classDesc.Stats[StatType.Dexterity].StartValue,
+                    Vitality = (uint)classDesc.Stats[StatType.Vitality].StartValue,
+                    Wisdom = (uint)classDesc.Stats[StatType.Wisdom].StartValue
                 },
                 CombatStats = new CombatStat(),
                 ExploStats = new ExplorationStat(),
