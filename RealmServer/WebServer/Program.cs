@@ -1,7 +1,5 @@
 ﻿#region
 
-using Common.Control;
-using Common.Control.Message;
 using Common.Database;
 using Common.Network.Messaging;
 using Common.Resources.Config;
@@ -41,7 +39,6 @@ internal class Program
         // to ensure the saving of any data that wasn't saved to the database
 
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-        Console.CancelKeyPress += Close;
 
         var listener = new HttpListener();
         var config = AppEngineConfig.Config;
@@ -63,7 +60,7 @@ internal class Program
             listener.Start();
         }
 
-        var semaphore = new SemaphoreSlim(200); // add this to your config, e.g. 200
+        var semaphore = new SemaphoreSlim(200);
 
         while (true)
         {
@@ -132,24 +129,9 @@ internal class Program
         catch (HttpListenerException) { }
     }
 
-    private static async void OnShutdownRequested(object sender, ControlMessage<ShutdownInfo> e)
-    {
-        await Task.Delay(e.Content.ShutdownDelay);
-
-        // ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
-        Environment.Exit(0);
-    }
-
     private static void UnhandledException(object sender, UnhandledExceptionEventArgs args)
     {
         Log.Fatal(args.ExceptionObject);
-
-        // ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
-    }
-
-    private static void Close(object sender, ConsoleCancelEventArgs args)
-    {
-        // ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
     }
 
     private static string GetContextIP(HttpListenerContext context)

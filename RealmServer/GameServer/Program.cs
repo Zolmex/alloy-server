@@ -1,7 +1,5 @@
 ﻿#region
 
-using Common.Control;
-using Common.Control.Message;
 using Common.Database;
 using Common.Resources.Config;
 using Common.Resources.World;
@@ -41,8 +39,7 @@ internal class Program
         // to ensure the saving of any data that wasn't saved to redis
 
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-        Console.CancelKeyPress += Close;
-
+        
         var config = GameServerConfig.Config;
         using (var timer = new EasyTimer(LogLevel.Info, "Starting server...", $"Listening on port {config.Port} ([TIME])"))
         {
@@ -67,25 +64,8 @@ internal class Program
         RealmManager.Run(config.MsPT); // Run world, entities and other game logic
     }
 
-    private static async void OnShutdownRequested(object sender, ControlMessage<ShutdownInfo> e)
-    {
-        ChatManager.Announce($"Server shutting down in {e.Content.ShutdownDelay}. Reason: {e.Content.Reason}");
-
-        await Task.Delay(e.Content.ShutdownDelay);
-
-        ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
-        Environment.Exit(0);
-    }
-
     private static void UnhandledException(object sender, UnhandledExceptionEventArgs args)
     {
         Log.Fatal(args.ExceptionObject);
-
-        ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
-    }
-
-    private static void Close(object sender, ConsoleCancelEventArgs args)
-    {
-        ServerControl.Publish(ControlChannel.MemberLeave, ServerControl.Host.InstanceID, null, ServerControl.Host);
     }
 }

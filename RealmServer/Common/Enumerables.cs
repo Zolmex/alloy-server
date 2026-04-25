@@ -233,10 +233,6 @@ public enum ItemType
     Scepter,
     Katana,
     Shuriken,
-
-    Weapon = 50,
-    Ability = 51,
-    Armor = 52
 }
 
 [Flags]
