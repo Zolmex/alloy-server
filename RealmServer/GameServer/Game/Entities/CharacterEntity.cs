@@ -41,7 +41,7 @@ public class CharacterEntity : Entity
     public readonly Random Rand = new();
     protected List<Entity> _hitEntities = new();
     protected ushort _nextBulletId;
-    public EntityBehavior Behavior;
+    
     public BehaviorController ClassicBehavior;
 
     private HealthLock? healthLock;
@@ -79,33 +79,15 @@ public class CharacterEntity : Entity
     public event Action<CharacterEntity, CharacterEntity, int> OnDamagedBy; // <This, From, DamageDealt>
     public event Action<CharacterEntity, Player, string> OnPlayerText; // <This, From, text>
 
-    public EntityBehavior GetBehavior()
-    {
-        return Behavior;
-    }
-
     public void LoadBehavior()
     {
         StateResources.ClearResources();
-
-        if (BehaviorLibrary.EntityBehaviors.TryGetValue(Regex.Replace(Desc.ObjectId, @"[\s']", ""),
-                out var behaviorType))
-        {
-            Behavior = (EntityBehavior)Activator.CreateInstance(behaviorType);
-            Behavior.StateManager.RegisterEntity(this);
-        }
 
         if (BehaviorLibrary.ClassicBehaviors.TryGetValue(Desc.ObjectId, out var rootState))
             ClassicBehavior = new BehaviorController(this, rootState);
 
         if (Initialized)
-        {
-            Behavior?.Initialize(this);
             ClassicBehavior?.Initialize();
-        }
-
-        if (Behavior != null && ClassicBehavior != null)
-            _log.Warn($"Two behavior systems are defined for {Desc.ObjectId}");
     }
 
     public T ResolveResource<T>(IStateChild child)
@@ -116,10 +98,7 @@ public class CharacterEntity : Entity
     public override void Initialize()
     {
         if (!Initialized)
-        {
-            Behavior?.Initialize(this);
             ClassicBehavior?.Initialize();
-        }
 
         base.Initialize();
     }
@@ -150,7 +129,6 @@ public class CharacterEntity : Entity
         if (!base.Tick(time))
             return false;
 
-        Behavior?.Tick(this, time);
         ClassicBehavior?.Tick(time);
 
         Projectiles.Update();
@@ -435,7 +413,6 @@ public class CharacterEntity : Entity
             HandleXpGain();
             HandleLoot();
             RemoveReferencesTo();
-            GetBehavior()?.OnDeath(this, Killer);
         }
 
         LeaveWorld();
@@ -504,7 +481,6 @@ public class CharacterEntity : Entity
         Damage(damageSource.GetTotalDamage(), from);
         if (damageSource.Effects != null)
             ApplyConditionEffects(damageSource.Effects);
-        GetBehavior()?.OnHitBy(this, from, damageSource);
     }
 
     public void HitBy(CharacterEntity from, DamageSource damageSource, bool ignoreInvincible = false)
@@ -585,8 +561,6 @@ public class CharacterEntity : Entity
         {
             _hitEntities.Add(hit);
         }
-
-        GetBehavior()?.OnHitEntity(this, hit, damageSource);
     }
 
     public void RemoveReferencesTo()

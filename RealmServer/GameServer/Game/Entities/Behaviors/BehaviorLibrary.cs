@@ -60,20 +60,12 @@ public static class BehaviorLibrary
     private static Assembly _lastAssembly;
 
     public static readonly ConcurrentDictionary<string, State> ClassicBehaviors = new();
-    public static readonly ConcurrentDictionary<string, Type> EntityBehaviors = new();
 
     public static void Load(Assembly asm = null)
     {
         asm ??= Assembly.GetExecutingAssembly();
 
         _log.Info("Loading behavior library...");
-
-        // Load custom C# behaviors
-        foreach (var behaviorType in asm.GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(EntityBehavior))))
-        {
-            EntityBehaviors[behaviorType.Name] = behaviorType;
-            _log.Debug($"Loading behavior '{behaviorType.Name}'");
-        }
 
         // Load classic behaviors (root states) with the CharacterBehavior attribute
         var classicLibType = asm.GetType(typeof(BehaviorLib).FullName);

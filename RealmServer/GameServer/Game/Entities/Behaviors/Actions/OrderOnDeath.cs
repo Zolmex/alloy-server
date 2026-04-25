@@ -21,15 +21,6 @@ public record OrderOnDeath : BehaviorScript
     private void OnDeath(Entity en)
     {
         foreach (var i in (en as CharacterEntity).GetOtherEnemiesByName(_children, _range))
-        {
-            if (i.Behavior != null)
-            { // Patpot's behavior system
-                // Need to find a way to pass the target state enum into this behavior
-            }
-            else
-            { // Traditional behaviors
-                i.ClassicBehavior?.TransitionTo(_targetState, RealmManager.WorldTime);
-            }
-        }
+            i.ClassicBehavior?.TransitionTo(_targetState, RealmManager.WorldTime);
     }
 }

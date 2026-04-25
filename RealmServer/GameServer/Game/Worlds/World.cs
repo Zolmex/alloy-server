@@ -560,22 +560,6 @@ public class World : IIdentifiable
         }
     }
 
-    public IEnumerable<CharacterEntity> GetEnemiesWithBehavior<T>(CharacterEntity owner, float radius)
-        where T : EntityBehavior
-    {
-        return GetEnemiesWithBehavior<T>(owner.Position.X, owner.Position.Y, radius);
-    }
-
-    public IEnumerable<CharacterEntity> GetEnemiesWithBehavior<T>(float x, float y, float radius)
-        where T : EntityBehavior
-    {
-        var enemiesWithin = GetEnemiesWithin(x, y, radius);
-        if (!enemiesWithin.Any())
-            return enemiesWithin;
-
-        return enemiesWithin.Where(ent => ent.GetBehavior() is T);
-    }
-
     public IEnumerable<CharacterEntity> GetEnemiesByName(string name, float x, float y, float radius)
     {
         var query = new SearchQuery(name, new IntPoint((int)x, (int)y), radius, 0);
