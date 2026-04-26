@@ -28,19 +28,19 @@ public class Nexus : World
         foreach (var pos in Map.Regions[TileRegion.Realm_Portals])
             _realmPortalTiles.Add(Map[(int)pos.X, (int)pos.Y]);
 
-        var realmCount = GameServerConfig.Config.RealmCount;
-        if (realmCount == 0)
-            return;
-
-        // Spawn realm portals
-        for (var i = 0; i < realmCount; i++)
-        {
-            if (_realmPortals.Count >= _realmPortalTiles.Count)
-                break;
-
-            var portal = new Portal(0x0704, true);
-            AddRealmPortal(portal);
-        }
+        // var realmCount = GameServerConfig.Config.RealmCount;
+        // if (realmCount == 0)
+        //     return;
+        //
+        // // Spawn realm portals
+        // for (var i = 0; i < realmCount; i++)
+        // {
+        //     if (_realmPortals.Count >= _realmPortalTiles.Count)
+        //         break;
+        //
+        //     var portal = new Portal(0x0704, true);
+        //     AddRealmPortal(portal);
+        // }
     }
 
     // My take on a PortalMonitor. Just.. not in a separate class B).
