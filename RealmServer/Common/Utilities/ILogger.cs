@@ -1,7 +1,6 @@
 ﻿namespace Common.Utilities;
 
-public interface ILogger
-{
+public interface ILogger {
     void Info(object message, bool saveToFile = false);
     void Warn(object message, bool saveToFile = false);
     void Error(object message, bool saveToFile = false);

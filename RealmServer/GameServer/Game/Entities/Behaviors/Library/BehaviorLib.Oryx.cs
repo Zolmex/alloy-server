@@ -10,8 +10,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Oryx the Mad God 2")]
     public static State OryxTheMadGod2 =>
         new(
@@ -33,7 +32,7 @@ public partial class BehaviorLib
             ),
             // new ScaleHP2(30),
             new State("Attack",
-                new Wander((0.05f * 5.55f) + 0.74f), // Adjusted speed
+                new Wander(0.05f * 5.55f + 0.74f), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 25,
@@ -107,7 +106,7 @@ public partial class BehaviorLib
                 new HpLessTransition(0.2f, "prepareRage")
             ),
             new State("prepareRage",
-                new Follow((0.1f * 5.55f) + 0.74f, acquireRange: 15, distFromTarget: 3), // Adjusted speed
+                new Follow(0.1f * 5.55f + 0.74f, acquireRange: 15, distFromTarget: 3), // Adjusted speed
                 new Taunt("Can't... keep... henchmen... alive... anymore! ARGHHH!!!"),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
                 new Shoot(
@@ -127,7 +126,7 @@ public partial class BehaviorLib
                 new TimedTransition(10000, "rage")
             ),
             new State("rage",
-                new Follow((0.1f * 5.55f) + 0.74f, acquireRange: 15, distFromTarget: 3), // Adjusted speed
+                new Follow(0.1f * 5.55f + 0.74f, acquireRange: 15, distFromTarget: 3), // Adjusted speed
                 new Shoot(
                     projectileIndex: 13,
                     maxRadius: 25,
@@ -435,7 +434,7 @@ public partial class BehaviorLib
                         coolDownOffset: 2000,
                         targeted: true // Added
                     ),
-                    new Follow((0.85f * 5.55f) + 0.74f, acquireRange: 1, distFromTarget: 0), // Adjusted speed
+                    new Follow(0.85f * 5.55f + 0.74f, acquireRange: 1, distFromTarget: 0), // Adjusted speed
                     new Flash(0xFF0000, 0.5f, 9000001)
                 )
             )
@@ -469,7 +468,7 @@ public partial class BehaviorLib
                 // new TierLoot(7, ItemType.Weapon, 0.2f),
                 new ItemLoot("Magic Potion", 0.03f)
             ),
-            new Wander((0.4f * 5.55f) + 0.74f), // Adjusted speed
+            new Wander(0.4f * 5.55f + 0.74f), // Adjusted speed
             new Shoot(
                 projectileIndex: 0,
                 maxRadius: 3,
@@ -551,8 +550,8 @@ public partial class BehaviorLib
     public static State HenchmanOfOryx =>
         new(
             new State("Attack",
-                new Orbit((0.2f * 5.55f) + 0.74f, 2f, target: "Oryx the Mad God 2", radiusVariance: 1),
-                new Wander((0.3f * 5.55f) + 0.74f), // Adjusted speed
+                new Orbit(0.2f * 5.55f + 0.74f, 2f, target: "Oryx the Mad God 2", radiusVariance: 1),
+                new Wander(0.3f * 5.55f + 0.74f), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 15,
@@ -586,9 +585,9 @@ public partial class BehaviorLib
             ),
             new State("Attack",
                 new TimedTransition(10000, "Wait"),
-                new Orbit((0.1f * 5.55f) + 0.74f, 6f, target: "Oryx the Mad God 2", radiusVariance: 3),
-                new Follow((0.1f * 5.55f) + 0.74f, acquireRange: 15),
-                new Wander((0.2f * 5.55f) + 0.74f), // Adjusted speed
+                new Orbit(0.1f * 5.55f + 0.74f, 6f, target: "Oryx the Mad God 2", radiusVariance: 3),
+                new Follow(0.1f * 5.55f + 0.74f, acquireRange: 15),
+                new Wander(0.2f * 5.55f + 0.74f), // Adjusted speed
                 new TossObject("Monstrosity Scarab", 1, 0, 10000, 1000)
             )
         );
@@ -598,8 +597,8 @@ public partial class BehaviorLib
         new(
             new State("Attack",
                 new State("Charge",
-                    new Charge((1f * 5.55f) + 0.74f, 25),
-                    new Wander((0.3f * 5.55f) + 0.74f), // Adjusted speed
+                    new Charge(1f * 5.55f + 0.74f, 25),
+                    new Wander(0.3f * 5.55f + 0.74f), // Adjusted speed
                     new EntityWithinTransition(radius: 1, targetState: "Boom")
                 ),
                 new State("Boom",
@@ -637,8 +636,8 @@ public partial class BehaviorLib
     [CharacterBehavior("Aberrant of Oryx")]
     public static State AberrantOfOryx =>
         new(
-            new Protect((0.2f * 5.55f) + 0.74f, "Oryx the Mad God 2"),
-            new Wander((0.7f * 5.55f) + 0.74f), // Adjusted speed
+            new Protect(0.2f * 5.55f + 0.74f, "Oryx the Mad God 2"),
+            new Wander(0.7f * 5.55f + 0.74f), // Adjusted speed
             new State("Wait",
                 new EntityWithinTransition(radius: 15, targetState: "Attack")
             ),
@@ -712,12 +711,12 @@ public partial class BehaviorLib
     public static State BileOfOryx =>
         new(
             new Protect(
-                (0.4f * 5.55f) + 0.74f, // Adjusted speed
+                0.4f * 5.55f + 0.74f, // Adjusted speed
                 "Oryx the Mad God 2",
                 protectionRange: 5,
                 reprotectRange: 4
             ),
-            new Wander((0.5f * 5.55f) + 0.74f) // Adjusted speed
+            new Wander(0.5f * 5.55f + 0.74f) // Adjusted speed
         );
 
     [CharacterBehavior("Abomination of Oryx")]
@@ -770,10 +769,10 @@ public partial class BehaviorLib
                 new EntityWithinTransition(radius: 2, targetState: "Shoot")
             ),
             new Charge(
-                (3f * 5.55f) + 0.74f, // Adjusted speed
+                3f * 5.55f + 0.74f, // Adjusted speed
                 10,
                 3000
             ),
-            new Wander((0.5f * 5.55f) + 0.74f) // Adjusted speed
+            new Wander(0.5f * 5.55f + 0.74f) // Adjusted speed
         );
 }

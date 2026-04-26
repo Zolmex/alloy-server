@@ -1,17 +1,16 @@
 ﻿#region
 
+using System.Linq;
+using System.Threading.Tasks;
 using Common.Resources.Config;
 using Common.Utilities;
 using StackExchange.Redis;
-using System.Linq;
-using System.Threading.Tasks;
 
 #endregion
 
 namespace Common.Database;
 
-public static class RedisClient
-{
+public static class RedisClient {
     private static ILogger _log = new Logger(typeof(RedisClient));
 
     private static ConnectionMultiplexer _conn;
@@ -21,15 +20,15 @@ public static class RedisClient
     public static IServer Server { get; private set; }
 
 
-    public static void Connect(DatabaseConfig config)
-    {
-        if (_conn is not null && _conn.IsConnected)
-        {
+    public static void Connect(DatabaseConfig config) {
+        if (_conn is not null && _conn.IsConnected) {
             _log.Warn("Already connected to Redis Server.");
             return;
         }
 
-        var conString = config.Host + ":" + config.Port + ",syncTimeout=30000"; // Build the configuration string to connect to a specific Redis server
+        var conString =
+            config.Host + ":" + config.Port +
+            ",syncTimeout=30000"; // Build the configuration string to connect to a specific Redis server
         if (!string.IsNullOrWhiteSpace(config.Password))
             conString += ",password=" + config.Password;
 
@@ -45,15 +44,15 @@ public static class RedisClient
         _log.Info($"Connected database to index {config.Redis.DbIndex}");
     }
 
-    public static async Task ConnectAsync(DatabaseConfig config)
-    {
-        if (_conn is not null && _conn.IsConnected)
-        {
+    public static async Task ConnectAsync(DatabaseConfig config) {
+        if (_conn is not null && _conn.IsConnected) {
             _log.Warn("Already connected to Redis Server.");
             return;
         }
 
-        var conString = config.Host + ":" + config.Port + ",syncTimeout=30000,allowAdmin=true"; // Build the configuration string to connect to a specific Redis server
+        var conString =
+            config.Host + ":" + config.Port +
+            ",syncTimeout=30000,allowAdmin=true"; // Build the configuration string to connect to a specific Redis server
         if (!string.IsNullOrWhiteSpace(config.Password))
             conString += ",password=" + config.Password;
 
@@ -67,8 +66,7 @@ public static class RedisClient
         _log.Info($"Connected database to index {config.Redis.DbIndex}");
     }
 
-    public static void SetLogger(ILogger logger)
-    {
+    public static void SetLogger(ILogger logger) {
         _log = logger;
     }
 }

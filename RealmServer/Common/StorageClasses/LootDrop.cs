@@ -1,16 +1,9 @@
-﻿#region
-
-using Common.Enums;
-
-#endregion
-
-namespace Common.StorageClasses;
+﻿namespace Common.StorageClasses;
 
 /// <summary>
 ///     Information storage class for a loot drop.
 /// </summary>
-public class LootDrop
-{
+public class LootDrop {
     /// <summary>
     ///     Initializes a new instance of the <see cref="LootDrop" /> class.
     /// </summary>
@@ -19,8 +12,7 @@ public class LootDrop
     /// <param name="rarity">
     ///     Rarity of the item that was dropped.
     /// </param>
-    public LootDrop(string player, string item, LootDropRarity rarity)
-    {
+    public LootDrop(string player, string item, LootDropRarity rarity) {
         PlayerName = player;
         ItemName = item;
         Rarity = rarity;

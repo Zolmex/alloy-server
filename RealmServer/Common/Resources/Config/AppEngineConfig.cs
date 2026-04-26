@@ -1,21 +1,19 @@
 ﻿#region
 
-using Common.Utilities;
 using System.IO;
 using System.Xml.Linq;
+using Common.Utilities;
 
 #endregion
 
 namespace Common.Resources.Config;
 
-public class AppEngineConfig
-{
+public class AppEngineConfig {
     private const string ConfigFile = "Resources/Config/Data/appEngineConfig.xml";
 
     private static AppEngineConfig _config;
 
-    public AppEngineConfig(XElement e)
-    {
+    public AppEngineConfig(XElement e) {
         XmlsDir = e.GetValue<string>("XmlsDir");
         WorldsDir = e.GetValue<string>("WorldsDir");
         Port = e.GetValue<int>("Port");
@@ -30,8 +28,7 @@ public class AppEngineConfig
     public int Port { get; private set; }
     public string Address { get; private set; }
 
-    private static AppEngineConfig Load()
-    {
+    private static AppEngineConfig Load() {
         return new AppEngineConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 }

@@ -2,13 +2,13 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Text;
+using Common.Structs;
 
 namespace Common.Network;
 
-public ref struct SpanWriter
-{
+public ref struct SpanWriter {
     public int Position { get; set; }
-    
+
     private readonly bool _littleEndian;
     private readonly Span<byte> _span;
 
@@ -20,20 +20,17 @@ public ref struct SpanWriter
         _littleEndian = littleEndian;
     }
 
-    public void Write(bool value)
-    {
+    public void Write(bool value) {
         _span[Position] = (byte)(value ? 1 : 0);
         Position++;
     }
 
-    public void Write(byte value)
-    {
+    public void Write(byte value) {
         _span[Position] = value;
         Position++;
     }
 
-    public void Write(short value)
-    {
+    public void Write(short value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteInt16BigEndian(_cursor, value);
         else
@@ -41,8 +38,7 @@ public ref struct SpanWriter
         Position += 2;
     }
 
-    public void Write(int value)
-    {
+    public void Write(int value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteInt32BigEndian(_cursor, value);
         else
@@ -57,21 +53,18 @@ public ref struct SpanWriter
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     public void Write<T>(T[] value)
-        where T : IConvertible
-    {
-        if (value is char[] chars)
-        {
+        where T : IConvertible {
+        if (value is char[] chars) {
             var span = (ReadOnlySpan<char>)chars.AsSpan();
             var length = Encoding.UTF8.GetByteCount(span);
             Write((ushort)length);
-            
+
             Encoding.UTF8.GetBytes(span, _cursor); // Writes from 'span' to '_cursor'
             Position += length;
             return;
         }
 
-        if (value is string[] strings)
-        {
+        if (value is string[] strings) {
             Write((ushort)strings.Length);
             foreach (var str in strings)
                 WriteUTF(str);
@@ -80,17 +73,14 @@ public ref struct SpanWriter
 
         Write((ushort)value.Length);
 
-        if (value is byte[] bytes)
-        {
+        if (value is byte[] bytes) {
             bytes.CopyTo(_cursor);
-            Position += bytes.Length; 
+            Position += bytes.Length;
             return;
         }
 
         for (var i = 0; i < value.Length; i++)
-        {
-            switch (value[i])
-            {
+            switch (value[i]) {
                 case bool @bool: Write(@bool); break;
                 case byte @byte: Write(@byte); break; // this one will probably never work because of byte[] check above
                 case char @char: Write(@char); break;
@@ -106,18 +96,15 @@ public ref struct SpanWriter
                 case ulong @ulong: Write(@ulong); break;
                 default: throw new NotSupportedException($"{value[i].GetType()} not supported.");
             }
-        }
     }
 
-    public void Write(string[] value)
-    {
+    public void Write(string[] value) {
         Write((ushort)value.Length);
         for (var i = 0; i < value.Length; i++)
             WriteUTF(value[i]);
     }
 
-    public void Write(long value)
-    {
+    public void Write(long value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteInt64BigEndian(_cursor, value);
         else
@@ -125,8 +112,7 @@ public ref struct SpanWriter
         Position += 8;
     }
 
-    public void Write(ushort value)
-    {
+    public void Write(ushort value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteUInt16BigEndian(_cursor, value);
         else
@@ -134,8 +120,7 @@ public ref struct SpanWriter
         Position += 2;
     }
 
-    public void Write(uint value)
-    {
+    public void Write(uint value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteUInt32BigEndian(_cursor, value);
         else
@@ -143,8 +128,7 @@ public ref struct SpanWriter
         Position += 4;
     }
 
-    public void Write(ulong value)
-    {
+    public void Write(ulong value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteUInt64BigEndian(_cursor, value);
         else
@@ -152,8 +136,7 @@ public ref struct SpanWriter
         Position += 8;
     }
 
-    public void Write(float value)
-    {
+    public void Write(float value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteSingleBigEndian(_cursor, value);
         else
@@ -161,53 +144,49 @@ public ref struct SpanWriter
         Position += 4;
     }
 
-    public void Write(double value)
-    {
+    public void Write(double value) {
         if (!_littleEndian)
             BinaryPrimitives.WriteDoubleBigEndian(_cursor, value);
         else
             BinaryPrimitives.WriteDoubleLittleEndian(_cursor, value);
-        Position += 8;    
+        Position += 8;
     }
 
-    public void WriteNullTerminatedString(ReadOnlySpan<char> str)
-    {
+    public void WriteNullTerminatedString(ReadOnlySpan<char> str) {
         var length = Encoding.UTF8.GetByteCount(str);
         Encoding.UTF8.GetBytes(str, _cursor);
         Position += length;
-        
+
         _span[Position] = 0;
         Position++;
     }
 
-    public void WriteUTF(ReadOnlySpan<char> str)
-    {
-        if (str.IsEmpty)
+    public void WriteUTF(ReadOnlySpan<char> str) {
+        if (str.IsEmpty) {
             Write(ushort.MinValue);
-        else
-        {
+        }
+        else {
             var length = Encoding.UTF8.GetByteCount(str);
             if (Position + length + 2 > _span.Length)
-                throw new InternalBufferOverflowException($"SpanWriter buffer is too small. Current: {Position} | Target total: {length + 2} | Max: {_span.Length}");
-            
+                throw new InternalBufferOverflowException(
+                    $"SpanWriter buffer is too small. Current: {Position} | Target total: {length + 2} | Max: {_span.Length}");
+
             Write((ushort)length);
-            
+
             Encoding.UTF8.GetBytes(str, _cursor);
             Position += length;
         }
     }
 
-    public void Write(WorldPosData wp)
-    {
+    public void Write(WorldPosData wp) {
         Write(wp.X);
         Write(wp.Y);
     }
 
-    public void Write32UTF(string str)
-    {
+    public void Write32UTF(string str) {
         var length = Encoding.UTF8.GetByteCount(str);
         Write(length);
-            
+
         Encoding.UTF8.GetBytes(str, _cursor);
         Position += length;
     }

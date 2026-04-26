@@ -1,7 +1,7 @@
 ﻿#region
 
-using Common;
 using Common.Network;
+using Common.Structs;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Inventory;
 using GameServer.Game.Entities.Types;
@@ -12,13 +12,11 @@ using GameServer.Game.Network.Messaging.Outgoing;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.INVSWAP)]
-public partial record InvSwap : IIncomingPacket
-{
+public record InvSwap : IIncomingPacket {
     public SlotObjectData SlotObject1;
     public SlotObjectData SlotObject2;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         // we need to be the owner of at least one of the inventories we are swapping. 
         //if (SlotObject1.ObjectId != user.GameInfo.Player.Id && SlotObject2.ObjectId != user.GameInfo.Player.Id)
         //    return;
@@ -32,20 +30,19 @@ public partial record InvSwap : IIncomingPacket
             else // Container inv swap
                 success = DoContainerInvSwap(user);
         }
-        else
+        else {
             success = DoPlayerContainerInvSwap(user);
+        }
 
         user.SendPacket(new InvResult(success ? 0 : 1));
     }
 
-    public void Read(ref SpanReader rdr)
-    {
-        SlotObject1 = rdr.ReadSlotObjectData();
-        SlotObject2 = rdr.ReadSlotObjectData();
+    public void Read(ref SpanReader rdr) {
+        SlotObject1 = SlotObjectData.Read(ref rdr);
+        SlotObject2 = SlotObjectData.Read(ref rdr);
     }
 
-    public bool DoPlayerInvSwap(User user)
-    {
+    public bool DoPlayerInvSwap(User user) {
         // inv swap validation rules for player inv swap:
         // two inventories can be a player inventory, if they are the same object id
         // slot ids must be different
@@ -57,7 +54,8 @@ public partial record InvSwap : IIncomingPacket
         if (SlotObject1.SlotId == SlotObject2.SlotId)
             return false;
 
-        var item1 = player.Inventory.GetItem(SlotObject1.SlotId); // If the slot is 255 or 254 (hp or mp pots) it will return the potion item
+        var item1 = player.Inventory.GetItem(SlotObject1
+            .SlotId); // If the slot is 255 or 254 (hp or mp pots) it will return the potion item
         var item2 = player.Inventory.GetItem(SlotObject2.SlotId);
         if (!PlayerInventory.IsEquippable(player, item1, SlotObject2.SlotId) ||
             !PlayerInventory.IsEquippable(player, item2, SlotObject1.SlotId))
@@ -70,8 +68,7 @@ public partial record InvSwap : IIncomingPacket
         return true;
     }
 
-    public bool DoPlayerContainerInvSwap(User user)
-    {
+    public bool DoPlayerContainerInvSwap(User user) {
         // inv swap validation rules for player-container inv swap
         // one entity must be a player
         // one entity must be a container
@@ -105,16 +102,16 @@ public partial record InvSwap : IIncomingPacket
         if (!PlayerInventory.IsEquippable(player, playerItem, playerSlot))
             return false;
 
-        if (playerSlot is 254 or 255 || containerItem is { ObjectType: 2594 or 2595 })
-        { // Handle potion stacking
-            if (!playerIsEnt1)
-            {
-                if (!player.Inventory.AddToPotionStack(containerItem.ObjectType)) // If we can't add to the stack, cancel swap operation
+        if (playerSlot is 254 or 255 || containerItem is { ObjectType: 2594 or 2595 }) { // Handle potion stacking
+            if (!playerIsEnt1) {
+                if (!player.Inventory.AddToPotionStack(containerItem
+                        .ObjectType)) // If we can't add to the stack, cancel swap operation
                     return false;
                 container.Inventory.SetItemNoLock(null, containerSlot); // Clear potion from the container
             }
-            else if (!player.Inventory.RemovePotionStack(playerItem.ObjectType))
+            else if (!player.Inventory.RemovePotionStack(playerItem.ObjectType)) {
                 return false;
+            }
         }
 
         EntityInventory.InventorySwap(player.Inventory, container.Inventory, playerSlot, containerSlot);
@@ -146,8 +143,7 @@ public partial record InvSwap : IIncomingPacket
         return true;
     }
 
-    public Player GetValidPlayer(Entity ent1, Entity ent2)
-    {
+    public Player GetValidPlayer(Entity ent1, Entity ent2) {
         var p = ent1 as Player;
         var p2 = ent2 as Player;
         if (p != null && p2 != null)
@@ -158,8 +154,7 @@ public partial record InvSwap : IIncomingPacket
         return p ?? p2;
     }
 
-    public Container GetValidContainer(Entity ent1, Entity ent2)
-    {
+    public Container GetValidContainer(Entity ent1, Entity ent2) {
         var c = ent1 as Container;
         var c2 = ent2 as Container;
         if (c != null && c2 != null)

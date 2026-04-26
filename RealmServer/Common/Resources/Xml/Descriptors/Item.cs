@@ -1,13 +1,12 @@
-using Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class Item : ItemData
-{
+public class Item : ItemData {
     private static readonly Logger _log = new(typeof(Item));
 
     private readonly Dictionary<FieldBoostType, Dictionary<string, ItemFieldBoost>>
@@ -19,8 +18,7 @@ public class Item : ItemData
 
     public readonly TextureDesc Texture;
 
-    public Item(XElement e)
-    {
+    public Item(XElement e) {
         if (e == null) // Null when instanced by itemdata import
         {
             _initialized = true;
@@ -44,7 +42,8 @@ public class Item : ItemData
         MpCost = e.GetValue<int>("MpCost");
         MpEndCost = e.GetValue<int>("MpEndCost");
         FameBonus = e.GetValue<int>("FameBonus");
-        NumProjectiles = e.GetValue("NumProjectiles", (byte)(SlotType == 25 ? 3 : 1)); // Shurikens have 3 shots as a base
+        NumProjectiles =
+            e.GetValue("NumProjectiles", (byte)(SlotType == 25 ? 3 : 1)); // Shurikens have 3 shots as a base
         ArcGap = e.GetValue("ArcGap", 11.25f);
         DisplayId = e.GetValue<string>("DisplayId");
         Doses = e.GetValue<int>("Doses");
@@ -63,8 +62,7 @@ public class Item : ItemData
             .Select(i => new ActivateEffectDesc(i, this, (byte)ItemField.ActivateEffects))
             .ToArray();
         Projectiles = e.Elements("Projectile")
-            .Select(i =>
-            {
+            .Select(i => {
                 var proj = new ProjectileDesc(i, this, (byte)ItemField.Projectile);
                 proj.SetContainer(ObjectType);
                 return proj;
@@ -98,254 +96,212 @@ public class Item : ItemData
 
     public override Type FieldsEnum => typeof(ItemField);
 
-    public string ObjectId
-    {
+    public string ObjectId {
         get => GetValue<string>(0);
         set => SetValue(0, value);
     }
 
-    public ushort ObjectType
-    {
+    public ushort ObjectType {
         get => GetValue<ushort>(1);
         set => SetValue(1, value);
     }
 
-    public int SlotType
-    {
+    public int SlotType {
         get => GetValue<int>(2);
         set => SetValue(2, value);
     }
 
-    public bool Usable
-    {
+    public bool Usable {
         get => GetValue<bool>(3);
         set => SetValue(3, value);
     }
 
-    public int BagType
-    {
+    public int BagType {
         get => GetValue<int>(4);
         set => SetValue(4, value);
     }
 
-    public bool Consumable
-    {
+    public bool Consumable {
         get => GetValue<bool>(5);
         set => SetValue(5, value);
     }
 
-    public bool Potion
-    {
+    public bool Potion {
         get => GetValue<bool>(6);
         set => SetValue(6, value);
     }
 
-    public bool Soulbound
-    {
+    public bool Soulbound {
         get => GetValue<bool>(7);
         set => SetValue(7, value);
     }
 
-    public int Tex1
-    {
+    public int Tex1 {
         get => GetValue<int>(8);
         set => SetValue(8, value);
     }
 
-    public int Tex2
-    {
+    public int Tex2 {
         get => GetValue<int>(9);
         set => SetValue(9, value);
     }
 
-    public int Tier
-    {
+    public int Tier {
         get => GetValue<int>(10);
         set => SetValue(10, value);
     }
 
-    public string Description
-    {
+    public string Description {
         get => GetValue<string>(11);
         set => SetValue(11, value);
     }
 
-    public float RateOfFire
-    {
+    public float RateOfFire {
         get => GetValue<float>(12);
         set => SetValue(12, value);
     }
 
-    public int MpCost
-    {
+    public int MpCost {
         get => GetValue<int>(13);
         set => SetValue(13, value);
     }
 
-    public int FameBonus
-    {
+    public int FameBonus {
         get => GetValue<int>(14);
         set => SetValue(14, value);
     }
 
-    public byte NumProjectiles
-    {
+    public byte NumProjectiles {
         get => GetValue<byte>(15);
         set => SetValue(15, value);
     }
 
-    public float ArcGap
-    {
+    public float ArcGap {
         get => GetValue<float>(16);
         set => SetValue(16, value);
     }
 
-    public string DisplayId
-    {
+    public string DisplayId {
         get => GetValue<string>(17);
         set => SetValue(17, value);
     }
 
-    public int Cooldown
-    {
+    public int Cooldown {
         get => GetValue<int>(18);
         set => SetValue(18, value);
     }
 
-    public bool Resurrects
-    {
+    public bool Resurrects {
         get => GetValue<bool>(19);
         set => SetValue(19, value);
     }
 
-    public int Doses
-    {
+    public int Doses {
         get => GetValue<int>(20);
         set => SetValue(20, value);
     }
 
-    public int MaxDoses
-    {
+    public int MaxDoses {
         get => GetValue<int>(21);
         set => SetValue(21, value);
     }
 
-    public EquipmentBoost[] StatBoosts
-    {
+    public EquipmentBoost[] StatBoosts {
         get => GetValue<EquipmentBoost[]>(22);
         set => SetValue(22, value);
     }
 
-    public ActivateEffectDesc[] ActivateEffects
-    {
+    public ActivateEffectDesc[] ActivateEffects {
         get => GetValue<ActivateEffectDesc[]>(23);
         set => SetValue(23, value);
     }
 
-    public ProjectileDesc[] Projectiles
-    {
+    public ProjectileDesc[] Projectiles {
         get => GetValue<ProjectileDesc[]>(24);
         set => SetValue(24, value);
     }
 
-    public string Rarity
-    {
+    public string Rarity {
         get => GetValue<string>(25);
         set => SetValue(25, value);
     }
 
-    public int GemstoneLimit
-    {
+    public int GemstoneLimit {
         get => GetValue<int>(26);
         set => SetValue(26, value);
     }
 
-    public int[] Gemstones
-    {
+    public int[] Gemstones {
         get => GetValue<int[]>(27);
         set => SetValue(27, value);
     }
 
-    public GemstoneDesc Gemstone
-    {
+    public GemstoneDesc Gemstone {
         get => GetValue<GemstoneDesc>(28);
         set => SetValue(28, value);
     }
 
-    public int ItemLevel
-    {
+    public int ItemLevel {
         get => GetValue<int>(29);
         set => SetValue(29, value);
     }
 
-    public LevelIncreaseDesc[] LevelIncreases
-    {
+    public LevelIncreaseDesc[] LevelIncreases {
         get => GetValue<LevelIncreaseDesc[]>(30);
         set => SetValue(30, value);
     }
 
-    public int UpgradeLevels
-    {
+    public int UpgradeLevels {
         get => GetValue<int>(31);
         set => SetValue(31, value);
     }
 
-    public int MpEndCost
-    {
+    public int MpEndCost {
         get => GetValue<int>(32);
         set => SetValue(32, value);
     }
 
-    public int MaxCharge
-    {
+    public int MaxCharge {
         get => GetValue<int>(33);
         set => SetValue(33, value);
     }
 
-    public int MpCostPerSecond
-    {
+    public int MpCostPerSecond {
         get => GetValue<int>(34);
         set => SetValue(34, value);
     }
 
-    public SheathDesc Sheath
-    {
+    public SheathDesc Sheath {
         get => GetValue<SheathDesc>(35);
         set => SetValue(35, value);
     }
 
-    public SpellDesc Spell
-    {
+    public SpellDesc Spell {
         get => GetValue<SpellDesc>(36);
         set => SetValue(36, value);
     }
 
-    public QuiverDesc Quiver
-    {
+    public QuiverDesc Quiver {
         get => GetValue<QuiverDesc>(37);
         set => SetValue(37, value);
     }
 
-    public PoisonDesc Poison
-    {
+    public PoisonDesc Poison {
         get => GetValue<PoisonDesc>(38);
         set => SetValue(38, value);
     }
 
-    public HelmDesc Helm
-    {
+    public HelmDesc Helm {
         get => GetValue<HelmDesc>(39);
         set => SetValue(39, value);
     }
 
-    public CloakDesc Cloak
-    {
+    public CloakDesc Cloak {
         get => GetValue<CloakDesc>(40);
         set => SetValue(40, value);
     }
 
-    public SealDesc Seal
-    {
+    public SealDesc Seal {
         get => GetValue<SealDesc>(41);
         set => SetValue(41, value);
     }
@@ -361,16 +317,14 @@ public class Item : ItemData
         return export;
     }
 
-    private void ReloadFieldBoosts()
-    {
+    private void ReloadFieldBoosts() {
         ReloadItemLevelBoosts();
         ReloadGemstoneBoosts();
 
         ApplyFieldBoosts();
     }
 
-    public void AddModifierBoost(ItemData data, string field, bool flat, float amount)
-    {
+    public void AddModifierBoost(ItemData data, string field, bool flat, float amount) {
         AddFieldBoost(FieldBoostType.Modifiers, GetFullFieldStr(field, data), flat, amount);
 
         _fieldBoostUpdates.Add(FieldBoostType.Modifiers);
@@ -378,8 +332,7 @@ public class Item : ItemData
         _fieldBoostUpdates.Clear();
     }
 
-    public void RemoveModifierBoost(ItemData data, string field, bool flat, float amount)
-    {
+    public void RemoveModifierBoost(ItemData data, string field, bool flat, float amount) {
         RemoveFieldBoost(FieldBoostType.Modifiers, GetFullFieldStr(field, data), flat, amount);
 
         _fieldBoostUpdates.Add(FieldBoostType.Modifiers);
@@ -387,23 +340,20 @@ public class Item : ItemData
         _fieldBoostUpdates.Clear();
     }
 
-    protected override void HandleFieldUpdate(byte field)
-    {
+    protected override void HandleFieldUpdate(byte field) {
         if (field == (byte)ItemField.ItemLevel)
             ReloadItemLevelBoosts();
 
         if (field == (byte)ItemField.Gemstones)
             ReloadGemstoneBoosts();
 
-        if (_fieldBoostUpdates.Count > 0)
-        {
+        if (_fieldBoostUpdates.Count > 0) {
             ApplyFieldBoosts();
             _fieldBoostUpdates.Clear();
         }
     }
 
-    private void ReloadItemLevelBoosts()
-    {
+    private void ReloadItemLevelBoosts() {
         ResetFieldBoosts(FieldBoostType.ItemLevel);
         if (!_initialized || ItemLevel < 0)
             return;
@@ -432,20 +382,17 @@ public class Item : ItemData
         _fieldBoostUpdates.Add(FieldBoostType.ItemLevel);
     }
 
-    public void ReloadGemstoneBoosts()
-    {
+    public void ReloadGemstoneBoosts() {
         ResetFieldBoosts(FieldBoostType.Gemstone);
         if (!_initialized || Gemstones == null || Gemstones.Length < 1)
             return;
 
-        foreach (var gemType in Gemstones)
-        {
+        foreach (var gemType in Gemstones) {
             var gemItem = XmlLibrary.Gemstones[(ushort)gemType];
             if (gemItem.Gemstone.Boosts?.Length < 1)
                 continue;
 
-            foreach (var boost in gemItem.Gemstone.Boosts)
-            {
+            foreach (var boost in gemItem.Gemstone.Boosts) {
                 if (boost.BoostTarget != "Item")
                     continue;
 
@@ -456,8 +403,7 @@ public class Item : ItemData
         _fieldBoostUpdates.Add(FieldBoostType.Gemstone);
     }
 
-    public void UpdateDeepFields(string statStr, float baseAmount, bool flat = true, bool add = true)
-    {
+    public void UpdateDeepFields(string statStr, float baseAmount, bool flat = true, bool add = true) {
         ItemData baseData = XmlLibrary.ItemDescs[ObjectType]; // Cache for original values
         var
             fieldInfo = GetDeepField(statStr, this,
@@ -470,8 +416,7 @@ public class Item : ItemData
         var amount = add ? baseAmount : -baseAmount;
         var prevValue = obj.GetValue(field);
         var baseValue = baseData.GetValue(field); // Only used for % boosts
-        if (baseValue == null)
-        {
+        if (baseValue == null) {
             Logger.Error($"Null itemdata ({obj.GetType()}) field: {field}");
             return;
         }
@@ -483,13 +428,11 @@ public class Item : ItemData
             AddFlatValue(obj, field, prevValue, amount);
     }
 
-    private void AddFieldBoost(FieldBoostType fieldBoostType, string fieldStr, bool flat, float amount)
-    {
+    private void AddFieldBoost(FieldBoostType fieldBoostType, string fieldStr, bool flat, float amount) {
         if (!_fieldBoosts.TryGetValue(fieldBoostType, out var fieldBoosts)) // Create new boost type
             fieldBoosts = _fieldBoosts[fieldBoostType] = new Dictionary<string, ItemFieldBoost>();
 
-        if (!fieldBoosts.TryGetValue(fieldStr, out var boost))
-        {
+        if (!fieldBoosts.TryGetValue(fieldStr, out var boost)) {
             fieldBoosts[fieldStr] = new ItemFieldBoost(flat, amount);
             return;
         }
@@ -497,8 +440,7 @@ public class Item : ItemData
         boost.Add(flat, amount);
     }
 
-    private void RemoveFieldBoost(FieldBoostType fieldBoostType, string fieldStr, bool flat, float amount)
-    {
+    private void RemoveFieldBoost(FieldBoostType fieldBoostType, string fieldStr, bool flat, float amount) {
         if (!_fieldBoosts.TryGetValue(fieldBoostType, out var fieldBoosts)) // Boost doesn't exist
             return;
 
@@ -508,11 +450,11 @@ public class Item : ItemData
         boost.Add(flat, -amount); // Substraction
     }
 
-    private void ResetFieldBoosts(FieldBoostType fieldBoostType = FieldBoostType.All) // Wipe all boosts of the same type
+    private void
+        ResetFieldBoosts(FieldBoostType fieldBoostType = FieldBoostType.All) // Wipe all boosts of the same type
     {
         if (fieldBoostType == FieldBoostType.All)
-            foreach (var boost in _fieldBoosts.Values)
-            {
+            foreach (var boost in _fieldBoosts.Values) {
                 RemoveFieldBoosts(boost);
                 boost.Clear();
             }
@@ -524,10 +466,8 @@ public class Item : ItemData
         boosts.Clear();
     }
 
-    private void RemoveFieldBoosts(Dictionary<string, ItemFieldBoost> boosts)
-    {
-        foreach (var kvp in boosts)
-        {
+    private void RemoveFieldBoosts(Dictionary<string, ItemFieldBoost> boosts) {
+        foreach (var kvp in boosts) {
             var fieldStr = kvp.Key;
             var boost = kvp.Value;
             if (boost.FlatAmount != 0)
@@ -541,8 +481,7 @@ public class Item : ItemData
     {
         foreach (var fieldBoostType in _fieldBoostUpdates)
             if (_fieldBoosts.TryGetValue(fieldBoostType, out var fieldBoosts))
-                foreach (var kvp in fieldBoosts)
-                {
+                foreach (var kvp in fieldBoosts) {
                     var fieldStr = kvp.Key;
                     var boost = kvp.Value;
                     if (boost.FlatAmount != 0)
@@ -553,8 +492,7 @@ public class Item : ItemData
     }
 
     // This method is for adding to numeric values where you don't know if it's a byte, int, or float
-    private static void AddFlatValue(ItemData obj, byte field, object value, float amount)
-    {
+    private static void AddFlatValue(ItemData obj, byte field, object value, float amount) {
         if (value is int intValue)
             obj.SetValue(field, (int)(intValue + amount), true);
         else if (value is byte byteValue)
@@ -566,31 +504,37 @@ public class Item : ItemData
     }
 
     private static void AddProportionalValue(ItemData obj, byte field, object origValue, object prevValue,
-        float amount)
-    {
+        float amount) {
         var floatAmount = amount / 100f;
         if (origValue is int intValue) // Gotta do each calculation for int and float separately... and byte...
             obj.SetValue(field, (int)prevValue + (int)(intValue * floatAmount), true);
         else if (origValue is float floatValue)
-            obj.SetValue(field, (float)prevValue + (floatValue * floatAmount), true);
+            obj.SetValue(field, (float)prevValue + floatValue * floatAmount, true);
         else if (origValue is byte byteValue)
             obj.SetValue(field, (byte)prevValue + (byte)(byteValue * floatAmount), true);
         else
             throw new Exception($"INVALID NON-NUMERIC TYPE: Field:{field} Type:{obj.GetType()}");
     }
 
-    private static (byte, ItemData, ItemData) GetDeepField(string statStr, ItemData data, ItemData origData) // Tuple: (field, data, original data)
+    private static (byte, ItemData, ItemData)
+        GetDeepField(string statStr, ItemData data, ItemData origData) // Tuple: (field, data, original data)
     {
         byte field;
         var fields = statStr.Split("::");
-        if (fields.Length > 1) // If we want to edit properties of an item data property, we do so with :: (e.g. Projectile::MaxDamage)
+        if (fields.Length >
+            1) // If we want to edit properties of an item data property, we do so with :: (e.g. Projectile::MaxDamage)
         {
-            for (var i = 0; i < fields.Length - 1; i++) // Minus one to not assume the right part of the :: as an ItemData
+            for (var i = 0;
+                 i < fields.Length - 1;
+                 i++) // Minus one to not assume the right part of the :: as an ItemData
             {
                 var rawField = fields[i];
                 var indexIndicator = rawField.IndexOf("|"); // Arrays will always end in s
                 var elementIndex = indexIndicator == -1 ? -1 : int.Parse(rawField.Substring(indexIndicator + 1));
-                var cleanFieldName = indexIndicator == -1 ? rawField : rawField.Substring(0, indexIndicator); // Remove everything after the element index indicator
+                var cleanFieldName =
+                    indexIndicator == -1
+                        ? rawField
+                        : rawField.Substring(0, indexIndicator); // Remove everything after the element index indicator
 
                 field = (byte)Enum.Parse(data.FieldsEnum, cleanFieldName); // This is the field of the itemdata property
                 if (elementIndex != -1) // The data object is inside an array
@@ -598,8 +542,7 @@ public class Item : ItemData
                     data = data.GetValue<ItemData[]>(field)[elementIndex];
                     origData = origData.GetValue<ItemData[]>(field)[elementIndex];
                 }
-                else
-                {
+                else {
                     data = data.GetValue<ItemData>(field);
                     origData = origData.GetValue<ItemData>(field);
                 }
@@ -608,15 +551,15 @@ public class Item : ItemData
             field = (byte)Enum.Parse(data.FieldsEnum,
                 fields[fields.Length - 1]); // This is the field we're modifying
         }
-        else
+        else {
             field = (byte)Enum.Parse<ItemField>(statStr);
+        }
 
         return (field, data, origData);
     }
 
     // Here we're accessing the field (e.g. Stat) from an itemdata child (e.g. EquipmentBoost) and we're trying to get the full field str: (e.g. EquipmentBoost::Stat)
-    private static string GetFullFieldStr(string statStr, ItemData data)
-    {
+    private static string GetFullFieldStr(string statStr, ItemData data) {
         var parents = GetParents(data).Reverse(); // Reverse to get the deepest parent
 
         var ret = "";
@@ -629,8 +572,7 @@ public class Item : ItemData
 
     private static IEnumerable<string> GetParents(ItemData data) // THIS WORKS DON'T TOUCH IT
     {
-        if (data.Parent == null)
-        {
+        if (data.Parent == null) {
             yield return data.GetType().Name;
             yield break;
         }
@@ -644,8 +586,7 @@ public class Item : ItemData
 
         var curData = data;
         var prevData = data;
-        while (curData.Parent != null)
-        {
+        while (curData.Parent != null) {
             curData = curData.Parent;
             val = curData.GetValue(prevData.ParentField);
             name = curData.GetType().Name;

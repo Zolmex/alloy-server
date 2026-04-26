@@ -11,8 +11,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Fire Sprite")]
     public static State FireSprite =>
         new(
@@ -38,7 +37,8 @@ public partial class BehaviorLib
             new State("0",
                 new Spawn("Ice Sprite", maxSpawnsPerReset: 2, maxDensity: 2, cooldownMs: 60000),
                 new Shoot(path: new LinePath(8f), targeted: true, projName: "Ice Spinner", damage: 14,
-                    lifetimeMs: 1800, maxRadius: 10, count: 3, shootAngle: 7, cooldownMS: 300, size: 70, effects: (ConditionEffectIndex.Slowed, 1600)),
+                    lifetimeMs: 1800, maxRadius: 10, count: 3, shootAngle: 7, cooldownMS: 300, size: 70,
+                    effects: (ConditionEffectIndex.Slowed, 1600)),
                 new Wander(8.5f)
             )
         );

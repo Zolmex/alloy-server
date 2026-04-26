@@ -2,42 +2,34 @@
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class SizeInfo
-{
+public class SizeInfo {
     public int CooldownLeft;
 }
 
-public record ChangeSize : BehaviorScript
-{
+public record ChangeSize : BehaviorScript {
     private readonly int _rate;
     private readonly int _target;
 
-    public ChangeSize(int rate, int target)
-    {
+    public ChangeSize(int rate, int target) {
         _rate = rate;
         _target = target;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var state = host.ResolveResource<SizeInfo>(this);
         state.CooldownLeft = 0;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var state = host.ResolveResource<SizeInfo>(this);
 
-        if (state.CooldownLeft > 0)
-        {
+        if (state.CooldownLeft > 0) {
             state.CooldownLeft -= time.ElapsedMsDelta;
             return BehaviorTickState.OnCooldown;
         }
 
-        if (state.CooldownLeft <= 0)
-        {
-            if (host.Size != _target)
-            {
+        if (state.CooldownLeft <= 0) {
+            if (host.Size != _target) {
                 host.Size += _rate;
                 if ((_rate > 0 && host.Size > _target) ||
                     (_rate < 0 && host.Size < _target))

@@ -1,28 +1,25 @@
 ﻿#region
 
-using Common.Utilities;
 using System;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 
 #endregion
 
 namespace Common.Resources.Xml;
 
-public class MerchantDesc
-{
+public class MerchantDesc {
     public readonly MerchandiseEntry[] Entries;
     public readonly string Region;
 
-    public MerchantDesc(XElement e, string region)
-    {
+    public MerchantDesc(XElement e, string region) {
         Region = region;
         Entries = e.Elements("Entry").Select(x => new MerchandiseEntry(x)).ToArray();
     }
 }
 
-public class MerchandiseEntry
-{
+public class MerchandiseEntry {
     public readonly CurrencyType Currency;
     public readonly MerchandiseDiscount[] Discounts;
     public readonly int MaxDuration;
@@ -34,8 +31,7 @@ public class MerchandiseEntry
     public readonly int Price;
     public readonly int RankReq;
 
-    public MerchandiseEntry(XElement e)
-    {
+    public MerchandiseEntry(XElement e) {
         ObjectId = e.GetAttribute<string>("id");
         Price = e.GetAttribute<int>("price");
         RankReq = e.GetAttribute<int>("rankReq");
@@ -54,13 +50,11 @@ public class MerchandiseEntry
     }
 }
 
-public class MerchandiseDiscount
-{
+public class MerchandiseDiscount {
     public readonly float Probability;
     public readonly int Value;
 
-    public MerchandiseDiscount(XElement e)
-    {
+    public MerchandiseDiscount(XElement e) {
         Value = int.Parse(e.Value);
         Probability = e.GetAttribute<float>("prob");
     }

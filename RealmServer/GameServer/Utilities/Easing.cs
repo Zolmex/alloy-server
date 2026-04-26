@@ -6,15 +6,12 @@ using System;
 
 namespace GameServer.Utilities;
 
-public static class Easing
-{
+public static class Easing {
     private const float n1 = 7.5625f;
     private const float d1 = 2.75f;
 
-    public static void EaseVal(Ease ease, ref float val)
-    {
-        switch (ease)
-        {
+    public static void EaseVal(Ease ease, ref float val) {
+        switch (ease) {
             case Ease.InSine:
                 val = 1 - MathF.Cos(val * MathF.PI / 2);
                 break;
@@ -29,26 +26,24 @@ public static class Easing
                 break;
             case Ease.InOutBounce:
                 val = val < 0.5
-                    ? (1 - _easeOutBounce(1 - (2 * val))) / 2
-                    : (1 + _easeOutBounce((2 * val) - 1)) / 2;
+                    ? (1 - _easeOutBounce(1 - 2 * val)) / 2
+                    : (1 + _easeOutBounce(2 * val - 1)) / 2;
                 break;
         }
     }
 
-    private static float _easeOutBounce(float x)
-    {
+    private static float _easeOutBounce(float x) {
         if (x < 1f / d1)
             return n1 * x * x;
         if (x < 2f / d1)
-            return (n1 * (x -= 1.5f / d1) * x) + 0.75f;
+            return n1 * (x -= 1.5f / d1) * x + 0.75f;
         if (x < 2.5f / d1)
-            return (n1 * (x -= 2.25f / d1) * x) + 0.9375f;
-        return (n1 * (x -= 2.625f / d1) * x) + 0.984375f;
+            return n1 * (x -= 2.25f / d1) * x + 0.9375f;
+        return n1 * (x -= 2.625f / d1) * x + 0.984375f;
     }
 }
 
-public enum Ease
-{
+public enum Ease {
     None,
     InSine,
     OutSine,

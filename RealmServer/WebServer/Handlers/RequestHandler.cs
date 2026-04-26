@@ -10,52 +10,45 @@ using System.Threading.Tasks;
 
 namespace WebServer.Handlers;
 
-public abstract class RequestHandler
-{
+public abstract class RequestHandler {
     private static readonly Dictionary<string, RequestHandler> _handlers = new();
 
     public abstract string Path { get; } // Request identifier
 
     public abstract Task<string> Handle(string ip, NameValueCollection query);
 
-    protected string WriteError(string message)
-    {
+    protected string WriteError(string message) {
         if (string.IsNullOrWhiteSpace(message))
             return "<Error/>";
         return $"<Error>{message}</Error>";
     }
 
-    protected string WriteSuccess(string message = null)
-    {
+    protected string WriteSuccess(string message = null) {
         if (string.IsNullOrWhiteSpace(message))
             return "<Success/>";
         return $"<Success>{message}</Success>";
     }
 
     // Loads every RequestHandler child from the assembly into a Dictionary.
-    public static void Load()
-    {
+    public static void Load() {
         var types = Assembly.GetExecutingAssembly().GetTypes();
-        for (var i = 0; i < types.Length; i++)
-        {
+        for (var i = 0; i < types.Length; i++) {
             var type = types[i];
-            if (!type.IsAbstract && type.IsSubclassOf(typeof(RequestHandler)))
-            {
+            if (!type.IsAbstract && type.IsSubclassOf(typeof(RequestHandler))) {
                 var handler = (RequestHandler)Activator.CreateInstance(type);
                 _handlers.Add(handler.Path, handler);
             }
         }
     }
 
-    public static bool Exists(string path)
-    {
+    public static bool Exists(string path) {
         return _handlers.ContainsKey(path);
     }
 
-    public static Task<string> Handle(string path, string ip, NameValueCollection query)
-    {
+    public static Task<string> Handle(string path, string ip, NameValueCollection query) {
         if (!_handlers.TryGetValue(path, out var handler))
-            throw new ArgumentException($"Handler for {path} does not exist."); // Application shouldn't even get to this point
+            throw new ArgumentException(
+                $"Handler for {path} does not exist."); // Application shouldn't even get to this point
 
         return handler.Handle(ip, query);
     }

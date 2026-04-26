@@ -1,23 +1,19 @@
 ﻿#region
 
-using GameServer.Game.Entities;
-using GameServer.Utilities.Collections;
-using System.Threading.Tasks;
 using GameServer.Game.Entities.Types;
+using GameServer.Utilities.Collections;
 
 #endregion
 
 namespace GameServer.Game.Worlds;
 
-public class MapChunk
-{
+public class MapChunk {
     private readonly World _world;
 
     public LazyCollection<Entity> Entities; // Excluding players
     public LazyCollection<Player> Players;
 
-    public MapChunk(World world, int cX, int cY)
-    {
+    public MapChunk(World world, int cX, int cY) {
         _world = world;
 
         CX = cX;
@@ -30,17 +26,14 @@ public class MapChunk
     public int CX { get; }
     public int CY { get; }
 
-    public void Update()
-    {
+    public void Update() {
         Entities.Update();
         Players.Update();
     }
 
-    public void Tick(RealmTime time)
-    {
+    public void Tick(RealmTime time) {
         TickCount = time.TickCount;
-        foreach (var en in Entities.Values)
-        {
+        foreach (var en in Entities.Values) {
             if (en.Dead)
                 return;
 
@@ -57,26 +50,23 @@ public class MapChunk
         }
     }
 
-    public void Insert(Entity en)
-    {
+    public void Insert(Entity en) {
         if (en.IsPlayer)
             Players.Add(en as Player);
         else
             Entities.Add(en);
     }
 
-    public void Remove(Entity en)
-    {
+    public void Remove(Entity en) {
         if (en.IsPlayer)
             Players.Remove(en as Player);
         else
             Entities.Remove(en);
     }
 
-    public int DistSqr(MapChunk chunk)
-    {
+    public int DistSqr(MapChunk chunk) {
         var dx = CX - chunk.CX;
         var dy = CY - chunk.CY;
-        return (dx * dx) + (dy * dy);
+        return dx * dx + dy * dy;
     }
 }

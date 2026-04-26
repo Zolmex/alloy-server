@@ -11,8 +11,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Hobbit Mage")]
     public static State HobbitMage =>
         new(
@@ -548,14 +547,16 @@ public partial class BehaviorLib
         new(
             new State("wander",
                 new Shoot(8, new LinePath(6.5f), targeted: true, projName: "Dark Gray Spinner", damage: 10,
-                    lifetimeMs: 1500, predictive: 0.3f, cooldownMS: 700, size: 68, effects: (ConditionEffectIndex.Confused, 1000)),
+                    lifetimeMs: 1500, predictive: 0.3f, cooldownMS: 700, size: 68,
+                    effects: (ConditionEffectIndex.Confused, 1000)),
                 new Follow(4.63f, acquireRange: 10, distFromTarget: 2.2f),
                 new Wander(4.63f),
                 new TimedTransition(3000, "circle")
             ),
             new State("circle",
                 new Shoot(8, new LinePath(6.5f), targeted: true, projName: "Dark Gray Spinner", damage: 10,
-                    lifetimeMs: 1500, predictive: 0.3f, coolDownOffset: 1000, cooldownMS: 1000, size: 68, effects: (ConditionEffectIndex.Confused, 1000)),
+                    lifetimeMs: 1500, predictive: 0.3f, coolDownOffset: 1000, cooldownMS: 1000, size: 68,
+                    effects: (ConditionEffectIndex.Confused, 1000)),
                 new Orbit(4.63f, 2, 9),
                 new TimedTransition(3100, "wander")
             ),

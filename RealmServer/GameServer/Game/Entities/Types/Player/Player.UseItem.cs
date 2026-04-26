@@ -1,24 +1,23 @@
 ﻿#region
 
+using System;
+using System.Numerics;
 using Common;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
+using Common.Structs;
 using Common.Utilities;
 using GameServer.Game.Network.Messaging.Outgoing;
-using System;
-using System.Numerics;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public partial class Player
-{
+public partial class Player {
     public void UseItem(SlotObjectData slot, WorldPosData usePos, int clientTime) // TODO: validate client time
     {
         var item = Inventory[slot.SlotId];
-        if (!ValidateUseItem(item, slot, usePos))
-        {
+        if (!ValidateUseItem(item, slot, usePos)) {
             _log.Debug("test");
             User.SendPacket(new InvResult(1));
             return;
@@ -29,13 +28,12 @@ public partial class Player
             var result = HandleActivateEffect(item, usePos);
             Inventory[slot.SlotId] = result;
         }
-        else{} // TODO: Use ability
 
+        // TODO: Use ability
         User.SendPacket(new InvResult(0));
     }
 
-    private bool ValidateUseItem(Item item, SlotObjectData slot, WorldPosData usePos)
-    {
+    private bool ValidateUseItem(Item item, SlotObjectData slot, WorldPosData usePos) {
         if (item == null || this.DistSqr(usePos.X, usePos.Y) > SIGHT_RADIUS_SQR)
             return false;
 
@@ -51,16 +49,14 @@ public partial class Player
         return true;
     }
 
-    public Item HandleActivateEffect(Item item, WorldPosData usePos)
-    {
+    public Item HandleActivateEffect(Item item, WorldPosData usePos) {
         var ret = item;
 
         if (item.Consumable)
             ret = null;
 
         foreach (var ae in item.ActivateEffects)
-            switch (ae.AEIndex)
-            {
+            switch (ae.AEIndex) {
                 case ActivateEffectIndex.Heal:
                     AEHeal(ae);
                     break;
@@ -88,13 +84,11 @@ public partial class Player
         return ret;
     }
 
-    private void AEHeal(ActivateEffectDesc ae)
-    {
+    private void AEHeal(ActivateEffectDesc ae) {
         Heal(ae.Amount);
     }
 
-    private void AEHealNova(ActivateEffectDesc ae)
-    {
+    private void AEHealNova(ActivateEffectDesc ae) {
         foreach (var plr in World.GetAllPlayersWithin(Position.X, Position.Y, ae.Range))
             plr.Heal(ae.Amount);
 
@@ -106,15 +100,13 @@ public partial class Player
             new WorldPosData()));
     }
 
-    private Item AECreate(Item item, ActivateEffectDesc ae)
-    {
+    private Item AECreate(Item item, ActivateEffectDesc ae) {
         var objId = ae.ObjectId;
         var objDesc = XmlLibrary.Id2Object(objId);
         if (string.IsNullOrWhiteSpace(objId) || objDesc == null)
             return item;
 
-        if (objDesc.Class == "Portal")
-        {
+        if (objDesc.Class == "Portal") {
             var en = Resolve(objDesc.ObjectType);
             en.Move(Position.X, Position.Y);
             en.EnterWorld(World);
@@ -123,8 +115,7 @@ public partial class Player
         return null;
     }
 
-    private void AECondEffAura(ActivateEffectDesc ae)
-    {
+    private void AECondEffAura(ActivateEffectDesc ae) {
         var color = 0xFFFFFFFF;
 
         if (ae.EffectDesc.Effect == ConditionEffectIndex.Damaging)
@@ -133,8 +124,7 @@ public partial class Player
         if (ae.Color != 0)
             color = ae.Color;
 
-        foreach (var plr in World.GetAllPlayersWithin(Position.X, Position.Y, ae.Range))
-        {
+        foreach (var plr in World.GetAllPlayersWithin(Position.X, Position.Y, ae.Range)) {
             plr.ApplyConditionEffect(ae.EffectDesc.Effect, ae.DurationMS);
             plr.User.SendPacket(new ShowEffect((byte)ShowEffectIndex.Nova,
                 Id,
@@ -145,8 +135,7 @@ public partial class Player
         }
     }
 
-    private void AECondEffSelf(ActivateEffectDesc ae)
-    {
+    private void AECondEffSelf(ActivateEffectDesc ae) {
         var color = 0xFFFFFF;
 
         if (ae.EffectDesc.Effect == ConditionEffectIndex.Damaging)
@@ -164,11 +153,10 @@ public partial class Player
             new WorldPosData()));
     }
 
-    private void AEShoot(Item item, ActivateEffectDesc ae, WorldPosData usePos)
-    {
+    private void AEShoot(Item item, ActivateEffectDesc ae, WorldPosData usePos) {
         var angleInc = (float)(item.ArcGap * Math.PI / 180);
         var startAngle = (float)Math.Atan2(usePos.Y - Position.Y, usePos.X - Position.X) -
-                         ((int)((item.NumProjectiles - 1) / 2f) * angleInc);
+                         (int)((item.NumProjectiles - 1) / 2f) * angleInc;
 
         ServerShoot(item.Projectiles[0], item.NumProjectiles, startAngle.Rad2Deg(), angleInc.Rad2Deg(),
             new Vector2(Position.X, Position.Y), item.ObjectType);

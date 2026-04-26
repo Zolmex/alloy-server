@@ -1,20 +1,16 @@
 ﻿#region
 
-using Common;
 using Common.Network;
-using Common.Utilities;
-using System.IO;
+using Common.Structs;
 
 #endregion
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[] TheirItems, string Name) : IOutgoingPacket
-{
+public readonly record struct TradeStart(TradeItem[] MyItems, TradeItem[] TheirItems, string Name) : IOutgoingPacket {
     public PacketId ID => PacketId.TRADESTART;
-    
-    public void Write(ref SpanWriter wtr)
-    {
+
+    public void Write(ref SpanWriter wtr) {
         wtr.Write((byte)MyItems.Length);
         foreach (var item in MyItems)
             item.Write(ref wtr);
@@ -24,8 +20,7 @@ public readonly partial record struct TradeStart(TradeItem[] MyItems, TradeItem[
             item.Write(ref wtr);
     }
 
-    public static TradeStart Read(NetworkReader rdr)
-    {
+    public static TradeStart Read(NetworkReader rdr) {
         return new TradeStart();
     }
 }

@@ -1,16 +1,10 @@
-﻿#region
-
-#endregion
-
-using Common.Network;
+﻿using Common.Network;
 
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.GOTOACK)]
-public partial record GotoAck : IIncomingPacket
-{
-    public void Handle(User user)
-    {
+public record GotoAck : IIncomingPacket {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
@@ -21,6 +15,5 @@ public partial record GotoAck : IIncomingPacket
         plr.FinishTeleport();
     }
 
-    public void Read(ref SpanReader rdr)
-    { }
+    public void Read(ref SpanReader rdr) { }
 }

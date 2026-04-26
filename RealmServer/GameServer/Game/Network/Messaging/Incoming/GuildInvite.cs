@@ -1,6 +1,5 @@
 ﻿#region
 
-using Common;
 using Common.Network;
 
 #endregion
@@ -8,12 +7,10 @@ using Common.Network;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.GUILDINVITE)]
-public partial record GuildInvite : IIncomingPacket
-{
+public record GuildInvite : IIncomingPacket {
     public string TargetName;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
@@ -31,8 +28,7 @@ public partial record GuildInvite : IIncomingPacket
         // target.GuildInvite(user, acc.GuildName);
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         TargetName = rdr.ReadUTF();
     }
 }

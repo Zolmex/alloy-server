@@ -1,14 +1,12 @@
-using Common.Utilities;
 using System;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class SealDesc : ItemData
-{
-    public SealDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
+public class SealDesc : ItemData {
+    public SealDesc(XElement e, ItemData parent = null, byte parentField = 0) {
         SetParent(parent, parentField);
         if (e == null) // Null when instance by itemdata import
         {
@@ -33,68 +31,57 @@ public class SealDesc : ItemData
 
     public override Type FieldsEnum => typeof(SealDescField);
 
-    public short MpCost
-    {
+    public short MpCost {
         get => GetValue<short>(0);
         set => SetValue(0, value);
     }
 
-    public int Duration
-    {
+    public int Duration {
         get => GetValue<int>(1);
         set => SetValue(1, value);
     }
 
-    public short MaxStack
-    {
+    public short MaxStack {
         get => GetValue<short>(2);
         set => SetValue(2, value);
     }
 
-    public float Radius
-    {
+    public float Radius {
         get => GetValue<float>(3);
         set => SetValue(3, value);
     }
 
-    public short ShieldAmount
-    {
+    public short ShieldAmount {
         get => GetValue<short>(4);
         set => SetValue(4, value);
     }
 
-    public short MaxAllies
-    {
+    public short MaxAllies {
         get => GetValue<short>(5);
         set => SetValue(5, value);
     }
 
-    public float EfficiencyReductionPerPlayer
-    {
+    public float EfficiencyReductionPerPlayer {
         get => GetValue<float>(6);
         set => SetValue(6, value);
     }
 
-    public short BannerSpeed
-    {
+    public short BannerSpeed {
         get => GetValue<short>(7);
         set => SetValue(7, value);
     }
 
-    public GemstoneBoost[] StatsModifier
-    {
+    public GemstoneBoost[] StatsModifier {
         get => GetValue<GemstoneBoost[]>(8);
         set => SetValue(8, value);
     }
 
-    public int BoostDuration
-    {
+    public int BoostDuration {
         get => GetValue<int>(9);
         set => SetValue(9, value);
     }
 
-    public short MaxBanners
-    {
+    public short MaxBanners {
         get => GetValue<short>(10);
         set => SetValue(10, value);
     }

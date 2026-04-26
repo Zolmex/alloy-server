@@ -1,19 +1,17 @@
 ﻿#region
 
-using Common.Database;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using Common.Database;
 
 #endregion
 
 namespace WebServer.Handlers.Guild;
 
-public class SetBoard : RequestHandler
-{
+public class SetBoard : RequestHandler {
     public override string Path => "/guild/setBoard";
 
-    public override async Task<string> Handle(string ip, NameValueCollection query)
-    {
+    public override async Task<string> Handle(string ip, NameValueCollection query) {
         var board = query["board"];
         if (string.IsNullOrWhiteSpace(board))
             return WriteError("Invalid board text.");

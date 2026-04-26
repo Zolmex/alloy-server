@@ -1,13 +1,11 @@
-using Common.Utilities;
 using System;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class EquipmentBoost : ItemData
-{
-    public EquipmentBoost(XElement e, ItemData parent = null, byte parentField = 0)
-    {
+public class EquipmentBoost : ItemData {
+    public EquipmentBoost(XElement e, ItemData parent = null, byte parentField = 0) {
         SetParent(parent, parentField);
         if (e == null) // Null when instance by itemdata import
         {
@@ -26,20 +24,17 @@ public class EquipmentBoost : ItemData
 
     public override Type FieldsEnum => typeof(EquipmentBoostField);
 
-    public int Stat
-    {
+    public int Stat {
         get => GetValue<int>(0);
         set => SetValue(0, value);
     }
 
-    public int Amount
-    {
+    public int Amount {
         get => GetValue<int>(1);
         set => SetValue(1, value);
     }
 
-    public LevelIncreaseDesc LevelIncrease
-    {
+    public LevelIncreaseDesc LevelIncrease {
         get => GetValue<LevelIncreaseDesc>(2);
         set => SetValue(2, value);
     }

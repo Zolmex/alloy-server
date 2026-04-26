@@ -1,8 +1,8 @@
 ﻿#region
 
-using Common.Utilities;
 using System.Collections.Generic;
 using System.Linq;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
 
 #endregion
@@ -14,8 +14,7 @@ namespace GameServer.Game.Entities.Behaviors;
 ///     given entity.
 ///     These are used in tandem with an <see cref="EntityBehavior" /> to form the behavior system.
 /// </summary>
-public class BehaviorTransition(TransitionType transitionType = TransitionType.Random) : IStateChild
-{
+public class BehaviorTransition(TransitionType transitionType = TransitionType.Random) : IStateChild {
     private readonly List<string> targetStates = new();
     private readonly List<string> usedStates = new();
 
@@ -25,27 +24,18 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
     ///     Register states that can be transitioned to when the transition condition is met.
     /// </summary>
     /// <param name="targetStates">States that can be transitioned to.</param>
-    public void RegisterTargetStates(params string[] targetStates)
-    {
-        foreach (var targetState in targetStates)
-        {
-            this.targetStates.Add(targetState);
-        }
+    public void RegisterTargetStates(params string[] targetStates) {
+        foreach (var targetState in targetStates) this.targetStates.Add(targetState);
     }
 
     /// <summary>
     ///     Gets a state that can be transitioned to.
     /// </summary>
     /// <returns>The state that can be transitioned to.</returns>
-    public string GetTargetState()
-    {
-        if (usedStates.Count == targetStates.Count)
-        {
-            usedStates.Clear();
-        }
+    public string GetTargetState() {
+        if (usedStates.Count == targetStates.Count) usedStates.Clear();
 
-        switch (TransitionType)
-        {
+        switch (TransitionType) {
             case TransitionType.Random:
                 return targetStates.RandomElement();
             case TransitionType.Random7Bag:
@@ -66,8 +56,7 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
     ///     before the transition runs on tick.
     /// </summary>
     /// <param name="host">The character that the behavior is being ran on.</param>
-    public virtual void Start(CharacterEntity host)
-    { }
+    public virtual void Start(CharacterEntity host) { }
 
     /// <summary>
     ///     Function that will contain any logic for running the transition on a tick by tick basis.
@@ -78,8 +67,7 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
     ///     Returns the state to be transitioned to if the transition condition is met, or null if the condition is not
     ///     met.
     /// </returns>
-    public virtual string Tick(CharacterEntity host, RealmTime time)
-    {
+    public virtual string Tick(CharacterEntity host, RealmTime time) {
         return null;
     }
 
@@ -89,6 +77,5 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
     /// </summary>
     /// <param name="host">The character that the transition is being ran on.</param>
     /// <param name="time">The current <see cref="RealmTime" /> the transition is being ended at.</param>
-    public virtual void End(CharacterEntity host, RealmTime time)
-    { }
+    public virtual void End(CharacterEntity host, RealmTime time) { }
 }

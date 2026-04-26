@@ -1,20 +1,17 @@
 ﻿#region
 
+using System.Linq;
 using Common.Resources.Config;
 using Common.Utilities;
-using GameServer.Game.Entities;
-using System.Linq;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Worlds.Logic;
 
-public class Realm : World
-{
+public class Realm : World {
     public Realm()
-        : base(REALM, -1)
-    {
+        : base(REALM, -1) {
         DisplayName = GetRealmName();
 
         Oryx = new Oryx(this);
@@ -24,16 +21,14 @@ public class Realm : World
 
     public Oryx Oryx { get; }
 
-    public override void Initialize()
-    {
+    public override void Initialize() {
         base.Initialize();
 
         Oryx.Initialize();
         RealmManager.OnRealmAdded(this);
     }
 
-    public override void Tick(RealmTime time)
-    {
+    public override void Tick(RealmTime time) {
         if (!Initialized)
             return;
 
@@ -42,25 +37,21 @@ public class Realm : World
         Oryx.Tick(time);
     }
 
-    public override void RemoveEntity(Entity en)
-    {
+    public override void RemoveEntity(Entity en) {
         base.RemoveEntity(en);
 
         Oryx.OnEnemyKilled(en);
     }
 
-    public void CloseRealm()
-    {
+    public void CloseRealm() {
         Oryx.Close();
     }
 
-    public Entity GetActiveEvent()
-    {
+    public Entity GetActiveEvent() {
         return Oryx.ActiveEvent;
     }
 
-    public string GetRealmName()
-    {
+    public string GetRealmName() {
         string ret = null;
         while (ret == null || RealmManager.ActiveRealms.Values.Any(i => i.EqualsIgnoreCase(ret)))
             ret = RealmConfig.Config.Names.RandomElement();

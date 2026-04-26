@@ -1,7 +1,6 @@
 namespace Common.Network.Messaging;
 
-public enum AppMessageId
-{
+public enum AppMessageId {
     Hello = 0,
     Register = 1,
     Verify = 2,
@@ -11,5 +10,5 @@ public enum AppMessageId
     DeleteCharacter = 6,
     GetAccount = 7,
     BanAccount = 8,
-    UnbanAccount = 9,
+    UnbanAccount = 9
 }

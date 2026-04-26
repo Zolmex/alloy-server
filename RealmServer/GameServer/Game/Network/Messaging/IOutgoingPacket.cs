@@ -1,9 +1,7 @@
-﻿using Common.Network;
-using Common.Network.Messaging;
+﻿using Common.Network.Messaging;
 
 namespace GameServer.Game.Network.Messaging;
 
-public interface IOutgoingPacket : IWritable
-{
+public interface IOutgoingPacket : IWritable {
     PacketId ID { get; }
 }

@@ -1,30 +1,26 @@
-using Common.Utilities;
 using System;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class ContainerProjectileProps
-{
+public class ContainerProjectileProps {
     public readonly byte ProjectileIndex;
     public readonly ProjectileProps Props;
-    
-    public ContainerProjectileProps(XElement e)
-    {
+
+    public ContainerProjectileProps(XElement e) {
         ProjectileIndex = e.GetAttribute<byte>("id");
         Props = new ProjectileProps(e);
     }
 
-    public ContainerProjectileProps(byte projectileIndex, ProjectileProps props)
-    {
+    public ContainerProjectileProps(byte projectileIndex, ProjectileProps props) {
         ProjectileIndex = projectileIndex;
         Props = props;
     }
 }
 
-public record ProjectileProps
-{
+public record ProjectileProps {
     public readonly float Amplitude;
     public readonly bool ArmorPiercing;
     public readonly bool Boomerang;
@@ -44,8 +40,7 @@ public record ProjectileProps
     public readonly float Speed;
     public readonly bool Wavy;
 
-    public ProjectileProps(XElement e)
-    {
+    public ProjectileProps(XElement e) {
         ObjectId = e.GetValue<string>("ObjectId");
         LifetimeMS = (int)e.GetValue<float>("LifetimeMS");
         Speed = e.GetValue<float>("Speed") / 10;
@@ -70,8 +65,7 @@ public record ProjectileProps
         Frequency = e.GetValue<float>("Frequency", 1);
         Magnitude = e.GetValue<float>("Magnitude", 3);
 
-        if (e.Element("Path") == null)
-        {
+        if (e.Element("Path") == null) {
             if (e.HasElement("Amplitude") || e.HasElement("Frequency"))
                 PathType = PathType.AmplitudePath;
             // else if (Parametric)
@@ -85,20 +79,19 @@ public record ProjectileProps
     }
 
     public ProjectileProps(string objectId, int lifetimeMs, float speed, int damage = -1, int minDamage = -1,
-        int maxDamage = -1, (ConditionEffectIndex, int)[] effects = null, bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
-        bool wavy = false, bool parametric = false, bool boomerang = false, float amplitude = 0, float frequency = 1, float magnitude = 3, int size = 100)
-    {
+        int maxDamage = -1, (ConditionEffectIndex, int)[] effects = null, bool multiHit = false,
+        bool passesCover = false, bool armorPiercing = false,
+        bool wavy = false, bool parametric = false, bool boomerang = false, float amplitude = 0, float frequency = 1,
+        float magnitude = 3, int size = 100) {
         ObjectId = objectId;
         LifetimeMS = lifetimeMs;
         Speed = speed;
         Damage = damage;
-        if (damage == -1)
-        {
+        if (damage == -1) {
             MinDamage = minDamage;
             MaxDamage = maxDamage;
         }
-        else
-        {
+        else {
             MinDamage = damage;
             MaxDamage = damage;
         }
@@ -124,9 +117,8 @@ public record ProjectileProps
             PathType = PathType.BoomerangPath;
         else PathType = PathType.LinePath;
     }
-    
-    public virtual bool Equals(ProjectileProps other)
-    {
+
+    public virtual bool Equals(ProjectileProps other) {
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
 
@@ -147,11 +139,11 @@ public record ProjectileProps
                && Size == other.Size
                && Speed == other.Speed
                && Wavy == other.Wavy
-               && (Effects == other.Effects || (Effects != null && other.Effects != null && Effects.SequenceEqual(other.Effects)));
+               && (Effects == other.Effects ||
+                   (Effects != null && other.Effects != null && Effects.SequenceEqual(other.Effects)));
     }
 
-    public override int GetHashCode()
-    {
+    public override int GetHashCode() {
         var hash = new HashCode();
         hash.Add(Amplitude);
         hash.Add(ArmorPiercing);

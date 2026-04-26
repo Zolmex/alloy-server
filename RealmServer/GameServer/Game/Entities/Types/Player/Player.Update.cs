@@ -1,23 +1,22 @@
 ﻿#region
 
-using Common;
-using Common.Utilities;
-using GameServer.Game.Network.Messaging.Outgoing;
-using GameServer.Game.Worlds;
-using GameServer.Utilities.Collections;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Numerics;
+using Common;
+using Common.Structs;
 using GameServer.Game.Entities.DamageSources.Types;
 using GameServer.Game.Network;
+using GameServer.Game.Network.Messaging.Outgoing;
+using GameServer.Game.Worlds;
+using GameServer.Utilities.Collections;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public partial class Player
-{
+public partial class Player {
     public const int TP_COOLDOWN = 10000; // 10 seconds
 
     public const int SIGHT_RADIUS = 20;
@@ -42,18 +41,15 @@ public partial class Player
     public bool Teleporting;
     public int TPCooldownLeft;
 
-    private void InitPlayerSight()
-    {
+    private void InitPlayerSight() {
         _visibleEntities.OnAdd += OnEntityAdded;
         _visibleEntities.OnRemove += OnEntityRemoved;
         _visibleStaticEntities.OnAdd += OnEntityAdded;
         _visibleStaticEntities.OnRemove += OnEntityRemoved;
     }
 
-    public bool TeleportTo(WorldPosData pos, bool force = false)
-    {
-        if (!force)
-        {
+    public bool TeleportTo(WorldPosData pos, bool force = false) {
+        if (!force) {
             if (Teleporting)
                 return false;
 
@@ -70,14 +66,12 @@ public partial class Player
         return true;
     }
 
-    public void FinishTeleport()
-    {
+    public void FinishTeleport() {
         Teleporting = false;
         Move(_tpPos.X, _tpPos.Y);
     }
 
-    public override bool Move(float posX, float posY)
-    {
+    public override bool Move(float posX, float posY) {
         if (User.State != ConnectionState.Ready || User.GameInfo.State != GameState.Playing || !Initialized || Dead)
             return false;
 
@@ -88,72 +82,64 @@ public partial class Player
         return true;
     }
 
-    private void ProcessUnconfirmedHits(float posX, float posY)
-    {
+    private void ProcessUnconfirmedHits(float posX, float posY) {
         var toRemove = new HashSet<Projectile>();
-            foreach (var unconfirmedHit in _unconfirmedHits)
+        foreach (var unconfirmedHit in _unconfirmedHits) {
+            var timeOfUnconfirmation = unconfirmedHit.GetUnconfirmedHitTime(this);
+            if (timeOfUnconfirmation == 0) {
+                toRemove.Add(unconfirmedHit);
+                continue;
+            }
+
+            if (RealmManager.WorldTime.TotalElapsedMs >
+                timeOfUnconfirmation) // GREAT. we have a move ack after the time the projectile should have collided. evaluate
             {
-                var timeOfUnconfirmation = unconfirmedHit.GetUnconfirmedHitTime(this);
-                if (timeOfUnconfirmation == 0)
+                if (unconfirmedHit.CheckUnconfirmedHit(this, posX,
+                        posY)) // PERFECT CASE. hit has been confirmed. no problems
                 {
+                    unconfirmedHit.ConfirmHit(this);
                     toRemove.Add(unconfirmedHit);
                     continue;
                 }
 
-                if (RealmManager.WorldTime.TotalElapsedMs >
-                    timeOfUnconfirmation) // GREAT. we have a move ack after the time the projectile should have collided. evaluate
-                {
-                    if (unconfirmedHit.CheckUnconfirmedHit(this, posX,
-                            posY)) // PERFECT CASE. hit has been confirmed. no problems
-                    {
+                // unfortunately we could not confirm the hit, how big was this time gap?
+                var timeDifference = RealmManager.WorldTime.TotalElapsedMs - timeOfUnconfirmation;
+                if (timeDifference < 100) {
+                    // okay, this movement has only covered 0.1 of a second, if it didnt go through. then fine
+                    unconfirmedHit.RemoveHit(this);
+                    toRemove.Add(unconfirmedHit);
+                    continue;
+                }
+
+                // okay its been over 0.1 seconds, lets try work out where the player has been
+                var newPosVec = new Vector2(posX, posY);
+                var originalPosVec = new Vector2(Position.X, Position.Y);
+                var posDiffVec = newPosVec - originalPosVec;
+
+                var hit = false;
+                for (var i = timeOfUnconfirmation; i < RealmManager.WorldTime.TotalElapsedMs; i += 20) {
+                    float vectorPerc = timeDifference / i;
+                    var assumedMovement = originalPosVec + posDiffVec * vectorPerc;
+                    if (unconfirmedHit.CheckUnconfirmedHit(this, assumedMovement.X, assumedMovement.Y)) {
+                        hit = true;
                         unconfirmedHit.ConfirmHit(this);
                         toRemove.Add(unconfirmedHit);
-                        continue;
-                    }
-
-                    // unfortunately we could not confirm the hit, how big was this time gap?
-                    var timeDifference = RealmManager.WorldTime.TotalElapsedMs - timeOfUnconfirmation;
-                    if (timeDifference < 100)
-                    {
-                        // okay, this movement has only covered 0.1 of a second, if it didnt go through. then fine
-                        unconfirmedHit.RemoveHit(this);
-                        toRemove.Add(unconfirmedHit);
-                        continue;
-                    }
-
-                    // okay its been over 0.1 seconds, lets try work out where the player has been
-                    var newPosVec = new Vector2(posX, posY);
-                    var originalPosVec = new Vector2(Position.X, Position.Y);
-                    var posDiffVec = newPosVec - originalPosVec;
-
-                    var hit = false;
-                    for (var i = timeOfUnconfirmation; i < RealmManager.WorldTime.TotalElapsedMs; i += 20)
-                    {
-                        float vectorPerc = timeDifference / i;
-                        var assumedMovement = originalPosVec + (posDiffVec * vectorPerc);
-                        if (unconfirmedHit.CheckUnconfirmedHit(this, assumedMovement.X, assumedMovement.Y))
-                        {
-                            hit = true;
-                            unconfirmedHit.ConfirmHit(this);
-                            toRemove.Add(unconfirmedHit);
-                            break;
-                        }
-                    }
-
-                    if (!hit)
-                    { // okay. we didn't hit
-                        unconfirmedHit.RemoveHit(this);
-                        toRemove.Add(unconfirmedHit);
+                        break;
                     }
                 }
-            }
 
-            foreach (var toRem in toRemove)
-                _unconfirmedHits.Remove(toRem);
+                if (!hit) { // okay. we didn't hit
+                    unconfirmedHit.RemoveHit(this);
+                    toRemove.Add(unconfirmedHit);
+                }
+            }
+        }
+
+        foreach (var toRem in toRemove)
+            _unconfirmedHits.Remove(toRem);
     }
 
-    private void SendUpdate()
-    {
+    private void SendUpdate() {
         GetNewTiles();
         ProcessVisibleEntities();
 
@@ -168,11 +154,9 @@ public partial class Player
         _oldEntities.Clear();
     }
 
-    private void GetNewTiles()
-    {
+    private void GetNewTiles() {
         _visibleTiles.Clear();
-        switch (World.Config.Blocksight)
-        {
+        switch (World.Config.Blocksight) {
             case World.UNBLOCKED_SIGHT:
                 var pX = (int)Position.X;
                 var pY = (int)Position.Y;
@@ -181,8 +165,7 @@ public partial class Player
                 for (var y = pY - SIGHT_RADIUS; y <= pY + SIGHT_RADIUS; y++)
                     for (var x = pX - SIGHT_RADIUS; x <= pX + SIGHT_RADIUS; x++)
                         if (x >= 0 && x < width && y >= 0 && y < height &&
-                            this.TileDistSqr(x, y) <= SIGHT_RADIUS_SQR)
-                        {
+                            this.TileDistSqr(x, y) <= SIGHT_RADIUS_SQR) {
                             var tile = World.Map[x, y];
 
                             _visibleTiles.Add(tile);
@@ -194,23 +177,21 @@ public partial class Player
         }
     }
 
-    public void TileUpdate(WorldTile tile)
-    {
+    public void TileUpdate(WorldTile tile) {
         _tilesDiscovered.Remove(tile);
     }
 
-    private void ProcessVisibleEntities()
-    {
-        if (Quest != null && Quest.Id != QuestId)
-        { // This means we have a new quest
+    private void ProcessVisibleEntities() {
+        if (Quest != null && Quest.Id != QuestId) { // This means we have a new quest
             QuestId = Quest.Id;
             _visibleEntities.Add(Quest);
         }
-        else if (Quest == null)
+        else if (Quest == null) {
             QuestId = -1;
+        }
 
-        foreach (var kvp in _visibleEntities)
-        { // Some entities could have gone out of the active chunks so we have to manually check
+        foreach (var kvp in _visibleEntities) {
+            // Some entities could have gone out of the active chunks so we have to manually check
             var en = kvp.Value;
             if (!IsEntityVisible(en))
                 _visibleEntities.Remove(en);
@@ -220,21 +201,15 @@ public partial class Player
         _visibleStaticEntities.Update();
     }
 
-    public void HandleEntityTick(Entity en)
-    {
+    public void HandleEntityTick(Entity en) {
         if (en.Dead)
             return;
 
         var chunk = en.Tile.Chunk;
-        if (chunk.DistSqr(Tile.Chunk) > ACTIVE_RADIUS)
-        {
-            return;
-        }
+        if (chunk.DistSqr(Tile.Chunk) > ACTIVE_RADIUS) return;
 
-        if (IsEntityVisible(en))
-        {
-            if (en.Desc.Static)
-            {
+        if (IsEntityVisible(en)) {
+            if (en.Desc.Static) {
                 _visibleStaticEntities.Add(en);
                 return;
             }
@@ -249,15 +224,13 @@ public partial class Player
         _visibleEntities.Remove(en);
     }
 
-    private void OnEntityAdded(Entity en)
-    {
+    private void OnEntityAdded(Entity en) {
         en.DeathEvent += _onDeathHandler;
         en.Stats.StatChangedListeners.Add(this);
         _newEntities.Add(en.Stats.GetObjectData(Id));
     }
 
-    private void OnEntityRemoved(Entity en)
-    {
+    private void OnEntityRemoved(Entity en) {
         en.DeathEvent -= _onDeathHandler;
         en.Stats.StatChangedListeners.Remove(this);
         _oldEntities.Add(en.Stats.GetObjectDropData());
@@ -265,31 +238,24 @@ public partial class Player
 
     public void AddAllPlayers() // Should only be called once, in Initialize method
     {
-        foreach (var kvp in World.Players)
-        {
+        foreach (var kvp in World.Players) {
             var plr = kvp.Value;
             if (!plr.Dead)
                 _visibleEntities.Add(plr);
         }
     }
 
-    public void AddPlayerEntity(Player plr)
-    {
+    public void AddPlayerEntity(Player plr) {
         if (!plr.Dead)
             _visibleEntities.Add(plr);
     }
 
-    private bool IsEntityVisible(Entity en)
-    {
+    private bool IsEntityVisible(Entity en) {
         if (en.IsPlayer || en.Desc.KeepInSight)
             return !en.Dead;
 
-        if (_visibleTiles.Contains(en.Tile))
-        {
-            if (en is Container c)
-            {
-                return c.IsVisibleTo(this);
-            }
+        if (_visibleTiles.Contains(en.Tile)) {
+            if (en is Container c) return c.IsVisibleTo(this);
 
             return !en.Dead;
         }
@@ -300,13 +266,11 @@ public partial class Player
         return false;
     }
 
-    private void HandleEntityDeath(Entity en)
-    {
+    private void HandleEntityDeath(Entity en) {
         if (Dead)
             return;
 
-        if (en.Desc.Static)
-        {
+        if (en.Desc.Static) {
             _visibleStaticEntities.Remove(en);
             return;
         }

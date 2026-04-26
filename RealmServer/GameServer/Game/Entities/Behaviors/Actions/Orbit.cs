@@ -1,16 +1,15 @@
 ﻿#region
 
-using Common;
 using System;
 using System.Numerics;
+using Common;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class OrbitInfo
-{
+public class OrbitInfo {
     public int Direction;
     public float FinalRadius;
     public float FinalSpeed;
@@ -18,8 +17,7 @@ public class OrbitInfo
     public Entity Target;
 }
 
-public record Orbit : BehaviorScript
-{
+public record Orbit : BehaviorScript {
     private readonly float _acquireRange;
     private readonly bool _orbitClockwise;
     private readonly float _radius;
@@ -30,8 +28,8 @@ public record Orbit : BehaviorScript
     private readonly bool _targetPlayer;
 
     public Orbit(float speed, float radius, float acquireRange = 10, string target = null,
-        float speedVariance = 0.0f, float radiusVariance = 0.0f, bool orbitClockwise = false, bool targetPlayer = false)
-    {
+        float speedVariance = 0.0f, float radiusVariance = 0.0f, bool orbitClockwise = false,
+        bool targetPlayer = false) {
         _speed = speed;
         _radius = radius;
         _radiusVariance = radiusVariance;
@@ -42,17 +40,15 @@ public record Orbit : BehaviorScript
         _targetPlayer = targetPlayer;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var orbitInfo = host.ResolveResource<OrbitInfo>(this);
         orbitInfo.Direction = _orbitClockwise ? 1 : -1;
-        orbitInfo.FinalSpeed = _speed + (_speedVariance * (float)((Random.Shared.NextDouble() * 2) - 1));
-        orbitInfo.FinalRadius = _radius + (_radiusVariance * (float)((Random.Shared.NextDouble() * 2) - 1));
+        orbitInfo.FinalSpeed = _speed + _speedVariance * (float)(Random.Shared.NextDouble() * 2 - 1);
+        orbitInfo.FinalRadius = _radius + _radiusVariance * (float)(Random.Shared.NextDouble() * 2 - 1);
         orbitInfo.FirstTick = true;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var orbitInfo = host.ResolveResource<OrbitInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))
             return BehaviorTickState.BehaviorFailed;
@@ -66,29 +62,28 @@ public record Orbit : BehaviorScript
 
         orbitInfo.Target = target;
 
-        if (target == null || target.Dead)
-        {
+        if (target == null || target.Dead) {
             orbitInfo.Target = null;
             return BehaviorTickState.BehaviorFailed;
         }
 
         var angle = host.Position.Y == target.Position.Y && host.Position.X == target.Position.X
-            ? Math.Atan2(host.Position.Y - target.Position.Y + ((Random.Shared.NextDouble() * 2) - 1), host.Position.X - target.Position.X + ((Random.Shared.NextDouble() * 2) - 1))
+            ? Math.Atan2(host.Position.Y - target.Position.Y + (Random.Shared.NextDouble() * 2 - 1),
+                host.Position.X - target.Position.X + (Random.Shared.NextDouble() * 2 - 1))
             : Math.Atan2(host.Position.Y - target.Position.Y, host.Position.X - target.Position.X);
         var angularSpd = orbitInfo.Direction * host.GetSpeed(orbitInfo.FinalSpeed) / orbitInfo.FinalRadius;
 
         angle += angularSpd * (time.ElapsedMsDelta / 1000f);
 
-        var x = target.Position.X + (Math.Cos(angle) * orbitInfo.FinalRadius);
-        var y = target.Position.Y + (Math.Sin(angle) * orbitInfo.FinalRadius);
+        var x = target.Position.X + Math.Cos(angle) * orbitInfo.FinalRadius;
+        var y = target.Position.Y + Math.Sin(angle) * orbitInfo.FinalRadius;
         var vect = new Vector2((float)x, (float)y) - new Vector2(host.Position.X, host.Position.Y);
         vect = Vector2.Normalize(vect);
         vect *= host.GetSpeed(orbitInfo.FinalSpeed) * (time.ElapsedMsDelta / 1000f);
 
         host.MoveRelative(vect.X, vect.Y);
 
-        if (orbitInfo.FirstTick)
-        {
+        if (orbitInfo.FirstTick) {
             orbitInfo.FirstTick = false;
             return BehaviorTickState.BehaviorActivate;
         }

@@ -1,21 +1,19 @@
 ﻿#region
 
-using Common.Database;
-using Common.Database.Models;
-using Common.Resources.Xml;
-using Common.Resources.Xml.Descriptors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Common.Database.Models;
+using Common.Resources.Xml;
+using Common.Resources.Xml.Descriptors;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Entities.Inventory;
 
-public class PlayerInventory : EntityInventory
-{
+public class PlayerInventory : EntityInventory {
     private const int MAX_INV_SLOTS = 20;
     private const int HP_SLOT = 254;
     private const int MP_SLOT = 255;
@@ -31,8 +29,7 @@ public class PlayerInventory : EntityInventory
     private int _magicPotionCount;
 
     public PlayerInventory(Player player)
-        : base(player, MAX_INV_SLOTS)
-    {
+        : base(player, MAX_INV_SLOTS) {
         _player = player;
         if (_potionStack.Count == 0) // Populate potion stack
         {
@@ -41,17 +38,14 @@ public class PlayerInventory : EntityInventory
         }
     }
 
-    public override Item GetItem(int slot)
-    {
+    public override Item GetItem(int slot) {
         if (slot is 254 or 255)
             return _potionStack[slot];
         return base.GetItem(slot);
     }
 
-    public override Item RemoveItem(byte slotId)
-    {
-        if (slotId is 254 or 255)
-        {
+    public override Item RemoveItem(byte slotId) {
+        if (slotId is 254 or 255) {
             var item = _potionStack[slotId];
             if (!RemovePotionStack(item.ObjectType))
                 return null;
@@ -61,13 +55,10 @@ public class PlayerInventory : EntityInventory
         return base.RemoveItem(slotId);
     }
 
-    public bool HandlePotionSwap(Item item, Item item2, byte slot1, byte slot2)
-    {
+    public bool HandlePotionSwap(Item item, Item item2, byte slot1, byte slot2) {
         // Returns true if the item swapped is a potion
-        if (item is { ObjectType: 2594 or 2595 })
-        { // HP/MP potion stack
-            switch (item.ObjectType)
-            {
+        if (item is { ObjectType: 2594 or 2595 }) { // HP/MP potion stack
+            switch (item.ObjectType) {
                 case 2594:
                     if (!AddToPotionStack(2594))
                         return false;
@@ -83,10 +74,8 @@ public class PlayerInventory : EntityInventory
             return true;
         }
 
-        if (item2 is { ObjectType: 2594 or 2595 })
-        { // HP/MP potion drop
-            switch (item2.ObjectType)
-            {
+        if (item2 is { ObjectType: 2594 or 2595 }) { // HP/MP potion drop
+            switch (item2.ObjectType) {
                 case 2594:
                     if (!RemovePotionStack(2594))
                         return false;
@@ -105,13 +94,10 @@ public class PlayerInventory : EntityInventory
         return false;
     }
 
-    public bool AddToPotionStack(int itemId)
-    { // Purely adds to the potion stack if there is room
-        switch (itemId)
-        {
+    public bool AddToPotionStack(int itemId) { // Purely adds to the potion stack if there is room
+        switch (itemId) {
             case 2594:
-                if (_healthPotionCount >= MAX_POTIONS)
-                {
+                if (_healthPotionCount >= MAX_POTIONS) {
                     Console.WriteLine("Too many potions!!");
                     return false;
                 }
@@ -131,13 +117,10 @@ public class PlayerInventory : EntityInventory
         return false;
     }
 
-    public bool RemovePotionStack(int itemId)
-    { // Purely removes from the potion stack if there is room
-        switch (itemId)
-        {
+    public bool RemovePotionStack(int itemId) { // Purely removes from the potion stack if there is room
+        switch (itemId) {
             case 2594:
-                if (_healthPotionCount <= 0)
-                { // We don't have any more potions
+                if (_healthPotionCount <= 0) { // We don't have any more potions
                     Console.WriteLine("Not enough potions!!");
                     return false;
                 }
@@ -157,13 +140,10 @@ public class PlayerInventory : EntityInventory
         return false;
     }
 
-    public override int GetNextAvailableSlot()
-    {
+    public override int GetNextAvailableSlot() {
         for (var i = 4; i < _invSize; i++)
-        {
             if (_items[i] == null)
                 return i;
-        }
 
         return -1;
     }
@@ -189,8 +169,7 @@ public class PlayerInventory : EntityInventory
         // chr.ItemDatas = GetItemDatas();
     }
 
-    public bool ApplyGemstones(byte slot, byte gemSlot, byte invSlot)
-    {
+    public bool ApplyGemstones(byte slot, byte gemSlot, byte invSlot) {
         if (slot < 0 || slot >= _invSize || invSlot < 0 ||
             invSlot >= _invSize) // Check slots to be within valid values
             return false;
@@ -220,8 +199,7 @@ public class PlayerInventory : EntityInventory
         return true;
     }
 
-    public bool RemoveGemstones(byte slot, byte gemSlot, byte invSlot)
-    {
+    public bool RemoveGemstones(byte slot, byte gemSlot, byte invSlot) {
         if (slot < 0 || slot >= _invSize || invSlot < 0 ||
             invSlot >= _invSize) // Check slots to be within valid values
             return false;
@@ -287,8 +265,7 @@ public class PlayerInventory : EntityInventory
         return true;
     }
 
-    public static bool IsEquippable(Player player, Item item, byte slot)
-    {
+    public static bool IsEquippable(Player player, Item item, byte slot) {
         if (item == null) return true;
         if (slot > 3) return true;
 
@@ -296,8 +273,7 @@ public class PlayerInventory : EntityInventory
         return classDesc.SlotTypes[slot] == item.SlotType;
     }
 
-    public int GetTotalFreeInventorySlots()
-    {
+    public int GetTotalFreeInventorySlots() {
         var count = 0;
         for (var i = 4; i < 12; i++)
             if (GetItem(i) == null)

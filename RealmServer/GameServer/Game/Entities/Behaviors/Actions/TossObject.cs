@@ -1,26 +1,25 @@
 ﻿#region
 
-using Common;
-using Common.Resources.World;
-using Common.Resources.Xml;
-using Common.Utilities;
-using GameServer.Game.Network.Messaging.Outgoing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common;
+using Common.Resources.World;
+using Common.Resources.Xml;
+using Common.Structs;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
+using GameServer.Game.Network.Messaging.Outgoing;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class TossObjectInfo
-{
+public class TossObjectInfo {
     public int CooldownLeft;
 }
 
-public record TossObject : BehaviorScript
-{
+public record TossObject : BehaviorScript {
     private readonly float _angle;
     private readonly string[] _children;
     private readonly int _cooldownMS;
@@ -47,8 +46,7 @@ public record TossObject : BehaviorScript
         float minRange = 0, float maxRange = 0,
         float densityRange = 0, int maxDensity = 1,
         TileRegion region = TileRegion.None, float regionRange = 10,
-        bool targeted = false)
-    {
+        bool targeted = false) {
         if (group == null)
             _children = new[] { child };
         else
@@ -74,8 +72,7 @@ public record TossObject : BehaviorScript
         _targeted = targeted;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var tossObjectInfo = host.ResolveResource<TossObjectInfo>(this);
         tossObjectInfo.CooldownLeft = _cooldownOffsetMS;
 
@@ -88,8 +85,7 @@ public record TossObject : BehaviorScript
 
         _reproduceRegions = new List<IntPoint>();
         for (var y = 0; y < h; y++)
-            for (var x = 0; x < w; x++)
-            {
+            for (var x = 0; x < w; x++) {
                 if (map[x, y].Region != _region)
                     continue;
 
@@ -97,33 +93,26 @@ public record TossObject : BehaviorScript
             }
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var tossObjectInfo = host.ResolveResource<TossObjectInfo>(this);
-        if (tossObjectInfo.CooldownLeft <= 0)
-        {
+        if (tossObjectInfo.CooldownLeft <= 0) {
             if (host.HasConditionEffect(ConditionEffectIndex.Stunned))
                 return BehaviorTickState.BehaviorFailed;
 
-            if (Random.Shared.NextDouble() > _probability)
-            {
+            if (Random.Shared.NextDouble() > _probability) {
                 tossObjectInfo.CooldownLeft = _cooldownMS;
                 return BehaviorTickState.BehaviorDeactivate;
             }
 
             Entity player = _targeted ? host.GetNearestPlayer(_range) : null;
-            if (_densityRange != 0 && _maxDensity != 0)
-            {
+            if (_densityRange != 0 && _maxDensity != 0) {
                 var cnt = 0;
                 if (_children.Length > 1)
                     cnt = host.GetOtherEnemiesByName(_group, _densityRange).Count();
                 else
-                {
                     cnt = host.GetOtherEnemiesByName(_children[0], _densityRange).Count();
-                }
 
-                if (cnt >= _maxDensity)
-                {
+                if (cnt >= _maxDensity) {
                     tossObjectInfo.CooldownLeft = _cooldownMS;
                     return BehaviorTickState.BehaviorDeactivate;
                 }
@@ -131,20 +120,20 @@ public record TossObject : BehaviorScript
 
             var r = _range;
             if (_minRange != 0 && _maxRange != 0)
-                r = (float)(_minRange + (Random.Shared.NextDouble() * (_maxRange - _minRange)));
+                r = (float)(_minRange + Random.Shared.NextDouble() * (_maxRange - _minRange));
 
             var a = _angle;
             if (_angle == 0 && _minAngle != 0 && _maxAngle != 0)
-                a = (float)(_minAngle + (Random.Shared.NextDouble() * (_maxAngle - _minAngle)));
+                a = (float)(_minAngle + Random.Shared.NextDouble() * (_maxAngle - _minAngle));
 
             WorldPosData target;
             if (player == null)
-                target = new WorldPosData { X = host.Position.X + (float)(r * Math.Cos(a)), Y = host.Position.Y + (float)(r * Math.Sin(a)) };
+                target = new WorldPosData
+                    { X = host.Position.X + (float)(r * Math.Cos(a)), Y = host.Position.Y + (float)(r * Math.Sin(a)) };
             else
                 target = new WorldPosData { X = player.Position.X, Y = player.Position.Y };
 
-            if (_reproduceRegions != null && _reproduceRegions.Count > 0)
-            {
+            if (_reproduceRegions != null && _reproduceRegions.Count > 0) {
                 var sx = (int)host.Position.X;
                 var sy = (int)host.Position.Y;
                 var regions = _reproduceRegions
@@ -172,17 +161,15 @@ public record TossObject : BehaviorScript
             var objType = XmlLibrary.Id2Object(_children[Random.Shared.Next(_children.Length)]).ObjectType;
             var entity = Entity.Resolve(objType);
 
-            if (host.Spawned)
-            {
-                entity.Spawned = true;
-            }
+            if (host.Spawned) entity.Spawned = true;
 
             entity.Move(target.X, target.Y);
             entity.EnterWorld(world);
             tossObjectInfo.CooldownLeft = _cooldownMS;
         }
-        else
+        else {
             tossObjectInfo.CooldownLeft -= time.ElapsedMsDelta;
+        }
 
         return BehaviorTickState.BehaviorActive;
     }

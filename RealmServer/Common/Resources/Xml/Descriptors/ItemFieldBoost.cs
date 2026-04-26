@@ -1,9 +1,7 @@
 namespace Common.Resources.Xml.Descriptors;
 
-public class ItemFieldBoost
-{
-    public ItemFieldBoost(bool flat, float amount)
-    {
+public class ItemFieldBoost {
+    public ItemFieldBoost(bool flat, float amount) {
         if (flat)
             FlatAmount = amount;
         else
@@ -13,8 +11,7 @@ public class ItemFieldBoost
     public float FlatAmount { get; private set; }
     public float ProportionalAmount { get; private set; }
 
-    public void Add(bool flat, float amount)
-    {
+    public void Add(bool flat, float amount) {
         if (flat)
             FlatAmount += amount;
         else

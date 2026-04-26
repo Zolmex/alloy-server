@@ -1,7 +1,5 @@
 ﻿#region
 
-using Common;
-using Common.Database;
 using Common.Network;
 
 #endregion
@@ -9,12 +7,10 @@ using Common.Network;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.GUILDREMOVE)]
-public partial record GuildRemove : IIncomingPacket
-{
+public record GuildRemove : IIncomingPacket {
     public string TargetName;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
@@ -39,8 +35,7 @@ public partial record GuildRemove : IIncomingPacket
         //     target.User.ReconnectTo(RealmManager.NexusInstance);
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         TargetName = rdr.ReadUTF();
     }
 }

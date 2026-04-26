@@ -7,8 +7,7 @@ using System.ComponentModel;
 
 namespace Common;
 
-public enum RegisterStatus
-{
+public enum RegisterStatus {
     [Description("Success.")] Success,
     [Description("Name taken.")] NameInUse,
     [Description("Invalid name.")] InvalidName,
@@ -19,15 +18,13 @@ public enum RegisterStatus
     [Description("Internal server error")] InternalError
 }
 
-public enum BuyStatus
-{
+public enum BuyStatus {
     [Description("Success.")] Success,
     [Description("Not enough gold.")] NotEnoughCredits,
     [Description("Not enough fame.")] NotEnoughFame
 }
 
-public enum CharResult
-{
+public enum CharResult {
     [Description("Success")] Success,
 
     [Description("You don't own this skin.")]
@@ -40,26 +37,23 @@ public enum CharResult
     InternalError
 }
 
-public enum VerifyStatus
-{
+public enum VerifyStatus {
     [Description("Success")] Success,
 
     [Description("Invalid account credentials.")]
     InvalidCredentials,
-    
+
     [Description("Internal server error.")]
     InternalError
 }
 
-public enum FlushStatus
-{
+public enum FlushStatus {
     Success,
     VersionMismatch,
     InternalError
 }
 
-public enum CreateCharacterStatus
-{
+public enum CreateCharacterStatus {
     [Description("Success")] Success,
 
     [Description("You don't own this skin.")]
@@ -72,8 +66,7 @@ public enum CreateCharacterStatus
     InternalError
 }
 
-public enum StatType
-{
+public enum StatType {
     MaxHP = 0,
     HP = 1,
     Size = 2,
@@ -205,8 +198,7 @@ public enum StatType
     None = int.MaxValue
 }
 
-public enum ItemType
-{
+public enum ItemType {
     All,
     Sword,
     Dagger,
@@ -232,12 +224,11 @@ public enum ItemType
     Prism,
     Scepter,
     Katana,
-    Shuriken,
+    Shuriken
 }
 
 [Flags]
-public enum ConditionEffectIndex : byte
-{
+public enum ConditionEffectIndex : byte {
     Nothing = 0,
     Dead = 1,
     Quiet = 2,
@@ -304,8 +295,7 @@ public enum ConditionEffectIndex : byte
     ConditionCount
 }
 
-public enum ActivateEffectIndex
-{
+public enum ActivateEffectIndex {
     None,
     Create,
     Dye,
@@ -363,8 +353,7 @@ public enum ActivateEffectIndex
     BulletCreate
 }
 
-public enum ShowEffectIndex : byte
-{
+public enum ShowEffectIndex : byte {
     Unknown = 0,
     Heal = 1,
     Teleport = 2,
@@ -386,8 +375,7 @@ public enum ShowEffectIndex : byte
     SheatheSlash = 18
 }
 
-public enum TerrainType
-{
+public enum TerrainType {
     None,
     Mountains,
     HighSand,
@@ -404,18 +392,22 @@ public enum TerrainType
     BeachTowels
 }
 
-public enum CurrencyType
-{
+public enum CurrencyType {
     Gold,
     Fame,
     GuildFame
 }
 
-public enum GuildRank
-{
+public enum GuildRank {
     Founder = 40,
     Leader = 30,
     Officer = 20,
     Member = 10,
     Initiate = 0
+}
+
+public enum LootDropRarity {
+    All,
+    Legendary,
+    Primal
 }

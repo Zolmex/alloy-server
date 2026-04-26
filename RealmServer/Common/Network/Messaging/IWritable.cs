@@ -1,8 +1,5 @@
-using System.IO;
-
 namespace Common.Network.Messaging;
 
-public interface IWritable
-{
+public interface IWritable {
     void Write(ref SpanWriter wtr);
 }

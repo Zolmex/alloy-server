@@ -1,54 +1,47 @@
 ﻿#region
 
-using Common;
 using System.Numerics;
+using Common;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class ChargeInfo
-{
+public class ChargeInfo {
     public Vector2 Direction;
     public int RemainingTime;
 }
 
-public record Charge : BehaviorScript
-{
+public record Charge : BehaviorScript {
     private readonly int _cooldownMS;
     private readonly float _range;
     private readonly float _speed;
 
-    public Charge(float speed = 1, float range = 10, int cooldownMS = 1000)
-    {
+    public Charge(float speed = 1, float range = 10, int cooldownMS = 1000) {
         _speed = speed;
         _range = range;
         _cooldownMS = cooldownMS;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var chargeState = host.ResolveResource<ChargeInfo>(this);
         chargeState.RemainingTime = 0; // Make sure the behavior runs once
         chargeState.Direction = Vector2.Zero;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var chargeState = host.ResolveResource<ChargeInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))
             return BehaviorTickState.BehaviorFailed;
 
         var status = BehaviorTickState.BehaviorActive;
-        if (chargeState.RemainingTime <= 0)
-        {
-            if (chargeState.Direction == Vector2.Zero)
-            {
+        if (chargeState.RemainingTime <= 0) {
+            if (chargeState.Direction == Vector2.Zero) {
                 var player = host.GetNearestPlayer(_range);
-                if (player != null && player.Position.X != host.Position.X && player.Position.Y != host.Position.Y)
-                {
-                    chargeState.Direction = new Vector2(player.Position.X - host.Position.X, player.Position.Y - host.Position.Y);
+                if (player != null && player.Position.X != host.Position.X && player.Position.Y != host.Position.Y) {
+                    chargeState.Direction = new Vector2(player.Position.X - host.Position.X,
+                        player.Position.Y - host.Position.Y);
 
                     var d = chargeState.Direction.Length();
 
@@ -58,8 +51,7 @@ public record Charge : BehaviorScript
                     status = BehaviorTickState.BehaviorActivate;
                 }
             }
-            else
-            {
+            else {
                 chargeState.Direction = Vector2.Zero;
                 chargeState.RemainingTime = _cooldownMS;
 
@@ -67,8 +59,7 @@ public record Charge : BehaviorScript
             }
         }
 
-        if (chargeState.Direction != Vector2.Zero)
-        {
+        if (chargeState.Direction != Vector2.Zero) {
             var dist = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
             host.MoveRelative(chargeState.Direction.X * dist, chargeState.Direction.Y * dist);
         }

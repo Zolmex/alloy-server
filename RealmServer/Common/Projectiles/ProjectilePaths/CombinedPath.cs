@@ -1,29 +1,25 @@
 ﻿#region
 
-using Common.Network;
-using Common.Resources.Xml.Descriptors;
-using System.IO;
 using System.Linq;
 using System.Numerics;
+using Common.Network;
+using Common.Resources.Xml.Descriptors;
 
 #endregion
 
 namespace Common.Projectiles.ProjectilePaths;
 
-public class CombinedPath : ProjectilePathSegment
-{
+public class CombinedPath : ProjectilePathSegment {
     private readonly ProjectilePathSegment[] _segments;
 
     public CombinedPath(int? timeOffset = null, params ProjectilePathSegment[] segments)
-        : base(PathType.CombinedPath, 0, timeOffset: timeOffset)
-    {
+        : base(PathType.CombinedPath, 0, timeOffset: timeOffset) {
         _segments = segments;
 
         _lifetimeMs = segments.Max(i => i.TimeOffset + i.LifetimeMs);
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs)
-    {
+    public override Vector2 PositionAt(int elapsedLifetimeMs) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -36,8 +32,7 @@ public class CombinedPath : ProjectilePathSegment
         var deltaY = 0f;
 
         var count = 0;
-        foreach (var segment in _segments)
-        {
+        foreach (var segment in _segments) {
             if (segment.TimeOffset > 0 && elapsedLifetimeMs < segment.TimeOffset)
                 continue;
 
@@ -52,11 +47,9 @@ public class CombinedPath : ProjectilePathSegment
         return p;
     }
 
-    public override void Write(ref SpanWriter wtr)
-    {
+    public override void Write(ref SpanWriter wtr) {
         wtr.Write((byte)_segments.Length);
-        foreach (var segment in _segments)
-        {
+        foreach (var segment in _segments) {
             wtr.Write((byte)segment.Type);
             segment.Write(ref wtr);
         }
@@ -65,17 +58,12 @@ public class CombinedPath : ProjectilePathSegment
         wtr.Write(_mods);
     }
 
-    public override void SetInfo(ProjectileInfo info)
-    {
+    public override void SetInfo(ProjectileInfo info) {
         base.SetInfo(info);
-        foreach (var segment in _segments)
-        {
-            segment.SetInfo(info);
-        }
+        foreach (var segment in _segments) segment.SetInfo(info);
     }
 
-    public override ProjectilePathSegment Clone()
-    {
+    public override ProjectilePathSegment Clone() {
         return new CombinedPath(TimeOffset, (ProjectilePathSegment[])_segments.Clone());
     }
 }

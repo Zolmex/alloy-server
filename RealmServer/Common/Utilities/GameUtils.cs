@@ -1,14 +1,11 @@
-﻿using Common.Database.Models;
-using System.Linq;
+﻿using System.Linq;
+using Common.Database.Models;
 
 namespace Common.Utilities;
 
-public static class GameUtils
-{
-    public static string StatIndexToName(int index)
-    {
-        switch (index)
-        {
+public static class GameUtils {
+    public static string StatIndexToName(int index) {
+        switch (index) {
             case 0: return "MaxHitPoints";
             case 1: return "MaxMagicPoints";
             case 2: return "Attack";
@@ -22,10 +19,8 @@ public static class GameUtils
         return null;
     }
 
-    public static int StatNameToIndex(string name)
-    {
-        switch (name)
-        {
+    public static int StatNameToIndex(string name) {
+        switch (name) {
             case "MaxHitPoints": return 0;
             case "MaxMagicPoints": return 1;
             case "Attack": return 2;
@@ -39,18 +34,15 @@ public static class GameUtils
         return -1;
     }
 
-    public static int GetNextLevelXp(int level)
-    {
+    public static int GetNextLevelXp(int level) {
         // TODO: return real value lol
         return level + 10;
     }
 
-    public static int GetNextClassQuestFame(Character chr, Account acc)
-    {
+    public static int GetNextClassQuestFame(Character chr, Account acc) {
         // TODO: based on chr.ObjectType and classStat.BestFame find the next class quest fame
         var classStat = acc.AccStats!.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
-        if (classStat == null)
-        {
+        if (classStat == null) {
             Logger.Debug($"BITCH {chr.ObjectType}");
             return 0;
         }

@@ -7,13 +7,12 @@ namespace GameServer.Game.Entities.Behaviors;
 ///     Base class for all BehaviorScripts, a collection of classes that perform common behavior logic on a given entity.
 ///     These are used in tandem with an <see cref="EntityBehavior" /> to form the behavior system.
 /// </summary>
-public record BehaviorScript : IStateChild
-{
+public record BehaviorScript : IStateChild {
     /// <summary>
-    ///     A return from the <see cref="Tick(CharacterEntity, RealmTime)" /> function to indicate what happened during the tick.
+    ///     A return from the <see cref="Tick(CharacterEntity, RealmTime)" /> function to indicate what happened during the
+    ///     tick.
     /// </summary>
-    public enum BehaviorTickState
-    {
+    public enum BehaviorTickState {
         /// <summary>
         ///     The behavior was on cooldown during the tick.
         /// </summary>
@@ -43,8 +42,7 @@ public record BehaviorScript : IStateChild
     /// <summary>
     ///     An enum defining how a <see cref="BehaviorScript" /> will acquire the its target for the behavior.
     /// </summary>
-    public enum TargetType
-    {
+    public enum TargetType {
         /// <summary>
         ///     The behavior will target the closest player.
         /// </summary>
@@ -82,17 +80,15 @@ public record BehaviorScript : IStateChild
     }
 
     // Setup any ObjectDesc data here
-    public virtual void Setup(ObjectDesc desc)
-    { }
-    
+    public virtual void Setup(ObjectDesc desc) { }
+
     /// <summary>
     ///     Function that will contain any logic for starting a behavior, for anything that is required to be initialized
     ///     before the behavior runs on tick.
     ///     Useful for resetting variables like cooldowns and angles.
     /// </summary>
     /// <param name="host">The character that the behavior is being ran on.</param>
-    public virtual void Start(CharacterEntity host)
-    { }
+    public virtual void Start(CharacterEntity host) { }
 
     /// <summary>
     ///     Function that will contain any logic for running the behavior on a tick by tick basis.
@@ -100,8 +96,7 @@ public record BehaviorScript : IStateChild
     /// <param name="host">The character that the behavior is being ran on.</param>
     /// <param name="time">The current <see cref="RealmTime" /> the behavior was ticked at.</param>
     /// <returns>Returns a <see cref="BehaviorTickState" /> which will indicate what happened during the tick.</returns>
-    public virtual BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public virtual BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         return BehaviorTickState.OnCooldown;
     }
 
@@ -111,6 +106,5 @@ public record BehaviorScript : IStateChild
     /// </summary>
     /// <param name="host">The character that the behavior is being ran on.</param>
     /// <param name="time">The current <see cref="RealmTime" /> the behavior is being ended at.</param>
-    public virtual void End(CharacterEntity host, RealmTime time)
-    { }
+    public virtual void End(CharacterEntity host, RealmTime time) { }
 }

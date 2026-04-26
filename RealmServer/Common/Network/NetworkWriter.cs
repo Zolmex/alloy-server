@@ -5,30 +5,29 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using Common.Structs;
 
 #endregion
 
 namespace Common.Network;
 
-public class NetworkWriter : BinaryWriter
-{
+public class NetworkWriter : BinaryWriter {
     private readonly bool _littleEndian;
 
-    public NetworkWriter(Stream s, bool littleEndian = true) : base(s, Encoding.UTF8) // Little endian is for network, big endian is for maps
+    public NetworkWriter(Stream s, bool littleEndian = true) :
+        base(s, Encoding.UTF8) // Little endian is for network, big endian is for maps
     {
         _littleEndian = littleEndian;
     }
 
-    public override void Write(short value)
-    {
+    public override void Write(short value) {
         if (!_littleEndian)
             base.Write(IPAddress.HostToNetworkOrder(value));
         else
             base.Write(value);
     }
 
-    public override void Write(int value)
-    {
+    public override void Write(int value) {
         if (!_littleEndian)
             base.Write(IPAddress.HostToNetworkOrder(value));
         else
@@ -42,34 +41,28 @@ public class NetworkWriter : BinaryWriter
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     public void Write<T>(T[] value)
-        where T : IConvertible
-    {
-        if (value is char[] chars)
-        {
+        where T : IConvertible {
+        if (value is char[] chars) {
             var span = chars.AsSpan();
             Write((ushort)Encoding.UTF8.GetByteCount(span));
             base.Write(span);
             return;
         }
 
-        if (value is string[] strings)
-        {
+        if (value is string[] strings) {
             Write(strings);
             return;
         }
 
         Write((ushort)value.Length);
 
-        if (value is byte[] bytes)
-        {
+        if (value is byte[] bytes) {
             base.Write(bytes);
             return;
         }
 
         for (var i = 0; i < value.Length; i++)
-        {
-            switch (value[i])
-            {
+            switch (value[i]) {
                 case bool @bool: Write(@bool); break;
                 case byte @byte: Write(@byte); break; // this one will probably never work because of byte[] check above
                 case char @char: Write(@char); break;
@@ -85,52 +78,42 @@ public class NetworkWriter : BinaryWriter
                 case uint @uint: Write(@uint); break;
                 case ulong @ulong: Write(@ulong); break;
             }
-        }
     }
 
-    public void Write(string[] value)
-    {
+    public void Write(string[] value) {
         Write((ushort)value.Length);
-        for (var i = 0; i < value.Length; i++)
-        {
-            WriteUTF(value[i]);
-        }
+        for (var i = 0; i < value.Length; i++) WriteUTF(value[i]);
     }
 
-    public override void Write(long value)
-    {
+    public override void Write(long value) {
         if (!_littleEndian)
             base.Write(IPAddress.HostToNetworkOrder(value));
         else
             base.Write(value);
     }
 
-    public override void Write(ushort value)
-    {
+    public override void Write(ushort value) {
         if (!_littleEndian)
             base.Write((ushort)IPAddress.HostToNetworkOrder((short)value));
         else
             base.Write(value);
     }
 
-    public override void Write(uint value)
-    {
+    public override void Write(uint value) {
         if (!_littleEndian)
             base.Write((uint)IPAddress.HostToNetworkOrder((int)value));
         else
             base.Write(value);
     }
 
-    public override void Write(ulong value)
-    {
+    public override void Write(ulong value) {
         if (!_littleEndian)
             base.Write((ulong)IPAddress.HostToNetworkOrder((long)value));
         else
             base.Write(value);
     }
 
-    public override unsafe void Write(float value)
-    {
+    public override unsafe void Write(float value) {
         if (!_littleEndian)
             for (var i = 3; i >= 0; i--)
                 base.Write(((byte*)&value)[i]);
@@ -138,8 +121,7 @@ public class NetworkWriter : BinaryWriter
             base.Write(value);
     }
 
-    public override unsafe void Write(double value)
-    {
+    public override unsafe void Write(double value) {
         if (!_littleEndian)
             for (var i = 7; i >= 0; i--)
                 base.Write(((byte*)&value)[i]);
@@ -147,48 +129,40 @@ public class NetworkWriter : BinaryWriter
             base.Write(value);
     }
 
-    public void WriteNullTerminatedString(ReadOnlySpan<char> str)
-    {
+    public void WriteNullTerminatedString(ReadOnlySpan<char> str) {
         base.Write(str);
         base.Write(byte.MinValue);
     }
 
-    private void WriteUTF(ReadOnlySpan<char> str)
-    {
-        if (str.IsEmpty)
+    private void WriteUTF(ReadOnlySpan<char> str) {
+        if (str.IsEmpty) {
             Write(ushort.MinValue);
-        else
-        {
+        }
+        else {
             Write((ushort)str.Length);
             base.Write(str);
         }
     }
 
-    public void Write(WorldPosData wp)
-    {
+    public void Write(WorldPosData wp) {
         Write(wp.X);
         Write(wp.Y);
     }
 
-    public void Write32UTF(string str)
-    {
+    public void Write32UTF(string str) {
         var bytes = Encoding.UTF8.GetBytes(str);
         Write(bytes.Length);
         base.Write(bytes);
     }
 }
 
-public static class NetworkWriterExtension
-{
-    extension(NetworkWriter wtr)
-    {
-        public void Write<T>(T value) where T : struct, Enum
-        {
+public static class NetworkWriterExtension {
+    extension(NetworkWriter wtr) {
+        public void Write<T>(T value) where T : struct, Enum {
             wtr.Write(MemoryMarshal.AsBytes(new ReadOnlySpan<T>(in value)));
         }
 
-        public void Write<T>(T[] value) where T : struct, Enum
-        {
+        public void Write<T>(T[] value) where T : struct, Enum {
             wtr.Write((ushort)value.Length);
             wtr.Write(MemoryMarshal.AsBytes(value));
         }

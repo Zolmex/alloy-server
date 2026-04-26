@@ -6,17 +6,14 @@ using Common.Resources.Xml;
 
 namespace GameServer.Game.Entities.Loot;
 
-public class ItemLoot
-{
-    public ItemLoot(ushort itemType, float dropChance, float threshold = 0f)
-    {
+public class ItemLoot {
+    public ItemLoot(ushort itemType, float dropChance, float threshold = 0f) {
         ItemType = itemType;
         DropChance = dropChance;
         Threshold = threshold;
     }
 
-    public ItemLoot(string itemName, float dropChance, float threshold = 0f)
-    {
+    public ItemLoot(string itemName, float dropChance, float threshold = 0f) {
         ItemType = XmlLibrary.Id2Item(itemName).ObjectType;
         DropChance = dropChance;
         Threshold = threshold;

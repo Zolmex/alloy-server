@@ -1,36 +1,33 @@
 ﻿#region
 
-using Common;
-using Common.Database;
-using Common.Database.Models;
-using Common.Resources.Config;
-using Common.Resources.World;
-using Common.Utilities;
-using GameServer.Game.Chat;
-using GameServer.Game.Entities.Inventory;
-using GameServer.Game.Network.Messaging.Outgoing;
-using GameServer.Game.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Common;
+using Common.Database;
+using Common.Database.Models;
+using Common.Resources.World;
+using Common.Structs;
+using Common.Utilities;
+using GameServer.Game.Chat;
 using GameServer.Game.Entities.DamageSources;
 using GameServer.Game.Entities.DamageSources.Types;
+using GameServer.Game.Entities.Inventory;
 using GameServer.Game.Network;
+using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds.Logic;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public partial class Player : CharacterEntity
-{
+public partial class Player : CharacterEntity {
     public static Action<Player, string> OnDeath;
     private readonly List<string> _guildInvites = new();
 
     private readonly HashSet<Projectile> _unconfirmedHits = new();
 
-    public Player(User user, Character chr) : base(chr.ObjectType)
-    {
+    public Player(User user, Character chr) : base(chr.ObjectType) {
         User = user;
         Char = chr;
         IsPlayer = true;
@@ -55,15 +52,13 @@ public partial class Player : CharacterEntity
 
     public event Action<RealmTime> OnTick;
 
-    private void Reset()
-    {
+    private void Reset() {
         Dead = false; // Reset death state
         Position = new WorldPosData();
         PrevPosition = new WorldPosData();
     }
 
-    public override void Initialize()
-    {
+    public override void Initialize() {
         Reset();
         base.Initialize();
 
@@ -85,8 +80,7 @@ public partial class Player : CharacterEntity
         // Load inventory data
         Inventory.Load(Char);
 
-        if (World is Realm realm)
-        {
+        if (World is Realm realm) {
             SendEnemy("Oryx the Mad God", "You are food for my minions!");
             SendEnemy("Oryx the Mad God",
                 $"I still have {realm.Oryx.EventsMax - realm.Oryx.EventsCounter} guardians left!");
@@ -102,8 +96,7 @@ public partial class Player : CharacterEntity
         World.OnEntityTick += HandleEntityTick;
     }
 
-    protected override void LoadStats()
-    {
+    protected override void LoadStats() {
         if (User.State != ConnectionState.Ready || User.GameInfo.State != GameState.Playing)
             return;
 
@@ -117,8 +110,7 @@ public partial class Player : CharacterEntity
         AccRank = User.Account.Rank;
 
         // These stats will be recalculated anyway based on gear, constellations, etc, but no harm in having this here
-        if (Char.CharStats != null)
-        {
+        if (Char.CharStats != null) {
             MaxHP = (int)Char.CharStats.MaxHp;
             HP = (int)Char.CharStats.Hp;
             MaxMP = (int)Char.CharStats.MaxMp;
@@ -135,8 +127,7 @@ public partial class Player : CharacterEntity
         Stats.Initializing = false;
     }
 
-    public void SaveCharacter(bool saveToDb = false)
-    {
+    public void SaveCharacter(bool saveToDb = false) {
         if (!Initialized) // Make sure we don't fuck up our character
             return;
 
@@ -145,8 +136,7 @@ public partial class Player : CharacterEntity
         Char.CurrentFame = (uint)CharFame;
         // Char.NextLevelXp = NextLevelXpGoal; // TODO: fix
         // Char.NextClassQuestFame = NextClassQuestFame;
-        if (Char.CharStats != null)
-        {
+        if (Char.CharStats != null) {
             Char.CharStats.Hp = (uint)HP;
             Char.CharStats.Mp = (uint)MP;
             Char.SkinType = (ushort)Skin;
@@ -168,13 +158,11 @@ public partial class Player : CharacterEntity
             DbClient.FlushAsync(Char);
     }
 
-    public void RemoveReferenceTo(Entity ent)
-    {
+    public void RemoveReferenceTo(Entity ent) {
         _hitEntities.Remove(ent);
     }
 
-    public override bool Tick(RealmTime time)
-    {
+    public override bool Tick(RealmTime time) {
         if (!base.Tick(time))
             return false;
 
@@ -191,8 +179,7 @@ public partial class Player : CharacterEntity
         return true;
     }
 
-    public override bool Death(string killer)
-    {
+    public override bool Death(string killer) {
         if (Dead)
             return false;
 
@@ -219,33 +206,27 @@ public partial class Player : CharacterEntity
         return true;
     }
 
-    protected override void LeaveWorld()
-    {
+    protected override void LeaveWorld() {
         World.OnEntityTick -= HandleEntityTick;
         base.LeaveWorld();
     }
 
-    public ushort GetGraveType()
-    {
-        return Level switch
-        {
+    public ushort GetGraveType() {
+        return Level switch {
             _ => 1845
         };
     }
 
-    public void SendNotif(string text, int color = 0xFFFFFF, int size = 24, int specifyId = -1)
-    {
+    public void SendNotif(string text, int color = 0xFFFFFF, int size = 24, int specifyId = -1) {
         User.SendPacket(new Notification(specifyId != -1 ? specifyId : Id, text, color, size));
     }
 
-    public void AddCurrency(CurrencyType currency, int amount)
-    {
+    public void AddCurrency(CurrencyType currency, int amount) {
         var accStats = User.Account.AccStats;
         if (accStats == null)
             throw new Exception($"Null account stats. AccId:{User.Account.Id}");
-        
-        switch (currency)
-        {
+
+        switch (currency) {
             case CurrencyType.Gold:
                 Gold += amount;
                 accStats.CurrentCredits += (uint)amount;
@@ -262,34 +243,26 @@ public partial class Player : CharacterEntity
         _ = DbClient.FlushAsync(accStats);
     }
 
-    public void SetLootBoost(double lootBoost)
-    {
+    public void SetLootBoost(double lootBoost) {
         LootBoost = lootBoost;
-        foreach (var ent in _hitEntities)
-        {
+        foreach (var ent in _hitEntities) {
             if (ent == null) continue; // will be cleaned up later in tick
-            if (ent is CharacterEntity c)
-            {
-                c.UpdateLootRollCache(this);
-            }
+            if (ent is CharacterEntity c) c.UpdateLootRollCache(this);
         }
     }
 
-    public void StoreUnconfirmedHit(Projectile p)
-    {
+    public void StoreUnconfirmedHit(Projectile p) {
         _unconfirmedHits.Add(p);
     }
 
-    public void GuildInvite(User invitedBy, string guildName)
-    {
+    public void GuildInvite(User invitedBy, string guildName) {
         if (!_guildInvites.Contains(guildName))
             _guildInvites.Add(guildName);
 
         User.SendPacket(new InvitedToGuild(invitedBy.Account.Name, guildName));
     }
 
-    public void JoinGuild(string guildname)
-    {
+    public void JoinGuild(string guildname) {
         if (!_guildInvites.Remove(guildname))
             return;
 
@@ -299,26 +272,20 @@ public partial class Player : CharacterEntity
         GuildRank = User.Account.GuildMember?.GuildRank ?? 0;
     }
 
-    public override void Hit(CharacterEntity hit, DamageSource damageSource)
-    {
-        if (!_hitEntities.Contains(hit))
-        {
-            _hitEntities.Add(hit);
-        }
+    public override void Hit(CharacterEntity hit, DamageSource damageSource) {
+        if (!_hitEntities.Contains(hit)) _hitEntities.Add(hit);
 
         if (hit is Enemy)
             EnemyHit(this, damageSource);
     }
 
-    public override void OnHitBy(CharacterEntity from, DamageSource damageSource)
-    {
+    public override void OnHitBy(CharacterEntity from, DamageSource damageSource) {
         Damage(damageSource.GetTotalDamage(), from);
         if (damageSource.Effects != null)
             ApplyConditionEffects(damageSource.Effects);
     }
 
-    public override void Dispose()
-    {
+    public override void Dispose() {
         // Player instance is reused when moving between worlds, so this acts as a Reset() method. Called in RealmManager.Update()
         base.Dispose();
 
@@ -338,22 +305,19 @@ public partial class Player : CharacterEntity
         _visibleTiles.Clear();
         _tilesDiscovered.Clear();
         _newTiles.Clear();
-        while (_deadEntities.TryDequeue(out var en))
-        {
+        while (_deadEntities.TryDequeue(out var en)) {
             en.DeathEvent -= _onDeathHandler;
             en.Stats.StatChangedListeners.Remove(this);
         }
 
-        foreach (var kvp in _visibleEntities)
-        {
+        foreach (var kvp in _visibleEntities) {
             var en = kvp.Value;
             en.DeathEvent -= _onDeathHandler;
             en.Stats.StatChangedListeners.Remove(this);
         }
 
         _visibleEntities.Clear();
-        foreach (var kvp in _visibleStaticEntities)
-        {
+        foreach (var kvp in _visibleStaticEntities) {
             var en = kvp.Value;
             en.DeathEvent -= _onDeathHandler;
             en.Stats.StatChangedListeners.Remove(this);

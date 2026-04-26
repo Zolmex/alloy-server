@@ -1,28 +1,23 @@
 ﻿#region
 
-using Common.Resources.Config;
+using System.Collections.Generic;
 using Common.Resources.World;
 using Common.Utilities;
-using GameServer.Game.Entities;
-using System.Collections.Generic;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Worlds.Logic;
 
-public class Nexus : World
-{
+public class Nexus : World {
     private readonly HashSet<WorldTile> _realmPortals = new();
     private readonly List<WorldTile> _realmPortalTiles = new();
 
     public Dictionary<Portal, string> AllPortals = new();
 
-    public Nexus() : base(NEXUS, 0, -1)
-    { }
+    public Nexus() : base(NEXUS, 0, -1) { }
 
-    public override void Initialize()
-    {
+    public override void Initialize() {
         base.Initialize();
 
         // Load all tiles with RealmPortals region
@@ -45,8 +40,7 @@ public class Nexus : World
     }
 
     // My take on a PortalMonitor. Just.. not in a separate class B).
-    public void AddPortal(World world)
-    {
+    public void AddPortal(World world) {
         var attach = world is Realm;
         var type = attach ? 0x0704 : 0x0703;
         var portal = new Portal((ushort)type, attach);
@@ -55,32 +49,26 @@ public class Nexus : World
 
     public void RemovePortal(string name) // Primarily used for realm portals.
     {
-        foreach (var portal in AllPortals.Keys)
-        {
+        foreach (var portal in AllPortals.Keys) {
             var portalWorld = portal.PortalWorld;
-            if (portalWorld.DisplayName == name)
-            {
+            if (portalWorld.DisplayName == name) {
                 portal.TryLeaveWorld();
                 AllPortals.Remove(portal);
             }
         }
     }
 
-    public void RemovePortal(World target)
-    {
-        foreach (var portal in AllPortals.Keys)
-        {
+    public void RemovePortal(World target) {
+        foreach (var portal in AllPortals.Keys) {
             var portalWorld = portal.PortalWorld;
-            if (portalWorld == target)
-            {
+            if (portalWorld == target) {
                 portal.TryLeaveWorld();
                 AllPortals.Remove(portal);
             }
         }
     }
 
-    private void AddRealmPortal(Portal portal)
-    {
+    private void AddRealmPortal(Portal portal) {
         WorldTile tile = null; // Select a random realm portal tile
         while (tile == null || _realmPortals.Contains(tile))
             tile = _realmPortalTiles.RandomElement();

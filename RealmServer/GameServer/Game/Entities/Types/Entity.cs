@@ -1,21 +1,21 @@
 ﻿#region
 
+using System;
+using System.Numerics;
+using System.Threading;
 using Common;
 using Common.Resources.Config;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
+using Common.Structs;
 using Common.Utilities;
 using GameServer.Game.Worlds;
-using System;
-using System.Numerics;
-using System.Threading;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public class Entity : IIdentifiable
-{
+public class Entity : IIdentifiable {
     public const int MAX_POS_HISTORY_SIZE = 20;
     private static readonly Random _random = new();
     private static int _nextEntityId;
@@ -31,8 +31,7 @@ public class Entity : IIdentifiable
     public WorldPosData PrevPosition;
     public WorldPosData SpawnPosition;
 
-    public Entity(ushort type, int lifetime = -1)
-    {
+    public Entity(ushort type, int lifetime = -1) {
         _log = new Logger(GetType());
 
         Id = Interlocked.Increment(ref _nextEntityId);
@@ -58,13 +57,11 @@ public class Entity : IIdentifiable
     public event Action<World> OnEnteredWorld;
     public event Action<World> OnLeftWorld;
 
-    public static Entity Resolve(ushort objType)
-    {
+    public static Entity Resolve(ushort objType) {
         var desc = XmlLibrary.ObjectDescs[objType];
 
         if (desc.Class != null)
-            switch (desc.Class)
-            {
+            switch (desc.Class) {
                 case "ConnectedWall":
                 case "CaveWall":
                     return new ConnectedObject(objType);
@@ -92,15 +89,13 @@ public class Entity : IIdentifiable
         return new Entity(objType);
     }
 
-    public void EnterWorld(World world)
-    {
+    public void EnterWorld(World world) {
         World = world;
         World.AddEntity(this);
         OnEnteredWorld?.Invoke(world);
     }
 
-    public virtual void Initialize()
-    {
+    public virtual void Initialize() {
         LoadStats();
 
         SpawnPosition = new WorldPosData(Position.X, Position.Y);
@@ -111,13 +106,11 @@ public class Entity : IIdentifiable
         Initialized = true;
     }
 
-    public virtual bool Tick(RealmTime time)
-    {
+    public virtual bool Tick(RealmTime time) {
         if (!Initialized)
             return false;
 
-        if (Lifetime > 0)
-        {
+        if (Lifetime > 0) {
             Lifetime -= 1000 / GameServerConfig.Config.TPS;
 
             if (Lifetime <= 0)
@@ -129,8 +122,7 @@ public class Entity : IIdentifiable
         return true;
     }
 
-    protected virtual void LoadStats()
-    {
+    protected virtual void LoadStats() {
         Stats.Initializing = true;
 
         Name = Desc.ObjectId;
@@ -141,23 +133,19 @@ public class Entity : IIdentifiable
         Stats.Initializing = false;
     }
 
-    public virtual bool MoveRelative(Vector2 relVec)
-    {
+    public virtual bool MoveRelative(Vector2 relVec) {
         return MoveRelative(relVec.X, relVec.Y);
     }
 
-    public virtual bool MoveRelative(float relX, float relY)
-    {
+    public virtual bool MoveRelative(float relX, float relY) {
         return Move(Position.X + relX, Position.Y + relY);
     }
 
-    public virtual bool Move(Vector2 pos)
-    {
+    public virtual bool Move(Vector2 pos) {
         return Move(pos.X, pos.Y);
     }
 
-    public virtual bool Move(float posX, float posY)
-    {
+    public virtual bool Move(float posX, float posY) {
         if (Dead)
             return false;
 
@@ -171,29 +159,26 @@ public class Entity : IIdentifiable
         return true;
     }
 
-    protected void UpdateTileChunk()
-    {
-        if (World != null && Position.X >= 0 && Position.X < World.Map.Width && Position.Y >= 0 && Position.Y < World.Map.Height)
-        {
+    protected void UpdateTileChunk() {
+        if (World != null && Position.X >= 0 && Position.X < World.Map.Width && Position.Y >= 0 &&
+            Position.Y < World.Map.Height) {
             var oldChunk = Tile?.Chunk;
             if (Desc.Static && Tile?.Object == this)
                 Tile.SetObject(null);
-            
+
             Tile = World.Map[(int)Position.X, (int)Position.Y];
             if (Desc.Static && Tile.Object == null)
                 Tile.SetObject(this);
 
             var newChunk = Tile?.Chunk;
-            if (newChunk != null && newChunk != oldChunk)
-            {
+            if (newChunk != null && newChunk != oldChunk) {
                 oldChunk?.Remove(this);
                 newChunk.Insert(this);
             }
         }
     }
 
-    public virtual bool TryLeaveWorld()
-    {
+    public virtual bool TryLeaveWorld() {
         if (Dead)
             return false;
 
@@ -203,8 +188,7 @@ public class Entity : IIdentifiable
         return true;
     }
 
-    protected virtual void LeaveWorld()
-    {
+    protected virtual void LeaveWorld() {
         DeathEvent?.Invoke(this);
         DeathEvent = null;
         Tile?.Chunk?.Remove(this);
@@ -221,15 +205,14 @@ public class Entity : IIdentifiable
     }
 
     // moveTo: absolute world position
-    public void MoveTowards(RealmTime time, Vector2 moveTo, float tilesPerSecond)
-    {
+    public void MoveTowards(RealmTime time, Vector2 moveTo, float tilesPerSecond) {
         var angle = this.GetAngleBetween(moveTo);
         var dist = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
         var speed = this.GetSpeed(tilesPerSecond) * (time.ElapsedMsDelta / 1000f);
         dist *= speed;
 
-        if (moveTo.DistSqr(Position.ToVec2()) < dist.LengthSquared())
-        { // If the distance we're about to move is greater than the distance to the desired position, set position to the desired position
+        if (moveTo.DistSqr(Position.ToVec2()) < dist.LengthSquared()) {
+            // If the distance we're about to move is greater than the distance to the desired position, set position to the desired position
             Move(moveTo.X, moveTo.Y);
             return;
         }
@@ -237,42 +220,36 @@ public class Entity : IIdentifiable
         MoveRelative(dist);
     }
 
-    public void MoveTowards(RealmTime time, float angleRad, float tilesPerSecond)
-    {
+    public void MoveTowards(RealmTime time, float angleRad, float tilesPerSecond) {
         var dist = new Vector2(MathF.Cos(angleRad), MathF.Sin(angleRad));
         var speed = this.GetSpeed(tilesPerSecond) * (time.ElapsedMsDelta / 1000f);
         dist *= speed;
         MoveRelative(dist);
     }
 
-    public virtual void Dispose()
-    {
+    public virtual void Dispose() {
         Initialized = false;
         Stats.Clear();
     }
 
     #region STATS
 
-    public string Name
-    {
+    public string Name {
         get => Stats.GetString(StatType.Name);
         set => Stats.Set(StatType.Name, value);
     }
 
-    public int MaxHP
-    {
+    public int MaxHP {
         get => Stats.GetInt(StatType.MaxHP);
         set => Stats.Set(StatType.MaxHP, value);
     }
 
-    public int HP
-    {
+    public int HP {
         get => Stats.GetInt(StatType.HP);
         set => Stats.Set(StatType.HP, value);
     }
 
-    public int Size
-    {
+    public int Size {
         get => Stats.GetInt(StatType.Size);
         set => Stats.Set(StatType.Size, value);
     }

@@ -7,8 +7,7 @@ using GameServer.Game.Entities.Types;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public record OpenGate : BehaviorScript
-{
+public record OpenGate : BehaviorScript {
     private readonly int _area;
 
     private readonly string _target;
@@ -18,52 +17,40 @@ public record OpenGate : BehaviorScript
     private readonly int _yMax;
     private readonly int _yMin;
 
-    public OpenGate(int xMin, int xMax, int yMin, int yMax)
-    {
+    public OpenGate(int xMin, int xMax, int yMin, int yMax) {
         _xMin = xMin;
         _xMax = xMax;
         _yMin = yMin;
         _yMax = yMax;
     }
 
-    public OpenGate(string target, int area = 10)
-    {
+    public OpenGate(string target, int area = 10) {
         _target = target;
         _area = area;
         _useArea = true;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         if (_useArea)
-        {
-            for (var x = (int)host.Position.X - _area; x <= (int)host.Position.X + _area; x++)
-            {
-                for (var y = (int)host.Position.Y - _area; y <= (int)host.Position.Y + _area; y++)
-                {
+            for (var x = (int)host.Position.X - _area; x <= (int)host.Position.X + _area; x++) {
+                for (var y = (int)host.Position.Y - _area; y <= (int)host.Position.Y + _area; y++) {
                     var tile = host.World.Map[x, y];
-                    if (tile.ObjectType == XmlLibrary.Id2Object(_target).ObjectType)
-                    {
+                    if (tile.ObjectType == XmlLibrary.Id2Object(_target).ObjectType) {
                         tile.ObjectType = 0;
                         tile.Object?.TryLeaveWorld();
                         tile.SetObject(null);
                     }
                 }
             }
-        }
         else
-        {
-            for (var x = _xMax; x <= _xMax; x++)
-            {
-                for (var y = _yMin; y <= _yMax; y++)
-                {
+            for (var x = _xMax; x <= _xMax; x++) {
+                for (var y = _yMin; y <= _yMax; y++) {
                     var tile = host.World.Map[x, y];
                     tile.ObjectType = 0;
                     tile.Object?.TryLeaveWorld();
                     tile.SetObject(null);
                 }
             }
-        }
 
         return BehaviorTickState.BehaviorActive;
     }

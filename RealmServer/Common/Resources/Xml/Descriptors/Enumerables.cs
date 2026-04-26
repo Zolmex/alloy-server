@@ -1,7 +1,6 @@
 namespace Common.Resources.Xml.Descriptors;
 
-public enum PathType : byte
-{
+public enum PathType : byte {
     LinePath,
     WavyPath,
     CirclePath,
@@ -48,8 +47,7 @@ public enum ItemField : byte // Values here must equal the class name they use (
     LevelIncreases
 }
 
-public enum ActivateEffectField : byte
-{
+public enum ActivateEffectField : byte {
     Index,
     EffectDesc,
     DurationMS,
@@ -63,8 +61,7 @@ public enum ActivateEffectField : byte
     LevelIncreases
 }
 
-public enum ProjectileField : byte
-{
+public enum ProjectileField : byte {
     BulletId,
     ObjectId,
     LifetimeMS,
@@ -86,43 +83,37 @@ public enum ProjectileField : byte
     LevelIncreases
 }
 
-public enum GemstoneField : byte
-{
+public enum GemstoneField : byte {
     SlotTypes,
     Origin,
     Boosts
 }
 
-public enum ConditionEffectField : byte
-{
+public enum ConditionEffectField : byte {
     Effect,
     DurationMS
 }
 
-public enum GemstoneBoostField : byte
-{
+public enum GemstoneBoostField : byte {
     BoostType,
     Stat,
     Amount,
     BoostTarget
 }
 
-public enum LevelIncreaseField : byte
-{
+public enum LevelIncreaseField : byte {
     Field,
     Rate,
     Amount
 }
 
-public enum EquipmentBoostField : byte
-{
+public enum EquipmentBoostField : byte {
     Stat,
     Amount,
     LevelIncrease
 }
 
-public enum SheathDescField : byte
-{
+public enum SheathDescField : byte {
     Capacity,
     SlashDamage,
     Efficiency,
@@ -133,16 +124,14 @@ public enum SheathDescField : byte
     StanceDuration
 }
 
-public enum SpellDescField : byte
-{
+public enum SpellDescField : byte {
     MpCost,
     NumProjectiles,
     ProjectileId,
     MpRefundPerHit
 }
 
-public enum QuiverDescField : byte
-{
+public enum QuiverDescField : byte {
     MpCost,
     ProjectileId,
     ArrowChance,
@@ -151,8 +140,7 @@ public enum QuiverDescField : byte
     MpProjectileId
 }
 
-public enum PoisonDescField : byte
-{
+public enum PoisonDescField : byte {
     MpCost,
     Effects,
     Damage,
@@ -167,8 +155,7 @@ public enum PoisonDescField : byte
     ImpactDamage
 }
 
-public enum HelmDescField : byte
-{
+public enum HelmDescField : byte {
     MpCost,
     Duration,
     StacksGain,
@@ -178,8 +165,7 @@ public enum HelmDescField : byte
     MpDrain
 }
 
-public enum CloakDescField : byte
-{
+public enum CloakDescField : byte {
     MpCost,
     Duration,
     StatsModifier,
@@ -187,8 +173,7 @@ public enum CloakDescField : byte
     BoostDuration
 }
 
-public enum SealDescField : byte
-{
+public enum SealDescField : byte {
     MpCost,
     Duration,
     MaxStack,
@@ -201,8 +186,7 @@ public enum SealDescField : byte
     BoostDuration
 }
 
-public enum FieldBoostType
-{
+public enum FieldBoostType {
     All,
     ItemLevel,
     Gemstone,

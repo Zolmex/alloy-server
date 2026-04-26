@@ -1,16 +1,5 @@
 ﻿#region
 
-using Common;
-using Common.Projectiles.ProjectilePaths;
-using Common.Resources.World;
-using Common.Resources.Xml;
-using Common.Utilities;
-using GameServer.Game.Entities.Behaviors.Actions;
-using GameServer.Game.Entities.Behaviors.Classic;
-using GameServer.Game.Entities.Behaviors.Library;
-using GameServer.Game.Entities.Behaviors.Transitions;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,20 +9,30 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Common;
+using Common.Projectiles.ProjectilePaths;
+using Common.Resources.World;
+using Common.Resources.Xml;
+using Common.Structs;
+using Common.Utilities;
+using GameServer.Game.Entities.Behaviors.Actions;
+using GameServer.Game.Entities.Behaviors.Classic;
+using GameServer.Game.Entities.Behaviors.Library;
+using GameServer.Game.Entities.Behaviors.Transitions;
 using GameServer.Game.Entities.DamageSources.Types;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors;
 
-public static class BehaviorLibrary
-{
+public static class BehaviorLibrary {
     private static readonly Logger _log = new(typeof(BehaviorLibrary));
 
     private static readonly string _assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
 
-    private static readonly IEnumerable<MetadataReference> _defaultReferences =
-    [
+    private static readonly IEnumerable<MetadataReference> _defaultReferences = [
         MetadataReference.CreateFromFile(Path.Combine(_assemblyPath, "mscorlib.dll")),
         MetadataReference.CreateFromFile(Path.Combine(_assemblyPath, "System.dll")),
         MetadataReference.CreateFromFile(Path.Combine(_assemblyPath, "System.Core.dll")),
@@ -61,8 +60,7 @@ public static class BehaviorLibrary
 
     public static readonly ConcurrentDictionary<string, State> ClassicBehaviors = new();
 
-    public static void Load(Assembly asm = null)
-    {
+    public static void Load(Assembly asm = null) {
         asm ??= Assembly.GetExecutingAssembly();
 
         _log.Info("Loading behavior library...");
@@ -74,24 +72,19 @@ public static class BehaviorLibrary
 
         var lib = Activator.CreateInstance(classicLibType); // Lib instance to get the property values
         var libType = classicLibType;
-        foreach (var prop in libType.GetProperties())
-        {
+        foreach (var prop in libType.GetProperties()) {
             var attribute = prop.GetCustomAttribute(typeof(CharacterBehaviorAttribute)) as CharacterBehaviorAttribute;
-            if (attribute == null)
-            {
-                continue;
-            }
+            if (attribute == null) continue;
 
             var desc = XmlLibrary.Id2Object(attribute.ObjectId);
-            if (desc == null)
-            {
+            if (desc == null) {
                 _log.Warn($"Missing descriptor for {attribute.ObjectId}");
                 continue;
             }
 
             var state = (State)prop.GetValue(lib);
             state.Setup(desc);
-            
+
             ClassicBehaviors[attribute.ObjectId] = state;
             _log.Debug($"Loading classic behavior '{attribute.ObjectId}'");
         }
@@ -99,16 +92,13 @@ public static class BehaviorLibrary
         _log.Info("Finished loading behavior library.");
     }
 
-    public static bool Reload(string behaviorsPath)
-    {
+    public static bool Reload(string behaviorsPath) {
         Assembly asm;
-        using (new EasyTimer(LogLevel.Info, "Compiling behavior assembly...", "Compiled behavior assembly in [TIME]"))
-        {
+        using (new EasyTimer(LogLevel.Info, "Compiling behavior assembly...", "Compiled behavior assembly in [TIME]")) {
             asm = CompileBehaviorAssembly(behaviorsPath);
             _lastAssembly = asm;
 
-            if (asm == null)
-            {
+            if (asm == null) {
                 _log.Error("Failed to compile behavior assembly.");
                 return false;
             }
@@ -118,8 +108,7 @@ public static class BehaviorLibrary
         return true;
     }
 
-    private static Assembly CompileBehaviorAssembly(string behaviorsPath)
-    {
+    private static Assembly CompileBehaviorAssembly(string behaviorsPath) {
         var defaultCompilationOptions =
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                 .WithOverflowChecks(true)
@@ -137,8 +126,7 @@ public static class BehaviorLibrary
 
         using var ms = new MemoryStream();
         var result = compilation.Emit(ms);
-        if (result.Success)
-        {
+        if (result.Success) {
             ms.Seek(0, SeekOrigin.Begin);
             var context = new AssemblyLoadContext("BehaviorLib", true);
             var asm = context.LoadFromStream(ms);
@@ -155,25 +143,20 @@ public static class BehaviorLibrary
         return null;
     }
 
-    private static SyntaxTree[] ParseSyntaxTrees(string behaviorsPath)
-    {
+    private static SyntaxTree[] ParseSyntaxTrees(string behaviorsPath) {
         var files = Directory.GetFiles(behaviorsPath, "*", SearchOption.AllDirectories);
         var ret = new List<SyntaxTree>(files.Length);
-        Parallel.For(0, files.Length, i =>
-        {
+        Parallel.For(0, files.Length, i => {
             var fileText = File.ReadAllText(files[i]);
             if (_behaviorFileCache.TryGetValue(files[i], out var cachedFileText))
-            {
                 if (fileText == cachedFileText) // File hasn't changed
-                {
                     return;
-                }
-            }
 
             _behaviorFileCache[files[i]] = fileText;
             var tree = CSharpSyntaxTree.ParseText(fileText);
-            using (TimedLock.Lock(ret))
+            using (TimedLock.Lock(ret)) {
                 ret.Add(tree);
+            }
         });
         return ret.ToArray();
     }

@@ -1,14 +1,12 @@
-using Common.Utilities;
 using System;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class SheathDesc : ItemData
-{
-    public SheathDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
+public class SheathDesc : ItemData {
+    public SheathDesc(XElement e, ItemData parent = null, byte parentField = 0) {
         SetParent(parent, parentField);
         if (e == null) // Null when instance by itemdata import
         {
@@ -30,50 +28,42 @@ public class SheathDesc : ItemData
 
     public override Type FieldsEnum => typeof(SheathDescField);
 
-    public int Capacity
-    {
+    public int Capacity {
         get => GetValue<int>(0);
         set => SetValue(0, value);
     }
 
-    public int SlashDamage
-    {
+    public int SlashDamage {
         get => GetValue<int>(1);
         set => SetValue(1, value);
     }
 
-    public float Efficiency
-    {
+    public float Efficiency {
         get => GetValue<float>(2);
         set => SetValue(2, value);
     }
 
-    public int ManaPerSlash
-    {
+    public int ManaPerSlash {
         get => GetValue<int>(3);
         set => SetValue(3, value);
     }
 
-    public int SlashCooldownMS
-    {
+    public int SlashCooldownMS {
         get => GetValue<int>(4);
         set => SetValue(4, value);
     }
 
-    public float Radius
-    {
+    public float Radius {
         get => GetValue<float>(5);
         set => SetValue(5, value);
     }
 
-    public ConditionEffectDesc[] Effects
-    {
+    public ConditionEffectDesc[] Effects {
         get => GetValue<ConditionEffectDesc[]>(6);
         set => SetValue(6, value);
     }
 
-    public int StanceDuration
-    {
+    public int StanceDuration {
         get => GetValue<int>(7);
         set => SetValue(7, value);
     }

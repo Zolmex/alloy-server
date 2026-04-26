@@ -10,8 +10,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Hermit God")]
     public static State HermitGod =>
         new(
@@ -105,10 +104,10 @@ public partial class BehaviorLib
                 new ItemLoot("Health Potion", 0.1f),
                 new ItemLoot("Magic Potion", 0.1f)
             ),
-            new Follow((0.6f * 5.55f) + 0.74f, acquireRange: 4, distFromTarget: 1), // Adjusted speed
-            new Orbit((0.3f * 5.55f) + 0.74f, 10f, target: "Hermit God", speedVariance: 0.2f,
+            new Follow(0.6f * 5.55f + 0.74f, acquireRange: 4, distFromTarget: 1), // Adjusted speed
+            new Orbit(0.3f * 5.55f + 0.74f, 10f, target: "Hermit God", speedVariance: 0.2f,
                 radiusVariance: 1.5f), // Adjusted speed
-            new Wander((0.6f * 5.55f) + 0.74f), // Adjusted speed
+            new Wander(0.6f * 5.55f + 0.74f), // Adjusted speed
             new Shoot(
                 projectileIndex: 0,
                 maxRadius: 6,
@@ -133,7 +132,7 @@ public partial class BehaviorLib
         new(
             new State("Attack",
                 new EntityNotWithinTransition(target: "Hermit God", radius: 100, targetState: "Die"),
-                new Orbit((0.6f * 5.55f) + 0.74f, 5.5f, target: "Hermit God"), // Adjusted speed
+                new Orbit(0.6f * 5.55f + 0.74f, 5.5f, target: "Hermit God"), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 0,
@@ -159,7 +158,7 @@ public partial class BehaviorLib
     [CharacterBehavior("Hermit God Tentacle")]
     public static State HermitGodTentacle =>
         new(
-            new Orbit((1f * 5.55f) + 0.74f, 5.5f, target: "Hermit God"), // Adjusted speed
+            new Orbit(1f * 5.55f + 0.74f, 5.5f, target: "Hermit God"), // Adjusted speed
             new Shoot(
                 projectileIndex: 0,
                 maxRadius: 3,

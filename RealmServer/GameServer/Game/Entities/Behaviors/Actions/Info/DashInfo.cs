@@ -11,8 +11,7 @@ namespace GameServer.Game.Entities.Behaviors.Actions;
 /// <summary>
 ///     Information storage class for any runtime properties required by the <see cref="Dash" /> behavior.
 /// </summary>
-public class DashInfo
-{
+public class DashInfo {
     /// <summary>
     ///     Gets or sets how many times the behavior will Dash per cycle.
     /// </summary>

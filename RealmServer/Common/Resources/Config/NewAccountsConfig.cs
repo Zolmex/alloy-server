@@ -1,26 +1,22 @@
 ﻿#region
 
-using Common.Database;
-using Common.Database.Models;
-using Common.Resources.Xml;
-using Common.Utilities;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using Common.Database.Models;
+using Common.Resources.Xml;
+using Common.Utilities;
 
 #endregion
 
 namespace Common.Resources.Config;
 
-public class NewAccountsConfig
-{
+public class NewAccountsConfig {
     private const string ConfigFile = "Resources/Config/Data/newAccountsConfig.xml";
 
     private static NewAccountsConfig _config;
 
-    public NewAccountsConfig(XElement e)
-    {
+    public NewAccountsConfig(XElement e) {
         Fame = e.GetValue<int>("Fame");
         Credits = e.GetValue<int>("Credits");
         MaxChars = e.GetValue<int>("MaxChars");
@@ -39,23 +35,18 @@ public class NewAccountsConfig
     public int CharSlotCost { get; private set; }
     public int VaultSlotCost { get; private set; }
 
-    private static NewAccountsConfig Load()
-    {
+    private static NewAccountsConfig Load() {
         return new NewAccountsConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 
-    public static ClassStat[] CreateClassStats()
-    {
+    public static ClassStat[] CreateClassStats() {
         var classStats = new List<ClassStat>();
         foreach (var player in XmlLibrary.PlayerDescs.Values)
-        {
-            classStats.Add(new ClassStat
-            {
+            classStats.Add(new ClassStat {
                 ObjectType = player.ObjectType,
                 BestFame = 0,
                 BestLevel = 0
             });
-        }
 
         return classStats.ToArray();
     }

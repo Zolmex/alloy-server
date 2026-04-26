@@ -1,9 +1,7 @@
 ﻿#region
 
-using Common.Database;
 using Common.Database.Models;
 using Common.Utilities;
-using GameServer.Game.Entities;
 using GameServer.Game.Entities.Types;
 using GameServer.Game.Worlds;
 using GameServer.Game.Worlds.Logic;
@@ -12,21 +10,18 @@ using GameServer.Game.Worlds.Logic;
 
 namespace GameServer.Game.Network;
 
-public enum GameState
-{
+public enum GameState {
     Idle, // User has established connection to server but hasn't loaded to any world yet
     Loading, // User has sent Hello packet, and now we're waiting for client to send Load packet
     Playing // User has established
 }
 
-public class GameInfo
-{
+public class GameInfo {
     private static readonly Logger _log = new(typeof(GameInfo));
 
     public readonly User User;
 
-    public GameInfo(User user)
-    {
+    public GameInfo(User user) {
         User = user;
     }
 
@@ -44,8 +39,7 @@ public class GameInfo
     public Vault Vault { get; set; }
 
     public void AllySettings(byte allyShots, byte allyDamage, byte allyNotifs, byte allyParticles,
-        byte allyEntities)
-    {
+        byte allyEntities) {
         AllyShots = allyShots;
         AllyDamage = allyDamage;
         AllyNotifs = allyNotifs;
@@ -53,14 +47,12 @@ public class GameInfo
         AllyEntities = allyEntities;
     }
 
-    public void SetWorld(World world)
-    {
+    public void SetWorld(World world) {
         State = GameState.Loading;
         World = world;
     }
 
-    public void Load(Character chr, World world)
-    {
+    public void Load(Character chr, World world) {
         State = GameState.Playing;
 
         Char = chr;
@@ -68,8 +60,7 @@ public class GameInfo
         Player.EnterWorld(world);
     }
 
-    public void Unload(bool reconnect, bool death)
-    {
+    public void Unload(bool reconnect, bool death) {
         State = GameState.Idle;
 
         if (Player == null || death) // Player leaves world on death
@@ -80,8 +71,7 @@ public class GameInfo
         Player.TryLeaveWorld();
     }
 
-    public void Reset()
-    {
+    public void Reset() {
         State = GameState.Idle; // Change our state first
         Char = null;
         Player = null;

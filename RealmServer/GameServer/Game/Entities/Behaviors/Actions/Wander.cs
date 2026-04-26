@@ -1,19 +1,18 @@
 ﻿#region
 
-using Common;
-using Common.Utilities;
-using GameServer.Utilities;
 using System;
 using System.Numerics;
 using System.Xml.Linq;
+using Common.Structs;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
+using GameServer.Utilities;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class WanderInfo
-{
+public class WanderInfo {
     public float AngleDir;
     public Vector2 InitialPos;
     public Vector2 StartPos;
@@ -22,8 +21,7 @@ public class WanderInfo
     public long WanderStarted;
 }
 
-public record Wander : BehaviorScript
-{
+public record Wander : BehaviorScript {
     private readonly int _cooldownMs;
     private readonly float _distance;
     private readonly float _distanceFromSpawn;
@@ -31,8 +29,8 @@ public record Wander : BehaviorScript
     private readonly float _moveTime;
     private readonly int _moveTimeMs;
 
-    public Wander(float speed = 1f, float distance = 1f, float distanceFromSpawn = 5f, int cooldownMs = 0, Ease ease = Ease.None)
-    {
+    public Wander(float speed = 1f, float distance = 1f, float distanceFromSpawn = 5f, int cooldownMs = 0,
+        Ease ease = Ease.None) {
         _distance = distance;
         _moveTime = distance / speed;
         _moveTimeMs = (int)(_moveTime * 1000);
@@ -41,8 +39,7 @@ public record Wander : BehaviorScript
         _ease = ease;
     }
 
-    public Wander(XElement xml)
-    {
+    public Wander(XElement xml) {
         _distance = xml.GetAttribute("distance", 4f);
         var speed = xml.GetAttribute("speed", 1f);
         _moveTime = _distance / speed;
@@ -52,29 +49,25 @@ public record Wander : BehaviorScript
         _ease = Enum.Parse<Ease>(xml.GetAttribute("ease", "None"));
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var wanderInfo = host.ResolveResource<WanderInfo>(this);
         wanderInfo.WanderCooldown = _cooldownMs;
         wanderInfo.InitialPos = new Vector2(host.Position.X, host.Position.Y);
         wanderInfo.Wandering = false;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var wanderInfo = host.ResolveResource<WanderInfo>(this);
         var firstMove = false;
-        if (!wanderInfo.Wandering && wanderInfo.WanderCooldown > 0)
-        {
+        if (!wanderInfo.Wandering && wanderInfo.WanderCooldown > 0) {
             wanderInfo.WanderCooldown -= time.ElapsedMsDelta;
             if (wanderInfo.WanderCooldown > 0)
                 return BehaviorTickState.OnCooldown;
         }
-        else if (!wanderInfo.Wandering && wanderInfo.WanderCooldown <= 0)
-        {
-            var intersect = Utils.FindCircleCircleIntersections(wanderInfo.InitialPos, _distanceFromSpawn, host.Position.ToVec2(), _distance, out var interSect1, out var intersect2);
-            if (intersect == 2)
-            {
+        else if (!wanderInfo.Wandering && wanderInfo.WanderCooldown <= 0) {
+            var intersect = Utils.FindCircleCircleIntersections(wanderInfo.InitialPos, _distanceFromSpawn,
+                host.Position.ToVec2(), _distance, out var interSect1, out var intersect2);
+            if (intersect == 2) {
                 var angle1Deg = host.GetAngleBetween(interSect1).Rad2Deg();
                 var angle2Deg = host.GetAngleBetween(intersect2).Rad2Deg();
                 if (angle2Deg < 0) angle2Deg += 360;
@@ -83,8 +76,7 @@ public record Wander : BehaviorScript
                 float angleDeg = new Random().Next((int)angle2Deg, (int)angle1Deg);
                 wanderInfo.AngleDir = angleDeg.Deg2Rad();
             }
-            else if (intersect == 0)
-            {
+            else if (intersect == 0) {
                 float angleDeg = new Random().Next(360);
                 wanderInfo.AngleDir = angleDeg.Deg2Rad();
             }
@@ -99,14 +91,14 @@ public record Wander : BehaviorScript
         var elapsedTimePerc = time.ElapsedMsDelta / 1000f / _moveTime;
         if (_ease != Ease.None)
             Easing.EaseVal(_ease, ref elapsedTimePerc);
-        var relMove = new Vector2(MathF.Cos(wanderInfo.AngleDir) * elapsedTimePerc * _distance, MathF.Sin(wanderInfo.AngleDir) * elapsedTimePerc * _distance);
+        var relMove = new Vector2(MathF.Cos(wanderInfo.AngleDir) * elapsedTimePerc * _distance,
+            MathF.Sin(wanderInfo.AngleDir) * elapsedTimePerc * _distance);
         host.MoveRelative(relMove);
         if (firstMove)
             return BehaviorTickState.BehaviorActivate;
 
         wanderInfo.WanderCooldown -= time.ElapsedMsDelta;
-        if (wanderInfo.WanderCooldown <= 0)
-        {
+        if (wanderInfo.WanderCooldown <= 0) {
             wanderInfo.Wandering = false;
             wanderInfo.WanderCooldown = _cooldownMs;
             return BehaviorTickState.BehaviorDeactivate;

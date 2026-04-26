@@ -1,20 +1,17 @@
 #region
 
-using Common;
-using Common.Resources.Xml.Descriptors;
-using Common.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
+using Common.Resources.Xml.Descriptors;
+using Common.Structs;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public partial class Player
-{
+public partial class Player {
     private readonly ConcurrentDictionary<int, List<ServerShootInfo>> _serverShootAcks = new();
     public int LastClientShootTime;
     public long LastMoveAck;
@@ -22,8 +19,7 @@ public partial class Player
     public long LastShootAck;
     // This file is used to synchronize player's state with the server and client. Also used for anticheat 
 
-    public bool ValidateAttackSpeed(Item weapon, int clientTime)
-    {
+    public bool ValidateAttackSpeed(Item weapon, int clientTime) {
         if (LastShootAck == 0) // First time shooting
             return true;
 
@@ -42,16 +38,14 @@ public partial class Player
         return delta >= attackPeriod + diff - 5;
     }
 
-    public bool ValidateMove(float posX, float posY)
-    {
+    public bool ValidateMove(float posX, float posY) {
         if (Teleporting)
-        { // Player will be moved on GotoAck
+            // Player will be moved on GotoAck
             return false;
-        }
 
         var moveThresh =
-            4 + (this.GetSpeed(Speed) *
-                 (TimeSinceLastMove() / 1000f)); // 4 tiles to account for any lag or speed modifiers
+            4 + this.GetSpeed(Speed) *
+            (TimeSinceLastMove() / 1000f); // 4 tiles to account for any lag or speed modifiers
         moveThresh *= moveThresh; // Squared
         var dist = this.DistSqr(posX, posY);
         // Console.WriteLine($"Move: dist:{dist} thresh:{moveThresh}");
@@ -59,10 +53,8 @@ public partial class Player
     }
 
     private void AwaitServerShoot(int itemType, Vector2 pos, float angle, float angleInc, int[] damageList,
-        float[] critList)
-    {
-        if (!_serverShootAcks.TryGetValue(itemType, out var list))
-        {
+        float[] critList) {
+        if (!_serverShootAcks.TryGetValue(itemType, out var list)) {
             list = new List<ServerShootInfo>();
             _serverShootAcks.TryAdd(itemType, list);
         }
@@ -71,8 +63,7 @@ public partial class Player
     }
 
     public bool ValidateServerShoot(int itemType, WorldPosData pos, float angle, float angleInc, int[] damageList,
-        float[] critList)
-    {
+        float[] critList) {
         var vecPos = new Vector2(pos.X, pos.Y);
         if (!_serverShootAcks.TryGetValue(itemType, out var list))
             return false;
@@ -80,13 +71,11 @@ public partial class Player
         return list.Remove(new ServerShootInfo(itemType, vecPos, angle, angleInc, damageList, critList));
     }
 
-    public long TimeSinceLastMove()
-    {
+    public long TimeSinceLastMove() {
         return RealmManager.RealTime.ElapsedMilliseconds - LastMoveAck;
     }
 
-    public void FailedShoot(int projCount)
-    {
+    public void FailedShoot(int projCount) {
         _nextBulletId += (ushort)projCount;
     }
 }
@@ -97,10 +86,8 @@ public record struct ServerShootInfo(
     float Angle,
     float AngleInc,
     int[] DamageList,
-    float[] CritList)
-{
-    public bool Equals(ServerShootInfo other)
-    {
+    float[] CritList) {
+    public bool Equals(ServerShootInfo other) {
         return ItemType.Equals(other.ItemType) &&
                Pos.Equals(other.Pos) &&
                Angle.Equals(other.Angle) &&
@@ -109,8 +96,7 @@ public record struct ServerShootInfo(
                CritList.SequenceEqual(other.CritList);
     }
 
-    public override int GetHashCode()
-    {
+    public override int GetHashCode() {
         return HashCode.Combine(ItemType, Pos, Angle, AngleInc, DamageList, CritList);
     }
 }

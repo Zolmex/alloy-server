@@ -10,8 +10,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     private const float fixedAngle_RingAttack2 = 22.5f;
 
     [CharacterBehavior("shtrs Defense System")]

@@ -1,13 +1,11 @@
-using Common.Utilities;
 using System;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class GemstoneBoost : ItemData
-{
-    public GemstoneBoost(XElement e, ItemData parent = null, byte parentField = 0)
-    {
+public class GemstoneBoost : ItemData {
+    public GemstoneBoost(XElement e, ItemData parent = null, byte parentField = 0) {
         SetParent(parent, parentField);
         if (e == null) // Null when instance by itemdata import
         {
@@ -28,26 +26,22 @@ public class GemstoneBoost : ItemData
 
     public override Type FieldsEnum => typeof(GemstoneBoostField);
 
-    public string BoostType
-    {
+    public string BoostType {
         get => GetValue<string>(0);
         set => SetValue(0, value);
     }
 
-    public string Stat
-    {
+    public string Stat {
         get => GetValue<string>(1);
         set => SetValue(1, value);
     }
 
-    public float Amount
-    {
+    public float Amount {
         get => GetValue<float>(2);
         set => SetValue(2, value);
     }
 
-    public string BoostTarget
-    {
+    public string BoostTarget {
         get => GetValue<string>(3);
         set => SetValue(3, value);
     }

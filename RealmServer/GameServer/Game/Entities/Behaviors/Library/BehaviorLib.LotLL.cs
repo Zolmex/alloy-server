@@ -10,8 +10,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Lord of the Lost Lands")]
     public static State LordOfTheLostLands =>
         new(
@@ -28,7 +27,7 @@ public partial class BehaviorLib
                 new HpLessTransition(0.1f, "Dead"),
                 new State("Start",
                     new SetAltTexture(0),
-                    new Wander((0.4f * 5.55f) + 0.74f),
+                    new Wander(0.4f * 5.55f + 0.74f),
                     new Shoot(12, 7, 10, fixedAngle: 180, cooldownMS: 1000),
                     new Shoot(12, 7, 10, fixedAngle: 0, cooldownMS: 800),
                     new TossObject("Guardian of the Lost Lands"),
@@ -40,7 +39,7 @@ public partial class BehaviorLib
                 ),
                 new State("Attack",
                     new SetAltTexture(0),
-                    new Wander((0.4f * 5.55f) + 0.74f),
+                    new Wander(0.4f * 5.55f + 0.74f),
                     new EntityWithinTransition("Follow", radius: 1),
                     new TimedTransition(10000, "Gathering"),
                     new State("Attack1.0",
@@ -60,8 +59,8 @@ public partial class BehaviorLib
                     )
                 ),
                 new State("Follow",
-                    new Follow((1 * 5.55f) + 0.74f, 3, 20),
-                    new Wander((0.4f * 5.55f) + 0.74f),
+                    new Follow(1 * 5.55f + 0.74f, 3, 20),
+                    new Wander(0.4f * 5.55f + 0.74f),
                     new Shoot(20, 7, 10, cooldownMS: 700, targeted: true),
                     new TimedTransition(5000, "Gathering")
                 ),
@@ -131,15 +130,15 @@ public partial class BehaviorLib
             ),
             new State("Full",
                 new Spawn("Knight of the Lost Lands", maxSpawnsPerReset: 2, cooldownMs: 4000),
-                new Follow((2 * 5.55f) + 0.74f, 6, 20),
-                new Wander((0.3f * 5.55f) + 0.74f),
+                new Follow(2 * 5.55f + 0.74f, 6, 20),
+                new Wander(0.3f * 5.55f + 0.74f),
                 new Shoot(10, 8, 360 / 8f, fixedAngle: 360 / 8f, cooldownMS: 1300, projectileIndex: 1),
                 new Shoot(10, 5, 10, cooldownMS: 1200, targeted: true),
                 new HpLessTransition(0.25f, "Low")
             ),
             new State("Low",
-                new StayAwayFrom((1 * 5.55f) + 0.74f, 5),
-                new Wander((1 * 5.55f) + 0.74f),
+                new StayAwayFrom(1 * 5.55f + 0.74f, 5),
+                new Wander(1 * 5.55f + 0.74f),
                 new Shoot(10, 8, 360 / 8f, fixedAngle: 360 / 8f, cooldownMS: 3000, projectileIndex: 1),
                 new Shoot(10, 5, 10, cooldownMS: 1500, targeted: true)
             )
@@ -152,9 +151,9 @@ public partial class BehaviorLib
                 new ItemLoot("Health Potion", 0.1f),
                 new ItemLoot("Magic Potion", 0.1f)
             ),
-            new Follow((2 * 5.55f) + 0.74f, 4, 20),
-            new StayAwayFrom((1 * 5.55f) + 0.74f),
-            new Wander((1 * 5.55f) + 0.74f),
+            new Follow(2 * 5.55f + 0.74f, 4, 20),
+            new StayAwayFrom(1 * 5.55f + 0.74f),
+            new Wander(1 * 5.55f + 0.74f),
             new Shoot(13, cooldownMS: 700, targeted: true)
         );
 }

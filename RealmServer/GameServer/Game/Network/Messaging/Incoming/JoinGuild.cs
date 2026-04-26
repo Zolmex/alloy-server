@@ -1,18 +1,12 @@
-﻿#region
-
-#endregion
-
-using Common.Network;
+﻿using Common.Network;
 
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.JOINGUILD)]
-public partial record JoinGuild : IIncomingPacket
-{
+public record JoinGuild : IIncomingPacket {
     public string GuildName;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
@@ -24,8 +18,7 @@ public partial record JoinGuild : IIncomingPacket
         player.JoinGuild(GuildName);
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         GuildName = rdr.ReadUTF();
     }
 }

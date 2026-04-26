@@ -2,55 +2,47 @@
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class SetAltTextureInfo
-{
+public class SetAltTextureInfo {
     public int CurrentTexture;
     public int RemainingTime;
 }
 
-public record SetAltTexture : BehaviorScript
-{
+public record SetAltTexture : BehaviorScript {
     private readonly int _cooldown;
     private readonly int _indexMax;
     private readonly int _indexMin;
     private readonly bool _loop;
 
-    public SetAltTexture(int minValue, int maxValue = -1, int cooldown = 0, bool loop = false)
-    {
+    public SetAltTexture(int minValue, int maxValue = -1, int cooldown = 0, bool loop = false) {
         _indexMin = minValue;
         _indexMax = maxValue;
         _cooldown = cooldown;
         _loop = loop;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var state = host.ResolveResource<SetAltTextureInfo>(this);
         state.CurrentTexture = host.AltTexture;
         state.RemainingTime = _cooldown;
 
-        if (host.AltTexture != _indexMin)
-        {
+        if (host.AltTexture != _indexMin) {
             host.AltTexture = _indexMin;
             state.CurrentTexture = _indexMin;
         }
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var state = host.ResolveResource<SetAltTextureInfo>(this);
 
         if (_indexMax == -1 || (state.CurrentTexture == _indexMax && !_loop))
             return BehaviorTickState.BehaviorFailed;
 
-        if (state.RemainingTime > 0)
-        {
+        if (state.RemainingTime > 0) {
             state.RemainingTime -= time.ElapsedMsDelta;
             return BehaviorTickState.OnCooldown;
         }
 
-        if (state.RemainingTime <= 0)
-        {
+        if (state.RemainingTime <= 0) {
             var newTexture = state.CurrentTexture >= _indexMax ? _indexMin : state.CurrentTexture + 1;
             state.CurrentTexture = newTexture;
             host.AltTexture = newTexture;

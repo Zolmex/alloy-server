@@ -1,25 +1,23 @@
 ﻿#region
 
-using Common.Resources.Xml;
-using Common.Utilities;
 using System;
 using System.Linq;
 using System.Numerics;
 using System.Xml.Linq;
+using Common.Resources.Xml;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class SpawnInfo
-{
+public class SpawnInfo {
     public int CooldownMs;
     public int SpawnCount;
 }
 
-public record Spawn : BehaviorScript
-{
+public record Spawn : BehaviorScript {
     private readonly int _cooldownMsDefault;
     private readonly int _cooldownOffsetMs;
     private readonly float _densityRadius;
@@ -34,8 +32,9 @@ public record Spawn : BehaviorScript
     private readonly float _minX;
     private readonly float _minY;
 
-    public Spawn(string entityName, float x = 0, float y = 0, int cooldownMs = 1000, int cooldownOffsetMs = 0, int maxSpawnsPerReset = int.MaxValue, int minSpawnCount = 1, int maxSpawnCount = 1, string group = null, int maxDensity = 0, float densityRadius = 10)
-    {
+    public Spawn(string entityName, float x = 0, float y = 0, int cooldownMs = 1000, int cooldownOffsetMs = 0,
+        int maxSpawnsPerReset = int.MaxValue, int minSpawnCount = 1, int maxSpawnCount = 1, string group = null,
+        int maxDensity = 0, float densityRadius = 10) {
         _entityName = entityName;
         _minX = x;
         _maxX = x;
@@ -48,14 +47,17 @@ public record Spawn : BehaviorScript
         _maxSpawnCount = maxSpawnCount;
         if (_minSpawnCount > _maxSpawnCount)
             throw new ArithmeticException();
-        _groupIds = group != null ? XmlLibrary.ObjectDescs.Values.Where(x => x.Group == group).Select(x => x.ObjectId).ToArray() : null;
+        _groupIds = group != null
+            ? XmlLibrary.ObjectDescs.Values.Where(x => x.Group == group).Select(x => x.ObjectId).ToArray()
+            : null;
         _maxDensity = maxDensity;
         _densityRadius = densityRadius;
     }
 
-    public Spawn(string entityName, float minX, float maxX, float minY, float maxY, int cooldownMs = 1000, int cooldownOffsetMs = 0, int maxSpawnsPerReset = int.MaxValue,
-        int minSpawnCount = 1, int maxSpawnCount = 1, string group = null, int maxDensity = 0, float densityRadius = 10)
-    {
+    public Spawn(string entityName, float minX, float maxX, float minY, float maxY, int cooldownMs = 1000,
+        int cooldownOffsetMs = 0, int maxSpawnsPerReset = int.MaxValue,
+        int minSpawnCount = 1, int maxSpawnCount = 1, string group = null, int maxDensity = 0,
+        float densityRadius = 10) {
         _entityName = entityName;
         _minX = minX;
         _maxX = maxX;
@@ -68,13 +70,14 @@ public record Spawn : BehaviorScript
         _maxSpawnCount = maxSpawnCount;
         if (_minSpawnCount > _maxSpawnCount)
             throw new ArithmeticException();
-        _groupIds = group != null ? XmlLibrary.ObjectDescs.Values.Where(x => x.Group == group).Select(x => x.ObjectId).ToArray() : null;
+        _groupIds = group != null
+            ? XmlLibrary.ObjectDescs.Values.Where(x => x.Group == group).Select(x => x.ObjectId).ToArray()
+            : null;
         _maxDensity = maxDensity;
         _densityRadius = densityRadius;
     }
 
-    public Spawn(XElement xml)
-    {
+    public Spawn(XElement xml) {
         _entityName = xml.GetAttribute<string>("entityName");
         _minX = xml.GetAttribute<float>("minX");
         _minY = xml.GetAttribute<float>("minY");
@@ -89,19 +92,16 @@ public record Spawn : BehaviorScript
             throw new ArithmeticException();
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var spawnInfo = host.ResolveResource<SpawnInfo>(this);
         spawnInfo.CooldownMs = _cooldownOffsetMs;
         spawnInfo.SpawnCount = 0;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var spawnInfo = host.ResolveResource<SpawnInfo>(this);
         if (spawnInfo.SpawnCount > _maxSpawnsPerReset) return BehaviorTickState.BehaviorFailed;
-        if (spawnInfo.CooldownMs > 0)
-        {
+        if (spawnInfo.CooldownMs > 0) {
             spawnInfo.CooldownMs -= time.ElapsedMsDelta;
             if (spawnInfo.CooldownMs > 0)
                 return BehaviorTickState.OnCooldown;
@@ -109,26 +109,26 @@ public record Spawn : BehaviorScript
 
         var random = new Random();
         var spawnCount = random.Next(_minSpawnCount, _maxSpawnCount);
-        for (var i = 0; i < spawnCount; i++)
-        {
+        for (var i = 0; i < spawnCount; i++) {
             string enName;
             if (_groupIds == null)
                 enName = _entityName;
             else
                 enName = _groupIds.RandomElement();
 
-            if (_maxDensity != 0 && host.World.GetEnemiesByName(enName, host.Position.X, host.Position.Y, _densityRadius).Count() >= _maxDensity)
+            if (_maxDensity != 0 &&
+                host.World.GetEnemiesByName(enName, host.Position.X, host.Position.Y, _densityRadius).Count() >=
+                _maxDensity)
                 continue;
 
-            var x = ((float)random.NextDouble() * (_maxX - _minX)) + _minX;
-            var y = ((float)random.NextDouble() * (_maxY - _minY)) + _minY;
+            var x = (float)random.NextDouble() * (_maxX - _minX) + _minX;
+            var y = (float)random.NextDouble() * (_maxY - _minY) + _minY;
             var child = host.World.SpawnEntity(enName, new Vector2(host.Position.X + x, host.Position.Y + y));
             child.Parent = host;
 
             if (host.Spawned)
-            { // Spawned by admin
+                // Spawned by admin
                 child.Spawned = true;
-            }
 
             spawnInfo.SpawnCount++;
             if (spawnInfo.SpawnCount == _maxSpawnCount)

@@ -1,24 +1,22 @@
 ﻿#region
 
-using Common;
-using Common.Resources.Xml;
-using Common.Resources.Xml.Descriptors;
-using Common.Utilities;
-using GameServer.Game.Worlds;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Common;
+using Common.Resources.Xml;
+using Common.Resources.Xml.Descriptors;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
+using GameServer.Game.Worlds;
 
 #endregion
 
 namespace GameServer.Game.Entities.Inventory;
 
-public class EntityInventory
-{
-    public enum BagType
-    {
+public class EntityInventory {
+    public enum BagType {
         Common = 0,
         Pink = 1,
         Cyan = 2,
@@ -33,40 +31,32 @@ public class EntityInventory
     protected readonly Logger _log;
     public readonly object InvLock = new();
 
-    public EntityInventory(Entity entity, int numSlots)
-    {
+    public EntityInventory(Entity entity, int numSlots) {
         _log = new Logger(GetType());
 
         _entity = entity;
         _items = new Item[numSlots];
     }
 
-    public Item this[int slot]
-    {
+    public Item this[int slot] {
         get => GetItem(slot);
         set => SetItem(slot, value);
     }
 
-    public virtual int GetNextAvailableSlot()
-    {
+    public virtual int GetNextAvailableSlot() {
         for (var i = 0; i < _items.Length; i++)
-        {
             if (_items[i] == null)
                 return i;
-        }
 
         return -1;
     }
 
-    public void UpdateSlots(params int[] slots)
-    {
+    public void UpdateSlots(params int[] slots) {
         UpdateSlotsNoLock(slots);
     }
 
-    protected void UpdateSlotsNoLock(params int[] slots)
-    {
-        foreach (var slot in slots)
-        {
+    protected void UpdateSlotsNoLock(params int[] slots) {
+        foreach (var slot in slots) {
             if (_entity.IsPlayer)
                 (_entity as Player).InvChanged(slot, _items[slot]);
             _entity.Stats.Set(GetStat(slot, false), _items[slot]?.ObjectType ?? -1, _entity.IsPlayer && slot > 3);
@@ -74,10 +64,8 @@ public class EntityInventory
         }
     }
 
-    public void SetItem(int slot, Item item)
-    {
-        if (slot < 0 || slot >= _items.Length)
-        {
+    public void SetItem(int slot, Item item) {
+        if (slot < 0 || slot >= _items.Length) {
             _log.Warn($"Inventory transaction failed for slot {slot} item {item.ObjectType}");
             return;
         }
@@ -87,19 +75,16 @@ public class EntityInventory
         UpdateSlotsNoLock(slot);
     }
 
-    protected void SetSlots(Item[] items, params int[] slots)
-    {
-        if (slots == null || items == null || slots.Length == 0 || items.Length == 0 || slots.Length != items.Length)
-        {
-            _log.Warn($"Inventory transaction failed for slots {slots?.ToCommaSepString()} item {items?.Select(i => i.ObjectId).ToCommaSepString()}");
+    protected void SetSlots(Item[] items, params int[] slots) {
+        if (slots == null || items == null || slots.Length == 0 || items.Length == 0 || slots.Length != items.Length) {
+            _log.Warn(
+                $"Inventory transaction failed for slots {slots?.ToCommaSepString()} item {items?.Select(i => i.ObjectId).ToCommaSepString()}");
             return;
         }
 
-        foreach (var slot in slots)
-        {
+        foreach (var slot in slots) {
             var item = items[slot];
-            if (slot < 0 || slot >= items.Length)
-            {
+            if (slot < 0 || slot >= items.Length) {
                 _log.Warn($"Inventory transaction failed for slot {slot} item {item}");
                 break;
             }
@@ -109,74 +94,66 @@ public class EntityInventory
         }
     }
 
-    public void SetItems(Item[] items)
-    {
-        if (items == null || items.Length > _items.Length)
-        {
+    public void SetItems(Item[] items) {
+        if (items == null || items.Length > _items.Length) {
             _log.Warn($"Inventory transaction failed. Items Size: {items.Length} Inv Size: {_items.Length}");
             return;
         }
 
-        for (var i = 0; i < items.Length; i++)
-        {
+        for (var i = 0; i < items.Length; i++) {
             var item = items[i];
             InternalSetItem(i, item);
             UpdateSlotsNoLock(i);
         }
     }
 
-    public void SetItems(int[] itemTypes, byte[] itemDatas)
-    {
-        if (itemTypes == null || itemDatas == null || itemTypes.Length > _items.Length)
-        {
-            _log.Warn($"Inventory transaction failed. Items Size: {itemTypes.Length} Item Datas Size: {itemDatas?.Length ?? -1} Inv Size: {_items.Length}");
+    public void SetItems(int[] itemTypes, byte[] itemDatas) {
+        if (itemTypes == null || itemDatas == null || itemTypes.Length > _items.Length) {
+            _log.Warn(
+                $"Inventory transaction failed. Items Size: {itemTypes.Length} Item Datas Size: {itemDatas?.Length ?? -1} Inv Size: {_items.Length}");
             return;
         }
 
         using var stream = new MemoryStream(itemDatas);
         using var reader = new BinaryReader(stream);
-        for (var i = 0; i < itemTypes.Length; i++)
-        {
+        for (var i = 0; i < itemTypes.Length; i++) {
             Item item = null;
             var itemType = itemTypes[i];
-            if (itemType != -1)
-            {
+            if (itemType != -1) {
                 var xml = XmlLibrary.ItemDescs[(ushort)itemType].Root;
                 item = new Item(xml);
                 item.Import(reader);
             }
-            else
+            else {
                 reader.ReadByte(); // 0 byte
+            }
 
             InternalSetItem(i, item);
             UpdateSlotsNoLock(i);
         }
     }
 
-    public void SetItem(int slot, int itemType, BinaryReader dataReader)
-    {
-        if (slot < 0 || slot >= _items.Length)
-        {
+    public void SetItem(int slot, int itemType, BinaryReader dataReader) {
+        if (slot < 0 || slot >= _items.Length) {
             _log.Warn($"Inventory transaction failed for slot {slot} item {itemType}");
             return;
         }
 
         Item item = null;
-        if (itemType != -1)
-        {
+        if (itemType != -1) {
             var xml = XmlLibrary.ItemDescs[(ushort)itemType].Root;
             item = new Item(xml);
             item.Import(dataReader);
         }
-        else
+        else {
             dataReader.ReadByte(); // 0 byte
+        }
 
         InternalSetItem(slot, item);
         UpdateSlotsNoLock(slot);
     }
 
-    public virtual Item RemoveItem(byte slotId)
-    {
+    public virtual Item RemoveItem(byte slotId) {
         if (slotId > _items.Length)
             return null;
 
@@ -185,8 +162,7 @@ public class EntityInventory
         return item;
     }
 
-    public void SwapSlots(byte slot1, byte slot2)
-    {
+    public void SwapSlots(byte slot1, byte slot2) {
         var item = _items[slot1];
         var item2 = _items[slot2];
 
@@ -195,8 +171,7 @@ public class EntityInventory
     }
 
     // This will ALWAYS swap two items, so perform any validation BEFORE you call it
-    public static void InventorySwap(EntityInventory inv1, EntityInventory inv2, byte inv1SlotId, byte inv2SlotId)
-    {
+    public static void InventorySwap(EntityInventory inv1, EntityInventory inv2, byte inv1SlotId, byte inv2SlotId) {
         var item = inv1.GetItemNoLock(inv1SlotId);
         var otherItem = inv2.GetItemNoLock(inv2SlotId);
 
@@ -204,8 +179,7 @@ public class EntityInventory
         inv2.SetItemNoLock(item, inv2SlotId);
     }
 
-    public static void InventorySwap(EntityInventory inv, byte slot1Id, byte slot2Id)
-    {
+    public static void InventorySwap(EntityInventory inv, byte slot1Id, byte slot2Id) {
         var item = inv.GetItemNoLock(slot1Id);
         var otherItem = inv.GetItemNoLock(slot2Id);
 
@@ -213,19 +187,16 @@ public class EntityInventory
         inv.SetItemNoLock(item, slot2Id);
     }
 
-    public int[] GetItemTypes()
-    {
+    public int[] GetItemTypes() {
         var ret = new int[_items.Length];
         for (var i = 0; i < ret.Length; i++)
             ret[i] = _items[i]?.ObjectType ?? -1;
         return ret;
     }
 
-    public byte[] GetItemDatas()
-    {
+    public byte[] GetItemDatas() {
         var data = new List<byte>();
-        for (var i = 0; i < _items.Length; i++)
-        {
+        for (var i = 0; i < _items.Length; i++) {
             var item = _items[i];
             if (item == null)
                 data.Add(0);
@@ -236,48 +207,41 @@ public class EntityInventory
         return data.ToArray();
     }
 
-    public virtual Item GetItem(int slot)
-    {
+    public virtual Item GetItem(int slot) {
         if (slot < 0 || slot > _items.Length)
             return null;
 
         return _items[slot];
     }
 
-    public IEnumerable<Item> GetItems()
-    {
+    public IEnumerable<Item> GetItems() {
         foreach (var item in _items)
             yield return item;
     }
 
     // DO NOT USE THIS IF YOU HAVE NOT LOCKED THE INVENTORY.
-    public Item GetItemNoLock(int slot)
-    {
+    public Item GetItemNoLock(int slot) {
         return _items[slot];
     }
 
     // DO NOT USE THIS IF YOU HAVE NOT LOCKED THE INVENTORY.
-    public void SetItemNoLock(Item item, int slot)
-    {
+    public void SetItemNoLock(Item item, int slot) {
         InternalSetItem(slot, item);
         UpdateSlotsNoLock(slot);
     }
 
-    protected void InternalSetItem(int slot, Item item)
-    {
+    protected void InternalSetItem(int slot, Item item) {
         _items[slot] = item;
     }
 
-    public bool IsEmpty()
-    {
+    public bool IsEmpty() {
         foreach (var item in _items)
             if (item != null)
                 return false;
         return true;
     }
 
-    public static EntityInventory GetInventoryById(World world, int objId)
-    {
+    public static EntityInventory GetInventoryById(World world, int objId) {
         if (!world.Entities.TryGetValue(objId, out var targetEntity))
             return null;
 
@@ -289,10 +253,8 @@ public class EntityInventory
         return null;
     }
 
-    public static ushort GetBagIdFromType(BagType bagType)
-    {
-        switch (bagType)
-        {
+    public static ushort GetBagIdFromType(BagType bagType) {
+        switch (bagType) {
             case BagType.Common:
                 return 1280;
             case BagType.Pink:
@@ -310,10 +272,8 @@ public class EntityInventory
         return 1280;
     }
 
-    protected StatType GetStat(int slot, bool itemData)
-    {
-        switch (slot)
-        {
+    protected StatType GetStat(int slot, bool itemData) {
+        switch (slot) {
             case 0: return itemData ? StatType.InventoryData0 : StatType.Inventory0;
             case 1: return itemData ? StatType.InventoryData1 : StatType.Inventory1;
             case 2: return itemData ? StatType.InventoryData2 : StatType.Inventory2;

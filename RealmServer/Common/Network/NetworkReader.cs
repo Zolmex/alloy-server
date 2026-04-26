@@ -10,61 +10,53 @@ using System.Text;
 
 namespace Common.Network;
 
-public class NetworkReader : BinaryReader
-{
+public class NetworkReader : BinaryReader {
     private readonly bool _littleEndian;
 
-    public NetworkReader(Stream s, bool littleEndian = true) : base(s, Encoding.UTF8) // Little endian is for network, big endian is for maps
+    public NetworkReader(Stream s, bool littleEndian = true) :
+        base(s, Encoding.UTF8) // Little endian is for network, big endian is for maps
     {
         _littleEndian = littleEndian;
     }
 
-    public override short ReadInt16()
-    {
+    public override short ReadInt16() {
         if (!_littleEndian)
             return IPAddress.NetworkToHostOrder(base.ReadInt16());
         return base.ReadInt16();
     }
 
-    public override int ReadInt32()
-    {
+    public override int ReadInt32() {
         if (!_littleEndian)
             return IPAddress.NetworkToHostOrder(base.ReadInt32());
         return base.ReadInt32();
     }
 
-    public override long ReadInt64()
-    {
+    public override long ReadInt64() {
         if (!_littleEndian)
             return IPAddress.NetworkToHostOrder(base.ReadInt64());
         return base.ReadInt64();
     }
 
-    public override ushort ReadUInt16()
-    {
+    public override ushort ReadUInt16() {
         if (!_littleEndian)
             return (ushort)IPAddress.NetworkToHostOrder((short)base.ReadUInt16());
         return base.ReadUInt16();
     }
 
-    public override uint ReadUInt32()
-    {
+    public override uint ReadUInt32() {
         if (!_littleEndian)
             return (uint)IPAddress.NetworkToHostOrder((int)base.ReadUInt32());
         return base.ReadUInt32();
     }
 
-    public override ulong ReadUInt64()
-    {
+    public override ulong ReadUInt64() {
         if (!_littleEndian)
             return (ulong)IPAddress.NetworkToHostOrder((long)base.ReadUInt64());
         return base.ReadUInt64();
     }
 
-    public override float ReadSingle()
-    {
-        if (!_littleEndian)
-        {
+    public override float ReadSingle() {
+        if (!_littleEndian) {
             var arr = base.ReadBytes(4);
             Array.Reverse(arr);
             return BitConverter.ToSingle(arr, 0);
@@ -73,10 +65,8 @@ public class NetworkReader : BinaryReader
         return base.ReadSingle();
     }
 
-    public override double ReadDouble()
-    {
-        if (!_littleEndian)
-        {
+    public override double ReadDouble() {
+        if (!_littleEndian) {
             var arr = base.ReadBytes(8);
             Array.Reverse(arr);
             return BitConverter.ToDouble(arr, 0);
@@ -85,12 +75,10 @@ public class NetworkReader : BinaryReader
         return base.ReadDouble();
     }
 
-    public string ReadNullTerminatedString()
-    {
+    public string ReadNullTerminatedString() {
         var ret = new StringBuilder();
         var b = ReadByte();
-        while (b != 0)
-        {
+        while (b != 0) {
             ret.Append((char)b);
             b = ReadByte();
         }
@@ -98,23 +86,18 @@ public class NetworkReader : BinaryReader
         return ret.ToString();
     }
 
-    public string ReadUTF()
-    {
+    public string ReadUTF() {
         return Encoding.UTF8.GetString(ReadBytes(ReadUInt16()));
     }
 
-    public string Read32UTF()
-    {
+    public string Read32UTF() {
         return Encoding.UTF8.GetString(ReadBytes(ReadInt32()));
     }
 }
 
-public static class NetworkReaderExtension
-{
-    extension(NetworkReader rdr)
-    {
-        public T[] Read<T>() where T : struct
-        {
+public static class NetworkReaderExtension {
+    extension(NetworkReader rdr) {
+        public T[] Read<T>() where T : struct {
             var len = rdr.ReadUInt16();
             var values = new T[len];
             rdr.Read(MemoryMarshal.AsBytes(new Span<T>(values)));

@@ -1,25 +1,22 @@
 ﻿#region
 
-using Common.Utilities;
 using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 
 #endregion
 
 namespace Common.Resources.Config;
 
-public enum RealmClose
-{
+public enum RealmClose {
     EventsKilled,
     MinutesElapsed
 }
 
-public class RealmCloseData
-{
-    public RealmCloseData(XElement e)
-    {
+public class RealmCloseData {
+    public RealmCloseData(XElement e) {
         Min = e.GetAttribute<int>("min");
         Max = e.GetAttribute<int>("max");
         CloseType = Enum.Parse<RealmClose>(e.Value);
@@ -30,10 +27,8 @@ public class RealmCloseData
     public RealmClose CloseType { get; private set; }
 }
 
-public class RealmEventData
-{
-    public RealmEventData(XElement e)
-    {
+public class RealmEventData {
+    public RealmEventData(XElement e) {
         ObjectId = e.GetAttribute<string>("objId");
         SetPiece = e.GetValue<string>("SetPiece");
         PerRealmMax = e.GetValue("PerRealmMax", -1);
@@ -44,14 +39,12 @@ public class RealmEventData
     public int PerRealmMax { get; private set; }
 }
 
-public class RealmConfig
-{
+public class RealmConfig {
     private const string ConfigFile = "Resources/Config/Data/realmConfig.xml";
 
     private static RealmConfig _config;
 
-    public RealmConfig(XElement e)
-    {
+    public RealmConfig(XElement e) {
         Names = e.GetValue<string>("Names")?.Split(',');
         Events = e.Elements("Event").Select(x => new RealmEventData(x)).ToArray();
         Close = e.Elements("Close").Select(x => new RealmCloseData(x)).ToArray();
@@ -64,8 +57,7 @@ public class RealmConfig
     public RealmEventData[] Events { get; private set; }
     public RealmCloseData[] Close { get; private set; }
 
-    private static RealmConfig Load()
-    {
+    private static RealmConfig Load() {
         return new RealmConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 }

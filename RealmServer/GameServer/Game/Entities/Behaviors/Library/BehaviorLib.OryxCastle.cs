@@ -10,8 +10,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Oryx Stone Guardian Right")]
     public static State OryxStoneGuardianRight =>
         new(
@@ -33,23 +32,23 @@ public partial class BehaviorLib
             ),
             new State("1",
                 new State("1.1",
-                    new Orbit((0.6f * 5.55f) + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
+                    new Orbit(0.6f * 5.55f + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
                     new TimedTransition(1200, "1.2")
                 ),
                 new State("1.2",
                     new SetAltTexture(4),
-                    new Orbit((.4f * 5.55f) + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
+                    new Orbit(.4f * 5.55f + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
                     new Shoot(20, 2, 360 / 2f, fixedAngle: 180, rotateAngle: 30, cooldownMS: 200),
                     new TimedTransition(4000, TransitionType.Random, "Chose")
                 )
             ),
             new State("2",
                 new State("2.1",
-                    new Protect((2 * 5.55f) + 0.74f, "Oryx Guardian TaskMaster", 20),
+                    new Protect(2 * 5.55f + 0.74f, "Oryx Guardian TaskMaster", 20),
                     new TimedTransition(1000, "2.2")
                 ),
                 new State("2.2",
-                    new MoveLine((2 * 5.55f) + 0.74f),
+                    new MoveLine(2 * 5.55f + 0.74f),
                     new TimedTransition(1000, "2.3")
                 ),
                 new State("2.3",
@@ -86,7 +85,7 @@ public partial class BehaviorLib
             ),
             new State("3",
                 new State("3.1",
-                    new Protect((2 * 5.55f) + 0.74f, "Oryx Guardian TaskMaster", 20),
+                    new Protect(2 * 5.55f + 0.74f, "Oryx Guardian TaskMaster", 20),
                     new TimedTransition(1500, "3.2")
                 ),
                 new State("3.2",
@@ -108,19 +107,19 @@ public partial class BehaviorLib
                 )
             ),
             new State("4",
-                new Charge((2 * 5.55f) + 0.74f),
+                new Charge(2 * 5.55f + 0.74f),
                 new Shoot(20, 5, 10, cooldownMS: 1500, targeted: true),
                 new TimedTransition(4000, TransitionType.Random, "Chose")
             ),
             new State("5",
-                new Wander((0.4f * 5.55f) + 0.74f),
+                new Wander(0.4f * 5.55f + 0.74f),
                 new Shoot(10, 10, 360 / 10f, 2, 36, cooldownMS: 1000),
                 new TimedTransition(4000, TransitionType.Random, "Chose")
             ),
             new State("6",
                 new State("6.1",
                     new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                    new ReturnToSpawn((2 * 5.55f) + 0.74f, 1),
+                    new ReturnToSpawn(2 * 5.55f + 0.74f, 1),
                     new TimedTransition(1000, "6.2")
                 ),
                 new State("6.2",
@@ -166,23 +165,23 @@ public partial class BehaviorLib
             ),
             new State("1",
                 new State("1.1",
-                    new Orbit((.6f * 5.55f) + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
+                    new Orbit(.6f * 5.55f + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
                     new TimedTransition(1200, "1.2")
                 ),
                 new State("1.2",
                     new SetAltTexture(4),
-                    new Orbit((.4f * 5.55f) + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
+                    new Orbit(.4f * 5.55f + 0.74f, 5, 20, "Oryx Guardian TaskMaster"),
                     new Shoot(20, 2, 360 / 2f, fixedAngle: 180, rotateAngle: 30, cooldownMS: 200),
                     new TimedTransition(4000, TransitionType.Random, "Chose")
                 )
             ),
             new State("2",
                 new State("2.1",
-                    new Protect((2 * 5.55f) + 0.74f, "Oryx Guardian TaskMaster", 20),
+                    new Protect(2 * 5.55f + 0.74f, "Oryx Guardian TaskMaster", 20),
                     new TimedTransition(1000, "2.2")
                 ),
                 new State("2.2",
-                    new MoveLine((2 * 5.55f) + 0.74f, 180),
+                    new MoveLine(2 * 5.55f + 0.74f, 180),
                     new TimedTransition(1000, "2.3")
                 ),
                 new State("2.3",
@@ -219,7 +218,7 @@ public partial class BehaviorLib
             ),
             new State("3",
                 new State("3.1",
-                    new Protect((2 * 5.55f) + 0.74f, "Oryx Guardian TaskMaster", 20),
+                    new Protect(2 * 5.55f + 0.74f, "Oryx Guardian TaskMaster", 20),
                     new TimedTransition(1500, "3.2")
                 ),
                 new State("3.2",
@@ -241,19 +240,19 @@ public partial class BehaviorLib
                 )
             ),
             new State("4",
-                new Charge((2 * 5.55f) + 0.74f),
+                new Charge(2 * 5.55f + 0.74f),
                 new Shoot(20, 5, 10, cooldownMS: 1500),
                 new TimedTransition(4000, TransitionType.Random, "Chose")
             ),
             new State("5",
-                new Wander((0.4f * 5.55f) + 0.74f),
+                new Wander(0.4f * 5.55f + 0.74f),
                 new Shoot(10, 10, 360 / 10f, 2, 36, cooldownMS: 1000),
                 new TimedTransition(4000, TransitionType.Random, "Chose")
             ),
             new State("6",
                 new State("6.1",
                     new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                    new ReturnToSpawn((2 * 5.55f) + 0.74f, 1),
+                    new ReturnToSpawn(2 * 5.55f + 0.74f, 1),
                     new TimedTransition(1000, "6.2")
                 ),
                 new State("6.2",
@@ -336,8 +335,8 @@ public partial class BehaviorLib
                 new EntityWithinTransition(radius: 10, targetState: "tim 4 rekkings")
             ),
             new State("tim 4 rekkings",
-                new Wander((0.2f * 5.55f) + 0.74f), // Adjusted speed
-                new Follow((0.6f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 3), // Adjusted speed
+                new Wander(0.2f * 5.55f + 0.74f), // Adjusted speed
+                new Follow(0.6f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 3), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 10,
@@ -349,8 +348,8 @@ public partial class BehaviorLib
                 new TimedTransition(5000, "tim 4 singular rekt")
             ),
             new State("tim 4 singular rekt",
-                new Wander((0.2f * 5.55f) + 0.74f), // Adjusted speed
-                new Follow((0.7f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 3), // Adjusted speed
+                new Wander(0.2f * 5.55f + 0.74f), // Adjusted speed
+                new Follow(0.7f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 3), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 10,
@@ -383,8 +382,8 @@ public partial class BehaviorLib
                 new EntityWithinTransition("anuspiddle", radius: 10)
             ),
             new State("anuspiddle",
-                new Wander((0.2f * 5.55f) + 0.74f),
-                new Follow((0.6f * 5.55f) + 0.74f, 0, 10, -1),
+                new Wander(0.2f * 5.55f + 0.74f),
+                new Follow(0.6f * 5.55f + 0.74f, 0, 10, -1),
                 new Shoot(10, projectileIndex: 0, cooldownMS: 200, targeted: true)
             )
         );
@@ -393,7 +392,7 @@ public partial class BehaviorLib
     public static State OryxInsectCommander =>
         new(
             new State("lol jordan is a nub",
-                new Wander((0.2f * 5.55f) + 0.74f), // Adjusted speed
+                new Wander(0.2f * 5.55f + 0.74f), // Adjusted speed
                 new Reproduce("Oryx Insect Minion", densityRadius: 10, maxDensity: 20, cooldownMs: 500),
                 new Shoot(
                     projectileIndex: 0,
@@ -409,9 +408,9 @@ public partial class BehaviorLib
     public static State OryxInsectMinion =>
         new(
             new State("its SWARMING time",
-                new Wander((0.2f * 5.55f) + 0.74f), // Adjusted speed
-                new Wander((0.4f * 5.55f) + 0.74f, distanceFromSpawn: 8), // Adjusted speed
-                new Follow((0.8f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 1), // Adjusted speed
+                new Wander(0.2f * 5.55f + 0.74f), // Adjusted speed
+                new Wander(0.4f * 5.55f + 0.74f, distanceFromSpawn: 8), // Adjusted speed
+                new Follow(0.8f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 1), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 10,
@@ -440,8 +439,8 @@ public partial class BehaviorLib
                 new TimedTransition(1500, "jordan is stanking")
             ),
             new State("jordan is stanking",
-                new Wander((0.2f * 5.55f) + 0.74f), // Adjusted speed
-                new Follow((0.4f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 2), // Adjusted speed
+                new Wander(0.2f * 5.55f + 0.74f), // Adjusted speed
+                new Follow(0.4f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 2), // Adjusted speed
                 new SetAltTexture(1),
                 new Shoot(
                     projectileIndex: 0,
@@ -476,7 +475,7 @@ public partial class BehaviorLib
                 new EntityWithinTransition(radius: 10, targetState: "penispiddle")
             ),
             new State("penispiddle",
-                new Follow((0.6f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 0), // Adjusted speed
+                new Follow(0.6f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 0), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 10,
@@ -502,8 +501,8 @@ public partial class BehaviorLib
                 new EntityWithinTransition(radius: 10, targetState: "piddle")
             ),
             new State("piddle",
-                new Wander((0.2f * 5.55f) + 0.74f), // Adjusted speed
-                new Follow((0.4f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 1), // Adjusted speed
+                new Wander(0.2f * 5.55f + 0.74f), // Adjusted speed
+                new Follow(0.4f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 1), // Adjusted speed
                 new Shoot(
                     projectileIndex: 1,
                     maxRadius: 10,
@@ -516,8 +515,8 @@ public partial class BehaviorLib
                 new TimedTransition(5000, "charge")
             ),
             new State("charge",
-                new Wander((0.3f * 5.55f) + 0.74f), // Adjusted speed
-                new Follow((1.2f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 1), // Adjusted speed
+                new Wander(0.3f * 5.55f + 0.74f), // Adjusted speed
+                new Follow(1.2f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 1), // Adjusted speed
                 new Shoot(
                     projectileIndex: 1,
                     maxRadius: 10,

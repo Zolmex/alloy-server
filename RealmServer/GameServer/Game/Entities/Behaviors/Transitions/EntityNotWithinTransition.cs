@@ -1,8 +1,8 @@
 ﻿#region
 
-using Common.Utilities;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
 
 #endregion
@@ -18,8 +18,7 @@ using static BehaviorScript;
 /// <summary>
 ///     A class for transitioning to a given state after a target is not within a radius.
 /// </summary>
-public class EntityNotWithinTransition : BehaviorTransition
-{
+public class EntityNotWithinTransition : BehaviorTransition {
     private readonly float radius;
     private readonly string target;
     private readonly TargetType targetType;
@@ -28,8 +27,7 @@ public class EntityNotWithinTransition : BehaviorTransition
     ///     Initializes a new instance of the <see cref="EntityNotWithinTransition" /> class.
     /// </summary>
     /// <param name="xml">Behavior XML.</param>
-    public EntityNotWithinTransition(XElement xml)
-    {
+    public EntityNotWithinTransition(XElement xml) {
         RegisterTargetStates(xml.GetAttribute<string>("targetStates").Split(','));
         target = xml.GetAttribute<string>("target");
         radius = xml.GetAttribute<float>("radius");
@@ -43,9 +41,9 @@ public class EntityNotWithinTransition : BehaviorTransition
     /// <param name="target">"player" if the target should be a player, or name of the entity if the target is an entity.</param>
     /// <param name="radius">Radius within which the transition should be considered completed if the entity is not found.</param>
     /// <param name="transitionType">How the transition should decide which state to transition to.</param>
-    public EntityNotWithinTransition(string targetState, string target = "player", float radius = 8f, TransitionType transitionType = TransitionType.Random)
-        : base(transitionType)
-    {
+    public EntityNotWithinTransition(string targetState, string target = "player", float radius = 8f,
+        TransitionType transitionType = TransitionType.Random)
+        : base(transitionType) {
         RegisterTargetStates(targetState);
         this.target = target;
         this.radius = radius;
@@ -59,9 +57,9 @@ public class EntityNotWithinTransition : BehaviorTransition
     /// <param name="radius">Radius within which the transition should be considered completed if the entity is not found.</param>
     /// <param name="transitionType">How the transition should decide which state to transition to.</param>
     /// <param name="targetStates">Target states that can be transitioned to. If multiple are set, it will pick a random state.</param>
-    public EntityNotWithinTransition(string target = "player", float radius = 8f, TransitionType transitionType = TransitionType.Random, params string[] targetStates)
-        : base(transitionType)
-    {
+    public EntityNotWithinTransition(string target = "player", float radius = 8f,
+        TransitionType transitionType = TransitionType.Random, params string[] targetStates)
+        : base(transitionType) {
         RegisterTargetStates(targetStates);
         this.target = target;
         this.radius = radius;
@@ -69,17 +67,11 @@ public class EntityNotWithinTransition : BehaviorTransition
     }
 
     /// <inheritdoc />
-    public override string Tick(CharacterEntity host, RealmTime time)
-    {
-        if (targetType == TargetType.Player && !host.GetPlayersWithin(radius).Any())
-        {
-            return GetTargetState();
-        }
+    public override string Tick(CharacterEntity host, RealmTime time) {
+        if (targetType == TargetType.Player && !host.GetPlayersWithin(radius).Any()) return GetTargetState();
 
         if (targetType == TargetType.Entity && !host.GetOtherEnemiesByName(target, radius).Any())
-        {
             return GetTargetState();
-        }
 
         return null;
     }

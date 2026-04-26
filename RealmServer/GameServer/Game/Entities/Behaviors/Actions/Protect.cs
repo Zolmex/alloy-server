@@ -1,36 +1,33 @@
 ﻿#region
 
-using Common;
 using System;
 using System.Numerics;
+using Common;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public enum ProtectState
-{
+public enum ProtectState {
     DontKnowWhere,
     Protecting,
     Protected
 }
 
-public class ProtectInfo
-{
+public class ProtectInfo {
     public ProtectState State;
 }
 
-public record Protect : BehaviorScript
-{
+public record Protect : BehaviorScript {
     private readonly float _acquireRange;
     private readonly string _protectee;
     private readonly float _protectionRange;
     private readonly float _reprotectRange;
     private readonly float _speed;
 
-    public Protect(float speed, string protectee, float acquireRange = 10, float protectionRange = 2, float reprotectRange = 1)
-    {
+    public Protect(float speed, string protectee, float acquireRange = 10, float protectionRange = 2,
+        float reprotectRange = 1) {
         _acquireRange = acquireRange;
         _protectee = protectee;
         _protectionRange = protectionRange;
@@ -38,14 +35,12 @@ public record Protect : BehaviorScript
         _speed = speed;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var protectInfo = host.ResolveResource<ProtectInfo>(this);
         protectInfo.State = ProtectState.DontKnowWhere;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var protectInfo = host.ResolveResource<ProtectInfo>(this);
         if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))
             return BehaviorTickState.BehaviorFailed;
@@ -53,11 +48,9 @@ public record Protect : BehaviorScript
         Vector2 vect;
         var s = protectInfo.State;
         var entity = host.GetNearestOtherEnemyByName(_protectee, _acquireRange);
-        switch (s)
-        {
+        switch (s) {
             case ProtectState.DontKnowWhere:
-                if (entity != null)
-                {
+                if (entity != null) {
                     s = ProtectState.Protecting;
 
                     goto case ProtectState.Protecting;
@@ -66,39 +59,34 @@ public record Protect : BehaviorScript
                 break;
 
             case ProtectState.Protecting:
-                if (entity == null)
-                {
+                if (entity == null) {
                     s = ProtectState.DontKnowWhere;
 
                     break;
                 }
 
                 vect = new Vector2(entity.Position.X - host.Position.X, entity.Position.Y - host.Position.Y);
-                if (vect.Length() > _reprotectRange)
-                {
+                if (vect.Length() > _reprotectRange) {
                     vect = Vector2.Normalize(vect);
 
                     var dist = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
                     host.MoveRelative(vect.X * dist, vect.Y * dist);
                 }
-                else
-                {
+                else {
                     s = ProtectState.Protected;
                 }
 
                 break;
 
             case ProtectState.Protected:
-                if (entity == null)
-                {
+                if (entity == null) {
                     s = ProtectState.DontKnowWhere;
 
                     break;
                 }
 
                 vect = new Vector2(entity.Position.X - host.Position.X, entity.Position.Y - host.Position.Y);
-                if (vect.Length() > _protectionRange)
-                {
+                if (vect.Length() > _protectionRange) {
                     s = ProtectState.Protecting;
 
                     goto case ProtectState.Protecting;

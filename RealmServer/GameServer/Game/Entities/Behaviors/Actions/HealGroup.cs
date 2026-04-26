@@ -8,55 +8,46 @@ using GameServer.Game.Network.Messaging.Outgoing;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class HealGroupInfo
-{
+public class HealGroupInfo {
     public int RemainingTime;
 }
 
-public record HealGroup : BehaviorScript
-{
+public record HealGroup : BehaviorScript {
     private readonly int _cooldownMS;
     private readonly string _group;
     private readonly int _healAmount;
     private readonly float _range;
 
-    public HealGroup(float range, string group, int cooldownMS = 1000, int healAmount = 0)
-    {
+    public HealGroup(float range, string group, int cooldownMS = 1000, int healAmount = 0) {
         _range = range;
         _group = group;
         _cooldownMS = cooldownMS;
         _healAmount = healAmount;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
         healGroupInfo.RemainingTime = 0; // Make sure the behavior runs once
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var healGroupInfo = host.ResolveResource<HealGroupInfo>(this);
-        if (healGroupInfo.RemainingTime <= 0)
-        {
+        if (healGroupInfo.RemainingTime <= 0) {
             if (host.HasConditionEffect(ConditionEffectIndex.Stunned))
                 return BehaviorTickState.BehaviorFailed;
 
-            foreach (var entity in host.GetOtherEnemiesByName(_group, _range))
-            {
+            foreach (var entity in host.GetOtherEnemiesByName(_group, _range)) {
                 if (entity is not CharacterEntity character)
                     continue;
 
                 var newHp = entity.MaxHP;
-                if (_healAmount != 0)
-                {
+                if (_healAmount != 0) {
                     var newHealth = _healAmount + entity.HP;
                     if (newHp > newHealth)
                         newHp = newHealth;
                 }
 
-                if (newHp != entity.HP)
-                {
+                if (newHp != entity.HP) {
                     var n = newHp - entity.HP;
 
                     entity.HP = newHp;
@@ -87,8 +78,9 @@ public record HealGroup : BehaviorScript
 
             healGroupInfo.RemainingTime = _cooldownMS;
         }
-        else
+        else {
             healGroupInfo.RemainingTime -= time.ElapsedMsDelta;
+        }
 
         return BehaviorTickState.BehaviorActive;
     }

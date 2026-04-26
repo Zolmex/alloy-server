@@ -1,18 +1,16 @@
-using Common.Projectiles.ProjectilePaths;
-using Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Projectiles.ProjectilePaths;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class ProjectileDesc : ItemData
-{
+public class ProjectileDesc : ItemData {
     public readonly XElement Root;
 
-    public ProjectileDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
+    public ProjectileDesc(XElement e, ItemData parent = null, byte parentField = 0) {
         SetParent(parent, parentField);
         if (e == null) // Null when instance by itemdata import
         {
@@ -50,14 +48,14 @@ public class ProjectileDesc : ItemData
             .Select(i => new LevelIncreaseDesc(i, this, (byte)ProjectileField.LevelIncreases))
             .ToArray();
 
-        if (e.Element("Path") != null)
-        {
+        if (e.Element("Path") != null) {
             Path = new ProjectilePath();
             foreach (var elem in e.Elements("Path"))
                 Path.RegisterSegment(ProjectilePathSegment.ParsePath(elem));
         }
-        else
+        else {
             Path = ProjectilePathSegment.ParsePath(this).ToPath();
+        }
 
         _initialized = true;
     }
@@ -65,124 +63,104 @@ public class ProjectileDesc : ItemData
     public override Type FieldsEnum => typeof(ProjectileField);
     public ushort ContainerType { get; private set; }
 
-    public byte BulletId
-    {
+    public byte BulletId {
         get => GetValue<byte>(0);
         set => SetValue(0, value);
     }
 
-    public string ObjectId
-    {
+    public string ObjectId {
         get => GetValue<string>(1);
         set => SetValue(1, value);
     }
 
-    public int LifetimeMS
-    {
+    public int LifetimeMS {
         get => GetValue<int>(2);
         set => SetValue(2, value);
     }
 
-    public float Speed
-    {
+    public float Speed {
         get => GetValue<float>(3);
         set => SetValue(3, value);
     }
 
-    public int Damage
-    {
+    public int Damage {
         get => GetValue<int>(4);
         set => SetValue(4, value);
     }
 
-    public int MinDamage
-    {
+    public int MinDamage {
         get => GetValue<int>(5);
         set => SetValue(5, value);
     }
 
-    public int MaxDamage
-    {
+    public int MaxDamage {
         get => GetValue<int>(6);
         set => SetValue(6, value);
     }
 
-    public ConditionEffectDesc[] Effects
-    {
+    public ConditionEffectDesc[] Effects {
         get => GetValue<ConditionEffectDesc[]>(7);
         set => SetValue(7, value);
     }
 
-    public bool MultiHit
-    {
+    public bool MultiHit {
         get => GetValue<bool>(8);
         set => SetValue(8, value);
     }
 
-    public bool PassesCover
-    {
+    public bool PassesCover {
         get => GetValue<bool>(9);
         set => SetValue(9, value);
     }
 
-    public bool ArmorPiercing
-    {
+    public bool ArmorPiercing {
         get => GetValue<bool>(10);
         set => SetValue(10, value);
     }
 
-    public bool Wavy
-    {
+    public bool Wavy {
         get => GetValue<bool>(11);
         set => SetValue(11, value);
     }
 
-    public bool Parametric
-    {
+    public bool Parametric {
         get => GetValue<bool>(12);
         set => SetValue(12, value);
     }
 
-    public bool Boomerang
-    {
+    public bool Boomerang {
         get => GetValue<bool>(13);
         set => SetValue(13, value);
     }
 
-    public float Amplitude
-    {
+    public float Amplitude {
         get => GetValue<float>(14);
         set => SetValue(14, value);
     }
 
-    public float Frequency
-    {
+    public float Frequency {
         get => GetValue<float>(15);
         set => SetValue(15, value);
     }
 
-    public float Magnitude
-    {
+    public float Magnitude {
         get => GetValue<float>(16);
         set => SetValue(16, value);
     }
 
-    public int Size
-    {
+    public int Size {
         get => GetValue<int>(17);
         set => SetValue(17, value);
     }
 
-    public LevelIncreaseDesc[] LevelIncreases
-    {
+    public LevelIncreaseDesc[] LevelIncreases {
         get => GetValue<LevelIncreaseDesc[]>(18);
         set => SetValue(18, value);
     }
 
     public ProjectilePath Path { get; set; }
 
-    public void SetContainer(ushort containerType)
-    {
+    public void SetContainer(ushort containerType) {
         ContainerType = containerType;
     }
 }

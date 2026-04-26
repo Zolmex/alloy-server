@@ -6,10 +6,8 @@ using System;
 
 namespace GameServer.Game.Entities.Behaviors;
 
-public class CharacterBehaviorAttribute : Attribute
-{
-    public CharacterBehaviorAttribute(string objectId)
-    {
+public class CharacterBehaviorAttribute : Attribute {
+    public CharacterBehaviorAttribute(string objectId) {
         ObjectId = objectId;
     }
 

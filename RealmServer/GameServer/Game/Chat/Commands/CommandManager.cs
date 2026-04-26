@@ -1,10 +1,9 @@
 ﻿#region
 
-using Common.Utilities;
-using GameServer.Game.Entities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
 
 #endregion
@@ -12,21 +11,18 @@ using GameServer.Game.Entities.Types;
 namespace GameServer.Game.Chat.Commands;
 
 // This is basically the same implementation as RequestHandler in WebServer
-public abstract class CommandManager
-{
+public abstract class CommandManager {
     private static readonly Dictionary<string, Command> _commands = new();
     protected static Logger _log;
 
     public abstract void Execute(Player player, string args);
 
-    public static IEnumerable<Player> GetPlayers(string args, Player player)
-    {
+    public static IEnumerable<Player> GetPlayers(string args, Player player) {
         var playerList = new List<Player> { player };
         if (player.AccRank < (int)Command.CommandPermissionLevel.Moderator)
             return playerList;
 
-        switch (args)
-        {
+        switch (args) {
             case "self":
                 return playerList;
             case "nearby":
@@ -42,16 +38,13 @@ public abstract class CommandManager
         return playerList;
     }
 
-    public static void Load()
-    {
+    public static void Load() {
         _log = new Logger(typeof(CommandManager));
 
         var types = Assembly.GetExecutingAssembly().GetTypes();
-        for (var i = 0; i < types.Length; i++)
-        {
+        for (var i = 0; i < types.Length; i++) {
             var type = types[i];
-            if (!type.IsAbstract && type.IsSubclassOf(typeof(Command)))
-            {
+            if (!type.IsAbstract && type.IsSubclassOf(typeof(Command))) {
                 var cmd = (Command)Activator.CreateInstance(type);
                 var commandAttribute = Attribute.GetCustomAttribute(type, typeof(CommandAttribute)) as CommandAttribute;
                 cmd.PermissionLevel = commandAttribute.PermissionLevel;
@@ -61,30 +54,25 @@ public abstract class CommandManager
                     continue;
 
                 foreach (var alias in commandAttribute.Aliases)
-                {
                     if (!_commands.TryAdd($"/{alias.ToLower()}", cmd))
                         _log.Error($"Conflict: alias '{alias}' already exists.");
-                }
             }
         }
     }
 
-    public static void LogError(Exception e)
-    {
+    public static void LogError(Exception e) {
         _log.Error(e);
     }
 
-    public static void ExecuteCommand(Player player, string name, string args)
-    {
-        if (!_commands.TryGetValue(name.ToLower(), out var cmd))
-        {
+    public static void ExecuteCommand(Player player, string name, string args) {
+        if (!_commands.TryGetValue(name.ToLower(), out var cmd)) {
             player.SendError($"Command not found: {name}");
             return;
         }
 
         if (cmd.PermissionLevel == Command.CommandPermissionLevel.Admin && (!player.User.Account.IsAdmin ||
-                                                                            (int)cmd.PermissionLevel > player.User.Account.Rank))
-        {
+                                                                            (int)cmd.PermissionLevel >
+                                                                            player.User.Account.Rank)) {
             player.SendError("You're not authorized to use this command.");
             return;
         }
@@ -92,10 +80,8 @@ public abstract class CommandManager
         cmd.Execute(player, args);
     }
 
-    public static IEnumerable<string> GetCommandList(Player player)
-    {
-        foreach (var kvp in _commands)
-        {
+    public static IEnumerable<string> GetCommandList(Player player) {
+        foreach (var kvp in _commands) {
             if (kvp.Value.PermissionLevel > (Command.CommandPermissionLevel)player.AccRank)
                 continue;
             yield return kvp.Key;

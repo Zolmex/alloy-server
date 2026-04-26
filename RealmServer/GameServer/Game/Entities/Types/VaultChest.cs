@@ -1,17 +1,12 @@
 ﻿#region
 
-using Common.Database;
-using System.Linq;
-
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public class VaultChest : Container
-{
+public class VaultChest : Container {
     public VaultChest(ushort objType, int ownerId)
-        : base(objType, 8, ownerId, -1)
-    { }
+        : base(objType, 8, ownerId, -1) { }
 
     // public void LoadVaultChest(DbVault dbVaults, int vaultId) // TODO: fix
     // {

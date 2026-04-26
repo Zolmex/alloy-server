@@ -3,8 +3,7 @@
 /// <summary>
 ///     An enum defining how a <see cref="BehaviorTransition" /> will select its target state.
 /// </summary>
-public enum TransitionType
-{
+public enum TransitionType {
     /// <summary>
     ///     Randomly choose a state from the list.
     /// </summary>

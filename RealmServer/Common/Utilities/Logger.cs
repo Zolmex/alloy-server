@@ -8,8 +8,7 @@ using System.IO;
 
 namespace Common.Utilities;
 
-public enum LogLevel
-{
+public enum LogLevel {
     Info,
     Debug,
     Warn,
@@ -17,8 +16,7 @@ public enum LogLevel
     Fatal
 }
 
-public class Logger : ILogger
-{
+public class Logger : ILogger {
     private const int PADDING = 18;
 
     private static readonly string CurrentDir = Directory.GetCurrentDirectory();
@@ -27,11 +25,9 @@ public class Logger : ILogger
     private static readonly object _consoleLock = new();
     private readonly string _loggerName;
 
-    static Logger()
-    {
+    static Logger() {
         // Create directories for the log files if they don't exist
-        foreach (var level in Enum.GetValues(typeof(LogLevel)))
-        {
+        foreach (var level in Enum.GetValues(typeof(LogLevel))) {
             var path = $"{CurrentDir}{LogDir}{level.ToString().ToLower()}";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -39,71 +35,57 @@ public class Logger : ILogger
     }
 
     public Logger(Type type)
-        : this(type.Name)
-    { }
+        : this(type.Name) { }
 
-    public Logger(string name)
-    {
+    public Logger(string name) {
         _loggerName = name;
     }
 
-    public void Info(object obj, bool saveToFile = true)
-    {
+    public void Info(object obj, bool saveToFile = true) {
         Log(obj.ToString(), LogLevel.Info, saveToFile, _loggerName);
     }
 
-    public void Debug(object obj, bool saveToFile = false)
-    {
+    public void Debug(object obj, bool saveToFile = false) {
         Log(obj.ToString(), LogLevel.Debug, saveToFile, _loggerName);
     }
 
-    public void Warn(object obj, bool saveToFile = true)
-    {
+    public void Warn(object obj, bool saveToFile = true) {
         Log(obj.ToString(), LogLevel.Warn, saveToFile, _loggerName);
     }
 
-    public void Error(object obj, bool saveToFile = true)
-    {
+    public void Error(object obj, bool saveToFile = true) {
         Log(obj.ToString(), LogLevel.Error, saveToFile, _loggerName);
     }
 
-    public void Fatal(object obj, bool saveToFile = true)
-    {
+    public void Fatal(object obj, bool saveToFile = true) {
         Log(obj.ToString(), LogLevel.Fatal, saveToFile, _loggerName);
     }
 
-    public static void Info(object obj, string loggerName = "Logger", bool saveToFile = false)
-    {
+    public static void Info(object obj, string loggerName = "Logger", bool saveToFile = false) {
         Log(obj.ToString(), LogLevel.Info, saveToFile, loggerName);
     }
 
-    public static void Debug(object obj, string loggerName = "Logger", bool saveToFile = false)
-    {
+    public static void Debug(object obj, string loggerName = "Logger", bool saveToFile = false) {
         Log(obj.ToString(), LogLevel.Debug, saveToFile, loggerName);
     }
 
-    public static void Warn(object obj, string loggerName = "Logger", bool saveToFile = false)
-    {
+    public static void Warn(object obj, string loggerName = "Logger", bool saveToFile = false) {
         Log(obj.ToString(), LogLevel.Warn, saveToFile, loggerName);
     }
 
-    public static void Error(object obj, string loggerName = "Logger", bool saveToFile = false)
-    {
+    public static void Error(object obj, string loggerName = "Logger", bool saveToFile = false) {
         Log(obj.ToString(), LogLevel.Error, saveToFile, loggerName);
     }
 
-    public static void Fatal(object obj, string loggerName = "Logger", bool saveToFile = false)
-    {
+    public static void Fatal(object obj, string loggerName = "Logger", bool saveToFile = false) {
         Log(obj.ToString(), LogLevel.Fatal, saveToFile, loggerName);
     }
 
-    public void Log(LogLevel level, object obj, bool saveToFile = false)
-    {
+    public void Log(LogLevel level, object obj, bool saveToFile = false) {
         Log(obj.ToString(), level, saveToFile, _loggerName);
     }
 
-    private static void Log(string text, LogLevel level, bool saveToFile, string loggerName)
-    {
+    private static void Log(string text, LogLevel level, bool saveToFile, string loggerName) {
 #if RELEASE
             if (level == LogLevel.Debug)
                 return;
@@ -114,29 +96,23 @@ public class Logger : ILogger
 
         text = $"{DateTime.Now.TimeOfDay}  {lvl.PadRight(lvlPad) + loggerName.PadRight(senderPad) + text}";
 
-        using (TimedLock.Lock(_consoleLock))
-        {
+        using (TimedLock.Lock(_consoleLock)) {
             Console.BackgroundColor = GetBackColor(level);
             Console.ForegroundColor = GetForeColor(level);
             Console.WriteLine(text);
         }
 
-        try
-        {
-            if (saveToFile)
-            {
+        try {
+            if (saveToFile) {
                 var path = $"{CurrentDir}{LogDir}{level.ToString().ToLower()}/log.txt";
                 File.AppendAllLines(path, new[] { text });
             }
         }
-        catch (IOException e)
-        { } // uhhh, leave this here ok?
+        catch (IOException e) { } // uhhh, leave this here ok?
     }
 
-    private static ConsoleColor GetBackColor(LogLevel level)
-    {
-        switch (level)
-        {
+    private static ConsoleColor GetBackColor(LogLevel level) {
+        switch (level) {
             case LogLevel.Info:
             case LogLevel.Debug:
             case LogLevel.Warn:
@@ -149,10 +125,8 @@ public class Logger : ILogger
         }
     }
 
-    private static ConsoleColor GetForeColor(LogLevel level)
-    {
-        switch (level)
-        {
+    private static ConsoleColor GetForeColor(LogLevel level) {
+        switch (level) {
             case LogLevel.Info:
                 return ConsoleColor.Gray;
             case LogLevel.Debug:

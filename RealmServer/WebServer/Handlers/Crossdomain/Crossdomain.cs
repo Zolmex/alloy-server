@@ -8,15 +8,13 @@ using System.Threading.Tasks;
 
 namespace WebServer.Handlers.Crossdomain;
 
-public class Crossdomain : RequestHandler
-{
+public class Crossdomain : RequestHandler {
     private const string CROSSDOMAIN_PATH = "Handlers/Crossdomain/crossdomain.xml";
     private string _file;
 
     public override string Path => "/crossdomain.xml";
 
-    public override async Task<string> Handle(string ip, NameValueCollection query)
-    {
+    public override async Task<string> Handle(string ip, NameValueCollection query) {
         if (_file == null)
             _file = File.ReadAllText(CROSSDOMAIN_PATH);
 

@@ -1,10 +1,9 @@
 ﻿#region
 
-using Common.Network;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
+using Common.Network;
 
 #endregion
 
@@ -13,22 +12,19 @@ namespace Common.Projectiles.ProjectilePaths;
 /// <summary>
 ///     Movement mapping for a projectile, consisting of a collection of <see cref="ProjectilePathSegment" />.
 /// </summary>
-public class ProjectilePath
-{
+public class ProjectilePath {
     private readonly List<ProjectilePathSegment> projectilePathSegments = new();
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProjectilePath" /> class.
     /// </summary>
-    public ProjectilePath()
-    { }
+    public ProjectilePath() { }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ProjectilePath" /> class.
     /// </summary>
     /// <param name="baseSegment">Starting path segment/</param>
-    public ProjectilePath(int lifetimeMs, ProjectilePathSegment baseSegment)
-    {
+    public ProjectilePath(int lifetimeMs, ProjectilePathSegment baseSegment) {
         baseSegment.LifetimeMs = lifetimeMs;
         projectilePathSegments.Add(baseSegment);
     }
@@ -37,12 +33,8 @@ public class ProjectilePath
     ///     Initializes a new instance of the <see cref="ProjectilePath" /> class.
     /// </summary>
     /// <param name="projectilePathSegments">Collection of segments.</param>
-    public ProjectilePath(List<ProjectilePathSegment> projectilePathSegments)
-    {
-        foreach (var segment in projectilePathSegments)
-        {
-            this.projectilePathSegments.Add(segment.Clone());
-        }
+    public ProjectilePath(List<ProjectilePathSegment> projectilePathSegments) {
+        foreach (var segment in projectilePathSegments) this.projectilePathSegments.Add(segment.Clone());
     }
 
     /// <summary>
@@ -64,8 +56,7 @@ public class ProjectilePath
     ///     Register a segment to this path.
     /// </summary>
     /// <param name="segment">Segment.</param>
-    public void RegisterSegment(ProjectilePathSegment segment)
-    {
+    public void RegisterSegment(ProjectilePathSegment segment) {
         projectilePathSegments.Add(segment);
     }
 
@@ -73,13 +64,9 @@ public class ProjectilePath
     ///     Sets the projectile info for all segments in this path.
     /// </summary>
     /// <param name="info">Projectile Info.</param>
-    public void SetInfo(ProjectileInfo info)
-    {
+    public void SetInfo(ProjectileInfo info) {
         Info = info;
-        foreach (var segment in projectilePathSegments)
-        {
-            segment.SetInfo(info);
-        }
+        foreach (var segment in projectilePathSegments) segment.SetInfo(info);
     }
 
     /// <summary>
@@ -87,17 +74,15 @@ public class ProjectilePath
     /// </summary>
     /// <param name="relativeElapsed">Time since the projectile started</param>
     /// <returns>Position offset of the projectile from its start position.</returns>
-    public Vector2 PositionAt(int relativeElapsed)
-    {
+    public Vector2 PositionAt(int relativeElapsed) {
         var segmentEnd = 0;
         var segmentsTotal = 0;
         var startPos = Vector2.Zero; // Origin
-        foreach (var segment in projectilePathSegments)
-        {
+        foreach (var segment in projectilePathSegments) {
             segmentEnd += segment.LifetimeMs;
-            if (relativeElapsed <= segmentEnd)
-            {
-                var ret = segment.PositionAt(relativeElapsed - segmentsTotal); // Position offset relative to the segment start
+            if (relativeElapsed <= segmentEnd) {
+                var ret = segment.PositionAt(relativeElapsed -
+                                             segmentsTotal); // Position offset relative to the segment start
                 return startPos + ret; // Position offset relative to the path start
             }
 
@@ -113,8 +98,7 @@ public class ProjectilePath
     ///     so we need a new instance.
     /// </summary>
     /// <returns>A new instance of the path with the same segments.</returns>
-    public ProjectilePath Clone()
-    {
+    public ProjectilePath Clone() {
         return new ProjectilePath(projectilePathSegments);
     }
 
@@ -122,11 +106,9 @@ public class ProjectilePath
     ///     Write all of the segment data to the client so it can be parsed.
     /// </summary>
     /// <param name="wtr">Network Writer.</param>
-    public void Write(ref SpanWriter wtr)
-    {
+    public void Write(ref SpanWriter wtr) {
         wtr.Write(SegmentCount);
-        foreach (var segment in projectilePathSegments)
-        {
+        foreach (var segment in projectilePathSegments) {
             wtr.Write((byte)segment.Type);
             segment.Write(ref wtr);
         }

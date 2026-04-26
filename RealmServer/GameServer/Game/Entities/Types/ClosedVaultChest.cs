@@ -3,24 +3,20 @@
 using Common;
 using Common.Database;
 using Common.Resources.Config;
-using GameServer.Game.Worlds;
 using GameServer.Game.Worlds.Logic;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public class ClosedVaultChest : SellableObject
-{
+public class ClosedVaultChest : SellableObject {
     public ClosedVaultChest(ushort objType)
-        : base(objType)
-    {
+        : base(objType) {
         Price = NewAccountsConfig.Config.VaultSlotCost;
         Currency = CurrencyType.Fame;
     }
 
-    public override string Purchase(Player plr)
-    {
+    public override string Purchase(Player plr) {
         if (World is not Vault vault)
             return "Not in Vault.";
 

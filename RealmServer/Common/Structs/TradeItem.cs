@@ -1,17 +1,14 @@
 ﻿using Common.Network;
-using System.IO;
 
-namespace Common;
+namespace Common.Structs;
 
-public struct TradeItem
-{
+public struct TradeItem {
     public int Item;
     public ItemType SlotType;
     public bool Tradeable;
     public bool Included;
 
-    public void Write(ref SpanWriter wtr)
-    {
+    public void Write(ref SpanWriter wtr) {
         wtr.Write(Item);
         wtr.Write((int)SlotType);
         wtr.Write(Tradeable);

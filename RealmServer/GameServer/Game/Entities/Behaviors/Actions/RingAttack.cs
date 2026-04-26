@@ -1,17 +1,16 @@
 ﻿#region
 
+using System;
 using Common;
 using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
-using System;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class RingAttackInfo
-{
+public class RingAttackInfo {
     public float AngleToIncrement;
     public int CoolDownLeft;
     public float FixedAngle;
@@ -19,8 +18,7 @@ public class RingAttackInfo
     public bool Targeted;
 }
 
-public record RingAttack : BehaviorScript
-{
+public record RingAttack : BehaviorScript {
     private readonly float _angleOffset;
     private readonly float _angleToIncrement;
     private readonly int _coolDownMS;
@@ -34,8 +32,7 @@ public record RingAttack : BehaviorScript
 
     public RingAttack(float radius, int count, float offset, byte projectileIndex, float angleToIncrement,
         float fixedAngle = 0, bool targeted = false, int coolDownMS = 0, bool seeInvis = false,
-        bool useSavedAngle = false)
-    {
+        bool useSavedAngle = false) {
         _count = count;
         _radius = radius;
         _angleOffset = offset;
@@ -47,8 +44,7 @@ public record RingAttack : BehaviorScript
         _useSavedAngle = useSavedAngle;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var state = host.ResolveResource<RingAttackInfo>(this);
         state.AngleToIncrement = _angleToIncrement;
         state.FixedAngle = _fixedAngle;
@@ -56,28 +52,24 @@ public record RingAttack : BehaviorScript
         state.Targeted = _targeted;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var state = host.ResolveResource<RingAttackInfo>(this);
 
         if (host.HasConditionEffect(ConditionEffectIndex.Stunned))
             return BehaviorTickState.BehaviorFailed;
 
-        if (state.CoolDownLeft > 0)
-        {
+        if (state.CoolDownLeft > 0) {
             state.CoolDownLeft -= time.ElapsedMsDelta;
             return BehaviorTickState.OnCooldown;
         }
 
         var entity = _radius == 0 ? null : host.GetNearestOtherEnemyByName(null, _radius);
         var angleInc = 2 * MathF.PI / _count;
-        var desc = host.Desc.Projectiles[(byte)_projectileIndex].Props;
+        var desc = host.Desc.Projectiles[_projectileIndex].Props;
 
         float angle = 0;
-        if (state.Targeted)
-        {
-            if (state.AngleToIncrement != 0)
-            {
+        if (state.Targeted) {
+            if (state.AngleToIncrement != 0) {
                 if (_useSavedAngle)
                     state.FixedAngle = state.SavedAngle;
 
@@ -87,8 +79,12 @@ public record RingAttack : BehaviorScript
 
             angle = state.FixedAngle;
         }
-        else
-            angle = entity == null ? _angleOffset : (float)Math.Atan2(entity.Position.Y - host.Position.Y, entity.Position.X - host.Position.X) + _angleOffset;
+        else {
+            angle = entity == null
+                ? _angleOffset
+                : (float)Math.Atan2(entity.Position.Y - host.Position.Y, entity.Position.X - host.Position.X) +
+                  _angleOffset;
+        }
 
         var count = _count;
         if (host.HasConditionEffect(ConditionEffectIndex.Dazed))
@@ -97,7 +93,8 @@ public record RingAttack : BehaviorScript
         var dmg = Random.Shared.Next(desc.MinDamage, desc.MaxDamage);
         var startAngle = angle * (count - 1) / 2;
 
-        host.ShootProjectiles(ProjectilePathSegment.ParsePath(desc).ToPath(), _projectileIndex, dmg, dmg, (byte)count, startAngle.Rad2Deg(),
+        host.ShootProjectiles(ProjectilePathSegment.ParsePath(desc).ToPath(), _projectileIndex, dmg, dmg, (byte)count,
+            startAngle.Rad2Deg(),
             host.Position.X, host.Position.Y, angleInc.Rad2Deg());
 
         state.CoolDownLeft = time.ElapsedMsDelta;

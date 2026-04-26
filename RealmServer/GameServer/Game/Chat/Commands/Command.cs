@@ -1,6 +1,5 @@
 ﻿#region
 
-using GameServer.Game.Entities;
 using System;
 using GameServer.Game.Entities.Types;
 using static GameServer.Game.Chat.Commands.Command;
@@ -9,10 +8,8 @@ using static GameServer.Game.Chat.Commands.Command;
 
 namespace GameServer.Game.Chat.Commands;
 
-public class Command
-{
-    public enum CommandPermissionLevel
-    {
+public class Command {
+    public enum CommandPermissionLevel {
         All = 0,
         Donor1 = 10,
         Donor2 = 20,
@@ -29,10 +26,8 @@ public class Command
 }
 
 [AttributeUsage(AttributeTargets.Class)]
-public class CommandAttribute : Attribute
-{
-    public CommandAttribute(string command, CommandPermissionLevel permissionLevel, string[] aliases = null)
-    {
+public class CommandAttribute : Attribute {
+    public CommandAttribute(string command, CommandPermissionLevel permissionLevel, string[] aliases = null) {
         Command = command;
         PermissionLevel = permissionLevel;
         Aliases = aliases;

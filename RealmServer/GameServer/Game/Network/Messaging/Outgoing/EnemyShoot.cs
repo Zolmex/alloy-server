@@ -1,9 +1,7 @@
 ﻿#region
 
-using Common;
 using Common.Network;
 using Common.Projectiles.ProjectilePaths;
-using System.IO;
 
 #endregion
 
@@ -19,12 +17,10 @@ public readonly record struct EnemyShoot(
     short Damage,
     byte NumShots,
     float AngleInc,
-    ProjectilePath Path) : IOutgoingPacket
-{
+    ProjectilePath Path) : IOutgoingPacket {
     public PacketId ID => PacketId.ENEMYSHOOT;
-    
-    public void Write(ref SpanWriter wtr)
-    {
+
+    public void Write(ref SpanWriter wtr) {
         wtr.Write(FirstBulletId);
         wtr.Write(OwnerId);
         wtr.Write(ProjId);

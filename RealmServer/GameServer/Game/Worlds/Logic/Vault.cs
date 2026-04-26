@@ -1,10 +1,8 @@
 ﻿#region
 
-using Common.Database;
-using GameServer.Game.Entities;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using GameServer.Game.Entities;
 using GameServer.Game.Entities.Types;
 using GameServer.Game.Network;
 
@@ -12,8 +10,7 @@ using GameServer.Game.Network;
 
 namespace GameServer.Game.Worlds.Logic;
 
-public class Vault : World
-{
+public class Vault : World {
     private readonly List<Container> _openChests;
     private readonly List<Container> _openGiftChests;
     public readonly int AccountId;
@@ -22,8 +19,7 @@ public class Vault : World
     private User _user;
 
     public Vault(User user)
-        : base(VAULT, 0)
-    {
+        : base(VAULT, 0) {
         AccountId = user.Account.Id;
 
         _user = user;
@@ -35,8 +31,7 @@ public class Vault : World
         _openGiftChests = new List<Container>();
     }
 
-    public override void Reset()
-    {
+    public override void Reset() {
         base.Reset();
 
         _closedChests.Clear();
@@ -45,12 +40,10 @@ public class Vault : World
         _openGiftChests.Clear();
     }
 
-    protected override void InitializeEntities()
-    {
+    protected override void InitializeEntities() {
         base.InitializeEntities();
 
-        foreach (var kvp in Entities)
-        {
+        foreach (var kvp in Entities) {
             var en = kvp.Value;
             if (en is ClosedVaultChest)
                 _closedChests.Add(en);
@@ -92,8 +85,7 @@ public class Vault : World
         // }
     }
 
-    public VaultChest OpenChest(Entity closedChest = null)
-    {
+    public VaultChest OpenChest(Entity closedChest = null) {
         if (_closedChests.Count == 0)
             return null;
 
@@ -108,8 +100,7 @@ public class Vault : World
         return chest;
     }
 
-    public OneWayContainer OpenGiftChest(Entity closedGiftChest = null)
-    {
+    public OneWayContainer OpenGiftChest(Entity closedGiftChest = null) {
         if (_closedGiftChests.Count == 0)
             return null;
 
@@ -124,19 +115,18 @@ public class Vault : World
         return giftChest;
     }
 
-    public override void AddEntity(Entity en)
-    {
+    public override void AddEntity(Entity en) {
         base.AddEntity(en);
 
         if (en is Player plr && plr.AccountId == AccountId)
             _user = plr.User;
     }
 
-    public override void RemoveEntity(Entity en)
-    {
+    public override void RemoveEntity(Entity en) {
         base.RemoveEntity(en);
 
-        if (!Deleted && en is OneWayContainer container && _openGiftChests.Contains(container)) // When a gift chest leaves we gotta spawn a closed gift chest
+        if (!Deleted && en is OneWayContainer container &&
+            _openGiftChests.Contains(container)) // When a gift chest leaves we gotta spawn a closed gift chest
         {
             _openGiftChests.Remove(container);
 
@@ -165,8 +155,7 @@ public class Vault : World
         // DbClientOld.Save(_user.Account.Vault, _user.Account.Gifts);
     }
 
-    private static List<Entity> OrderToCenter(List<Entity> containers)
-    {
+    private static List<Entity> OrderToCenter(List<Entity> containers) {
         var minX = 0f;
         var minY = 0f;
         var maxX = 0f;

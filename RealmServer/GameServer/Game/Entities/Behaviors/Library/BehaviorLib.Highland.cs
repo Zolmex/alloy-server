@@ -11,8 +11,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Minotaur")]
     public static State Minotaur =>
         new(
@@ -282,7 +281,8 @@ public partial class BehaviorLib
         new(
             new State("circle_player",
                 new Shoot(path: new LinePath(5), targeted: true, projName: "Blue Bolt", damage: 32,
-                    lifetimeMs: 2400, maxRadius: 8, predictive: 0.3f, cooldownMS: 1000, coolDownOffset: 500, multiHit: true),
+                    lifetimeMs: 2400, maxRadius: 8, predictive: 0.3f, cooldownMS: 1000, coolDownOffset: 500,
+                    multiHit: true),
                 new Protect(4.62f, "Undead Dwarf King", 11, 10, 3),
                 new Orbit(4.62f, 3.5f, 11),
                 new Wander(4.62f),
@@ -393,7 +393,8 @@ public partial class BehaviorLib
                 new State("Bullet",
                     new Flash(0xffaa00, 0.2, 20),
                     new ChangeSize(20, 140),
-                    new Shoot(path: new AmplitudePath(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: true, projName: "White Flame",
+                    new Shoot(path: new AmplitudePath(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: true,
+                        projName: "White Flame",
                         damage: 29, lifetimeMs: 500, maxRadius: 8, cooldownMS: 200, size: 105, multiHit: true),
                     new TimedTransition(4000, "Wait")
                 ),
@@ -408,7 +409,8 @@ public partial class BehaviorLib
                 new TimedTransition(300, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new AmplitudePath(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: false, projName: "White Flame",
+                new Shoot(path: new AmplitudePath(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: false,
+                    projName: "White Flame",
                     damage: 29, lifetimeMs: 500, maxRadius: 12, count: 10, shootAngle: 36, fixedAngle: 0,
                     cooldownMS: 1000, size: 105, multiHit: true),
                 new Suicide()
@@ -430,7 +432,8 @@ public partial class BehaviorLib
                 new State("Bullet",
                     new Flash(0xffaa00, 0.2, 20),
                     new ChangeSize(20, 130),
-                    new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true, projName: "White Flame",
+                    new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
+                        projName: "White Flame",
                         damage: 29, lifetimeMs: 500, maxRadius: 8, cooldownMS: 200, multiHit: true),
                     new TimedTransition(4000, "Wait")
                 ),
@@ -445,7 +448,8 @@ public partial class BehaviorLib
                 new TimedTransition(300, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: false, projName: "White Flame",
+                new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: false,
+                    projName: "White Flame",
                     damage: 29, lifetimeMs: 500, maxRadius: 12, count: 10, shootAngle: 36, fixedAngle: 0,
                     cooldownMS: 1000, multiHit: true),
                 new Suicide()
@@ -587,17 +591,20 @@ public partial class BehaviorLib
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
-                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
+                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
-                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
+                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
-                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
+                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
                 new TimedTransition(2000, "weak_effect")
             ),
             new Suicide(6000)
@@ -609,17 +616,20 @@ public partial class BehaviorLib
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
-                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
+                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
-                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
+                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
-                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
+                    lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
                 new TimedTransition(2000, "weak_effect")
             ),
             new Suicide(6000)
@@ -631,17 +641,20 @@ public partial class BehaviorLib
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
-                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
+                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
-                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
+                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
-                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
+                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
                 new TimedTransition(2000, "weak_effect")
             ),
             new Suicide(6000)
@@ -653,17 +666,20 @@ public partial class BehaviorLib
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
-                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
+                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
-                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
+                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
                 new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
-                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true, passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 6000)),
+                    lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true,
+                    passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 6000)),
                 new TimedTransition(2000, "weak_effect")
             ),
             new Suicide(6000)
@@ -763,7 +779,8 @@ public partial class BehaviorLib
                 new SetAltTexture(2),
                 new Follow(5.18f, 20, 1),
                 new Shoot(path: new LinePath(5.5f), targeted: false, projName: "Specter Spinner", damage: 50,
-                    lifetimeMs: 2000, maxRadius: 20, count: 2, shootAngle: 50, cooldownMS: 400, size: 80, effects: [(ConditionEffectIndex.Sick, 4000), (ConditionEffectIndex.Confused, 1000)]),
+                    lifetimeMs: 2000, maxRadius: 20, count: 2, shootAngle: 50, cooldownMS: 400, size: 80,
+                    effects: [(ConditionEffectIndex.Sick, 4000), (ConditionEffectIndex.Confused, 1000)]),
                 new TimedTransition(4000, "Attack")
             )
         );
@@ -777,7 +794,8 @@ public partial class BehaviorLib
             ),
             new State("Suicide",
                 new Shoot(path: new LinePath(6f), targeted: true, projName: "Specter Spike", damage: 55,
-                    lifetimeMs: 1200, maxRadius: 60, count: 4, shootAngle: 45, cooldownMS: 1000, multiHit: true, effects: (ConditionEffectIndex.Sick, 4000)),
+                    lifetimeMs: 1200, maxRadius: 60, count: 4, shootAngle: 45, cooldownMS: 1000, multiHit: true,
+                    effects: (ConditionEffectIndex.Sick, 4000)),
                 new Suicide()
             )
         );

@@ -1,17 +1,14 @@
-using Common.Utilities;
 using System;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class ActivateEffectDesc : ItemData
-{
-    public ActivateEffectDesc(XElement e, ItemData parent = null, byte parentField = 0)
-    {
+public class ActivateEffectDesc : ItemData {
+    public ActivateEffectDesc(XElement e, ItemData parent = null, byte parentField = 0) {
         SetParent(parent, parentField);
-        if (e == null)
-        {
+        if (e == null) {
             _initialized = true;
             return;
         }
@@ -42,74 +39,62 @@ public class ActivateEffectDesc : ItemData
 
     public override Type FieldsEnum => typeof(ActivateEffectField);
 
-    public ActivateEffectIndex AEIndex
-    {
+    public ActivateEffectIndex AEIndex {
         get => GetValue<ActivateEffectIndex>(0);
         set => SetValue(0, value);
     }
 
-    public ConditionEffectDesc EffectDesc
-    {
+    public ConditionEffectDesc EffectDesc {
         get => GetValue<ConditionEffectDesc>(1);
         set => SetValue(1, value);
     }
 
-    public int DurationMS
-    {
+    public int DurationMS {
         get => GetValue<int>(2);
         set => SetValue(2, value);
     }
 
-    public float Range
-    {
+    public float Range {
         get => GetValue<float>(3);
         set => SetValue(3, value);
     }
 
-    public int Amount
-    {
+    public int Amount {
         get => GetValue<int>(4);
         set => SetValue(4, value);
     }
 
-    public int TotalDamage
-    {
+    public int TotalDamage {
         get => GetValue<int>(5);
         set => SetValue(5, value);
     }
 
-    public float Radius
-    {
+    public float Radius {
         get => GetValue<float>(6);
         set => SetValue(6, value);
     }
 
-    public uint Color
-    {
+    public uint Color {
         get => GetValue<uint>(7);
         set => SetValue(7, value);
     }
 
-    public int MaxTargets
-    {
+    public int MaxTargets {
         get => GetValue<int>(8);
         set => SetValue(8, value);
     }
 
-    public string ObjectId
-    {
+    public string ObjectId {
         get => GetValue<string>(9);
         set => SetValue(9, value);
     }
 
-    public LevelIncreaseDesc[] LevelIncreases
-    {
+    public LevelIncreaseDesc[] LevelIncreases {
         get => GetValue<LevelIncreaseDesc[]>(10);
         set => SetValue(10, value);
     }
 
-    public byte NumShots
-    {
+    public byte NumShots {
         get => GetValue<byte>(11);
         set => SetValue(11, value);
     }

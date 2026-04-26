@@ -1,20 +1,18 @@
 ﻿#region
 
-using Common.Database;
-using Common.Utilities;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using Common.Database;
+using Common.Utilities;
 
 #endregion
 
 namespace WebServer.Handlers.Char;
 
-public class Delete : RequestHandler
-{
+public class Delete : RequestHandler {
     public override string Path => "/char/delete";
 
-    public override async Task<string> Handle(string ip, NameValueCollection query)
-    {
+    public override async Task<string> Handle(string ip, NameValueCollection query) {
         var verify = await DbClient.VerifyAccountAsync(query["username"], query["password"]);
 
         var acc = verify.Account;

@@ -1,21 +1,19 @@
 ﻿#region
 
-using Common.Utilities;
 using System.IO;
 using System.Xml.Linq;
+using Common.Utilities;
 
 #endregion
 
 namespace Common.Resources.Config;
 
-public class NewCharsConfig
-{
+public class NewCharsConfig {
     private const string ConfigFile = "Resources/Config/Data/newCharsConfig.xml";
 
     private static NewCharsConfig _config;
 
-    public NewCharsConfig(XElement e)
-    {
+    public NewCharsConfig(XElement e) {
         Experience = e.GetValue<int>("Experience");
         Level = e.GetValue<int>("Level");
         Fame = e.GetValue<int>("Fame");
@@ -38,8 +36,7 @@ public class NewCharsConfig
     public int MagicPotions { get; private set; }
     public bool HasBackpack { get; private set; }
 
-    private static NewCharsConfig Load()
-    {
+    private static NewCharsConfig Load() {
         return new NewCharsConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 }

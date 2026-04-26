@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Common.Database.Models;
 using Microsoft.EntityFrameworkCore;
-using Common.Database.Models;
 
 namespace DbServer.Database;
 
-public partial class AlloyContext : DbContext
-{
-    public AlloyContext()
-    {
-    }
+public partial class AlloyContext : DbContext {
+    public AlloyContext() { }
 
     public AlloyContext(DbContextOptions<AlloyContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     public virtual DbSet<Account> Accounts { get; set; }
 
@@ -43,13 +36,13 @@ public partial class AlloyContext : DbContext
     public virtual DbSet<GuildMember> GuildMembers { get; set; }
 
     public virtual DbSet<KillStat> KillStats { get; set; }
-    
+
     public virtual DbSet<Login> Logins { get; set; }
-    
+
     public virtual DbSet<AccountLock> AccountLocks { get; set; }
-    
+
     public virtual DbSet<AccountIgnore> AccountIgnores { get; set; }
-    
+
     public virtual DbSet<AccountBan> AccountBans { get; set; }
 
     public virtual DbSet<AccountGift> AccountGifts { get; set; }
@@ -58,16 +51,14 @@ public partial class AlloyContext : DbContext
 
     public virtual DbSet<AccountVault> AccountVaults { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Account>(entity =>
-        {
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        modelBuilder.Entity<Account>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.HasIndex(e => e.AccStatsId, "acc_stats_id");
 
             entity.HasIndex(e => e.GuildId, "guild_id");
-            
+
             entity.HasIndex(e => e.GuildMemberId, "guild_member_id");
 
             entity.HasIndex(e => e.LoginId, "login_id");
@@ -106,7 +97,7 @@ public partial class AlloyContext : DbContext
                 .HasForeignKey(d => d.GuildId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Accounts_ibfk_4");
-            
+
             entity.HasOne(d => d.GuildMember).WithMany(p => p.Accounts)
                 .HasForeignKey(d => d.GuildMemberId)
                 .HasConstraintName("Accounts_ibfk_3");
@@ -116,9 +107,8 @@ public partial class AlloyContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Accounts_ibfk_2");
         });
-        
-        modelBuilder.Entity<AccountBan>(entity =>
-        {
+
+        modelBuilder.Entity<AccountBan>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Account_Bans");
@@ -148,8 +138,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Account_Bans_ibfk_2");
         });
 
-        modelBuilder.Entity<AccountGift>(entity =>
-        {
+        modelBuilder.Entity<AccountGift>(entity => {
             entity.HasKey(e => new { e.AccountId, e.SlotId }).HasName("PRIMARY");
 
             entity.ToTable("Account_Gifts");
@@ -167,8 +156,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Account_Gifts_ibfk_1");
         });
 
-        modelBuilder.Entity<AccountMute>(entity =>
-        {
+        modelBuilder.Entity<AccountMute>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Account_Mutes");
@@ -196,9 +184,8 @@ public partial class AlloyContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Account_Mutes_ibfk_2");
         });
-        
-        modelBuilder.Entity<AccountVault>(entity =>
-        {
+
+        modelBuilder.Entity<AccountVault>(entity => {
             entity.HasKey(e => new { e.AccountId, e.SlotId }).HasName("PRIMARY");
 
             entity.ToTable("Account_Vault");
@@ -216,8 +203,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Account_Vault_ibfk_1");
         });
 
-        modelBuilder.Entity<AccountSkin>(entity =>
-        {
+        modelBuilder.Entity<AccountSkin>(entity => {
             entity.HasKey(e => new { e.AccountId, e.SkinType }).HasName("PRIMARY");
 
             entity.ToTable("Account_Skins");
@@ -230,9 +216,8 @@ public partial class AlloyContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Account_Skins_ibfk_1");
         });
-        
-        modelBuilder.Entity<AccountIgnore>(entity =>
-        {
+
+        modelBuilder.Entity<AccountIgnore>(entity => {
             entity.HasKey(e => new { e.AccountId, e.IgnoredId }).HasName("PRIMARY");
 
             entity.ToTable("Account_Ignores");
@@ -245,9 +230,8 @@ public partial class AlloyContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Account_Ignores_ibfk_1");
         });
-        
-        modelBuilder.Entity<AccountLock>(entity =>
-        {
+
+        modelBuilder.Entity<AccountLock>(entity => {
             entity.HasKey(e => new { e.AccountId, e.LockedId }).HasName("PRIMARY");
 
             entity.ToTable("Account_Locks");
@@ -261,8 +245,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Account_Locks_ibfk_1");
         });
 
-        modelBuilder.Entity<AccountStat>(entity =>
-        {
+        modelBuilder.Entity<AccountStat>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Account_Stats");
@@ -275,10 +258,9 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.TotalFame).HasColumnName("total_fame");
         });
 
-        modelBuilder.Entity<Character>(entity =>
-        {
+        modelBuilder.Entity<Character>(entity => {
             entity.HasQueryFilter(e => !e.IsDeleted); // Handle soft deletes
-            
+
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.HasIndex(e => e.AccId, "acc_id");
@@ -353,8 +335,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Characters_ibfk_5");
         });
 
-        modelBuilder.Entity<CharacterDeath>(entity =>
-        {
+        modelBuilder.Entity<CharacterDeath>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Character_Death");
@@ -375,8 +356,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Character_Death_ibfk_1");
         });
 
-        modelBuilder.Entity<CharacterInventory>(entity =>
-        {
+        modelBuilder.Entity<CharacterInventory>(entity => {
             entity.HasKey(e => new { e.CharacterId, e.SlotId }).HasName("PRIMARY");
 
             entity.ToTable("Character_Inventory");
@@ -394,8 +374,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Character_Inventory_ibfk_1");
         });
 
-        modelBuilder.Entity<CharacterStat>(entity =>
-        {
+        modelBuilder.Entity<CharacterStat>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Character_Stats");
@@ -413,8 +392,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.Wisdom).HasColumnName("wisdom");
         });
 
-        modelBuilder.Entity<ClassStat>(entity =>
-        {
+        modelBuilder.Entity<ClassStat>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Class_Stats");
@@ -433,8 +411,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Class_Stats_ibfk_1");
         });
 
-        modelBuilder.Entity<CombatStat>(entity =>
-        {
+        modelBuilder.Entity<CombatStat>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Combat_Stats");
@@ -449,8 +426,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.ShotsHit).HasColumnName("shots_hit");
         });
 
-        modelBuilder.Entity<DungeonStat>(entity =>
-        {
+        modelBuilder.Entity<DungeonStat>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Dungeon_Stats");
@@ -462,8 +438,7 @@ public partial class AlloyContext : DbContext
                 .HasColumnName("dungeon_name");
         });
 
-        modelBuilder.Entity<ExplorationStat>(entity =>
-        {
+        modelBuilder.Entity<ExplorationStat>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Exploration_Stats");
@@ -477,8 +452,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.TilesUncovered).HasColumnName("tiles_uncovered");
         });
 
-        modelBuilder.Entity<Guild>(entity =>
-        {
+        modelBuilder.Entity<Guild>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.Property(e => e.Id).HasColumnName("id");
@@ -497,8 +471,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.TotalFame).HasColumnName("total_fame");
         });
 
-        modelBuilder.Entity<GuildMember>(entity =>
-        {
+        modelBuilder.Entity<GuildMember>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Guild_Members");
@@ -519,8 +492,7 @@ public partial class AlloyContext : DbContext
                 .HasConstraintName("Guild_Members_ibfk_1");
         });
 
-        modelBuilder.Entity<KillStat>(entity =>
-        {
+        modelBuilder.Entity<KillStat>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("Kill_Stats");
@@ -539,8 +511,7 @@ public partial class AlloyContext : DbContext
             entity.Property(e => e.WhiteBags).HasColumnName("white_bags");
         });
 
-        modelBuilder.Entity<Login>(entity =>
-        {
+        modelBuilder.Entity<Login>(entity => {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.HasIndex(e => e.Name, "name").IsUnique();

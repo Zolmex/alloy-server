@@ -1,15 +1,31 @@
-﻿using Common.Network;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountGift : DbModel, IDbQueryable
-{
+public class AccountGift : DbModel, IDbQueryable {
     public const string KEY_BASE = "accountGift";
-    
+
+    public AccountGift() {
+        RegisterProperty("AccountId",
+            (ref wtr) => wtr.Write(AccountId),
+            (ref rdr) => AccountId = rdr.ReadInt32()
+        );
+        RegisterProperty("SlotId",
+            (ref wtr) => wtr.Write(SlotId),
+            (ref rdr) => SlotId = rdr.ReadInt32()
+        );
+        RegisterProperty("ItemType",
+            (ref wtr) => wtr.Write(ItemType),
+            (ref rdr) => ItemType = rdr.ReadUInt16()
+        );
+        RegisterProperty("ItemData",
+            (ref wtr) => wtr.Write(ItemData ?? []),
+            (ref rdr) => ItemData = rdr.ReadBytes(rdr.ReadUInt16()).ToArray()
+        );
+    }
+
     public override string Key => KEY_BASE + $".{AccountId}.{SlotId}";
-    
+
     public int AccountId { get; set; }
 
     public int SlotId { get; set; }
@@ -19,43 +35,20 @@ public partial class AccountGift : DbModel, IDbQueryable
     public byte[]? ItemData { get; set; }
 
     public virtual Account Account { get; set; } = null!;
-    
-    public AccountGift()
-    {
-        RegisterProperty("AccountId",
-           (ref wtr) => wtr.Write(AccountId),
-            (ref rdr) => AccountId = rdr.ReadInt32()
-        );
-        RegisterProperty("SlotId",
-           (ref wtr) => wtr.Write(SlotId),
-            (ref rdr) => SlotId = rdr.ReadInt32()
-        );
-        RegisterProperty("ItemType",
-           (ref wtr) => wtr.Write(ItemType),
-            (ref rdr) => ItemType = rdr.ReadUInt16()
-        );
-        RegisterProperty("ItemData",
-           (ref wtr) => wtr.Write(ItemData ?? []),
-            (ref rdr) => ItemData = rdr.ReadBytes(rdr.ReadUInt16()).ToArray()
-        );
+
+    public static IEnumerable<string> GetIncludes() {
+        yield break;
     }
-    
-    public static AccountGift Read(string key)
-    {
+
+    public static AccountGift Read(string key) {
         var ret = new AccountGift();
         var split = key.Split('.');
         ret.AccountId = int.Parse(split[1]);
         ret.SlotId = int.Parse(split[2]);
         return ret;
     }
-    
-    public static IEnumerable<string> GetIncludes()
-    {
-        yield break;
-    }
-    
-    public static string BuildKey(int accountId, int slotId)
-    {
+
+    public static string BuildKey(int accountId, int slotId) {
         return KEY_BASE + $".{accountId}.{slotId}";
     }
 }

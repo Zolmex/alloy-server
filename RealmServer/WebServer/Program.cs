@@ -1,10 +1,5 @@
 ﻿#region
 
-using Common.Database;
-using Common.Network.Messaging;
-using Common.Resources.Config;
-using Common.Resources.Xml;
-using Common.Utilities;
 using System;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -15,20 +10,22 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Common.Database;
+using Common.Resources.Config;
+using Common.Resources.Xml;
+using Common.Utilities;
 using WebServer.Handlers;
 
 #endregion
 
 namespace WebServer;
 
-internal class Program
-{
+internal class Program {
     private static readonly Logger Log = new(typeof(Program));
 
-    private static async Task Main(string[] args)
-    {
+    private static async Task Main(string[] args) {
         ThreadPool.SetMinThreads(1000, 1000);
-        
+
         Console.Title = $"Realm Server v{Assembly.GetExecutingAssembly().GetName().Version} - WebServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -42,8 +39,8 @@ internal class Program
 
         var listener = new HttpListener();
         var config = AppEngineConfig.Config;
-        using (var timer = new EasyTimer(LogLevel.Info, "Starting server...", $"Listening on {config.Address + ":" + config.Port} ({EasyTimer.Time})"))
-        {
+        using (var timer = new EasyTimer(LogLevel.Info, "Starting server...",
+                   $"Listening on {config.Address + ":" + config.Port} ({EasyTimer.Time})")) {
             EnumUtils.Load(); // Initialize and prepare our static classes for later use
             RequestHandler.Load();
             XmlLibrary.Load(config.XmlsDir);
@@ -62,65 +59,58 @@ internal class Program
 
         var semaphore = new SemaphoreSlim(200);
 
-        while (true)
-        {
+        while (true) {
             HttpListenerContext context;
-            try
-            {
+            try {
                 context = await listener.GetContextAsync(); // non-blocking — frees the loop immediately
             }
-            catch (HttpListenerException)
-            {
+            catch (HttpListenerException) {
                 break; // listener was stopped (e.g. on shutdown)
             }
 
             await semaphore.WaitAsync(); // back-pressure: don't accept unbounded work
 
-            _ = Task.Run(async () =>
-            {
-                try
-                {
+            _ = Task.Run(async () => {
+                try {
                     await HandleRequestAsync(context);
                 }
-                finally
-                {
+                finally {
                     semaphore.Release();
                 }
             });
         }
     }
-    
-    private static async Task HandleRequestAsync(HttpListenerContext context)
-    {
+
+    private static async Task HandleRequestAsync(HttpListenerContext context) {
         var request = context.Request.Url.LocalPath;
         var ip = GetContextIP(context);
 
-        if (!RequestHandler.Exists(request))
-        {
+        if (!RequestHandler.Exists(request)) {
             Log.Warn($"Unknown request '{request}' from '{ip}'");
-            try { context.Response.Close(); } catch { }
+            try {
+                context.Response.Close();
+            }
+            catch { }
+
             return;
         }
 
         Log.Debug($"Received '{request}' from '{ip}'");
 
         NameValueCollection query;
-        try
-        {
+        try {
             using var inputStream = context.Request.InputStream;
             using var reader = new StreamReader(inputStream, Encoding.UTF8);
             query = HttpUtility.ParseQueryString(await reader.ReadToEndAsync());
         }
-        catch (HttpListenerException)
-        {
+        catch (HttpListenerException) {
             return;
         }
 
         var response = await RequestHandler.Handle(request, ip, query);
         response ??= "<Error>Internal error.</Error>";
 
-        try
-        {
+        try {
             var data = Encoding.UTF8.GetBytes(response);
             context.Response.ContentType = "text/*";
             await context.Response.OutputStream.WriteAsync(data, 0, data.Length);
@@ -129,13 +119,11 @@ internal class Program
         catch (HttpListenerException) { }
     }
 
-    private static void UnhandledException(object sender, UnhandledExceptionEventArgs args)
-    {
+    private static void UnhandledException(object sender, UnhandledExceptionEventArgs args) {
         Log.Fatal(args.ExceptionObject);
     }
 
-    private static string GetContextIP(HttpListenerContext context)
-    {
+    private static string GetContextIP(HttpListenerContext context) {
         return context.Request.RemoteEndPoint.ToString().Split(':')[0];
     }
 }

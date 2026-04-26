@@ -6,8 +6,7 @@ using Common.Network;
 
 namespace GameServer.Game.Network.Messaging;
 
-public interface IIncomingPacket
-{
+public interface IIncomingPacket {
     void Read(ref SpanReader rdr);
     void Handle(User user);
 }

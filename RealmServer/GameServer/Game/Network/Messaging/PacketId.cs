@@ -1,7 +1,6 @@
 ﻿namespace GameServer.Game.Network.Messaging;
 
-public enum PacketId : byte
-{
+public enum PacketId : byte {
     FAILURE,
     CREATESUCCESS = 1,
     CREATE = 2,
@@ -67,5 +66,5 @@ public enum PacketId : byte
     ACCEPTTRADE = 62,
     TRADEACCEPTED = 63,
     UNUSED7 = 64,
-    UNUSED8 = 65,
+    UNUSED8 = 65
 }

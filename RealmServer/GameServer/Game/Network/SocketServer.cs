@@ -1,26 +1,24 @@
 ﻿#region
 
-using Common.Resources.Config;
-using Common.Utilities;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using Common.Resources.Config;
+using Common.Utilities;
 
 #endregion
 
 namespace GameServer.Game.Network;
 
 // TCP socket server
-public static class SocketServer
-{
+public static class SocketServer {
     private static readonly Logger _log = new(typeof(SocketServer));
     private static ConcurrentFactory<User> _userFactory;
     private static Dictionary<string, int> _ips;
     private static Socket _socket;
 
     // Start accepting connections
-    public static void Start(int port, int maxConnections)
-    {
+    public static void Start(int port, int maxConnections) {
         _ips = new Dictionary<string, int>(); // Used to keep track of how many clients per IP address
         _userFactory = new ConcurrentFactory<User>(maxConnections); // Used to prevent memory leaks
 
@@ -31,24 +29,20 @@ public static class SocketServer
         StartAccept();
     }
 
-    private static void StartAccept()
-    {
+    private static void StartAccept() {
         var args = new SocketAsyncEventArgs();
         args.Completed += ProcessAccept;
 
-        try
-        {
+        try {
             // Socket async methods return false when they complete synchronously, meaning that the Completed
             // event won't be invoked, so we have to manually call the callback ourselves
             if (!_socket.AcceptAsync(args))
                 ProcessAccept(null, args);
         }
-        catch
-        { }
+        catch { }
     }
 
-    private static void ProcessAccept(object sender, SocketAsyncEventArgs args)
-    {
+    private static void ProcessAccept(object sender, SocketAsyncEventArgs args) {
         if (args.SocketError != SocketError.Success) // If error, recycle and continue
         {
             args.Dispose();
@@ -64,8 +58,7 @@ public static class SocketServer
         if (ipConnected && clientCount >= GameServerConfig.Config.MaxClientsPerIP)
             maxClientsReached = true;
 
-        if (ip == null || maxClientsReached)
-        {
+        if (ip == null || maxClientsReached) {
             args.Dispose();
             StartAccept();
             return;
@@ -77,8 +70,7 @@ public static class SocketServer
             _ips.TryAdd(ip, 1);
 
         var user = _userFactory.Pop(); // Give the connection a NetClient instance to communicate with
-        if (user == null)
-        {
+        if (user == null) {
             args.Dispose();
             StartAccept();
             return;
@@ -95,18 +87,15 @@ public static class SocketServer
         StartAccept();
     }
 
-    public static void DisconnectUser(User user)
-    {
+    public static void DisconnectUser(User user) {
         // Terminate connection with the Socket
-        try
-        {
+        try {
             user.Network.Socket.Shutdown(SocketShutdown.Both);
             user.Network.Socket.Close();
 
             _ips.Remove(user.Network.IP);
         }
-        catch
-        { }
+        catch { }
 
         // Recycle client instance
         user.Reset();

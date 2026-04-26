@@ -10,8 +10,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("DS Gulpord the Slime God")]
     public static State DSGulpordTheSlimeGod =>
         new(
@@ -34,109 +33,194 @@ public partial class BehaviorLib
                 new EntityWithinTransition("Start Shooting", radius: 10)
             ),
             new State("Start Shooting",
-                new Wander((0.3f * 5.55f) + 0.74f, distanceFromSpawn: 1),
+                new Wander(0.3f * 5.55f + 0.74f, distanceFromSpawn: 1),
                 new Shoot(15, 8, 360 / 8f, 1, cooldownMS: 500),
                 new TimedTransition(10000, "Shooting 2")
             ),
             new State("Shooting 2",
-                new Wander((0.3f * 5.55f) + 0.74f, distanceFromSpawn: 1),
+                new Wander(0.3f * 5.55f + 0.74f, distanceFromSpawn: 1),
                 new Shoot(15, 8, 360 / 8f, 1, cooldownMS: 500),
                 new Shoot(15, 3, projectileIndex: 0, fixedAngle: 90, shootAngle: 10, cooldownMS: 3400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 110, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 130, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 150, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 170, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 190, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 210, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 230, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 250, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 270, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 290, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 310, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 330, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 350, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 370, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 390, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 410, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 430, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 110, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 130, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 150, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 170, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 190, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 210, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 230, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 250, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 270, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 290, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 310, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 330, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 350, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 370, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 390, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 410, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 430, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3400),
                 new Shoot(15, 2, projectileIndex: 0, fixedAngle: 15, shootAngle: 10, cooldownMS: 7000),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 35, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 400),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 55, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 800),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 75, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 1200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 95, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 1600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 115, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 2200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 135, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 2600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 155, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 3000),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 175, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 3400),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 195, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 3800),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 215, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 4200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 235, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 4600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 255, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 5000),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 275, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 5400),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 295, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 5800),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 315, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 6200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 335, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 6600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 355, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 7000),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 35, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 400),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 55, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 800),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 75, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 1200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 95, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 1600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 115, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 2200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 135, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 2600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 155, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 3000),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 175, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 3400),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 195, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 3800),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 215, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 4200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 235, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 4600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 255, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 5000),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 275, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 5400),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 295, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 5800),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 315, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 6200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 335, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 6600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 355, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 7000),
                 new Shoot(15, 3, projectileIndex: 0, fixedAngle: 90, shootAngle: 10, cooldownMS: 3400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 110, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 130, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 150, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 170, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 190, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 210, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 230, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 250, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 270, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 290, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 310, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 330, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 350, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 370, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 390, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 410, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 430, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 110, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 130, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 150, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 170, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 190, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 210, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 230, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 250, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 270, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 290, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 310, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 330, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 350, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 370, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 390, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 410, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 430, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3400),
                 new Shoot(15, 2, projectileIndex: 0, fixedAngle: 295, shootAngle: 10, cooldownMS: 7000),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 315, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 400),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 335, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 800),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 355, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 1200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 375, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 1600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 395, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 2200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 415, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 2600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 435, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 3000),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 455, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 3400),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 475, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 3800),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 495, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 4200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 515, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 4600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 535, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 5000),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 555, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 5400),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 575, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 5800),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 595, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 6200),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 615, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 6600),
-                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 635, shootAngle: 10, cooldownMS: 7000, coolDownOffset: 7000),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 315, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 400),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 335, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 800),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 355, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 1200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 375, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 1600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 395, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 2200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 415, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 2600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 435, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 3000),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 455, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 3400),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 475, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 3800),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 495, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 4200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 515, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 4600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 535, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 5000),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 555, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 5400),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 575, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 5800),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 595, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 6200),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 615, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 6600),
+                new Shoot(15, 2, projectileIndex: 0, fixedAngle: 635, shootAngle: 10, cooldownMS: 7000,
+                    coolDownOffset: 7000),
                 new Shoot(15, 3, projectileIndex: 0, fixedAngle: 90, shootAngle: 10, cooldownMS: 3400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 110, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 130, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 150, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 170, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 190, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 210, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 230, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 250, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 270, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 1800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 290, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 310, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 330, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2400),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 350, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2600),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 370, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 2800),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 390, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3000),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 410, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3200),
-                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 430, shootAngle: 10, cooldownMS: 3400, coolDownOffset: 3400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 110, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 130, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 150, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 170, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 190, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 210, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 230, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 250, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 270, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 1800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 290, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 310, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 330, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2400),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 350, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2600),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 370, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 2800),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 390, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3000),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 410, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3200),
+                new Shoot(15, 3, projectileIndex: 0, fixedAngle: 430, shootAngle: 10, cooldownMS: 3400,
+                    coolDownOffset: 3400),
                 new HpLessTransition(0.70f, "Shooting 3 Prepare"),
                 new TimedTransition(15000, "Shooting 3 Prepare")
             ),
             new State("Shooting 3 Prepare",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable, 500),
-                new ReturnToSpawn((1 * 5.55f) + 0.74f),
+                new ReturnToSpawn(1 * 5.55f + 0.74f),
                 new TimedTransition(500, "Shooting 3")
             ),
             new State("Shooting 3",
@@ -200,7 +284,8 @@ public partial class BehaviorLib
             new State("Minions v2",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
                 new Spawn("DS Gulpord the Slime God M", maxSpawnsPerReset: 2, cooldownMs: 0),
-                new EntitiesNotWithinTransition(30, "Chase v1", "DS Gulpord the Slime God M", "DS Gulpord the Slime God S")
+                new EntitiesNotWithinTransition(30, "Chase v1", "DS Gulpord the Slime God M",
+                    "DS Gulpord the Slime God S")
             ),
             new State("Chase v1",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
@@ -249,7 +334,7 @@ public partial class BehaviorLib
             ),
             new State("Back",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
-                new ReturnToSpawn((0.5f * 5.55f) + 0.74f),
+                new ReturnToSpawn(0.5f * 5.55f + 0.74f),
                 new TimedTransition(1000, "Suicide")
             ),
             new State("Suicide",
@@ -260,7 +345,7 @@ public partial class BehaviorLib
     [CharacterBehavior("DS Alligator")]
     public static State DSAlligator =>
         new(
-            new Wander((.6f * 5.55f) + 0.74f),
+            new Wander(.6f * 5.55f + 0.74f),
             new Shoot(5, 3, 15, cooldownMS: 1500, targeted: true)
         );
 
@@ -268,13 +353,13 @@ public partial class BehaviorLib
     public static State DSBat =>
         new(
             new State("Without player",
-                new Wander((.7f * 5.55f) + 0.74f),
+                new Wander(.7f * 5.55f + 0.74f),
                 new Shoot(3, cooldownMS: 100, targeted: true),
                 new EntityWithinTransition("Player", radius: 5)
             ),
             new State("Player",
-                new Charge((3 * 5.55f) + 0.74f, 8, 2000),
-                new Follow((0.7f * 5.55f) + 0.74f, 5, 0),
+                new Charge(3 * 5.55f + 0.74f, 8, 2000),
+                new Follow(0.7f * 5.55f + 0.74f, 5, 0),
                 new Shoot(3, cooldownMS: 100, targeted: true),
                 new EntityNotWithinTransition("Without player", radius: 5)
             )
@@ -284,14 +369,14 @@ public partial class BehaviorLib
     public static State DSBrownSlime =>
         new(
             new State("No Player",
-                new Follow((0.6f * 5.55f) + 0.74f, 0, 5),
-                new Wander((0.6f * 5.55f) + 0.74f),
+                new Follow(0.6f * 5.55f + 0.74f, 0, 5),
+                new Wander(0.6f * 5.55f + 0.74f),
                 new Shoot(10, 8, 360 / 8f, cooldownMS: 1500, targeted: true),
                 new Reproduce("DS Brown Slime Trail", 100, 10, 50),
                 new EntityWithinTransition("Player", radius: 5)
             ),
             new State("Player",
-                new Follow((0.6f * 5.55f) + 0.74f, 5, 0),
+                new Follow(0.6f * 5.55f + 0.74f, 5, 0),
                 new Shoot(10, 8, 360 / 8f, cooldownMS: 1500, targeted: true),
                 new Reproduce("DS Brown Slime Trail", 100, 10, 50),
                 new EntityNotWithinTransition("No Player", radius: 5)
@@ -319,7 +404,7 @@ public partial class BehaviorLib
     public static State DSGoblinBrute =>
         new(
             new State("0",
-                new Follow((0.8f * 5.55f) + 0.74f, 0, 9),
+                new Follow(0.8f * 5.55f + 0.74f, 0, 9),
                 new Shoot(10, 4, 15, cooldownMS: 1000, targeted: true)
             )
         );
@@ -335,8 +420,8 @@ public partial class BehaviorLib
                 new EntityWithinTransition("Player founded", radius: 5)
             ),
             new State("Player founded",
-                new Wander((0.6f * 5.55f) + 0.74f),
-                new Follow((0.6f * 5.55f) + 0.74f, 10, 1),
+                new Wander(0.6f * 5.55f + 0.74f),
+                new Follow(0.6f * 5.55f + 0.74f, 10, 1),
                 new Shoot(10, projectileIndex: 0, cooldownMS: 1000, predictive: 0.5f, targeted: true)
             )
         );
@@ -345,7 +430,7 @@ public partial class BehaviorLib
     public static State DSGoblinPeon =>
         new(
             new State("0",
-                new Follow((0.7f * 5.55f) + 0.74f, 1),
+                new Follow(0.7f * 5.55f + 0.74f, 1),
                 new Shoot(9, 2, 20, cooldownMS: 500, targeted: true)
             )
         );
@@ -357,8 +442,8 @@ public partial class BehaviorLib
                 // new TierLoot(4, ItemType.Ability, 0.03)
             ),
             new State("0",
-                new Wander((0.6f * 5.55f) + 0.74f),
-                new StayAwayFrom((0.6f * 5.55f) + 0.74f, 6),
+                new Wander(0.6f * 5.55f + 0.74f),
+                new StayAwayFrom(0.6f * 5.55f + 0.74f, 6),
                 new Shoot(10, 2, projectileIndex: 0, shootAngle: 0, cooldownMS: 1000, targeted: true),
                 new Shoot(10, projectileIndex: 1, cooldownMS: 1000, targeted: true)
             )
@@ -368,7 +453,7 @@ public partial class BehaviorLib
     public static State DSFly =>
         new(
             new State("0",
-                new Wander((0.3f * 5.55f) + 0.74f),
+                new Wander(0.3f * 5.55f + 0.74f),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible)
             )
         );
@@ -377,7 +462,7 @@ public partial class BehaviorLib
     public static State DSGoblinSorcerer =>
         new(
             new State("0",
-                new Wander((0.6f * 5.55f) + 0.74f),
+                new Wander(0.6f * 5.55f + 0.74f),
                 new Shoot(10, 5, 20, cooldownMS: 1000, targeted: true),
                 new AOE(3, 30, range: 4, cooldownMs: 1000, effects: [(ConditionEffectIndex.Confused, 3000)])
             )
@@ -395,12 +480,12 @@ public partial class BehaviorLib
                 new ConditionEffectBehavior(ConditionEffectIndex.StunImmune),
                 new ConditionEffectBehavior(ConditionEffectIndex.ParalyzedImmune),
                 new State("No player",
-                    new Wander((0.6f * 5.55f) + 0.74f),
+                    new Wander(0.6f * 5.55f + 0.74f),
                     new EntityWithinTransition("Player", radius: 10)
                 ),
                 new State("Player",
                     new Taunt("Squeerk!"),
-                    new StayAwayFrom((.9f * 5.55f) + 0.74f, 99),
+                    new StayAwayFrom(.9f * 5.55f + 0.74f, 99),
                     new TimedTransition(15000, "Suicide")
                 ),
                 new State("Suicide",
@@ -423,9 +508,10 @@ public partial class BehaviorLib
                 // new TierLoot(4, ItemType.Ability, 0.05f)
             ),
             new State("0",
-                new Follow((1 * 5.55f) + 0.74f, 7),
-                new Wander((0.4f * 5.55f) + 0.74f),
-                new Shoot(12, projectileIndex: 0, count: 5, shootAngle: 10, predictive: 1, cooldownMS: 1000, targeted: true),
+                new Follow(1 * 5.55f + 0.74f, 7),
+                new Wander(0.4f * 5.55f + 0.74f),
+                new Shoot(12, projectileIndex: 0, count: 5, shootAngle: 10, predictive: 1, cooldownMS: 1000,
+                    targeted: true),
                 new Shoot(10, projectileIndex: 1, predictive: 0, cooldownMS: 650, targeted: true)
             )
         );
@@ -437,7 +523,7 @@ public partial class BehaviorLib
                 // new TierLoot(7, ItemType.Weapon, 0.05)
             ),
             new State("0",
-                new Follow((0.6f * 5.55f) + 0.74f, 1),
+                new Follow(0.6f * 5.55f + 0.74f, 1),
                 new Shoot(10, 3, 20, cooldownMS: 1000, targeted: true)
             )
         );
@@ -446,14 +532,14 @@ public partial class BehaviorLib
     public static State DSYellowSlime =>
         new(
             new State("No Player",
-                new Follow((0.6f * 5.55f) + 0.74f, 0, 5),
-                new Wander((0.6f * 5.55f) + 0.74f),
+                new Follow(0.6f * 5.55f + 0.74f, 0, 5),
+                new Wander(0.6f * 5.55f + 0.74f),
                 new Shoot(10, 8, projectileIndex: 0, cooldownMS: 1500, targeted: true),
                 new Reproduce("DS Brown Slime Trail", 100, 10, 50),
                 new EntityWithinTransition("Player", radius: 5)
             ),
             new State("Player",
-                new Follow((0.6f * 5.55f) + 0.74f, 0, 5),
+                new Follow(0.6f * 5.55f + 0.74f, 0, 5),
                 new Shoot(10, 8, 360 / 8f, cooldownMS: 1500, targeted: true),
                 new Reproduce("DS Brown Slime Trail", 100, 10, 50),
                 new EntityNotWithinTransition("No Player", radius: 5)
@@ -544,7 +630,7 @@ public partial class BehaviorLib
                 new ItemLoot("Murky Toxin", 0.01f, 0.03f)
             ),
             new State("0",
-                new Wander((0.3f * 5.55f) + 0.74f, distanceFromSpawn: 5)
+                new Wander(0.3f * 5.55f + 0.74f, distanceFromSpawn: 5)
             )
         );
 
@@ -557,7 +643,7 @@ public partial class BehaviorLib
                 new ItemLoot("Murky Toxin", 0.01f, 0.03f)
             ),
             new State("0",
-                new Wander((0.3f * 5.55f) + 0.74f, 5)
+                new Wander(0.3f * 5.55f + 0.74f, 5)
             )
         );
 
@@ -570,7 +656,7 @@ public partial class BehaviorLib
                 new ItemLoot("Murky Toxin", 0.01f, 0.03f)
             ),
             new State("0",
-                new Wander((0.3f * 5.55f) + 0.74f, 5)
+                new Wander(0.3f * 5.55f + 0.74f, 5)
             )
         );
 
@@ -583,7 +669,7 @@ public partial class BehaviorLib
                 new ItemLoot("Murky Toxin", 0.01f, 0.03f)
             ),
             new State("0",
-                new Wander((0.3f * 5.55f) + 0.74f, 5)
+                new Wander(0.3f * 5.55f + 0.74f, 5)
             )
         );
 }

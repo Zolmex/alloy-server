@@ -9,8 +9,7 @@ using GameServer.Game.Entities.Behaviors.Transitions;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     #region 3rdboss
 
     [CharacterBehavior("shtrs The Forgotten King")]
@@ -470,17 +469,17 @@ public partial class BehaviorLib
             // new ScaleHP2(20),
             new State("Idle"),
             new State("1st",
-                new Follow((1 * 5.55f) + 0.74f, 8, 5),
+                new Follow(1 * 5.55f + 0.74f, 8, 5),
                 new Shoot(15, 20, 360 / 20f, cooldownMS: 1000, targeted: true),
                 new TimedTransition(1000, "2nd")
             ),
             new State("2nd",
-                new Follow((1 * 5.55f) + 0.74f, 8, 5),
+                new Follow(1 * 5.55f + 0.74f, 8, 5),
                 new Shoot(10, projectileIndex: 1, cooldownMS: 1000, targeted: true),
                 new TimedTransition(1000, "3rd")
             ),
             new State("3rd",
-                new Follow((1 * 5.55f) + 0.74f, 8, 5),
+                new Follow(1 * 5.55f + 0.74f, 8, 5),
                 new Shoot(10, projectileIndex: 1, cooldownMS: 1000, targeted: true),
                 new TimedTransition(1000, "1st")
             )
@@ -492,18 +491,18 @@ public partial class BehaviorLib
             new HealGroup(30, "Crystals", 2000, 1500),
             new State("spawn",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
-                new Orbit((3 * 5.55f) + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
+                new Orbit(3 * 5.55f + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
                 new TimedTransition(7000, "follow")
             ),
             new State("follow",
-                new Follow((1 * 5.55f) + 0.74f, 6),
-                new Follow((1 * 5.55f) + 0.74f),
+                new Follow(1 * 5.55f + 0.74f, 6),
+                new Follow(1 * 5.55f + 0.74f),
                 new TimedTransition(3000, "dafuq")
             ),
             new State("dafuq",
-                new Orbit((3 * 5.55f) + 0.74f, 4, 30, "shtrs Crystal Tracker", .2f, .5f),
-                new Follow((1 * 5.55f) + 0.74f, 6),
-                new Follow((1 * 5.55f) + 0.74f, cooldownOffsetMS: 2000, cooldownMS: 1500),
+                new Orbit(3 * 5.55f + 0.74f, 4, 30, "shtrs Crystal Tracker", .2f, .5f),
+                new Follow(1 * 5.55f + 0.74f, 6),
+                new Follow(1 * 5.55f + 0.74f, cooldownOffsetMS: 2000, cooldownMS: 1500),
                 new TimedTransition(2000, "follow")
             )
         );
@@ -513,16 +512,16 @@ public partial class BehaviorLib
         new(
             new State("spawn",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
-                new Orbit((3 * 5.55f) + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
+                new Orbit(3 * 5.55f + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
                 new TimedTransition(7000, "follow")
             ),
             new State("follow",
-                new Follow((1 * 5.55f) + 0.74f, 6),
+                new Follow(1 * 5.55f + 0.74f, 6),
                 new TimedTransition(25, "dafuq")
             ),
             new State("dafuq",
-                new Orbit((3 * 5.55f) + 0.74f, 4, 30, "shtrs Crystal Tracker", .2f, .5f),
-                new Follow((1 * 5.55f) + 0.74f, 6),
+                new Orbit(3 * 5.55f + 0.74f, 4, 30, "shtrs Crystal Tracker", .2f, .5f),
+                new Follow(1 * 5.55f + 0.74f, 6),
                 new Shoot(5, 4, 4, cooldownMS: 1000, targeted: true)
             )
         );
@@ -532,18 +531,18 @@ public partial class BehaviorLib
         new(
             new State("spawn",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
-                new Orbit((3 * 5.55f) + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
+                new Orbit(3 * 5.55f + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
                 new TimedTransition(7000, "orbit")
             ),
             new State("orbit",
                 new TossObject("shtrs Fire Portal", cooldownMS: 8000),
-                new Orbit((3 * 5.55f) + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
-                new Follow((1 * 5.55f) + 0.74f, 6),
+                new Orbit(3 * 5.55f + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
+                new Follow(1 * 5.55f + 0.74f, 6),
                 new TimedTransition(5000, "ThrowPortal")
             ),
             new State("ThrowPortal",
-                new Orbit((3 * 5.55f) + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
-                new Follow((1 * 5.55f) + 0.74f, 6),
+                new Orbit(3 * 5.55f + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
+                new Follow(1 * 5.55f + 0.74f, 6),
                 new TossObject("shtrs Fire Portal", cooldownMS: 8000),
                 new TimedTransition(8000, "orbit")
             )
@@ -554,18 +553,18 @@ public partial class BehaviorLib
         new(
             new State("spawn",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
-                new Orbit((3 * 5.55f) + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
+                new Orbit(3 * 5.55f + 0.74f, 1, 5, "shtrs The Forgotten King", .2f, .5f),
                 new TimedTransition(7000, "orbit")
             ),
             new State("orbit",
                 new TossObject("shtrs Ice Portal", cooldownMS: 8000),
-                new Orbit((3 * 5.55f) + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
-                new Follow((0.4f * 5.55f) + 0.74f, 6),
+                new Orbit(3 * 5.55f + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
+                new Follow(0.4f * 5.55f + 0.74f, 6),
                 new TimedTransition(5000, "ThrowPortal")
             ),
             new State("ThrowPortal",
-                new Orbit((3 * 5.55f) + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
-                new Follow((1.4f * 5.55f) + 0.74f, 6),
+                new Orbit(3 * 5.55f + 0.74f, 4, 10, "shtrs Crystal Tracker", .2f, .5f),
+                new Follow(1.4f * 5.55f + 0.74f, 6),
                 new TossObject("shtrs Ice Portal", cooldownMS: 8000),
                 new TimedTransition(8000, "orbit")
             )
@@ -574,7 +573,7 @@ public partial class BehaviorLib
     [CharacterBehavior("shtrs Crystal Tracker")]
     public static State shtrsCrystalTracker =>
         new(
-            new Follow((1 * 5.55f) + 0.74f, 10, 1)
+            new Follow(1 * 5.55f + 0.74f, 10, 1)
         );
 
     [CharacterBehavior("shtrs king timer")]
@@ -639,7 +638,7 @@ public partial class BehaviorLib
             ),
             new State("Open",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible, persist: true),
-                new MoveTo(0, -12, (0.5f * 5.55f) + 0.74f, true),
+                new MoveTo(0, -12, 0.5f * 5.55f + 0.74f, true),
                 new TimedTransition(4000, "WADAFAK")
             ),
             new State("WADAFAK",

@@ -1,16 +1,15 @@
 ﻿#region
 
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 using Common.Database;
-using Common.Database.Models;
 using Common.Network;
 using Common.Resources.Config;
 using Common.Utilities;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
-using System;
-using System.IO;
-using System.Linq;
-using System.Text;
 using GameServer.Game.Worlds.Logic;
 
 #endregion
@@ -18,8 +17,7 @@ using GameServer.Game.Worlds.Logic;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.HELLO)]
-public partial record Hello : IIncomingPacket
-{
+public record Hello : IIncomingPacket {
     public string BuildVersion;
     public int GameId;
     public string MapJSON;
@@ -27,35 +25,29 @@ public partial record Hello : IIncomingPacket
     public string Password;
     public string Username;
 
-    public void Handle(User user)
-    {
-        if (BuildVersion != GameServerConfig.Config.Version)
-        {
+    public void Handle(User user) {
+        if (BuildVersion != GameServerConfig.Config.Version) {
             user.SendFailure(Failure.INCORRECT_VERSION, GameServerConfig.Config.Version);
             return;
         }
 
         var acc = user.Account;
-        if (user.State != ConnectionState.Reconnecting)
-        {
+        if (user.State != ConnectionState.Reconnecting) {
             var verify = DbClient.VerifyAccountAsync(Username, Password).SafeResult();
             var status = verify.Status;
             acc = verify.Account;
-            if (acc == null)
-            {
+            if (acc == null) {
                 user.SendFailure(Failure.DEFAULT, status.GetDescription());
                 return;
             }
         }
 
-        if (acc == null)
-        {
+        if (acc == null) {
             user.SendFailure(Failure.DEFAULT, "Invalid user state.");
             return;
         }
 
-        if (acc.IsBanned)
-        {
+        if (acc.IsBanned) {
             // Check if ban has expired
             if (acc.AccountBans.Any(b => b.ExpiresAt == null) || // Means the account is permanently banned
                 acc.AccountBans.Any(b => b.ExpiresAt > DateTime.UtcNow)) // Means the ban hasn't been lifted yet
@@ -68,30 +60,25 @@ public partial record Hello : IIncomingPacket
             DbClient.FlushAsync(acc, a => a.IsBanned).SafeResult();
         }
 
-        if (RealmManager.UserAccIds.TryGetValue(user, out _) && user.State != ConnectionState.Reconnecting)
-        {
+        if (RealmManager.UserAccIds.TryGetValue(user, out _) && user.State != ConnectionState.Reconnecting) {
             user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.Id}");
             return;
         }
 
-        if (GameServerConfig.Config.AdminOnly && !acc.IsAdmin)
-        {
+        if (GameServerConfig.Config.AdminOnly && !acc.IsAdmin) {
             user.SendFailure(Failure.DEFAULT, "Admin only server.");
             return;
         }
 
         RealmManager.Worlds.TryGetValue(GameId, out var world);
 
-        if (GameId == World.TEST_ID)
-        {
-            if (!acc.IsAdmin)
-            {
+        if (GameId == World.TEST_ID) {
+            if (!acc.IsAdmin) {
                 user.SendFailure(Failure.FORCE_CLOSE_GAME, "Only players with admin permissions can make test maps.");
                 return;
             }
 
-            if (MapJSONLength < 1 || string.IsNullOrEmpty(MapJSON))
-            {
+            if (MapJSONLength < 1 || string.IsNullOrEmpty(MapJSON)) {
                 user.SendFailure(Failure.FORCE_CLOSE_GAME, "Invalid test map data.");
                 return;
             }
@@ -108,8 +95,7 @@ public partial record Hello : IIncomingPacket
             world.LoadJsonMap(MapJSON, world.DisplayName);
             RealmManager.AddWorld(world);
         }
-        else if (world == null)
-        {
+        else if (world == null) {
             user.SendFailure(Failure.DEFAULT, $"Invalid target world: {GameId}");
             return;
         }
@@ -130,8 +116,7 @@ public partial record Hello : IIncomingPacket
             world.Config.Difficulty));
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         BuildVersion = rdr.ReadUTF();
         GameId = rdr.ReadInt32();
         Username = rdr.ReadUTF();

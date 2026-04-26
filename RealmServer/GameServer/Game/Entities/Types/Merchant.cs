@@ -1,7 +1,6 @@
 ﻿#region
 
 using Common;
-using Common.Database;
 using Common.Database.Models;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
@@ -11,25 +10,38 @@ using Common.Utilities;
 
 namespace GameServer.Game.Entities.Types;
 
-internal class Merchant : SellableObject
-{
+internal class Merchant : SellableObject {
     private readonly MerchantDesc _merchDesc;
     private MerchandiseEntry _merchEntry;
 
-    public Merchant(ushort objType, MerchantDesc desc) : base(objType)
-    {
+    public Merchant(ushort objType, MerchantDesc desc) : base(objType) {
         _merchDesc = desc;
         Restock();
     }
 
     public bool Respawn { get; private set; }
-    public int Stock { get => Stats.GetInt(StatType.MerchandiseCount); set => Stats.Set(StatType.MerchandiseCount, value); }
-    public int MinutesLeft { get => Stats.GetInt(StatType.MerchandiseMinsLeft); set => Stats.Set(StatType.MerchandiseMinsLeft, value); }
-    public int Discount { get => Stats.GetInt(StatType.MerchandiseDiscount); set => Stats.Set(StatType.MerchandiseDiscount, value); }
-    public int RankReq { get => Stats.GetInt(StatType.MerchandiseRankReq); set => Stats.Set(StatType.MerchandiseRankReq, value); }
 
-    private void Restock()
-    {
+    public int Stock {
+        get => Stats.GetInt(StatType.MerchandiseCount);
+        set => Stats.Set(StatType.MerchandiseCount, value);
+    }
+
+    public int MinutesLeft {
+        get => Stats.GetInt(StatType.MerchandiseMinsLeft);
+        set => Stats.Set(StatType.MerchandiseMinsLeft, value);
+    }
+
+    public int Discount {
+        get => Stats.GetInt(StatType.MerchandiseDiscount);
+        set => Stats.Set(StatType.MerchandiseDiscount, value);
+    }
+
+    public int RankReq {
+        get => Stats.GetInt(StatType.MerchandiseRankReq);
+        set => Stats.Set(StatType.MerchandiseRankReq, value);
+    }
+
+    private void Restock() {
         _merchEntry = _merchDesc.Entries.RandomElement();
 
         Price = _merchEntry.Price;
@@ -50,38 +62,33 @@ internal class Merchant : SellableObject
             Price -= (int)(Price * (Discount / 100f));
     }
 
-    public override void Initialize()
-    {
+    public override void Initialize() {
         base.Initialize();
 
         AddMinuteCounter();
     }
 
-    private void AddMinuteCounter()
-    {
-        RealmManager.AddTimedAction(MinutesLeft * 60000, () =>
-        {
+    private void AddMinuteCounter() {
+        RealmManager.AddTimedAction(MinutesLeft * 60000, () => {
             if (Dead && !Respawn)
                 return;
 
             MinutesLeft--; // Keep counting the minutes if the merchant is supposed to respawn
-            if (MinutesLeft <= 0)
-            {
-                if (Respawn)
-                {
+            if (MinutesLeft <= 0) {
+                if (Respawn) {
                     Respawn = false;
                     EnterWorld(World);
                 }
 
                 Restock();
             }
-            else
+            else {
                 AddMinuteCounter();
+            }
         });
     }
 
-    public override string Purchase(Player plr)
-    {
+    public override string Purchase(Player plr) {
         var acc = plr.User.Account;
         if (!HasEnoughCapital(acc.AccStats, Currency, Price))
             return $"Not enough {Currency}.";
@@ -107,10 +114,8 @@ internal class Merchant : SellableObject
         return SUCCESS;
     }
 
-    private static bool HasEnoughCapital(AccountStat stats, CurrencyType currency, int amount)
-    {
-        return currency switch
-        {
+    private static bool HasEnoughCapital(AccountStat stats, CurrencyType currency, int amount) {
+        return currency switch {
             CurrencyType.Gold => stats.CurrentCredits >= amount,
             CurrencyType.Fame => stats.CurrentFame >= amount,
             CurrencyType.GuildFame => true,

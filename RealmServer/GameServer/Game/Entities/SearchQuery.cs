@@ -1,8 +1,7 @@
 ﻿#region
 
-using Common;
-using GameServer.Game.Entities;
 using System.Collections.Generic;
+using Common.Structs;
 using GameServer.Game.Entities.Types;
 
 #endregion

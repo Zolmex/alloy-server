@@ -1,14 +1,11 @@
 ﻿using Common.Network;
-using System.IO;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct TradeAccepted(bool[] MyOffer, bool[] TheirOffer) : IOutgoingPacket
-{
+public readonly record struct TradeAccepted(bool[] MyOffer, bool[] TheirOffer) : IOutgoingPacket {
     public PacketId ID => PacketId.TRADEACCEPTED;
-    
-    public void Write(ref SpanWriter wtr)
-    {
+
+    public void Write(ref SpanWriter wtr) {
         wtr.Write((byte)MyOffer.Length);
         foreach (var item in MyOffer)
             wtr.Write(item);
@@ -17,8 +14,7 @@ public readonly partial record struct TradeAccepted(bool[] MyOffer, bool[] Their
             wtr.Write(item);
     }
 
-    public static TradeAccepted Read(NetworkReader rdr)
-    {
+    public static TradeAccepted Read(NetworkReader rdr) {
         return new TradeAccepted();
     }
 }

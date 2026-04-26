@@ -1,10 +1,5 @@
 ﻿#region
 
-using Common.Network;
-using Common.Resources.Xml;
-using Common.Utilities;
-using Ionic.Zlib;
-using Newtonsoft.Json;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
@@ -12,13 +7,18 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Network;
+using Common.Resources.Xml;
+using Common.Structs;
+using Common.Utilities;
+using Ionic.Zlib;
+using Newtonsoft.Json;
 
 #endregion
 
 namespace Common.Resources.World;
 
-public enum TileRegion
-{
+public enum TileRegion {
     None,
     Spawn = 0x01,
     Realm_Portals = 0x02,
@@ -80,29 +80,25 @@ public enum TileRegion
     Quest_Monster_Region_2 = 0x3a
 }
 
-public struct json_dat
-{
+public struct json_dat {
     public byte[] data { get; set; }
     public loc[] dict { get; set; }
     public int height { get; set; }
     public int width { get; set; }
 }
 
-public struct loc
-{
+public struct loc {
     public string ground { get; set; }
     public obj[] objs { get; set; }
     public obj[] regions { get; set; }
 }
 
-public struct obj
-{
+public struct obj {
     public string id { get; set; }
     public string name { get; set; }
 }
 
-public class MapTileData
-{
+public class MapTileData {
     public byte Elevation;
     public ushort GroundType;
     public string Key;
@@ -113,21 +109,19 @@ public class MapTileData
     public TileRegion Region;
     public TerrainType Terrain;
 
-    public loc GetEntry()
-    {
+    public loc GetEntry() {
         var obj = new obj();
-        if (ObjectType != 0)
-        {
-            obj = new obj { id = XmlLibrary.ObjectDescs[ObjectType].ObjectId, name = Key };
-        }
+        if (ObjectType != 0) obj = new obj { id = XmlLibrary.ObjectDescs[ObjectType].ObjectId, name = Key };
 
-        return new loc { ground = XmlLibrary.TileDescs[GroundType].GroundId, objs = obj.id != null ? new[] { obj } : null, regions = Region != TileRegion.None ? new obj[] { new() { id = Region.ToString() } } : null };
+        return new loc {
+            ground = XmlLibrary.TileDescs[GroundType].GroundId, objs = obj.id != null ? new[] { obj } : null,
+            regions = Region != TileRegion.None ? new obj[] { new() { id = Region.ToString() } } : null
+        };
     }
 }
 
 // https://github.com/dhojka7/realm-server/blob/456166cbd3c43ade24df8f7904db1f7863e4ebde/Game/JSMap.cs#L55
-public class MapData
-{
+public class MapData {
     private readonly Logger _log = new(typeof(MapData));
     public int Height;
     public Dictionary<TileRegion, List<IntPoint>> Regions;
@@ -135,8 +129,7 @@ public class MapData
     public MapTileData[,] Tiles;
     public int Width;
 
-    public MapData(byte[] data, string mapName)
-    {
+    public MapData(byte[] data, string mapName) {
         var wmap = mapName.EndsWith(".wmap");
         if (wmap)
             LoadWMap(data);
@@ -146,56 +139,54 @@ public class MapData
         InitRegions();
     }
 
-    public MapData(string jsonStr, string mapName)
-    {
+    public MapData(string jsonStr, string mapName) {
         LoadJMap(jsonStr, mapName);
         InitRegions();
     }
 
-    private void LoadJMap(string jsonStr, string mapName)
-    {
+    private void LoadJMap(string jsonStr, string mapName) {
         var json = JsonConvert.DeserializeObject<json_dat>(jsonStr);
         var buffer = ZlibStream.UncompressBuffer(json.data);
         var dict = new Dictionary<ushort, MapTileData>();
         var tiles = new MapTileData[json.width, json.height];
 
-        for (var i = 0; i < json.dict.Length; i++)
-        {
+        for (var i = 0; i < json.dict.Length; i++) {
             var o = json.dict[i];
 
             var region = TileRegion.None;
-            if (o.regions != null)
-            {
+            if (o.regions != null) {
                 var regionSuccess = Enum.TryParse(o.regions[0].id.Replace(' ', '_'), out region);
                 if (!regionSuccess)
                     _log.Warn($"Map region unknown. Map: {mapName} Region: {o.regions[0].id}");
             }
 
-            dict[(ushort)i] = new MapTileData { GroundType = o.ground == null ? (ushort)255 : XmlLibrary.Id2Tile(o.ground)?.GroundType ?? 0, ObjectType = o.objs == null ? (ushort)255 : XmlLibrary.Id2Object(o.objs[0].id)?.ObjectType ?? 0, Key = o.objs?[0].name, Region = region };
+            dict[(ushort)i] = new MapTileData {
+                GroundType = o.ground == null ? (ushort)255 : XmlLibrary.Id2Tile(o.ground)?.GroundType ?? 0,
+                ObjectType = o.objs == null ? (ushort)255 : XmlLibrary.Id2Object(o.objs[0].id)?.ObjectType ?? 0,
+                Key = o.objs?[0].name, Region = region
+            };
         }
 
-        using (var rdr = new NetworkReader(new MemoryStream(buffer), false))
+        using (var rdr = new NetworkReader(new MemoryStream(buffer), false)) {
             for (var y = 0; y < json.height; y++)
                 for (var x = 0; x < json.width; x++)
                     tiles[x, y] = dict[(ushort)rdr.ReadInt16()];
+        }
 
         //Add composite under cave walls
         for (var x = 0; x < json.width; x++)
             for (var y = 0; y < json.height; y++)
                 if (tiles[x, y].ObjectType != 255)
-                {
                     if (XmlLibrary.ObjectDescs.TryGetValue(tiles[x, y].ObjectType, out var desc))
                         if ((desc.CaveWall || desc.ConnectedWall) && tiles[x, y].GroundType == 255)
                             tiles[x, y].GroundType = 0xfd;
-                }
 
         Tiles = tiles;
         Width = json.width;
         Height = json.height;
     }
 
-    public string ExportJson()
-    {
+    public string ExportJson() {
         var tempDict = new List<loc>();
         var stream = new MemoryStream();
         var wtr = new BinaryWriter(stream);
@@ -203,8 +194,7 @@ public class MapData
 
         for (var y = 0; y < Height; y++) // Save tile data
         {
-            for (var x = 0; x < Width; x++)
-            {
+            for (var x = 0; x < Width; x++) {
                 var tile = Tiles[x, y];
                 tempDict.Add(tile.GetEntry());
 
@@ -221,12 +211,10 @@ public class MapData
         return JsonConvert.SerializeObject(json);
     }
 
-    public void InitRegions()
-    {
+    public void InitRegions() {
         Regions = new Dictionary<TileRegion, List<IntPoint>>();
         for (var x = 0; x < Width; x++)
-            for (var y = 0; y < Height; y++)
-            {
+            for (var y = 0; y < Height; y++) {
                 var tile = Tiles[x, y];
                 if (tile.Region == TileRegion.None)
                     continue;
@@ -237,8 +225,7 @@ public class MapData
             }
     }
 
-    private void LoadWMap(byte[] data)
-    {
+    private void LoadWMap(byte[] data) {
         // Read version from first byte
         int ver = data[0];
         if (ver is < 0 or > 2)
@@ -247,12 +234,14 @@ public class MapData
         // Decompress the entire payload first
         byte[] decompressed;
         using (var ms = new MemoryStream(data, 1, data.Length - 1)) // Skip version byte
-            using (var zlib = new ZlibStream(ms, CompressionMode.Decompress))
-                using (var output = new MemoryStream())
-                {
+        {
+            using (var zlib = new ZlibStream(ms, CompressionMode.Decompress)) {
+                using (var output = new MemoryStream()) {
                     zlib.CopyTo(output);
                     decompressed = output.ToArray();
                 }
+            }
+        }
 
         var span = decompressed.AsSpan();
         var pos = 0;
@@ -264,8 +253,7 @@ public class MapData
         var tileDatas = new MapTileData[tileCount];
         var objCache = new Dictionary<string, ushort>(tileCount);
 
-        for (var i = 0; i < tileCount; i++)
-        {
+        for (var i = 0; i < tileCount; i++) {
             // Read tile type
             var tileType = BinaryPrimitives.ReadUInt16LittleEndian(span[pos..]);
             pos += 2;
@@ -290,18 +278,14 @@ public class MapData
 
             // Version 1 elevation
             byte elevation = 0;
-            if (ver == 1)
-            {
-                elevation = span[pos++];
-            }
+            if (ver == 1) elevation = span[pos++];
 
             // Cache XML lookup
             var objType = !string.IsNullOrEmpty(objId)
                 ? GetCachedObjectType(objId, objCache)
                 : (ushort)0;
 
-            tileDatas[i] = new MapTileData
-            {
+            tileDatas[i] = new MapTileData {
                 GroundType = tileType,
                 ObjectType = objType,
                 ObjectCfg = objectCfg,
@@ -327,40 +311,31 @@ public class MapData
 
         // Version 2 elevations
         byte[] elevations = [];
-        if (ver == 2)
-        {
+        if (ver == 2) {
             elevations = span.Slice(pos, indexCount).ToArray();
             pos += indexCount;
         }
 
         // Validate full read
         if (pos != span.Length)
-        {
             throw new InvalidDataException(
                 $"Data length mismatch. Expected {span.Length} bytes, read {pos} bytes"
             );
-        }
 
         // Parallel tile assignment
-        Parallel.For(0, indexCount, i =>
-        {
+        Parallel.For(0, indexCount, i => {
             var x = i % Width;
             var y = i / Width;
             var tile = tileDatas[indices[i]];
 
-            if (ver == 2)
-            {
-                tile.Elevation = elevations[i];
-            }
+            if (ver == 2) tile.Elevation = elevations[i];
 
             Tiles[x, y] = tile;
         });
     }
 
-    private ushort GetCachedObjectType(string objId, Dictionary<string, ushort> cache)
-    {
-        if (!cache.TryGetValue(objId, out var type))
-        {
+    private ushort GetCachedObjectType(string objId, Dictionary<string, ushort> cache) {
+        if (!cache.TryGetValue(objId, out var type)) {
             var obj = XmlLibrary.Id2Object(objId);
             type = obj?.ObjectType ?? 0;
             cache[objId] = type;

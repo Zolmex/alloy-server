@@ -1,15 +1,13 @@
-using Common.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Xml.Linq;
+using Common.Utilities;
 
 namespace Common.Resources.Xml.Descriptors;
 
-public class ObjectDesc
-{
+public class ObjectDesc {
     public readonly bool BlocksSight;
     public readonly bool CaveWall;
     public readonly string Class;
@@ -62,8 +60,7 @@ public class ObjectDesc
     public readonly XElement XML;
     public readonly float XpMult;
 
-    public ObjectDesc(XElement e, string id, ushort type)
-    {
+    public ObjectDesc(XElement e, string id, ushort type) {
         XML = e;
         ObjectId = id;
         ObjectType = type;
@@ -121,12 +118,23 @@ public class ObjectDesc
     }
 }
 
-public class ProjectileCollection
-{
-    public ContainerProjectileProps this[byte projId]
-    {
-        get
-        {
+public class ProjectileCollection {
+    private readonly ConcurrentDictionary<byte, ContainerProjectileProps> _customDict = new(); // Behavior projectiles
+
+    private readonly Dictionary<byte, ContainerProjectileProps> _dict = new(); // XML projectiles
+    private byte _nextProjId;
+
+    public ProjectileCollection(IEnumerable<ContainerProjectileProps> props) {
+        foreach (var prop in props) {
+            _dict.TryAdd(prop.ProjectileIndex, prop);
+            _nextProjId = Math.Max(_nextProjId, prop.ProjectileIndex);
+        }
+
+        _nextProjId++;
+    }
+
+    public ContainerProjectileProps this[byte projId] {
+        get {
             if (_dict.TryGetValue(projId, out var ret) || _customDict.TryGetValue(projId, out ret))
                 return ret;
 
@@ -136,37 +144,22 @@ public class ProjectileCollection
 
     public ICollection<ContainerProjectileProps> Custom => _customDict.Values;
 
-    private readonly Dictionary<byte, ContainerProjectileProps> _dict = new(); // XML projectiles
-    private readonly ConcurrentDictionary<byte, ContainerProjectileProps> _customDict = new(); // Behavior projectiles
-    private byte _nextProjId;
-
-    public ProjectileCollection(IEnumerable<ContainerProjectileProps> props)
-    {
-        foreach (var prop in props)
-        {
-            _dict.TryAdd(prop.ProjectileIndex, prop);
-            _nextProjId = Math.Max(_nextProjId, prop.ProjectileIndex);
-        }
-
-        _nextProjId++;
-    }
-
-    public bool TryGetValue(byte projId, out ContainerProjectileProps props)
-    {
+    public bool TryGetValue(byte projId, out ContainerProjectileProps props) {
         return _dict.TryGetValue(projId, out props) || _customDict.TryGetValue(projId, out props);
     }
 
-    public ContainerProjectileProps AddOrGet(string objectId, int lifetimeMs, float speed, int damage = -1, int minDamage = -1,
-        int maxDamage = -1, (ConditionEffectIndex, int)[] effects = null, bool multiHit = false, bool passesCover = false, bool armorPiercing = false,
-        bool wavy = false, bool parametric = false, bool boomerang = false, float amplitude = 0, float frequency = 1, float magnitude = 3, int size = 100)
-    {
+    public ContainerProjectileProps AddOrGet(string objectId, int lifetimeMs, float speed, int damage = -1,
+        int minDamage = -1,
+        int maxDamage = -1, (ConditionEffectIndex, int)[] effects = null, bool multiHit = false,
+        bool passesCover = false, bool armorPiercing = false,
+        bool wavy = false, bool parametric = false, bool boomerang = false, float amplitude = 0, float frequency = 1,
+        float magnitude = 3, int size = 100) {
         var props = new ProjectileProps(objectId, lifetimeMs,
             speed, damage, minDamage, maxDamage, effects, multiHit, passesCover,
             armorPiercing, wavy, parametric, boomerang, amplitude, frequency, magnitude, size);
-        
+
         // Check if projectile doesn't exist already
-        foreach (var kvp in _dict)
-        {
+        foreach (var kvp in _dict) {
             var p = kvp.Value;
             if (p.Props.Equals(props)) // Return the existing match
                 return p;

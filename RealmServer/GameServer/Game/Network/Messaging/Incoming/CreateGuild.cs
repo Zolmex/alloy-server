@@ -1,20 +1,16 @@
 ﻿#region
 
-using Common.Database;
 using Common.Network;
-using GameServer.Game.Network.Messaging.Outgoing;
 
 #endregion
 
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.CREATEGUILD)]
-public partial record CreateGuild : IIncomingPacket
-{
+public record CreateGuild : IIncomingPacket {
     public string Name;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
@@ -26,8 +22,7 @@ public partial record CreateGuild : IIncomingPacket
         // user.SendPacket(new GuildResult(result == GuildResult.SUCCESS, result));
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         Name = rdr.ReadUTF();
     }
 }

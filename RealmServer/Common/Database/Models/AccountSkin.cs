@@ -1,36 +1,34 @@
-﻿using Common.Network;
-using Common.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class AccountSkin : DbModel, IDbQueryable
-{
+public class AccountSkin : DbModel, IDbQueryable {
     public const string KEY_BASE = "accountSkin";
-    
+
+    public AccountSkin() {
+        RegisterProperty("AccountId",
+            (ref wtr) => wtr.Write(AccountId),
+            (ref rdr) => AccountId = rdr.ReadInt32()
+        );
+        RegisterProperty("SkinType",
+            (ref wtr) => wtr.Write(SkinType),
+            (ref rdr) => SkinType = rdr.ReadInt32()
+        );
+    }
+
     public override string Key => KEY_BASE + $".{AccountId}.{SkinType}";
-    
+
     public int AccountId { get; set; }
 
     public int SkinType { get; set; }
 
     public virtual Account Account { get; set; } = null!;
-    
-    public AccountSkin()
-    {
-        RegisterProperty("AccountId",
-           (ref wtr) => wtr.Write(AccountId),
-            (ref rdr) => AccountId = rdr.ReadInt32()
-        );
-        RegisterProperty("SkinType",
-           (ref wtr) => wtr.Write(SkinType),
-            (ref rdr) => SkinType = rdr.ReadInt32()
-        );
+
+    public static IEnumerable<string> GetIncludes() {
+        yield break;
     }
 
-    public static AccountSkin Read(string key)
-    {
+    public static AccountSkin Read(string key) {
         var ret = new AccountSkin();
         var split = key.Split('.');
         ret.AccountId = int.Parse(split[1]);
@@ -38,13 +36,7 @@ public partial class AccountSkin : DbModel, IDbQueryable
         return ret;
     }
 
-    public static IEnumerable<string> GetIncludes()
-    {
-        yield break;
-    }
-    
-    public static string BuildKey(int accountId, int skinType)
-    {
+    public static string BuildKey(int accountId, int skinType) {
         return KEY_BASE + $".{accountId}.{skinType}";
     }
 }

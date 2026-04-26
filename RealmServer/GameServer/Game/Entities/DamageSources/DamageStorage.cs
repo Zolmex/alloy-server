@@ -1,6 +1,5 @@
 #region
 
-using GameServer.Game.Entities;
 using System;
 using System.Collections.Generic;
 using GameServer.Game.Entities.Types;
@@ -9,8 +8,7 @@ using GameServer.Game.Entities.Types;
 
 namespace GameServer.Game.Entities.DamageSources;
 
-public class DamageStorage
-{
+public class DamageStorage {
     private readonly Dictionary<Player, int> _playerToDamage = new();
     private readonly SortedSet<KeyValuePair<Player, int>> _sortedDamage = new(DamageComparer.Instance);
 
@@ -25,20 +23,17 @@ public class DamageStorage
     /// <param name="player">Player dealing the damage.</param>
     /// <param name="damage">Amount of damage dealt.</param>
     /// <returns>True if the player is a new attacker.</returns>
-    public bool RegisterDamage(Player player, int damage)
-    {
+    public bool RegisterDamage(Player player, int damage) {
         if (damage <= 0)
             return false;
 
         var newAttacker = false;
 
-        if (_playerToDamage.TryGetValue(player, out var currentDamage))
-        {
+        if (_playerToDamage.TryGetValue(player, out var currentDamage)) {
             _sortedDamage.Remove(new KeyValuePair<Player, int>(player, currentDamage));
             _playerToDamage[player] = currentDamage + damage;
         }
-        else
-        {
+        else {
             _playerToDamage[player] = damage;
             newAttacker = true;
         }
@@ -54,8 +49,7 @@ public class DamageStorage
     /// </summary>
     /// <param name="player">The player.</param>
     /// <returns>Damage dealt by the player or 0 if the player was not found.</returns>
-    public int GetDamageForPlayer(Player player)
-    {
+    public int GetDamageForPlayer(Player player) {
         return _playerToDamage.GetValueOrDefault(player, 0);
     }
 
@@ -64,10 +58,8 @@ public class DamageStorage
     /// </summary>
     /// <param name="maxCount">Maximum amount of players to return.</param>
     /// <returns>List of top damage dealers.</returns>
-    public List<KeyValuePair<Player, int>> GetTopDamageDealers(int maxCount)
-    {
-        if (maxCount <= 0)
-        {
+    public List<KeyValuePair<Player, int>> GetTopDamageDealers(int maxCount) {
+        if (maxCount <= 0) {
             _topDamageDealersCache.Clear();
             return _topDamageDealersCache;
         }
@@ -86,8 +78,8 @@ public class DamageStorage
     /// <param name="filter">Filter predicate to apply to players.</param>
     /// <param name="resultList">Optional list to populate with results (cleared first).</param>
     /// <returns>List of filter top damage dealers.</returns>
-    public List<KeyValuePair<Player, int>> GetTopDamageDealers(int maxCount, Func<Player, bool> filter, List<KeyValuePair<Player, int>> resultList = null)
-    {
+    public List<KeyValuePair<Player, int>> GetTopDamageDealers(int maxCount, Func<Player, bool> filter,
+        List<KeyValuePair<Player, int>> resultList = null) {
         var result = resultList ?? new List<KeyValuePair<Player, int>>();
         result.Clear();
 
@@ -95,8 +87,7 @@ public class DamageStorage
             return result;
 
         var added = 0;
-        foreach (var kvp in _sortedDamage)
-        {
+        foreach (var kvp in _sortedDamage) {
             if (!filter(kvp.Key))
                 continue;
 
@@ -112,14 +103,12 @@ public class DamageStorage
     /// <summary>
     ///     Updates the internal cache of top damage dealers
     /// </summary>
-    private void UpdateCache(int maxCount)
-    {
+    private void UpdateCache(int maxCount) {
         _topDamageDealersCache.Clear();
         _cachedMaxCount = maxCount;
 
         var added = 0;
-        foreach (var kvp in _sortedDamage)
-        {
+        foreach (var kvp in _sortedDamage) {
             _topDamageDealersCache.Add(kvp);
             added++;
             if (added >= maxCount)
@@ -129,23 +118,19 @@ public class DamageStorage
         _isCacheDirty = false;
     }
 
-    public IEnumerable<Player> GetAttackers()
-    {
+    public IEnumerable<Player> GetAttackers() {
         return _playerToDamage.Keys;
     }
 
-    public void Clear()
-    {
+    public void Clear() {
         _sortedDamage.Clear();
         _playerToDamage.Clear();
     }
 
-    private class DamageComparer : IComparer<KeyValuePair<Player, int>>
-    {
+    private class DamageComparer : IComparer<KeyValuePair<Player, int>> {
         public static readonly DamageComparer Instance = new();
 
-        public int Compare(KeyValuePair<Player, int> x, KeyValuePair<Player, int> y)
-        {
+        public int Compare(KeyValuePair<Player, int> x, KeyValuePair<Player, int> y) {
             return y.Value.CompareTo(x.Value);
         }
     }

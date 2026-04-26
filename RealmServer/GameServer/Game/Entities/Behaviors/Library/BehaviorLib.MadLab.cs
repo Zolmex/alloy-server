@@ -10,17 +10,14 @@ namespace GameServer.Game.Entities.Behaviors.Library;
 
 #endregion
 
-
-
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Turret Attack")]
     public static State TurretAttack =>
         new(
             new State("wait",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible, persist: true),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable, persist: true),
-                new TimedTransition(1500, TransitionType.Random, ["shoot", "wait"])
+                new TimedTransition(1500, TransitionType.Random, "shoot", "wait")
             ),
             new State("shoot",
                 new Shoot(15,
@@ -475,8 +472,10 @@ public partial class BehaviorLib
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible, 1000),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable, 1000),
                 new Wander(3F, distanceFromSpawn: 10),
-                new AOE(4, 80, 3000, cooldownOffset: 500, color: 0x1243D3, damageColor: 0x1243D3, throwTime: 1000, range: 10, effects: [(ConditionEffectIndex.Silenced, 2000)]),
-                new AOE(6, 100, 4000, cooldownOffset: 1500, color: 0xF4F2F7, damageColor: 0xF4F2F7, throwTime: 2000, range: 10, effects: [(ConditionEffectIndex.Quiet, 2000)]),
+                new AOE(4, 80, 3000, cooldownOffset: 500, color: 0x1243D3, damageColor: 0x1243D3, throwTime: 1000,
+                    range: 10, effects: [(ConditionEffectIndex.Silenced, 2000)]),
+                new AOE(6, 100, 4000, cooldownOffset: 1500, color: 0xF4F2F7, damageColor: 0xF4F2F7, throwTime: 2000,
+                    range: 10, effects: [(ConditionEffectIndex.Quiet, 2000)]),
                 new Spawn("LabTurret", cooldownMs: 4000, cooldownOffsetMs: 3000, maxDensity: 3, densityRadius: 10),
                 new Shoot(15,
                     new ProjectilePath(3000, new ChangeSpeedPath(3, 1, 1000)),
@@ -503,7 +502,8 @@ public partial class BehaviorLib
             new State("RETREAT!",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new Taunt("You're standing in the pinnacle of innovation... and soon, in a puddle of your own blood!", 10000000),
+                new Taunt("You're standing in the pinnacle of innovation... and soon, in a puddle of your own blood!",
+                    10000000),
                 new Spawn("LabTransition", cooldownMs: 100000),
                 new ReturnToSpawn(4),
                 new EntityWithinTransition(target: "Dr Terrible Bubble", radius: 1F, targetState: "hide")
@@ -525,7 +525,8 @@ public partial class BehaviorLib
                 new SetAltTexture(0),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new Taunt("No fatalities? That gas system was flawless! Fine... I'll do it myself, for science!", 100000),
+                new Taunt("No fatalities? That gas system was flawless! Fine... I'll do it myself, for science!",
+                    100000),
                 new TimedTransition(2000, "p2")
             ),
             new State("p2",

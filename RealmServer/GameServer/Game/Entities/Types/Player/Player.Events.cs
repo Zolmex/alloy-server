@@ -1,14 +1,12 @@
-using Common;
-using Common.Resources.Xml.Descriptors;
 using System;
 using System.Numerics;
+using Common.Resources.Xml.Descriptors;
 using GameServer.Game.Entities.DamageSources;
 using GameServer.Game.Entities.DamageSources.Types;
 
 namespace GameServer.Game.Entities.Types;
 
-public partial class Player
-{
+public partial class Player {
     public event Action<CharacterEntity> OnKill;
     public event Action<int> OnHeal;
     public event Action InCombat;
@@ -18,23 +16,19 @@ public partial class Player
     public event Action<ProjectileDesc, float, Vector2> OnDoShoot; // Triggers every time the weapon is fired
     public event Action<Projectile> OnShoot; // Triggers for every projectile
 
-    public void OnKillInvoke(CharacterEntity killed)
-    {
+    public void OnKillInvoke(CharacterEntity killed) {
         OnKill?.Invoke(killed);
     }
 
-    public void EnemyHit(CharacterEntity target, DamageSource damageSource)
-    {
+    public void EnemyHit(CharacterEntity target, DamageSource damageSource) {
         OnEnemyHit?.Invoke(target, damageSource);
     }
 
-    public void InvChanged(int slot, Item item)
-    {
+    public void InvChanged(int slot, Item item) {
         OnInvChanged?.Invoke(slot, item);
     }
 
-    public void DamageDealt(CharacterEntity target, int damage)
-    {
+    public void DamageDealt(CharacterEntity target, int damage) {
         OnDamageDealt?.Invoke(target, damage);
     }
 }

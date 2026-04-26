@@ -10,26 +10,25 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Vengeful Spirit")]
     public static State VengefulSpirit =>
         new(
             new State("Start",
                 new ChangeSize(50, 120),
-                new Follow((0.5f * 5.55f) + 0.74f, 1, 8),
-                new Wander((0.3f * 5.55f) + 0.74f),
+                new Follow(0.5f * 5.55f + 0.74f, 1, 8),
+                new Wander(0.3f * 5.55f + 0.74f),
                 new Shoot(8.4f, 3, projectileIndex: 0, shootAngle: 16, cooldownMS: 800, targeted: true),
                 new TimedTransition(1000, "Vengeful")
             ),
             new State("Vengeful",
-                new Follow((0.5f * 5.55f) + 0.74f, 8, 1),
-                new Wander((0.3f * 5.55f) + 0.74f),
+                new Follow(0.5f * 5.55f + 0.74f, 8, 1),
+                new Wander(0.3f * 5.55f + 0.74f),
                 new Shoot(8.4f, 3, projectileIndex: 0, shootAngle: 16, cooldownMS: 1245, targeted: true),
                 new TimedTransition(3000, "Vengeful2")
             ),
             new State("Vengeful2",
-                new ReturnToSpawn((1 * 5.55f) + 0.74f),
+                new ReturnToSpawn(1 * 5.55f + 0.74f),
                 new Shoot(8.4f, 3, projectileIndex: 0, shootAngle: 16, cooldownMS: 750, targeted: true),
                 new TimedTransition(1500, "Vengeful")
             )
@@ -39,8 +38,8 @@ public partial class BehaviorLib
     public static State WaterMine =>
         new(
             new State("Seek",
-                new Follow((.9f * 5.55f) + 0.74f, 1, 8),
-                new Wander((0.3f * 5.55f) + 0.74f),
+                new Follow(.9f * 5.55f + 0.74f, 1, 8),
+                new Wander(0.3f * 5.55f + 0.74f),
                 new TimedTransition(3750, "Boom")
             ),
             new State("Boom",
@@ -53,7 +52,7 @@ public partial class BehaviorLib
     public static State BeachSpectre =>
         new(
             new State("Fight",
-                new Wander((0.3f * 5.55f) + 0.74f),
+                new Wander(0.3f * 5.55f + 0.74f),
                 new ChangeSize(10, 120),
                 new Shoot(8.4f, 3, projectileIndex: 0, shootAngle: 14, cooldownMS: 1250, targeted: true)
             )
@@ -179,7 +178,7 @@ public partial class BehaviorLib
             // new ScaleHP2(20),
             new State("idle",
                 new SetAltTexture(1),
-                new Wander((1 * 5.55f) + 0.74f),
+                new Wander(1 * 5.55f + 0.74f),
                 new DamageTakenTransition(2000, "pause")
             ),
             new State("pause",
@@ -193,8 +192,8 @@ public partial class BehaviorLib
                 new TimedTransition(15000, "midfight"),
                 new State("2",
                     new SetAltTexture(0),
-                    new Wander((0.1f * 5.55f) + 0.74f),
-                    new StayAwayFrom((0.1f * 5.55f) + 0.74f, 5),
+                    new Wander(0.1f * 5.55f + 0.74f),
+                    new StayAwayFrom(0.1f * 5.55f + 0.74f, 5),
                     new Shoot(12, projectileIndex: 0, cooldownMS: 450, targeted: true),
                     new Shoot(12, 3, projectileIndex: 0, shootAngle: 20, cooldownMS: 1050, targeted: true),
                     new TimedTransition(3250, "1")
@@ -202,7 +201,7 @@ public partial class BehaviorLib
                 new State("1",
                     new TossObject("Water Mine", 7, cooldownMS: 1000),
                     new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                    new ReturnToSpawn((1 * 5.55f) + 0.74f),
+                    new ReturnToSpawn(1 * 5.55f + 0.74f),
                     new Shoot(12, projectileIndex: 0, cooldownMS: 450, targeted: true),
                     new Shoot(12, 3, projectileIndex: 0, shootAngle: 20, cooldownMS: 1050, targeted: true),
                     new TimedTransition(1500, "2")
@@ -215,7 +214,7 @@ public partial class BehaviorLib
                 new TimedTransition(10000, "countdown"),
                 new State("midfight2",
                     new SetAltTexture(0),
-                    new ReturnToSpawn((1 * 5.55f) + 0.74f),
+                    new ReturnToSpawn(1 * 5.55f + 0.74f),
                     new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
                     new Shoot(10, 4, 360 / 4f, coolDownOffset: 800,
                         angleOffset: 270, cooldownMS: 1000, targeted: true),
@@ -225,8 +224,8 @@ public partial class BehaviorLib
                     new TimedTransition(3000, "midfight1")
                 ),
                 new State("midfight1",
-                    new Follow((0.8f * 5.55f) + 0.74f, 1, 8),
-                    new Wander((0.5f * 5.55f) + 0.74f),
+                    new Follow(0.8f * 5.55f + 0.74f, 1, 8),
+                    new Wander(0.5f * 5.55f + 0.74f),
                     new Taunt("Fire at will!"),
                     new Shoot(8.4f, 2, 25, 1, cooldownMS: 1250, targeted: true),
                     new Shoot(8.4f, 6, projectileIndex: 0, shootAngle: 10, cooldownMS: 950, targeted: true),
@@ -234,7 +233,7 @@ public partial class BehaviorLib
                 )
             ),
             new State("countdown",
-                new Wander((0.3f * 5.55f) + 0.74f),
+                new Wander(0.3f * 5.55f + 0.74f),
                 new Timed(1000,
                     new Taunt("Ready..")
                 ),
@@ -246,8 +245,8 @@ public partial class BehaviorLib
                 new TimedTransition(2000, "fire")
             ),
             new State("fire",
-                new Follow((0.3f * 5.55f) + 0.74f, 1, 8),
-                new Wander((0.1f * 5.55f) + 0.74f),
+                new Follow(0.3f * 5.55f + 0.74f, 1, 8),
+                new Wander(0.1f * 5.55f + 0.74f),
                 new Shoot(10, 4, 360 / 4f, 1, coolDownOffset: 1100,
                     angleOffset: 270, cooldownMS: 850, targeted: true),
                 new Shoot(10, 4, 360 / 4f, 1, coolDownOffset: 1100, angleOffset: 90,

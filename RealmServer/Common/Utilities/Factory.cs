@@ -7,19 +7,16 @@ using System.Collections.Generic;
 
 namespace Common.Utilities;
 
-public class Factory<T>
-{
+public class Factory<T> {
     private readonly Queue<T> _pool;
 
-    public Factory(int size, params object[] args)
-    {
+    public Factory(int size, params object[] args) {
         _pool = new Queue<T>();
         for (var i = 0; i < size; i++)
             _pool.Enqueue((T)Activator.CreateInstance(typeof(T), args));
     }
 
-    public T Pop()
-    {
+    public T Pop() {
         if (_pool.Count < 1)
             throw new Exception("Object pool is empty.");
 
@@ -29,25 +26,21 @@ public class Factory<T>
         return ret;
     }
 
-    public void Push(T obj)
-    {
+    public void Push(T obj) {
         _pool.Enqueue(obj);
     }
 }
 
-public class Factory
-{
+public class Factory {
     private readonly Queue<object> _pool;
 
-    public Factory(Type type, int size, params object[] args)
-    {
+    public Factory(Type type, int size, params object[] args) {
         _pool = new Queue<object>();
         for (var i = 0; i < size; i++)
             _pool.Enqueue(Activator.CreateInstance(type, args));
     }
 
-    public object Pop()
-    {
+    public object Pop() {
         if (_pool.Count < 1)
             throw new Exception("Object pool is empty.");
 
@@ -57,8 +50,7 @@ public class Factory
         return ret;
     }
 
-    public void Push(object obj)
-    {
+    public void Push(object obj) {
         _pool.Enqueue(obj);
     }
 }

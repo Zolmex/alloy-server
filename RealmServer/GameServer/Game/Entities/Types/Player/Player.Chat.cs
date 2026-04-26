@@ -1,21 +1,19 @@
 ﻿#region
 
+using System.Linq;
 using GameServer.Game.Chat.Commands;
 using GameServer.Game.Network.Messaging.Outgoing;
-using System.Linq;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public partial class Player
-{
+public partial class Player {
     private const int TextCooldown = 500;
 
     private long _lastMessageSent;
 
-    public void SendInfo(string text)
-    {
+    public void SendInfo(string text) {
         User.SendPacket(new Text(
             "",
             0,
@@ -25,8 +23,7 @@ public partial class Player
             text));
     }
 
-    public void SendParty(string text, Player speaker = null)
-    {
+    public void SendParty(string text, Player speaker = null) {
         User.SendPacket(new Text(
             speaker?.Name,
             speaker?.Id ?? 0,
@@ -36,8 +33,7 @@ public partial class Player
             text));
     }
 
-    public void SendError(string text)
-    {
+    public void SendError(string text) {
         User.SendPacket(new Text(
             "*Error*",
             0,
@@ -47,8 +43,7 @@ public partial class Player
             text));
     }
 
-    public void SendHelp(string text)
-    {
+    public void SendHelp(string text) {
         User.SendPacket(new Text(
             "*Help*",
             0,
@@ -58,23 +53,19 @@ public partial class Player
             text));
     }
 
-    public void SendEnemy(Entity entity, string text)
-    {
+    public void SendEnemy(Entity entity, string text) {
         User.SendPacket(new Text($"#{entity.Desc.DisplayName}", entity.Id, -1, 3, null, text));
     }
 
-    public void SendEnemy(string name, string text)
-    {
+    public void SendEnemy(string name, string text) {
         User.SendPacket(new Text($"#{name}", -1, -1, 3, null, text));
     }
 
-    public void Speak(string text)
-    {
+    public void Speak(string text) {
         if (!ValidateSpeak(RealmManager.WorldTime, text))
             return;
 
-        if (text.StartsWith('/'))
-        {
+        if (text.StartsWith('/')) {
             ExecuteCommand(text);
             return;
         }
@@ -86,16 +77,14 @@ public partial class Player
             en.PlayerTextReceived(this, text);
 
         // Send text message to players in current world
-        World.BroadcastAll(plr =>
-        {
+        World.BroadcastAll(plr => {
             var user = plr.User;
             if (!user.Account.AccountIgnores?.Any(i => i.IgnoredId == acc.Id) ?? true)
                 User.SendPacket(new Text(acc.IsAdmin ? $"@{acc.Name}" : acc.Name, Id, NumStars, 5, null, text));
         });
     }
 
-    private bool ValidateSpeak(RealmTime time, string text)
-    {
+    private bool ValidateSpeak(RealmTime time, string text) {
         if (User.Account.IsAdmin)
             return true;
 
@@ -108,8 +97,7 @@ public partial class Player
         return true;
     }
 
-    public void ExecuteCommand(string text)
-    {
+    public void ExecuteCommand(string text) {
         var spaceIndex = text.IndexOf(' ');
         var command = text.Substring(0, spaceIndex == -1 ? text.Length : spaceIndex);
         var args = spaceIndex == -1 ? null : text.Substring(spaceIndex + 1);

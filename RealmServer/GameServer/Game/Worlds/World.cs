@@ -1,30 +1,27 @@
 ﻿#region
 
-using Common;
-using Common.Enums;
-using Common.Resources.World;
-using Common.Resources.Xml;
-using Common.Resources.Xml.Descriptors;
-using Common.StorageClasses;
-using Common.Utilities;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Behaviors;
-using GameServer.Game.Entities.Inventory;
-using GameServer.Utilities.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
+using Common;
+using Common.Resources.World;
+using Common.Resources.Xml;
+using Common.Resources.Xml.Descriptors;
+using Common.StorageClasses;
+using Common.Structs;
+using Common.Utilities;
+using GameServer.Game.Entities;
+using GameServer.Game.Entities.Inventory;
 using GameServer.Game.Entities.Types;
+using GameServer.Utilities.Collections;
 
 #endregion
 
 namespace GameServer.Game.Worlds;
 
-public class World : IIdentifiable
-{
+public class World : IIdentifiable {
     public const string NEXUS = "Nexus";
     public const int NEXUS_ID = -1;
     public const int TEST_ID = -2;
@@ -57,8 +54,7 @@ public class World : IIdentifiable
 
     protected long _startTime;
 
-    public World(string name, int mapId, int worldId = 0)
-    {
+    public World(string name, int mapId, int worldId = 0) {
         _log = new Logger(GetType());
 
         Id = worldId == 0 ? Interlocked.Increment(ref _nextWorldId) : worldId;
@@ -96,13 +92,11 @@ public class World : IIdentifiable
     private event Action _onInitialize;
     public event Action<Entity> OnEntityTick;
 
-    public virtual void Reset()
-    {
+    public virtual void Reset() {
         Deleted = false;
     }
 
-    public virtual void Initialize()
-    {
+    public virtual void Initialize() {
         LoadMap(Config.Name, MapId);
         InitializeEntities();
 
@@ -113,21 +107,17 @@ public class World : IIdentifiable
         _onInitialize?.Invoke();
     }
 
-    protected virtual void InitializeEntities()
-    {
+    protected virtual void InitializeEntities() {
         LoadMerchants();
     }
 
-    private void LoadMerchants()
-    {
-        foreach (var kvp in Map.Regions)
-        {
+    private void LoadMerchants() {
+        foreach (var kvp in Map.Regions) {
             var region = kvp.Key;
             if (!MerchantsLibrary.Merchants.TryGetValue(region.ToString(), out var merchantDesc))
                 continue;
 
-            foreach (var pos in kvp.Value)
-            {
+            foreach (var pos in kvp.Value) {
                 var en = new Merchant(458, merchantDesc);
                 en.Move(pos.X + 0.5f, pos.Y + 0.5f);
                 en.EnterWorld(this);
@@ -135,16 +125,13 @@ public class World : IIdentifiable
         }
     }
 
-    public void LoadMap(string mapName, int mapId)
-    {
-        if (!WorldLibrary.MapDatas.TryGetValue(mapName, out var maps))
-        { // Get map names
+    public void LoadMap(string mapName, int mapId) {
+        if (!WorldLibrary.MapDatas.TryGetValue(mapName, out var maps)) { // Get map names
             _log.Error($"Invalid map {mapName}");
             return;
         }
 
-        if (maps.Length > 0)
-        {
+        if (maps.Length > 0) {
             if (mapId == -1)
                 mapId = Random.Shared.Next(maps.Length - 1);
 
@@ -158,8 +145,7 @@ public class World : IIdentifiable
         }
     }
 
-    public void LoadJsonMap(string json, string mapName)
-    {
+    public void LoadJsonMap(string json, string mapName) {
         Map = new WorldMap(this, new MapData(json, mapName));
 
         foreach (var en in Map.Entities) // Load entities from the map
@@ -172,17 +158,14 @@ public class World : IIdentifiable
 
         OnAddEntity?.Invoke(en);
 
-        if (en.IsPlayer)
-        {
+        if (en.IsPlayer) {
             _lastActiveTime = RealmManager.WorldTime.TotalElapsedMs;
             Players.Add(en as Player);
         }
-        else if (en is CharacterEntity chr)
-        {
+        else if (en is CharacterEntity chr) {
             Characters.Add(chr);
 
-            if (en is Enemy enemy)
-            {
+            if (en is Enemy enemy) {
                 Enemies.Add(enemy);
 
                 if (enemy.Desc.Quest && enemy.Desc.Level != -1)
@@ -191,22 +174,18 @@ public class World : IIdentifiable
         }
     }
 
-    public virtual void RemoveEntity(Entity en)
-    {
+    public virtual void RemoveEntity(Entity en) {
         Entities.Remove(en);
 
         OnRemoveEntity?.Invoke(en);
 
-        if (en.IsPlayer)
-        {
+        if (en.IsPlayer) {
             Players.Remove(en as Player);
         }
-        else if (en is CharacterEntity chr)
-        {
+        else if (en is CharacterEntity chr) {
             Characters.Remove(chr);
 
-            if (en is Enemy enemy)
-            {
+            if (en is Enemy enemy) {
                 Enemies.Remove(enemy);
 
                 if (enemy.Desc.Quest && enemy.Desc.Level != -1)
@@ -227,23 +206,18 @@ public class World : IIdentifiable
         Quests.Update();
     }
 
-    public void OnUpdate(Action act)
-    {
+    public void OnUpdate(Action act) {
         _onUpdate += act;
     }
 
-    public void OnInitialize(Action act)
-    {
+    public void OnInitialize(Action act) {
         _onInitialize += act;
     }
 
-    private void HandleTimers()
-    {
-        for (var i = 0; i < _timers.Count; i++)
-        {
+    private void HandleTimers() {
+        for (var i = 0; i < _timers.Count; i++) {
             var timer = _timers[i];
-            if (timer.Item1 <= RealmManager.WorldTime.TickCount)
-            {
+            if (timer.Item1 <= RealmManager.WorldTime.TickCount) {
                 timer.Item2();
                 _timers.RemoveAt(i);
                 i--;
@@ -251,23 +225,19 @@ public class World : IIdentifiable
         }
     }
 
-    public void AddTimedAction(int time, Action act)
-    {
+    public void AddTimedAction(int time, Action act) {
         _timers.Add(Tuple.Create(RealmManager.WorldTime.TickCount + TicksFromTime(time), act));
     }
 
-    public static long TicksFromTime(long time)
-    {
+    public static long TicksFromTime(long time) {
         return time / (1000 / RealmManager.TPS);
     }
 
-    public virtual void Tick(RealmTime time)
-    {
+    public virtual void Tick(RealmTime time) {
         if (!Initialized)
             return;
 
-        if (Deleted)
-        {
+        if (Deleted) {
             OnDelete();
 
             Update(); // Perform one last time
@@ -276,8 +246,7 @@ public class World : IIdentifiable
             return;
         }
 
-        if (!Config.LongLasting && Players.Count == 0 && time.TotalElapsedMs - _lastActiveTime > 60000)
-        {
+        if (!Config.LongLasting && Players.Count == 0 && time.TotalElapsedMs - _lastActiveTime > 60000) {
             Delete();
             return;
         }
@@ -285,8 +254,7 @@ public class World : IIdentifiable
         HandleTimers();
 
         for (var cY = 0; cY < Map.Chunks.Height; cY++)
-            for (var cX = 0; cX < Map.Chunks.Width; cX++)
-            {
+            for (var cX = 0; cX < Map.Chunks.Width; cX++) {
                 var chunk = Map.Chunks[cX, cY];
                 chunk.Update();
                 if (chunk.TickCount == time.TickCount || chunk.Players.Count == 0)
@@ -297,8 +265,7 @@ public class World : IIdentifiable
                      nearbyY++) // Tick nearby chunks
                     for (var nearbyX = chunk.CX - Player.ACTIVE_RADIUS;
                          nearbyX <= chunk.CX + Player.ACTIVE_RADIUS;
-                         nearbyX++)
-                    {
+                         nearbyX++) {
                         var ch = Map.Chunks[nearbyX, nearbyY];
                         if (ch == null ||
                             ch.TickCount == time.TickCount) // Make sure we don't tick the same chunk twice lol
@@ -310,27 +277,25 @@ public class World : IIdentifiable
 
         ActiveEntities.Update();
 
-        foreach (var plr in Players.Values)
-        {
+        foreach (var plr in Players.Values) {
             if (plr.Dead)
                 continue;
-            
+
             plr.Tick(time);
             _playerTick?.Invoke(plr);
         }
+
         _playerTick = null;
 
         ActiveEntities.Clear();
         SearchCache.Clear();
     }
 
-    public void InvokeEntityTick(Entity en)
-    {
+    public void InvokeEntityTick(Entity en) {
         OnEntityTick?.Invoke(en);
     }
 
-    public bool IsPassable(double x, double y, bool spawning = false, bool bypassNoWalk = false)
-    {
+    public bool IsPassable(double x, double y, bool spawning = false, bool bypassNoWalk = false) {
         var x_ = (int)x;
         var y_ = (int)y;
 
@@ -347,8 +312,7 @@ public class World : IIdentifiable
         return !tile.FullOccupy && !tile.EnemyOccupySquare && (spawning || !tile.OccupySquare);
     }
 
-    public bool IsOccupied(double x, double y)
-    {
+    public bool IsOccupied(double x, double y) {
         var x_ = (int)x;
         var y_ = (int)y;
 
@@ -362,13 +326,12 @@ public class World : IIdentifiable
         return tile.Object.Desc.FullOccupy || tile.Object.Desc.OccupySquare;
     }
 
-    public Entity SpawnSetPiece(string spName, int spawnX, int spawnY, int mapIndex = -1, string eventId = null, bool center = false)
-    {
+    public Entity SpawnSetPiece(string spName, int spawnX, int spawnY, int mapIndex = -1, string eventId = null,
+        bool center = false) {
         if (spawnX < 0 || spawnY < 0 || spawnX > Map.Width || spawnY > Map.Height)
             return null;
 
-        if (!WorldLibrary.MapDatas.TryGetValue(spName, out var setpiece))
-        {
+        if (!WorldLibrary.MapDatas.TryGetValue(spName, out var setpiece)) {
             _log.Error($"Invalid setpiece: {spName}");
             return null;
         }
@@ -376,15 +339,13 @@ public class World : IIdentifiable
         Entity ret = null;
         var map = mapIndex == -1 ? setpiece.RandomElement() : setpiece[mapIndex];
 
-        if (center)
-        {
+        if (center) {
             spawnX -= map.Width / 2;
             spawnY -= map.Height / 2;
         }
 
         for (var spY = 0; spY < map.Height; spY++)
-            for (var spX = 0; spX < map.Width; spX++)
-            {
+            for (var spX = 0; spX < map.Width; spX++) {
                 var x = spawnX + spX;
                 var y = spawnY + spY;
                 if (x < 0 || y < 0 || x > Map.Width || y > Map.Height)
@@ -392,19 +353,16 @@ public class World : IIdentifiable
 
                 var tile = Map[x, y];
                 var spTile = map.Tiles[spX, spY];
-                if (spTile.GroundType != 255)
-                {
+                if (spTile.GroundType != 255) {
                     tile.Object?.TryLeaveWorld();
                     tile.Update(spTile);
                 }
 
-                if (spTile.ObjectType != 0xff && spTile.ObjectType != 0)
-                {
+                if (spTile.ObjectType != 0xff && spTile.ObjectType != 0) {
                     tile.Object?.TryLeaveWorld();
 
                     var entity = Entity.Resolve(spTile.ObjectType);
-                    if (entity.Desc.Static)
-                    {
+                    if (entity.Desc.Static) {
                         if (entity.Desc.BlocksSight)
                             tile.BlocksSight = true;
                         tile.SetObject(entity);
@@ -417,8 +375,7 @@ public class World : IIdentifiable
                         ret = entity;
                 }
 
-                if (tile.Region != TileRegion.None)
-                {
+                if (tile.Region != TileRegion.None) {
                     var pos = new WorldPosData { X = x, Y = y };
                     Map.Regions[tile.Region].Add(pos);
                 }
@@ -429,19 +386,16 @@ public class World : IIdentifiable
         return ret;
     }
 
-    public void BroadcastAll(Action<Player> act)
-    {
+    public void BroadcastAll(Action<Player> act) {
         _playerTick += act;
     }
 
-    public void Delete()
-    {
+    public void Delete() {
         Active = false;
         Deleted = true; // The actual deletion of the world is performed in Tick
     }
 
-    protected virtual void OnDelete()
-    {
+    protected virtual void OnDelete() {
         foreach (var plr in Players.Values)
             plr.User.ReconnectTo(NEXUS_ID);
 
@@ -449,8 +403,7 @@ public class World : IIdentifiable
             en.TryLeaveWorld();
     }
 
-    public virtual void Dispose()
-    {
+    public virtual void Dispose() {
         Disposed = true;
         ActiveEntities.Clear();
         Entities.Clear();
@@ -460,15 +413,14 @@ public class World : IIdentifiable
         Quests.Clear();
     }
 
-    public Player GetPlayerById(int id)
-    {
+    public Player GetPlayerById(int id) {
         if (Players.TryGetValue(id, out var plr))
             return plr;
         return null;
     }
 
-    public IEnumerable<Player> GetAllPlayersWithin(float x, float y, float maxRadius, Predicate<Player> cond = null, float minRadius = 0)
-    {
+    public IEnumerable<Player> GetAllPlayersWithin(float x, float y, float maxRadius, Predicate<Player> cond = null,
+        float minRadius = 0) {
         var cx = (int)(x / ChunkMap.CHUNK_SIZE);
         var cy = (int)(y / ChunkMap.CHUNK_SIZE);
         if (Map.Chunks[cx, cy] == null)
@@ -477,18 +429,15 @@ public class World : IIdentifiable
         var maxRadSqr = maxRadius * maxRadius;
         var minRadSqr = minRadius * minRadius;
         var cRadius = (int)Math.Ceiling(maxRadius / ChunkMap.CHUNK_SIZE);
-        for (var i = -cRadius; i <= cRadius; i++)
-        {
+        for (var i = -cRadius; i <= cRadius; i++) {
             var cY = cy + i;
-            for (var j = -cRadius; j <= cRadius; j++)
-            {
+            for (var j = -cRadius; j <= cRadius; j++) {
                 var cX = cx + j;
                 var chunk = Map.Chunks[cX, cY];
                 if (chunk == null)
                     continue;
 
-                foreach (var kvp in chunk.Players)
-                {
+                foreach (var kvp in chunk.Players) {
                     var plr = kvp.Value;
                     var distSqr = plr.DistSqr(x, y);
                     if (distSqr <= maxRadSqr && distSqr > minRadSqr && (cond == null || cond(plr)))
@@ -498,13 +447,11 @@ public class World : IIdentifiable
         }
     }
 
-    public bool IsPlayerWithin(float x, float y, float radius)
-    {
+    public bool IsPlayerWithin(float x, float y, float radius) {
         return GetAllPlayersWithin(x, y, radius).Any();
     }
 
-    public IEnumerable<Entity> GetEntitiesWithin(float x, float y, float radius, Predicate<Entity> pred = null)
-    {
+    public IEnumerable<Entity> GetEntitiesWithin(float x, float y, float radius, Predicate<Entity> pred = null) {
         var cx = (int)(x / ChunkMap.CHUNK_SIZE);
         var cy = (int)(y / ChunkMap.CHUNK_SIZE);
         if (Map.Chunks[cx, cy] == null)
@@ -512,18 +459,15 @@ public class World : IIdentifiable
 
         var radSqr = radius * radius;
         var cRadius = (int)Math.Ceiling(radius / ChunkMap.CHUNK_SIZE);
-        for (var i = -cRadius; i <= cRadius; i++)
-        {
+        for (var i = -cRadius; i <= cRadius; i++) {
             var cY = cy + i;
-            for (var j = -cRadius; j <= cRadius; j++)
-            {
+            for (var j = -cRadius; j <= cRadius; j++) {
                 var cX = cx + j;
                 var chunk = Map.Chunks[cX, cY];
                 if (chunk == null)
                     continue;
 
-                foreach (var kvp in chunk.Entities)
-                {
+                foreach (var kvp in chunk.Entities) {
                     var en = kvp.Value;
                     if ((pred == null || pred.Invoke(en)) && en.DistSqr(x, y) <= radSqr)
                         yield return en;
@@ -532,8 +476,7 @@ public class World : IIdentifiable
         }
     }
 
-    public IEnumerable<CharacterEntity> GetEnemiesWithin(float x, float y, float radius)
-    {
+    public IEnumerable<CharacterEntity> GetEnemiesWithin(float x, float y, float radius) {
         var cx = (int)(x / ChunkMap.CHUNK_SIZE);
         var cy = (int)(y / ChunkMap.CHUNK_SIZE);
         if (Map.Chunks[cx, cy] == null)
@@ -541,18 +484,15 @@ public class World : IIdentifiable
 
         var radSqr = radius * radius;
         var cRadius = (int)Math.Ceiling(radius / ChunkMap.CHUNK_SIZE);
-        for (var i = -cRadius; i <= cRadius; i++)
-        {
+        for (var i = -cRadius; i <= cRadius; i++) {
             var cY = cy + i;
-            for (var j = -cRadius; j <= cRadius; j++)
-            {
+            for (var j = -cRadius; j <= cRadius; j++) {
                 var cX = cx + j;
                 var chunk = Map.Chunks[cX, cY];
                 if (chunk == null)
                     continue;
 
-                foreach (var kvp in chunk.Entities)
-                {
+                foreach (var kvp in chunk.Entities) {
                     var en = kvp.Value;
                     if (en is CharacterEntity chr && chr.DistSqr(x, y) <= radSqr)
                         yield return chr;
@@ -561,15 +501,13 @@ public class World : IIdentifiable
         }
     }
 
-    public IEnumerable<CharacterEntity> GetEnemiesByName(string name, float x, float y, float radius)
-    {
+    public IEnumerable<CharacterEntity> GetEnemiesByName(string name, float x, float y, float radius) {
         var query = new SearchQuery(name, new IntPoint((int)x, (int)y), radius, 0);
         if (SearchCache.TryGetValue(query, out var result))
             return result.Entities;
 
         var enemiesWithin = GetEnemiesWithin(x, y, radius);
-        if (name == null || !enemiesWithin.Any())
-        {
+        if (name == null || !enemiesWithin.Any()) {
             SearchCache.Add(query, new SearchQueryResult(enemiesWithin, null));
             return enemiesWithin;
         }
@@ -577,26 +515,22 @@ public class World : IIdentifiable
         return enemiesWithin.Where(ent => ent.Desc.ObjectId != null && ent.Desc.ObjectId == name);
     }
 
-    public IEnumerable<CharacterEntity> GetEnemiesByName(IEnumerable<string> names, float x, float y, float radius)
-    {
-        foreach (var name in names)
-        {
+    public IEnumerable<CharacterEntity> GetEnemiesByName(IEnumerable<string> names, float x, float y, float radius) {
+        foreach (var name in names) {
             var enemies = GetEnemiesByName(name, x, y, radius);
             foreach (var enemy in enemies)
                 yield return enemy;
         }
     }
 
-    public CharacterEntity GetNearestEnemyByName(string name, float x, float y, float radius)
-    {
+    public CharacterEntity GetNearestEnemyByName(string name, float x, float y, float radius) {
         var enemies = GetEnemiesByName(name, x, y, radius);
         if (!enemies.Any())
             return null;
 
         CharacterEntity nearest = null;
         var minDist = float.MaxValue;
-        foreach (var en in enemies)
-        {
+        foreach (var en in enemies) {
             if (en.DistSqr(x, y) >= minDist)
                 continue;
 
@@ -607,18 +541,15 @@ public class World : IIdentifiable
         return nearest;
     }
 
-    public Entity SpawnEntity(string entityName, Vector2 pos)
-    {
+    public Entity SpawnEntity(string entityName, Vector2 pos) {
         return SpawnEntity(entityName, pos.X, pos.Y);
     }
 
-    public Entity SpawnEntity(string entityName, WorldPosData worldPosData)
-    {
+    public Entity SpawnEntity(string entityName, WorldPosData worldPosData) {
         return SpawnEntity(entityName, worldPosData.X, worldPosData.Y);
     }
 
-    public Entity SpawnEntity(string entityName, float x, float y)
-    {
+    public Entity SpawnEntity(string entityName, float x, float y) {
         var desc = XmlLibrary.Id2Object(entityName);
         if (desc == null)
             throw new NullReferenceException($"Entity {entityName} not found. Double-check your spelling!");
@@ -629,25 +560,20 @@ public class World : IIdentifiable
         return entity;
     }
 
-    public void DropLootWithOverflow(float posX, float posY, List<Item> items, Player owner = null)
-    {
-        if (items.Count > Container.INVENTORY_SIZE)
-        {
+    public void DropLootWithOverflow(float posX, float posY, List<Item> items, Player owner = null) {
+        if (items.Count > Container.INVENTORY_SIZE) {
             var itemsChunks = items.Chunk(Container.INVENTORY_SIZE);
             foreach (var itemChunk in itemsChunks)
                 DropLoot(posX, posY, itemChunk.ToArray(), owner);
         }
-        else
-        {
+        else {
             DropLoot(posX, posY, items.ToArray(), owner);
         }
     }
 
-    public void DropLoot(float posX, float posY, Item[] items, Player owner = null)
-    {
+    public void DropLoot(float posX, float posY, Item[] items, Player owner = null) {
         var highestBagType = 0;
-        foreach (var item in items)
-        {
+        foreach (var item in items) {
             if (item.BagType > highestBagType)
                 highestBagType = item.BagType;
 
@@ -660,30 +586,25 @@ public class World : IIdentifiable
     }
 
     public void CreateContainerAt(float posX, float posY, Item[] items, EntityInventory.BagType bagType,
-        int owner = -1)
-    {
+        int owner = -1) {
         CreateContainerAt(posX, posY, items, owner, EntityInventory.GetBagIdFromType(bagType));
     }
 
-    public void CreateContainerAt(float posX, float posY, Item[] items, int owner = -1, ushort bagType = 1280)
-    {
+    public void CreateContainerAt(float posX, float posY, Item[] items, int owner = -1, ushort bagType = 1280) {
         var bag = new Container(bagType, 8, owner);
         bag.Move(posX, posY);
         bag.Inventory.SetItems(items);
         bag.EnterWorld(this);
     }
 
-    public void Taunt(CharacterEntity host, string taunt)
-    {
-        BroadcastAll(plr =>
-        {
+    public void Taunt(CharacterEntity host, string taunt) {
+        BroadcastAll(plr => {
             if (host.DistSqr(plr) < Player.SIGHT_RADIUS_SQR)
                 plr.SendEnemy(host, taunt);
         });
     }
 
-    public Player GetPlayerByName(string name)
-    {
+    public Player GetPlayerByName(string name) {
         return Players.FirstOrDefault(p => p.Value.Name == name).Value;
     }
 }

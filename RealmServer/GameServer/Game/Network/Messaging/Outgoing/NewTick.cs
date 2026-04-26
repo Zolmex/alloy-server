@@ -1,28 +1,24 @@
 ﻿#region
 
-using Common;
-using Common.Network;
-using Common.Utilities;
 using System.Collections.Generic;
-using System.IO;
+using Common.Network;
+using Common.Structs;
+using Common.Utilities;
 
 #endregion
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> Statuses) : IOutgoingPacket
-{
+public readonly record struct NewTick(Dictionary<int, ObjectStatusData> Statuses) : IOutgoingPacket {
     public PacketId ID => PacketId.NEWTICK;
-    
-    public void Write(ref SpanWriter wtr)
-    {
+
+    public void Write(ref SpanWriter wtr) {
         var begin = wtr.Position;
 
         var updateCount = 0;
         wtr.Write((short)0); // Placeholder
 
-        foreach (var status in Statuses.Values)
-        {
+        foreach (var status in Statuses.Values) {
             if (!status.Update)
                 continue;
 
@@ -38,8 +34,7 @@ public readonly partial record struct NewTick(Dictionary<int, ObjectStatusData> 
         wtr.Position = end; // Go to the end of the packet body
     }
 
-    public static NewTick Read(NetworkReader wtr)
-    {
+    public static NewTick Read(NetworkReader wtr) {
         return new NewTick();
     }
 }

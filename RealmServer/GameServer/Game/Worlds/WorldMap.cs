@@ -1,27 +1,24 @@
 ﻿#region
 
+using System.Collections.Generic;
 using Common;
 using Common.Network;
 using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
-using GameServer.Game.Entities;
-using System.Collections.Generic;
-using System.IO;
+using Common.Structs;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Worlds;
 
-public class WorldTile
-{
+public class WorldTile {
     public readonly MapTileData Data;
 
     private ushort _groundType;
 
-    public WorldTile(MapTileData tile, int x, int y, MapChunk chunk)
-    {
+    public WorldTile(MapTileData tile, int x, int y, MapChunk chunk) {
         TileDesc = XmlLibrary.TileDescs[tile.GroundType];
 
         Data = tile;
@@ -43,22 +40,19 @@ public class WorldTile
     public MapChunk Chunk { get; set; }
     public Portal Portal { get; set; }
 
-    public ushort GroundType
-    {
+    public ushort GroundType {
         get => _groundType;
-        set
-        {
+        set {
             _groundType = value;
             TileDesc = XmlLibrary.TileDescs[value];
         }
     }
-    
+
     public bool FullOccupy { get; private set; }
     public bool EnemyOccupySquare { get; private set; }
     public bool OccupySquare { get; private set; }
 
-    public void SetObject(Entity en)
-    {
+    public void SetObject(Entity en) {
         ObjectType = en?.Desc.ObjectType ?? 0;
         Object = en;
         FullOccupy = en?.Desc.FullOccupy ?? false;
@@ -66,28 +60,24 @@ public class WorldTile
         OccupySquare = en?.Desc.OccupySquare ?? false;
     }
 
-    public void Update(MapTileData newTile)
-    {
+    public void Update(MapTileData newTile) {
         GroundType = newTile.GroundType;
         ObjectType = newTile.ObjectType;
         Region = newTile.Region;
     }
 
-    public void Write(ref SpanWriter wtr)
-    {
+    public void Write(ref SpanWriter wtr) {
         wtr.Write((short)X);
         wtr.Write((short)Y);
         wtr.Write(GroundType);
     }
 }
 
-public class WorldMap
-{
+public class WorldMap {
     private readonly World _world;
 
     // https://github.com/dhojka7/realm-server/blob/456166cbd3c43ade24df8f7904db1f7863e4ebde/Game/World.cs#L80
-    public WorldMap(World world, MapData map)
-    {
+    public WorldMap(World world, MapData map) {
         _world = world;
 
         Width = map.Width;
@@ -98,18 +88,15 @@ public class WorldMap
         Regions = new Dictionary<TileRegion, List<WorldPosData>>();
         Terrains = new Dictionary<TerrainType, List<WorldPosData>>();
         for (var y = 0; y < Height; y++)
-            for (var x = 0; x < Width; x++)
-            {
+            for (var x = 0; x < Width; x++) {
                 var cX = (int)(x / ChunkMap.CHUNK_SIZE);
                 var cY = (int)(y / ChunkMap.CHUNK_SIZE);
                 var chunk = Chunks[cX, cY];
                 var js = map.Tiles[x, y];
                 var tile = Tiles[x, y] = new WorldTile(js, x, y, chunk);
-                if (js.ObjectType != 0xff && js.ObjectType != 0)
-                {
+                if (js.ObjectType != 0xff && js.ObjectType != 0) {
                     var entity = Entity.Resolve(js.ObjectType);
-                    if (entity.Desc.Static)
-                    {
+                    if (entity.Desc.Static) {
                         if (entity.Desc.BlocksSight)
                             tile.BlocksSight = true;
                         tile.SetObject(entity);
@@ -120,14 +107,12 @@ public class WorldMap
                 }
 
                 var pos = new WorldPosData { X = x, Y = y };
-                if (tile.Region != TileRegion.None)
-                {
+                if (tile.Region != TileRegion.None) {
                     Regions.TryAdd(tile.Region, []);
                     Regions[tile.Region].Add(pos);
                 }
 
-                if (tile.Data.Terrain != TerrainType.None)
-                {
+                if (tile.Data.Terrain != TerrainType.None) {
                     Terrains.TryAdd(tile.Data.Terrain, []);
                     Terrains[tile.Data.Terrain].Add(pos);
                 }
@@ -142,14 +127,12 @@ public class WorldMap
     public WorldTile[,] Tiles { get; }
     public ChunkMap Chunks { get; set; }
 
-    public WorldTile this[int x, int y]
-    {
+    public WorldTile this[int x, int y] {
         get => Tiles[x, y];
         set => Tiles[x, y] = value;
     }
 
-    public bool Contains(int x, int y)
-    {
+    public bool Contains(int x, int y) {
         return !(x < 0 || y < 0 || x >= Width || y >= Height);
     }
 }

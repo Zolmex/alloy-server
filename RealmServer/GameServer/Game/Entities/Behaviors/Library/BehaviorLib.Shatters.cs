@@ -16,8 +16,7 @@ using GameServer.Game.Entities.Loot;
 
 namespace GameServer.Game.Entities.Behaviors.Library;
 
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     #region generators
 
     [CharacterBehavior("shtrs MagiGenerators")]
@@ -745,7 +744,7 @@ public partial class BehaviorLib
     public static State ShtrsBlobomb =>
         new(
             new State("active",
-                new Follow((0.7f * 5.55f) + 0.74f, acquireRange: 40, distFromTarget: 0), // Adjusted speed
+                new Follow(0.7f * 5.55f + 0.74f, acquireRange: 40, distFromTarget: 0), // Adjusted speed
                 new EntityWithinTransition(radius: 2, targetState: "blink")
             ),
             new State("blink",
@@ -888,12 +887,12 @@ public partial class BehaviorLib
             ),
             new State("PreNewShit2",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new ReturnToSpawn((1 * 5.55f) + 0.74f),
+                new ReturnToSpawn(1 * 5.55f + 0.74f),
                 new TimedTransition(3000, "NewShit2")
             ),
             new State("NewShit2",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new MoveTo(0, -6, (1 * 5.55f) + 0.74f, true),
+                new MoveTo(0, -6, 1 * 5.55f + 0.74f, true),
                 new TimedTransition(3000, "Active2")
             ),
             new State("Active2",
@@ -957,7 +956,7 @@ public partial class BehaviorLib
             ),
             new State("NewShit3",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new MoveTo(4, 0, (1 * 5.55f) + 0.74f, true),
+                new MoveTo(4, 0, 1 * 5.55f + 0.74f, true),
                 new TimedTransition(3000, "Active3")
             ),
             new State("Active3",
@@ -1021,7 +1020,7 @@ public partial class BehaviorLib
             ),
             new State("NewShit4",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new MoveTo(0, 13, (1 * 5.55f) + 0.74f, true),
+                new MoveTo(0, 13, 1 * 5.55f + 0.74f, true),
                 new TimedTransition(3000, "Active4")
             ),
             new State("Active4",
@@ -1085,7 +1084,7 @@ public partial class BehaviorLib
             ),
             new State("NewShit5",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new MoveTo(0, 13, (1 * 5.55f) + 0.74f, true),
+                new MoveTo(0, 13, 1 * 5.55f + 0.74f, true),
                 new TimedTransition(3000, "Active5")
             ),
             new State("Active5",
@@ -1149,7 +1148,7 @@ public partial class BehaviorLib
             ),
             new State("NewShit6",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new MoveTo(0, 13, (1 * 5.55f) + 0.74f, true),
+                new MoveTo(0, 13, 1 * 5.55f + 0.74f, true),
                 new TimedTransition(3000, "Active6")
             ),
             new State("Active6",
@@ -1213,7 +1212,7 @@ public partial class BehaviorLib
             ),
             new State("NewShit7",
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
-                new MoveTo(0, -13, (1 * 5.55f) + 0.74f, true),
+                new MoveTo(0, -13, 1 * 5.55f + 0.74f, true),
                 new TimedTransition(3000, "Active7")
             ),
             new State("Active7",
@@ -1384,7 +1383,7 @@ public partial class BehaviorLib
     public static State ShtrsStonePaladin =>
         new(
             new State("Idle",
-                new Wander((0.4f * 5.55f) + 0.74f), // Adjusted speed
+                new Wander(0.4f * 5.55f + 0.74f), // Adjusted speed
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
                 new Reproduce(maxDensity: 4),
                 new EntityWithinTransition(radius: 8, targetState: "Attacking")
@@ -1591,7 +1590,7 @@ public partial class BehaviorLib
                     new TimedTransition(2000, "Wait")
                 ),
                 new State("Wait",
-                    new Follow((1f * 5.55f) + 0.74f, acquireRange: 2), // Adjusted speed
+                    new Follow(1f * 5.55f + 0.74f, acquireRange: 2), // Adjusted speed
                     new Flash(0x00ff00, 0.1f, 20),
                     new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
                     new TimedTransition(2000, "Bullet")
@@ -1604,12 +1603,12 @@ public partial class BehaviorLib
     public static State ShtrsStoneKnight =>
         new(
             new State("Follow",
-                new Follow((1f * 5.55f) + 0.74f, acquireRange: 10, distFromTarget: 5), // Adjusted speed
+                new Follow(1f * 5.55f + 0.74f, acquireRange: 10, distFromTarget: 5), // Adjusted speed
                 new EntityWithinTransition(radius: 10, targetState: "Charge")
             ),
             new State("Charge",
                 new TimedTransition(2000, "Follow"),
-                new Charge((1f * 5.55f) + 0.74f, 6, 2000), // Adjusted speed
+                new Charge(1f * 5.55f + 0.74f, 6, 2000), // Adjusted speed
                 new Shoot(
                     projectileIndex: 1,
                     maxRadius: 5,
@@ -1626,7 +1625,7 @@ public partial class BehaviorLib
     public static State ShtrsLavaSouls =>
         new(
             new State("active",
-                new Follow((1f * 5.55f) + 0.74f, acquireRange: 0), // Adjusted speed
+                new Follow(1f * 5.55f + 0.74f, acquireRange: 0), // Adjusted speed
                 new EntityWithinTransition(radius: 2, targetState: "blink")
             ),
             new State("blink",
@@ -1649,9 +1648,9 @@ public partial class BehaviorLib
     [CharacterBehavior("shtrs Glassier Archmage")]
     public static State ShtrsGlassierArchmage =>
         new(
-            new StayAwayFrom((0.5f * 5.55f) + 0.74f, 5), // Adjusted speed
+            new StayAwayFrom(0.5f * 5.55f + 0.74f, 5), // Adjusted speed
             new State("1st",
-                new Follow((1.8f * 5.55f) + 0.74f, acquireRange: 7), // Adjusted speed
+                new Follow(1.8f * 5.55f + 0.74f, acquireRange: 7), // Adjusted speed
                 new Shoot(
                     projectileIndex: 2,
                     maxRadius: 12,
@@ -1709,7 +1708,7 @@ public partial class BehaviorLib
         new(
             new State("Main",
                 new TimedTransition(5000, "Throw"),
-                new Follow((1f * 5.55f) + 0.74f, acquireRange: 1), // Adjusted speed
+                new Follow(1f * 5.55f + 0.74f, acquireRange: 1), // Adjusted speed
                 new Shoot(
                     projectileIndex: 0,
                     maxRadius: 10,
@@ -1925,7 +1924,7 @@ public partial class BehaviorLib
         new(
             new State("Follow",
                 new Follow(
-                    (1 * 5.55f) + 0.74f,
+                    1 * 5.55f + 0.74f,
                     1,
                     cooldownMS: 1000
                 ),

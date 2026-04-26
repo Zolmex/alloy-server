@@ -1,35 +1,29 @@
-using Common.Database;
-using Common.Database.Models;
-using Common.Resources.Config;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Database.Models;
+using Common.Resources.Config;
 
 namespace Common.Utilities;
 
-public static class ModelUtils
-{
-    extension(Account acc)
-    {
-        public XElement ToXml()
-        {
+public static class ModelUtils {
+    extension(Account acc) {
+        public XElement ToXml() {
             return new XElement("Account",
                 new XElement("AccountId", acc.Id),
                 new XElement("Rank", acc.Rank),
                 new XElement("Name", acc.Name),
-                !string.IsNullOrEmpty(acc.GuildName) ?
-                new XElement("Guild",
-                    new XElement("Name", acc.GuildName),
-                    new XElement("Rank", acc.GuildMember!.GuildRank))
-                : null,
+                !string.IsNullOrEmpty(acc.GuildName)
+                    ? new XElement("Guild",
+                        new XElement("Name", acc.GuildName),
+                        new XElement("Rank", acc.GuildMember!.GuildRank))
+                    : null,
                 acc.IsAdmin ? new XElement("Admin") : null,
                 acc.AccStats.ToXml(acc)
             );
         }
-        
-        public XElement ToCharListXml()
-        {
+
+        public XElement ToCharListXml() {
             return new XElement("Chars",
                 new XAttribute("nextCharId", acc.NextCharId!),
                 new XAttribute("maxNumChars", acc.MaxChars!),
@@ -52,10 +46,8 @@ public static class ModelUtils
         }
     }
 
-    extension(AccountStat stat)
-    {
-        public XElement ToXml(Account acc)
-        {
+    extension(AccountStat stat) {
+        public XElement ToXml(Account acc) {
             Logger.Debug(acc.AccStats);
             Logger.Debug(acc.AccStats.ClassStats);
             return new XElement("Stats",
@@ -71,12 +63,9 @@ public static class ModelUtils
         }
     }
 
-    extension(Character chr)
-    {
-        public XElement ToXml(Account acc)
-        {
-            var elements = new List<XElement>
-            {
+    extension(Character chr) {
+        public XElement ToXml(Account acc) {
+            var elements = new List<XElement> {
                 new("ObjectType", chr.ObjectType),
                 new("Level", chr.Level),
                 new("CharFame", chr.CurrentFame),
@@ -104,10 +93,8 @@ public static class ModelUtils
         }
     }
 
-    extension(ClassStat stat)
-    {
-        public XElement ToXml()
-        {
+    extension(ClassStat stat) {
+        public XElement ToXml() {
             return new XElement("ClassStats",
                 new XAttribute("objectType", stat.ObjectType!),
                 new XElement("BestLevel", stat.BestLevel),
@@ -116,10 +103,8 @@ public static class ModelUtils
         }
     }
 
-    extension(Guild guild)
-    {
-        public XElement ToXml()
-        {
+    extension(Guild guild) {
+        public XElement ToXml() {
             return new XElement("Guild"
                 // new XAttribute("name", guild.Name ?? ""),
                 // new XElement("CurrentFame", guild.CurrentFame),

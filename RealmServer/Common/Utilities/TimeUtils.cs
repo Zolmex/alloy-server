@@ -8,37 +8,35 @@ using System.Text.RegularExpressions;
 
 namespace Common.Utilities;
 
-public static class TimeUtils
-{
-    private static readonly string[] dateFormats = new[] { "MM/dd/yyyy hh:mmtt", "MM/dd hh:mmtt", "dd hh:mmtt", "MM/dd/yyyy h:mmtt", "MM/dd h:mmtt", "dd h:mmtt", "MM/dd/yyyy hhtt", "MM/dd hhtt", "dd hhtt" };
+public static class TimeUtils {
+    private static readonly string[] dateFormats = new[] {
+        "MM/dd/yyyy hh:mmtt", "MM/dd hh:mmtt", "dd hh:mmtt", "MM/dd/yyyy h:mmtt", "MM/dd h:mmtt", "dd h:mmtt",
+        "MM/dd/yyyy hhtt", "MM/dd hhtt", "dd hhtt"
+    };
+
     private static readonly string[] timeFormats = new[] { "hh:mmtt", "h:mmtt", "hhtt", "htt" };
 
-    public static int ToUnixTimestamp(this DateTime dateTime)
-    {
+    public static int ToUnixTimestamp(this DateTime dateTime) {
         return (int)(dateTime - new DateTime(1970, 1, 1)).TotalSeconds;
     }
 
-    public static DateTime FromUnixTimestamp(int time)
-    {
+    public static DateTime FromUnixTimestamp(int time) {
         var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         dateTime = dateTime.AddSeconds(time).ToLocalTime();
         return dateTime;
     }
 
-    public static TimeSpan? ParseTimeSpan(string input)
-    {
+    public static TimeSpan? ParseTimeSpan(string input) {
         var regex = new Regex(@"(\d+)([smhdw])", RegexOptions.IgnoreCase);
         var matches = regex.Matches(input);
         if (matches.Count == 0) return null;
 
         var timeSpan = TimeSpan.Zero;
-        foreach (Match match in matches)
-        {
+        foreach (Match match in matches) {
             var value = int.Parse(match.Groups[1].Value);
             var unit = char.ToLower(match.Groups[2].Value[0]);
 
-            switch (unit)
-            {
+            switch (unit) {
                 case 's':
                     timeSpan = timeSpan.Add(TimeSpan.FromSeconds(value));
                     break;
@@ -60,14 +58,12 @@ public static class TimeUtils
         return timeSpan;
     }
 
-    public static DateTime? ParseDateTime(string input)
-    {
+    public static DateTime? ParseDateTime(string input) {
         var now = DateTime.UtcNow;
         DateTime result;
 
         // Try parsing full date and time with minutes
-        if (DateTime.TryParseExact(input, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
-        {
+        if (DateTime.TryParseExact(input, dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out result)) {
             // If year or month is missing, use current year and month
             if (result.Year == 1) result = result.AddYears(now.Year - 1);
             if (result.Month == 1) result = result.AddMonths(now.Month - 1);
@@ -75,8 +71,7 @@ public static class TimeUtils
         }
 
         // Try parsing time only
-        if (DateTime.TryParseExact(input, timeFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
-        {
+        if (DateTime.TryParseExact(input, timeFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out result)) {
             result = new DateTime(now.Year, now.Month, now.Day, result.Hour, result.Minute, 0);
             return result.ToUniversalTime();
         }
@@ -85,19 +80,16 @@ public static class TimeUtils
     }
 
     // https://www.codeproject.com/Articles/770323/How-to-Convert-a-Date-Time-to-X-minutes-ago-in-Csh
-    public static string TimeAgo(DateTime dt)
-    {
+    public static string TimeAgo(DateTime dt) {
         var span = DateTime.Now - dt;
-        if (span.Days > 365)
-        {
+        if (span.Days > 365) {
             var years = span.Days / 365;
             if (span.Days % 365 != 0)
                 years += 1;
             return $"{years} {(years == 1 ? "year" : "years")} ago";
         }
 
-        if (span.Days > 30)
-        {
+        if (span.Days > 30) {
             var months = span.Days / 30;
             if (span.Days % 31 != 0)
                 months += 1;

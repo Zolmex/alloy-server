@@ -7,8 +7,7 @@ using System.Diagnostics;
 
 namespace Common.Utilities;
 
-public class EasyTimer : IDisposable
-{
+public class EasyTimer : IDisposable {
     public const string Time = "[TIME]";
     private static readonly Logger Log = new(typeof(EasyTimer));
     private readonly string _finalMessage;
@@ -16,8 +15,7 @@ public class EasyTimer : IDisposable
     private readonly LogLevel _level;
     private readonly Stopwatch _sw;
 
-    public EasyTimer(LogLevel level = LogLevel.Debug, string firstMessage = null, string finalMessage = "[TIME]")
-    {
+    public EasyTimer(LogLevel level = LogLevel.Debug, string firstMessage = null, string finalMessage = "[TIME]") {
         if (firstMessage != null)
             Log.Log(level, firstMessage);
         _level = level;
@@ -25,8 +23,7 @@ public class EasyTimer : IDisposable
         _sw = Stopwatch.StartNew();
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         Log.Log(_level, _finalMessage.Replace(Time, _sw.Elapsed.TotalMilliseconds + " ms"));
     }
 }

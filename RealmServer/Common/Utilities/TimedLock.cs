@@ -14,18 +14,14 @@ namespace Common.Utilities;
 // me invent a way of using a struct in both release and debug builds
 // without losing the debug leak tracking.
 
-public struct TimedLock : IDisposable
-{
-    public static TimedLock Lock(object o)
-    {
+public struct TimedLock : IDisposable {
+    public static TimedLock Lock(object o) {
         return Lock(o, TimeSpan.FromSeconds(1)); //TimeSpan.FromSeconds(10));
     }
 
-    public static TimedLock Lock(object o, TimeSpan timeout)
-    {
+    public static TimedLock Lock(object o, TimeSpan timeout) {
         var tl = new TimedLock(o);
-        if (!Monitor.TryEnter(o, timeout))
-        {
+        if (!Monitor.TryEnter(o, timeout)) {
 #if DEBUG
             GC.SuppressFinalize(tl.leakDetector);
 #endif
@@ -35,8 +31,7 @@ public struct TimedLock : IDisposable
         return tl;
     }
 
-    private TimedLock(object o)
-    {
+    private TimedLock(object o) {
         target = o;
 #if DEBUG
         leakDetector = new Sentinel();
@@ -45,8 +40,7 @@ public struct TimedLock : IDisposable
 
     private readonly object target;
 
-    public void Dispose()
-    {
+    public void Dispose() {
         Monitor.Exit(target);
 
         // It's a bad error if someone forgets to call Dispose,
@@ -61,10 +55,8 @@ public struct TimedLock : IDisposable
 #if DEBUG
     // (In Debug mode, we make it a class so that we can add a finalizer
     // in order to detect when the object is not freed.)
-    private class Sentinel
-    {
-        ~Sentinel()
-        {
+    private class Sentinel {
+        ~Sentinel() {
             // If this finalizer runs, someone somewhere failed to
             // call Dispose, which means we've failed to leave
             // a monitor!
@@ -76,8 +68,6 @@ public struct TimedLock : IDisposable
 #endif
 }
 
-public class LockTimeoutException : ApplicationException
-{
-    public LockTimeoutException() : base("Timeout waiting for lock")
-    { }
+public class LockTimeoutException : ApplicationException {
+    public LockTimeoutException() : base("Timeout waiting for lock") { }
 }

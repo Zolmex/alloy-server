@@ -6,8 +6,7 @@ using Common;
 
 namespace GameServer.Game.Entities.Types;
 
-public class ConnectionBuilder
-{
+public class ConnectionBuilder {
     public static int[] Dot = BuildConnections(0x02020202);
     public static int[] UShortLine = BuildConnections(0x01020202);
     public static int[] L = BuildConnections(0x01010202);
@@ -15,11 +14,9 @@ public class ConnectionBuilder
     public static int[] T = BuildConnections(0x01010201);
     public static int[] Cross = BuildConnections(0x01010101);
 
-    public static int[] BuildConnections(uint bits)
-    {
+    public static int[] BuildConnections(uint bits) {
         var connections = new int[4];
-        for (var k = 0; k < 4; k++)
-        {
+        for (var k = 0; k < 4; k++) {
             connections[k] = (int)bits;
             bits = (bits >> 8) | (bits << 24);
         }
@@ -28,21 +25,17 @@ public class ConnectionBuilder
     }
 }
 
-public class ConnectedObject : Entity
-{
-    public ConnectedObject(ushort type) : base(type)
-    {
+public class ConnectedObject : Entity {
+    public ConnectedObject(ushort type) : base(type) {
         IsConnected = true;
     }
 
-    public int Connect
-    {
+    public int Connect {
         get => Stats.GetInt(StatType.Connect);
         set => Stats.Set(StatType.Connect, value);
     }
 
-    public void FindConnection()
-    {
+    public void FindConnection() {
         var mx = (int)Position.X;
         var my = (int)Position.Y;
         var nearby = new bool[3, 3];

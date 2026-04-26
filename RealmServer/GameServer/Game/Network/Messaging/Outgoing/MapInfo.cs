@@ -12,12 +12,10 @@ public readonly record struct MapInfo(
     bool ShowDisplays,
     bool AllowPlayerTeleport,
     string Music,
-    int Difficulty) : IOutgoingPacket
-{
+    int Difficulty) : IOutgoingPacket {
     public PacketId ID => PacketId.MAPINFO;
 
-    public void Write(ref SpanWriter wtr)
-    {
+    public void Write(ref SpanWriter wtr) {
         wtr.Write(MapWidth);
         wtr.Write(MapHeight);
         wtr.WriteUTF(Name);

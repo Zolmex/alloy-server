@@ -1,7 +1,6 @@
 ﻿#region
 
 using Common.Network;
-using GameServer.Game.Entities;
 using GameServer.Game.Entities.Types;
 using GameServer.Game.Network.Messaging.Outgoing;
 
@@ -10,12 +9,10 @@ using GameServer.Game.Network.Messaging.Outgoing;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.USEPORTAL)]
-public partial record UsePortal : IIncomingPacket
-{
+public record UsePortal : IIncomingPacket {
     public int ObjectId;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
@@ -36,8 +33,7 @@ public partial record UsePortal : IIncomingPacket
             user.ReconnectTo(portal.PortalWorld);
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         ObjectId = rdr.ReadInt32();
     }
 }

@@ -8,12 +8,9 @@ using GameServer.Game.Worlds.Logic;
 
 namespace GameServer.Game.Entities.Types;
 
-public class Portal : CharacterEntity
-{
-    public Portal(ushort type, bool attachWorld = false) : base(type)
-    {
-        if (attachWorld)
-        {
+public class Portal : CharacterEntity {
+    public Portal(ushort type, bool attachWorld = false) : base(type) {
+        if (attachWorld) {
             var realm = new Realm();
             RealmManager.AddWorld(realm);
 
@@ -25,13 +22,11 @@ public class Portal : CharacterEntity
 
     public bool Usable { get; set; }
 
-    public override void Initialize()
-    {
+    public override void Initialize() {
         base.Initialize();
 
         Usable = true;
-        if (Desc.RealmPortal)
-        {
+        if (Desc.RealmPortal) {
             Name = PortalWorld.DisplayName + " (" + PortalWorld.Players.Count;
 
             var maxPlayers = PortalWorld.Config.MaxPlayers;
@@ -42,13 +37,11 @@ public class Portal : CharacterEntity
         }
     }
 
-    public override bool Tick(RealmTime time)
-    {
+    public override bool Tick(RealmTime time) {
         if (!base.Tick(time))
             return false;
 
-        if (Desc.RealmPortal)
-        {
+        if (Desc.RealmPortal) {
             Name = PortalWorld.DisplayName + " (" + PortalWorld.Players.Count;
             var maxPlayers = PortalWorld.Config.MaxPlayers;
             if (maxPlayers == -1)
@@ -60,10 +53,8 @@ public class Portal : CharacterEntity
         return true;
     }
 
-    public void LoadWorld(User user)
-    {
-        if (!Usable)
-        {
+    public void LoadWorld(User user) {
+        if (!Usable) {
             var player = user.GameInfo.Player;
             player.SendError("This portal is locked.");
             return;
@@ -73,14 +64,12 @@ public class Portal : CharacterEntity
             return;
 
         var worldName = Desc.DungeonName;
-        if (worldName == null)
-        {
+        if (worldName == null) {
             _log.Error($"Invalid portal type '{Desc.ObjectType:X4}'");
             return;
         }
 
-        PortalWorld = worldName switch
-        {
+        PortalWorld = worldName switch {
             "Nexus" => RealmManager.NexusInstance,
             "Vault" => user.GameInfo.Vault ?? new Vault(user),
             "Guild Hall" => RealmManager.GetGuildHall(user.Account.GuildMember?.GuildId ?? 0),

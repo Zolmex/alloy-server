@@ -3,13 +3,11 @@
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.ACCEPTTRADE)]
-public partial record AcceptTrade : IIncomingPacket
-{
+public record AcceptTrade : IIncomingPacket {
     public bool[] MyOffer;
     public bool[] TheirOffer;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         var player = user.GameInfo.Player;
         if (user.State != ConnectionState.Ready || user.GameInfo.State != GameState.Playing)
             return;
@@ -17,8 +15,7 @@ public partial record AcceptTrade : IIncomingPacket
         player.AcceptTrade(MyOffer, TheirOffer);
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         MyOffer = new bool[rdr.ReadByte()];
         for (var i = 0; i < MyOffer.Length; i++)
             MyOffer[i] = rdr.ReadBoolean();

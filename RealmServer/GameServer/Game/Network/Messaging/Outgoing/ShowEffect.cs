@@ -1,18 +1,22 @@
 ﻿#region
 
-using Common;
 using Common.Network;
+using Common.Structs;
 
 #endregion
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly record struct ShowEffect(byte EffectType, int TargetId, int Color, float EffectParam, WorldPosData Pos1, WorldPosData Pos2) : IOutgoingPacket
-{
+public readonly record struct ShowEffect(
+    byte EffectType,
+    int TargetId,
+    int Color,
+    float EffectParam,
+    WorldPosData Pos1,
+    WorldPosData Pos2) : IOutgoingPacket {
     public PacketId ID => PacketId.SHOWEFFECT;
 
-    public void Write(ref SpanWriter wtr)
-    {
+    public void Write(ref SpanWriter wtr) {
         wtr.Write(EffectType);
         wtr.Write(TargetId);
         wtr.Write(Color);

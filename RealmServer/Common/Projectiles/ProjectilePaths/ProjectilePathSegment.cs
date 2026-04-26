@@ -1,12 +1,11 @@
 ﻿#region
 
+using System;
+using System.Numerics;
+using System.Xml.Linq;
 using Common.Network;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using System;
-using System.IO;
-using System.Numerics;
-using System.Xml.Linq;
 
 #endregion
 
@@ -15,8 +14,7 @@ namespace Common.Projectiles.ProjectilePaths;
 /// <summary>
 ///     Class for a segment as part of a chained sequence of segments that form a <see cref="ProjectilePath" />.
 /// </summary>
-public class ProjectilePathSegment
-{
+public class ProjectilePathSegment {
     protected readonly int _mods;
 
     protected float? _angle;
@@ -27,8 +25,8 @@ public class ProjectilePathSegment
     ///     Initializes a new instance of the <see cref="ProjectilePathSegment" /> class.
     /// </summary>
     /// <param name="pathType">Path type.</param>
-    public ProjectilePathSegment(PathType pathType, float speed, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods)
-    {
+    public ProjectilePathSegment(PathType pathType, float speed, float? angle = null, int? lifetimeMs = null,
+        int? timeOffset = null, params PathSegmentModifier[] mods) {
         Type = pathType;
         Speed = speed;
         TimeOffset = timeOffset ?? 0;
@@ -60,8 +58,7 @@ public class ProjectilePathSegment
     /// <summary>
     ///     How long the path segment will run for in Ms.
     /// </summary>
-    public int LifetimeMs
-    {
+    public int LifetimeMs {
         get => _lifetimeMs ?? Info.LifetimeMs;
         set => _lifetimeMs = value;
     }
@@ -69,19 +66,16 @@ public class ProjectilePathSegment
     /// <summary>
     ///     Gets or sets the angle of this path segment.
     /// </summary>
-    public float Angle
-    {
+    public float Angle {
         get => _angle ?? Info.ShootAngle;
         set => _angle = value;
     }
 
-    public bool HasMod(PathSegmentModifier mod)
-    {
+    public bool HasMod(PathSegmentModifier mod) {
         return (_mods & (1 << (int)mod)) != 0;
     }
 
-    protected void ApplyModifiers(ref int elapsedLifetimeMs)
-    {
+    protected void ApplyModifiers(ref int elapsedLifetimeMs) {
         if (HasMod(PathSegmentModifier.Boomerang))
             if (elapsedLifetimeMs > LifetimeMs / 2)
                 elapsedLifetimeMs = LifetimeMs - elapsedLifetimeMs;
@@ -95,8 +89,7 @@ public class ProjectilePathSegment
     /// <param name="elapsedLifetimeMs">Time since the start of the segment.</param>
     /// <returns>The position offset relative to the segment's start position.</returns>
     /// <exception cref="NotImplementedException">Throws exception if not implemented in a derived class.</exception>
-    public virtual Vector2 PositionAt(int elapsedLifetimeMs)
-    {
+    public virtual Vector2 PositionAt(int elapsedLifetimeMs) {
         throw new NotImplementedException();
     }
 
@@ -104,8 +97,7 @@ public class ProjectilePathSegment
     ///     Gets the position offset at the end of this segment.
     /// </summary>
     /// <returns>Position offset at the end of the segment.</returns>
-    public Vector2 PositionAtEnd()
-    {
+    public Vector2 PositionAtEnd() {
         return PositionAt(LifetimeMs);
     }
 
@@ -114,8 +106,7 @@ public class ProjectilePathSegment
     ///     Speed, LifetimeMS, and Angle.
     /// </summary>
     /// <param name="wtr">Network Writer.</param>
-    public virtual void Write(ref SpanWriter wtr)
-    {
+    public virtual void Write(ref SpanWriter wtr) {
         wtr.Write(Speed);
         wtr.Write(LifetimeMs);
         wtr.Write(_angle ?? float.NaN);
@@ -123,8 +114,7 @@ public class ProjectilePathSegment
         wtr.Write(_mods);
     }
 
-    public virtual void SetInfo(ProjectileInfo info)
-    {
+    public virtual void SetInfo(ProjectileInfo info) {
         Info = info;
     }
 
@@ -134,8 +124,7 @@ public class ProjectilePathSegment
     ///     so we need a new instance.
     /// </summary>
     /// <returns>A new instance of the segment with the same values.</returns>
-    public virtual ProjectilePathSegment Clone()
-    {
+    public virtual ProjectilePathSegment Clone() {
         return new ProjectilePathSegment(0, 0);
     }
 
@@ -144,29 +133,20 @@ public class ProjectilePathSegment
     /// </summary>
     /// <param name="projDesc">Projectile Desc.</param>
     /// <returns>Projectile path segment.</returns>
-    public static ProjectilePathSegment ParsePath(ProjectileDesc projDesc)
-    {
+    public static ProjectilePathSegment ParsePath(ProjectileDesc projDesc) {
         // No path defined, import path from old system
         ProjectilePathSegment path;
         if (projDesc.Root.HasElement("Amplitude") || projDesc.Root.HasElement("Frequency"))
-        {
             path = new AmplitudePath(projDesc.Speed, projDesc.Amplitude, projDesc.Frequency, null, projDesc.LifetimeMS);
-        }
         // else if (projDesc.Parametric) {
         //     path = new ParametricPath(projDesc.Speed);
         // }
         else if (projDesc.Wavy)
-        {
             path = new WavyPath(projDesc.Speed, null, projDesc.LifetimeMS);
-        }
         else if (projDesc.Boomerang)
-        {
             path = new BoomerangPath(projDesc.Speed, null, projDesc.LifetimeMS);
-        }
         else
-        {
             path = new LinePath(projDesc.Speed, null, projDesc.LifetimeMS);
-        }
 
         return path;
     }
@@ -176,15 +156,13 @@ public class ProjectilePathSegment
     /// </summary>
     /// <param name="pathElement">XML element from file.</param>
     /// <returns>Projectile path segment.</returns>
-    public static ProjectilePathSegment ParsePath(XElement pathElement)
-    {
+    public static ProjectilePathSegment ParsePath(XElement pathElement) {
         if (pathElement == null)
             return new LinePath(10, null, 100);
 
         var pathName = pathElement.Value;
         var lifeTimeMs = pathElement.GetAttribute<int>("lifetimeMs");
-        switch (pathName)
-        {
+        switch (pathName) {
             case "Line":
                 var speed = pathElement.GetAttribute<float>("speed");
                 return new LinePath(speed, null, lifeTimeMs);
@@ -221,13 +199,12 @@ public class ProjectilePathSegment
         return null;
     }
 
-    public static ProjectilePathSegment ParsePath(ProjectileProps props)
-    {
-        return props.PathType switch
-        {
+    public static ProjectilePathSegment ParsePath(ProjectileProps props) {
+        return props.PathType switch {
             PathType.LinePath => new LinePath(props.Speed, null, props.LifetimeMS),
             PathType.WavyPath => new WavyPath(props.Speed, null, props.LifetimeMS),
-            PathType.AmplitudePath => new AmplitudePath(props.Speed, props.Amplitude, props.Frequency, null, props.LifetimeMS),
+            PathType.AmplitudePath => new AmplitudePath(props.Speed, props.Amplitude, props.Frequency, null,
+                props.LifetimeMS),
             PathType.BoomerangPath => new BoomerangPath(props.Speed, null, props.LifetimeMS),
             _ => null
         };
@@ -237,13 +214,11 @@ public class ProjectilePathSegment
     ///     Convert a solo segment to a <see cref="ProjectilePath" />.
     /// </summary>
     /// <returns>Projectile Path.</returns>
-    public ProjectilePath ToPath()
-    {
+    public ProjectilePath ToPath() {
         return new ProjectilePath(LifetimeMs, this);
     }
 
-    private static int GetModsFlag(PathSegmentModifier[] mods)
-    {
+    private static int GetModsFlag(PathSegmentModifier[] mods) {
         var ret = 0;
         foreach (var mod in mods)
             ret |= 1 << (int)mod;
@@ -251,8 +226,7 @@ public class ProjectilePathSegment
     }
 }
 
-public struct ProjectileInfo
-{
+public struct ProjectileInfo {
     public Vector2 StartPos;
     public float ShootAngle;
     public int LifetimeMs;
@@ -260,8 +234,7 @@ public struct ProjectileInfo
     public long StartTime;
 }
 
-public enum PathSegmentModifier : byte
-{
+public enum PathSegmentModifier : byte {
     None,
     Boomerang
 }

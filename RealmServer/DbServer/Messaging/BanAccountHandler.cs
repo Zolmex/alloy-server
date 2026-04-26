@@ -1,24 +1,16 @@
-using Common;
 using Common.Database.Models;
 using Common.Network;
 using Common.Network.Messaging;
 using Common.Network.Messaging.Impl;
-using Common.Resources.Config;
-using Common.Resources.Xml;
 using Common.Utilities;
 using DbServer.Database;
-using DbServer.Service;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DbServer.Messaging;
 
-public class BanAccountHandler : IMessageHandler
-{
+public class BanAccountHandler : IMessageHandler {
     public AppMessageId MessageId => AppMessageId.BanAccount;
 
-    public async Task HandleAsync(IAppMessage msg, AppConnection con)
-    {
+    public async Task HandleAsync(IAppMessage msg, AppConnection con) {
         var pkt = (BanAccountMessage)msg;
         var response = new BanAccountAck(pkt.Sequence);
         Logger.Debug($"BanAccount: {pkt.Name}");
@@ -27,8 +19,7 @@ public class BanAccountHandler : IMessageHandler
         var error = "";
 
         var acc = await DbCache.Accounts.FirstOrDefaultAsync(a => a.Name == pkt.Name);
-        if (acc == null)
-        {
+        if (acc == null) {
             success = false;
             error = $"Account {pkt.Name} not found";
         }
@@ -47,21 +38,19 @@ public class BanAccountHandler : IMessageHandler
         response.Success = success;
         response.Error = error;
 
-        if (!success)
-        {
+        if (!success) {
             con.Send(response);
             return;
         }
 
-        var ban = new AccountBan()
-        {
+        var ban = new AccountBan {
             Reason = pkt.Reason,
             ExpiresAt = pkt.ExpiresAt,
-            ModeratorId = pkt.ModeratorId,
+            ModeratorId = pkt.ModeratorId
         };
         acc.IsBanned = true;
         acc.AccountBans.Add(ban);
-        
+
         DbCache.Accounts.Update(acc,
             a => a.IsBanned);
         await DbCache.AccountBans.AddAsync(ban);

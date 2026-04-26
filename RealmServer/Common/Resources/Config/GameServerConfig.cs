@@ -1,21 +1,19 @@
 ﻿#region
 
-using Common.Utilities;
 using System.IO;
 using System.Xml.Linq;
+using Common.Utilities;
 
 #endregion
 
 namespace Common.Resources.Config;
 
-public class GameServerConfig
-{
+public class GameServerConfig {
     private const string ConfigFile = "Resources/Config/Data/gameServerConfig.xml";
 
     private static GameServerConfig _config;
 
-    public GameServerConfig(XElement e)
-    {
+    public GameServerConfig(XElement e) {
         BehaviorsDir = e.GetValue<string>("BehaviorsDir");
         XmlsDir = e.GetValue<string>("XmlsDir");
         MerchantsDir = e.GetValue<string>("MerchantsDir");
@@ -50,8 +48,7 @@ public class GameServerConfig
     public bool AdminOnly { get; private set; }
     public int RealmCount { get; private set; }
 
-    private static GameServerConfig Load()
-    {
+    private static GameServerConfig Load() {
         return new GameServerConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 }

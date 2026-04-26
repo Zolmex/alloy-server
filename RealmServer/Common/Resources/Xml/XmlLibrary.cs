@@ -1,25 +1,27 @@
 ﻿#region
 
-using Common.Resources.Xml.Descriptors;
-using Common.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Common.Resources.Xml.Descriptors;
+using Common.Utilities;
 
 #endregion
 
 namespace Common.Resources.Xml;
 
-public static class XmlLibrary
-{
+public static class XmlLibrary {
     private static readonly Logger _log = new(typeof(XmlLibrary));
 
     public static readonly ConcurrentDictionary<ushort, ObjectDesc> ObjectDescs = new();
     private static readonly ConcurrentDictionary<string, ObjectDesc> _id2Object = new();
-    private static readonly ConcurrentDictionary<string, ObjectDesc> _id2ObjectNoCase = new(StringComparer.CurrentCultureIgnoreCase);
+
+    private static readonly ConcurrentDictionary<string, ObjectDesc> _id2ObjectNoCase =
+        new(StringComparer.CurrentCultureIgnoreCase);
+
     public static readonly ConcurrentDictionary<ushort, ContainerDesc> ContainerDescs = new();
     public static readonly ConcurrentDictionary<ushort, PlayerDesc> PlayerDescs = new();
     private static readonly ConcurrentDictionary<string, PlayerDesc> _id2Player = new();
@@ -34,44 +36,37 @@ public static class XmlLibrary
     ///     Loads every .xml file in the directory <paramref name="dir" />.
     /// </summary>
     /// <param name="dir">Directory containing XML asset files.</param>
-    public static void Load(string dir)
-    {
-        if (!Directory.Exists(dir))
-        {
+    public static void Load(string dir) {
+        if (!Directory.Exists(dir)) {
             _log.Error($"XMLs directory not found. '{dir}'");
             return;
         }
-        
+
         var files = Directory.EnumerateFiles(dir, "*xml", SearchOption.AllDirectories);
 
-        Parallel.ForEach(files, file =>
-        {
+        Parallel.ForEach(files, file => {
             _log.Debug($"Loading XML {file}...");
             MakeDictionaries(XElement.Parse(File.ReadAllText(file)));
         });
         _log.Info("XML Library loaded successfully.");
     }
 
-    private static void MakeDictionaries(XElement root)
-    {
-        Parallel.ForEach(root.Elements(), xml =>
-        {
+    private static void MakeDictionaries(XElement root) {
+        Parallel.ForEach(root.Elements(), xml => {
             var id = xml.GetAttribute<string>("id");
             var type = xml.GetAttribute<ushort>("type");
 
             var name = xml.Name.ToString();
-            if (name == "Object")
-            {
-                if (xml.HasElement("Container"))
+            if (name == "Object") {
+                if (xml.HasElement("Container")) {
                     ContainerDescs.TryAdd(type, new ContainerDesc(xml, id, type));
-                else if (xml.HasElement("Player"))
-                {
+                }
+                else if (xml.HasElement("Player")) {
                     var plr = new PlayerDesc(xml, id, type);
                     PlayerDescs.TryAdd(type, plr);
                     _id2Player.TryAdd(id, plr);
                 }
-                else if (xml.HasElement("Item"))
-                {
+                else if (xml.HasElement("Item")) {
                     var item = new Item(xml);
                     ItemDescs.TryAdd(type, item);
                     _id2Item.TryAdd(id, item);
@@ -79,14 +74,14 @@ public static class XmlLibrary
                         Gemstones.TryAdd(type, item);
                 }
 
-                if (!xml.HasElement("Item") && !xml.HasElement("PetAbility"))
-                {
+                if (!xml.HasElement("Item") && !xml.HasElement("PetAbility")) {
                     var objDesc = new ObjectDesc(xml, id, type);
                     ObjectDescs.TryAdd(type, objDesc);
                     _id2Object.TryAdd(id, objDesc);
                     _id2ObjectNoCase.TryAdd(id, objDesc);
 
-                    if (objDesc.Terrain != TerrainType.None /* && xml.HasElement("Spawn")*/) // Entities spawned by Oryx in the Realm
+                    if (objDesc.Terrain != TerrainType.None /* && xml.HasElement("Spawn")*/
+                       ) // Entities spawned by Oryx in the Realm
                     {
                         var terrain = Enum.Parse<TerrainType>(xml.Element("Terrain").Value);
                         if (!TerrainEnemies.TryGetValue(terrain, out var list))
@@ -96,8 +91,7 @@ public static class XmlLibrary
                 }
             }
 
-            if (name == "Ground")
-            {
+            if (name == "Ground") {
                 var tile = new TileDesc(xml, id, type);
                 TileDescs.TryAdd(type, tile);
                 _id2Tile.TryAdd(id, tile);
@@ -105,11 +99,9 @@ public static class XmlLibrary
         });
     }
 
-    public static ObjectDesc Id2Object(string id, bool caseSensitive = true)
-    {
+    public static ObjectDesc Id2Object(string id, bool caseSensitive = true) {
         ObjectDesc ret;
-        if (!caseSensitive)
-        {
+        if (!caseSensitive) {
             if (!_id2ObjectNoCase.TryGetValue(id, out ret))
                 return null;
             return ret;
@@ -120,22 +112,19 @@ public static class XmlLibrary
         return ret;
     }
 
-    public static PlayerDesc Id2Player(string id)
-    {
+    public static PlayerDesc Id2Player(string id) {
         if (!_id2Player.TryGetValue(id, out var ret))
             return null;
         return ret;
     }
 
-    public static Item Id2Item(string id)
-    {
+    public static Item Id2Item(string id) {
         if (!_id2Item.TryGetValue(id, out var ret))
             return null;
         return ret;
     }
 
-    public static TileDesc Id2Tile(string id)
-    {
+    public static TileDesc Id2Tile(string id) {
         if (!_id2Tile.TryGetValue(id, out var ret))
             return null;
         return ret;

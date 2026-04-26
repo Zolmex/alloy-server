@@ -1,26 +1,21 @@
 ﻿namespace GameServer.Game.Network;
 
-public class ClientRandom
-{
+public class ClientRandom {
     private uint _seed;
 
-    public ClientRandom(uint seed)
-    {
+    public ClientRandom(uint seed) {
         _seed = seed;
     }
 
-    public uint NextInt()
-    {
+    public uint NextInt() {
         return Gen();
     }
 
-    public uint NextIntRange(uint min, uint max)
-    {
-        return min == max ? min : min + (Gen() % (max - min));
+    public uint NextIntRange(uint min, uint max) {
+        return min == max ? min : min + Gen() % (max - min);
     }
 
-    private uint Gen()
-    {
+    private uint Gen() {
         var lb = 16807 * (_seed & 0xFFFF);
         var hb = 16807 * (_seed >> 16);
         lb += (hb & 32767) << 16;

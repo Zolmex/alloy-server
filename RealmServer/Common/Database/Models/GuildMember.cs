@@ -1,16 +1,29 @@
-﻿using Common.Network;
-using Common.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Common.Utilities;
 
 namespace Common.Database.Models;
 
-public partial class GuildMember : DbModel, IDbQueryable
-{
+public class GuildMember : DbModel, IDbQueryable {
     public const string KEY_BASE = "guildMember";
-    
+
+    public GuildMember() {
+        RegisterProperty("Id",
+            (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("GuildRank",
+            (ref wtr) => wtr.Write(GuildRank),
+            (ref rdr) => GuildRank = rdr.ReadInt16()
+        );
+        RegisterProperty("LastSeenAt",
+            (ref wtr) => wtr.Write(LastSeenAt.ToUnixTimestamp()),
+            (ref rdr) => LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
+        );
+    }
+
     public override string Key => KEY_BASE + $".{Id}";
-    
+
     public int Id { get; set; }
 
     public short GuildRank { get; set; }
@@ -23,37 +36,18 @@ public partial class GuildMember : DbModel, IDbQueryable
 
     public virtual Guild Guild { get; set; }
 
-    public GuildMember()
-    {
-        RegisterProperty("Id",
-           (ref wtr) => wtr.Write(Id),
-            (ref rdr) => Id = rdr.ReadInt32()
-        );
-        RegisterProperty("GuildRank",
-           (ref wtr) => wtr.Write(GuildRank),
-            (ref rdr) => GuildRank = rdr.ReadInt16()
-        );
-        RegisterProperty("LastSeenAt",
-           (ref wtr) => wtr.Write(LastSeenAt.ToUnixTimestamp()),
-            (ref rdr) => LastSeenAt = TimeUtils.FromUnixTimestamp(rdr.ReadInt32())
-        );
+    public static IEnumerable<string> GetIncludes() {
+        yield break;
     }
 
-    public static GuildMember Read(string key)
-    {
+    public static GuildMember Read(string key) {
         var ret = new GuildMember();
         var split = key.Split('.');
         ret.Id = int.Parse(split[1]);
         return ret;
     }
 
-    public static IEnumerable<string> GetIncludes()
-    {
-        yield break;
-    }
-    
-    public static string BuildKey(int id)
-    {
+    public static string BuildKey(int id) {
         return KEY_BASE + $".{id}";
     }
 }

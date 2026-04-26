@@ -1,12 +1,12 @@
 ﻿#region
 
-using Common;
-using Common.Utilities;
-using GameServer.Utilities;
 using System;
 using System.Numerics;
 using System.Xml.Linq;
+using Common.Structs;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
+using GameServer.Utilities;
 
 #endregion
 
@@ -16,8 +16,7 @@ namespace GameServer.Game.Entities.Behaviors.Actions;
 ///     A behavior for creating short burst dashes towards a given target.
 ///     A collection of dashes is referred to as a 'Cycle', for when you need multiple dashes to be chained.
 /// </summary>
-public record Dash : BehaviorScript
-{
+public record Dash : BehaviorScript {
     private readonly float acquireRadiusSqr;
     private readonly float angleOffset;
     private readonly int cooldownMS;
@@ -65,8 +64,7 @@ public record Dash : BehaviorScript
         Ease ease = Ease.None,
         TargetType targetType = TargetType.ClosestPlayer,
         float fixedAngle = 0f,
-        float dashDamageRadius = 0.8f)
-    {
+        float dashDamageRadius = 0.8f) {
         acquireRadiusSqr = radius * radius;
         this.numDashes = numDashes;
         dashTime = MathF.Abs(dashRange / dashSpeed);
@@ -83,8 +81,7 @@ public record Dash : BehaviorScript
         this.dashDamageRadius = dashDamageRadius;
     }
 
-    public Dash(XElement xml)
-    {
+    public Dash(XElement xml) {
         var acquireRadius = xml.GetAttribute("acquireRadius", 8f);
         acquireRadiusSqr = acquireRadius * acquireRadius;
         numDashes = xml.GetAttribute("numDashes", 1);
@@ -104,8 +101,7 @@ public record Dash : BehaviorScript
     }
 
     /// <inheritdoc />
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var dashInfo = host.ResolveResource<DashInfo>(this);
         dashInfo.DashCooldown = cooldownOffsetMS == 0 ? cooldownMS : cooldownOffsetMS;
         dashInfo.DashCount = 0;
@@ -115,60 +111,41 @@ public record Dash : BehaviorScript
     }
 
     /// <inheritdoc />
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var dashInfo = host.ResolveResource<DashInfo>(this);
-        if (dashInfo.CycleCooldown > 0)
-        {
+        if (dashInfo.CycleCooldown > 0) {
             dashInfo.CycleCooldown -= time.ElapsedMsDelta;
-            if (dashInfo.CycleCooldown > 0)
-            {
-                return BehaviorTickState.OnCooldown;
-            }
+            if (dashInfo.CycleCooldown > 0) return BehaviorTickState.OnCooldown;
         }
 
-        if (dashInfo.Dashing)
-        {
+        if (dashInfo.Dashing) {
             var elapsedTimePerc = (time.TotalElapsedMs - dashInfo.DashStarted) / 1000f / dashTime;
-            if (ease != Ease.None)
-            {
-                Easing.EaseVal(ease, ref elapsedTimePerc);
-            }
+            if (ease != Ease.None) Easing.EaseVal(ease, ref elapsedTimePerc);
 
             var dist = dashRange * elapsedTimePerc;
             var relMovePos = new Vector2(MathF.Cos(dashInfo.DashAngle) * dist, MathF.Sin(dashInfo.DashAngle) * dist);
             host.Move(dashInfo.DashStartPos + relMovePos);
             if (damage != 0)
-            {
                 foreach (var plr in host.GetPlayersWithin(dashDamageRadius))
-                {
                     if (dashInfo.HitThisDash.Add(plr))
-                    {
                         plr.DamageWithText(damage, from: host);
-                    }
-                }
-            }
 
             dashInfo.DashCooldown -= time.ElapsedMsDelta;
-            if (dashInfo.DashCooldown <= 0)
-            {
+            if (dashInfo.DashCooldown <= 0) {
                 dashInfo.DashCount = (dashInfo.DashCount + 1) % numDashes;
                 dashInfo.Dashing = false;
-                if (dashInfo.DashCount == 0)
-                {
+                if (dashInfo.DashCount == 0) {
                     dashInfo.InCycle = false;
                     dashInfo.CycleCooldown = cycleCooldownMS;
                 }
-                else
-                {
+                else {
                     dashInfo.DashCooldown = cooldownMS;
                 }
 
                 return BehaviorTickState.BehaviorDeactivate;
             }
 
-            if (!dashInfo.DashStartSent)
-            {
+            if (!dashInfo.DashStartSent) {
                 dashInfo.DashStartSent = true;
                 return BehaviorTickState.BehaviorActivate;
             }
@@ -177,8 +154,7 @@ public record Dash : BehaviorScript
         }
 
         dashInfo.DashCooldown -= time.ElapsedMsDelta;
-        if (dashInfo.DashCooldown < 0)
-        {
+        if (dashInfo.DashCooldown < 0) {
             dashInfo.Dashing = true;
             dashInfo.DashCooldown = dashTimeMs;
             dashInfo.DashStartPos = host.Position.ToVec2();
@@ -186,10 +162,7 @@ public record Dash : BehaviorScript
             dashInfo.DashStartSent = false;
             dashInfo.HitThisDash.Clear();
             SetTarget(host, dashInfo);
-            if (!dashInfo.Dashing)
-            {
-                return BehaviorTickState.BehaviorFailed;
-            }
+            if (!dashInfo.Dashing) return BehaviorTickState.BehaviorFailed;
 
             dashInfo.InCycle = true;
             dashInfo.DashAngle += angleOffset;
@@ -199,16 +172,13 @@ public record Dash : BehaviorScript
         return BehaviorTickState.OnCooldown;
     }
 
-    private void SetTarget(CharacterEntity host, DashInfo dashInfo)
-    {
-        switch (targetType)
-        {
+    private void SetTarget(CharacterEntity host, DashInfo dashInfo) {
+        switch (targetType) {
             case TargetType.ClosestPlayer:
             case TargetType.RandomPlayerPerBehavior:
             case TargetType.FarthestPlayer:
                 var target = host.GetAttackTarget(acquireRadiusSqr, targetType);
-                if (target == null)
-                {
+                if (target == null) {
                     dashInfo.Dashing = false;
                     dashInfo.DashCooldown = cooldownMS;
                     return;
@@ -217,9 +187,10 @@ public record Dash : BehaviorScript
                 dashInfo.DashAngle = host.GetAngleBetween(target);
                 break;
             case TargetType.RandomPlayerPerCycle:
-                target = dashInfo.InCycle ? host.World.GetPlayerById(dashInfo.CurrentTargetID) : host.GetAttackTarget(acquireRadiusSqr, targetType);
-                if (target == null)
-                {
+                target = dashInfo.InCycle
+                    ? host.World.GetPlayerById(dashInfo.CurrentTargetID)
+                    : host.GetAttackTarget(acquireRadiusSqr, targetType);
+                if (target == null) {
                     dashInfo.Dashing = false;
                     dashInfo.DashCooldown = cooldownMS;
                     dashInfo.CurrentTargetID = -1;

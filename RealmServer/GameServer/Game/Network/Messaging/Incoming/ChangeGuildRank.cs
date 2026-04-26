@@ -9,13 +9,11 @@ using Common.Network;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.CHANGEGUILDRANK)]
-public partial record ChangeGuildRank : IIncomingPacket
-{
+public record ChangeGuildRank : IIncomingPacket {
     public string TargetName;
     public int TargetRank;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
@@ -26,7 +24,8 @@ public partial record ChangeGuildRank : IIncomingPacket
         var plr = user.GameInfo.Player;
         var target = plr.World.GetPlayerByName(TargetName);
         var targetAcc = target.User.Account;
-        if (targetAcc.GuildMember == null || targetAcc.GuildMember.GuildId != acc.GuildMember.GuildId || targetAcc.GuildMember.GuildRank >= acc.GuildMember.GuildRank)
+        if (targetAcc.GuildMember == null || targetAcc.GuildMember.GuildId != acc.GuildMember.GuildId ||
+            targetAcc.GuildMember.GuildRank >= acc.GuildMember.GuildRank)
             return;
 
         targetAcc.GuildMember.GuildRank = (short)TargetRank;
@@ -34,8 +33,7 @@ public partial record ChangeGuildRank : IIncomingPacket
         _ = DbClient.FlushAsync(targetAcc);
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         TargetName = rdr.ReadUTF();
         TargetRank = rdr.ReadInt32();
     }

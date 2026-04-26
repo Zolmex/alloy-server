@@ -8,15 +8,12 @@ using GameServer.Game.Worlds;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.ESCAPE)]
-public partial record Escape : IIncomingPacket
-{
-    public void Handle(User user)
-    {
+public record Escape : IIncomingPacket {
+    public void Handle(User user) {
         if (user.GameInfo.State != GameState.Playing)
             return;
 
-        if (user.GameInfo.World.Id == World.NEXUS_ID)
-        {
+        if (user.GameInfo.World.Id == World.NEXUS_ID) {
             user.GameInfo.Player.SendInfo("You're already in the Nexus!");
             return;
         }
@@ -24,6 +21,5 @@ public partial record Escape : IIncomingPacket
         user.ReconnectTo(RealmManager.NexusInstance);
     }
 
-    public void Read(ref SpanReader rdr)
-    { }
+    public void Read(ref SpanReader rdr) { }
 }

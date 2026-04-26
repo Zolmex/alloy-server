@@ -2,7 +2,6 @@
 
 using Common.Network;
 using Common.Utilities;
-using GameServer.Game.Entities;
 using GameServer.Game.Entities.Types;
 
 #endregion
@@ -10,26 +9,23 @@ using GameServer.Game.Entities.Types;
 namespace GameServer.Game.Network.Messaging.Incoming;
 
 [Packet(PacketId.PLAYERHIT)]
-public partial record PlayerHit : IIncomingPacket
-{
+public record PlayerHit : IIncomingPacket {
     private static readonly Logger _log = new(typeof(PlayerHit));
 
     public int OwnerId;
     public ushort ProjectileId;
 
-    public void Handle(User user)
-    {
+    public void Handle(User user) {
         if (user.State != ConnectionState.Ready || user.GameInfo.State != GameState.Playing)
             return;
 
-        if (!user.GameInfo.Player.World.Entities.TryGetValue(OwnerId, out var en) || en is not CharacterEntity projOwner)
-        {
+        if (!user.GameInfo.Player.World.Entities.TryGetValue(OwnerId, out var en) ||
+            en is not CharacterEntity projOwner) {
             _log.Debug($"NULL PROJ OWNER {OwnerId}");
             return;
         }
 
-        if (!projOwner.Projectiles.TryGetValue(ProjectileId, out var proj))
-        {
+        if (!projOwner.Projectiles.TryGetValue(ProjectileId, out var proj)) {
             _log.Debug($"DEAD PROJECTILE {ProjectileId}");
             return;
         }
@@ -37,8 +33,7 @@ public partial record PlayerHit : IIncomingPacket
         proj.TryHitEntity(user.GameInfo.Player);
     }
 
-    public void Read(ref SpanReader rdr)
-    {
+    public void Read(ref SpanReader rdr) {
         OwnerId = rdr.ReadInt32();
         ProjectileId = rdr.ReadUInt16();
     }

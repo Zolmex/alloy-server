@@ -6,8 +6,7 @@ namespace GameServer.Game.Entities;
 /// <summary>
 ///     Helper class for preventing a characte from dying for a specified period of time.
 /// </summary>
-public class HealthLock
-{
+public class HealthLock {
     private bool locked = true;
     private bool lockTriggered;
 
@@ -26,10 +25,8 @@ public class HealthLock
     /// </summary>
     /// <param name="characterEntity">Character the lock is on.</param>
     /// <returns>Whether or not the lock is active.</returns>
-    public bool IsLockActive(CharacterEntity characterEntity)
-    {
-        if (locked && characterEntity.HpPerc < LockAtPerc && !lockTriggered)
-        {
+    public bool IsLockActive(CharacterEntity characterEntity) {
+        if (locked && characterEntity.HpPerc < LockAtPerc && !lockTriggered) {
             lockTriggered = true;
             characterEntity.ApplyConditionEffect(ConditionEffectIndex.Invincible, LockDurationMs);
         }
@@ -41,8 +38,7 @@ public class HealthLock
     ///     Release an existing lock.
     /// </summary>
     /// <param name="characterEntity">Character the lock is on.</param>
-    public void ReleaseLock(CharacterEntity characterEntity)
-    {
+    public void ReleaseLock(CharacterEntity characterEntity) {
         locked = false;
         lockTriggered = true;
         characterEntity.RemoveConditionEffect(ConditionEffectIndex.Invincible);

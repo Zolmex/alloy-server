@@ -11,10 +11,7 @@ namespace GameServer.Game.Entities.Behaviors.Library;
 
 #endregion
 
-
-
-public partial class BehaviorLib
-{
+public partial class BehaviorLib {
     [CharacterBehavior("Malphas Protector")]
     public static State MalphasProtector =>
         new(
@@ -164,7 +161,8 @@ public partial class BehaviorLib
                 ),
                 new State("Bullet1",
                     new Flash(0xFFAA00, 0.2, 20),
-                    new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true, projName: "White Flame",
+                    new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
+                        projName: "White Flame",
                         damage: 20, lifetimeMs: 500, maxRadius: 8, cooldownMS: 200, multiHit: true),
                     new TimedTransition(4000, "Wait1")
                 ),
@@ -178,7 +176,8 @@ public partial class BehaviorLib
                 new TimedTransition(300, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true, projName: "White Flame",
+                new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
+                    projName: "White Flame",
                     damage: 20, lifetimeMs: 500, maxRadius: 10f, count: 8, shootAngle: 45, fixedAngle: 0,
                     cooldownMS: 1000, multiHit: true),
                 new Suicide()
@@ -209,7 +208,8 @@ public partial class BehaviorLib
             new State("lava4",
                 new ChangeGround(["TempRed Quad"], ["RedQuadLava"], 7),
                 new ChangeGround(["TempRed Checker Board"], ["RedCheckerBoardLava"], 7),
-                new EntitiesNotWithinTransition(targets: ["Archdemon Malphas", "Abyss Idol"], targetStates: "gg1", radius: 30)
+                new EntitiesNotWithinTransition(targets: ["Archdemon Malphas", "Abyss Idol"], targetStates: "gg1",
+                    radius: 30)
             ),
             new State("gg1",
                 new ChangeGround(["RedQuadLava"], ["TempRed Quad"], 1),
@@ -448,9 +448,12 @@ public partial class BehaviorLib
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible, 5000),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable, 5000),
                 new Orbit(3, 2, 10, "Archdemon Malphas"),
-                new TossObject("Brute Warrior of the Abyss", 0, cooldownOffsetMS: 5000, cooldownMS: 3000, probability: 0.5F),
-                new TossObject("Demon Warrior of the Abyss", 0, cooldownOffsetMS: 5000, cooldownMS: 3000, probability: 0.5F),
-                new TossObject("Demon Mage of the Abyss", 0, cooldownOffsetMS: 5000, cooldownMS: 3000, probability: 0.5F)
+                new TossObject("Brute Warrior of the Abyss", 0, cooldownOffsetMS: 5000, cooldownMS: 3000,
+                    probability: 0.5F),
+                new TossObject("Demon Warrior of the Abyss", 0, cooldownOffsetMS: 5000, cooldownMS: 3000,
+                    probability: 0.5F),
+                new TossObject("Demon Mage of the Abyss", 0, cooldownOffsetMS: 5000, cooldownMS: 3000,
+                    probability: 0.5F)
             )
         );
 

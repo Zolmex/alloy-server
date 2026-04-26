@@ -2,14 +2,10 @@ using Common.Database;
 using Common.Database.Models;
 using Common.Utilities;
 using DbServer.Service;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Concurrent;
-using System.Linq.Expressions;
 
 namespace DbServer.Database;
 
-public static class DbCache
-{
+public static class DbCache {
     public static readonly DbEntityCache<Account> Accounts = new();
 
     public static readonly DbEntityCache<AccountSkin> AccountSkins = new();
@@ -43,20 +39,20 @@ public static class DbCache
     public static readonly DbEntityCache<AccountLock> AccountLocks = new();
 
     public static readonly DbEntityCache<AccountIgnore> AccountIgnores = new();
-    
+
     public static readonly DbEntityCache<AccountVault> AccountVaults = new();
-    
+
     public static readonly DbEntityCache<AccountGift> AccountGifts = new();
-    
+
     public static readonly DbEntityCache<AccountBan> AccountBans = new();
-    
+
     public static readonly DbEntityCache<AccountMute> AccountMutes = new();
 
-    public static async Task<DbModel?> Find(string key) // Finds entity in one of the sets when you don't know in which table it could be
+    public static async Task<DbModel?>
+        Find(string key) // Finds entity in one of the sets when you don't know in which table it could be
     {
         var modelName = key.Split('.')[0];
-        return modelName switch
-        {
+        return modelName switch {
             Account.KEY_BASE => await Accounts.GetAsync(key),
             AccountSkin.KEY_BASE => await AccountSkins.GetAsync(key),
             AccountStat.KEY_BASE => await AccountStats.GetAsync(key),
@@ -81,12 +77,10 @@ public static class DbCache
             _ => null
         };
     }
-    
-    public static void Update(string key, DbModel entity, string[] properties)
-    {
+
+    public static void Update(string key, DbModel entity, string[] properties) {
         var modelName = key.Split('.')[0];
-        switch (modelName)
-        {
+        switch (modelName) {
             case Account.KEY_BASE:
                 Accounts.Update(entity as Account, properties);
                 break;
@@ -152,12 +146,10 @@ public static class DbCache
                 break;
         }
     }
-    
-    public static void CacheEntity(DbModel entity)
-    {
+
+    public static void CacheEntity(DbModel entity) {
         var modelName = entity.Key.Split('.')[0];
-        switch (modelName)
-        {
+        switch (modelName) {
             case Account.KEY_BASE:
                 Accounts.CacheEntity(entity as Account);
                 break;
@@ -223,46 +215,44 @@ public static class DbCache
                 break;
         }
     }
-    
-    public static void CacheChildren(DbModel entity)
-    {
+
+    public static void CacheChildren(DbModel entity) {
         var includePaths = GetIncludePaths(entity);
-        
+
         foreach (var path in includePaths) // Since include paths equal the property names, we can use reflection
         {
-            var propName = path.Split('.')[0]; // First property is always child of T, second is always a child of the child of T (inception)
+            var propName =
+                path.Split('.')
+                    [0]; // First property is always child of T, second is always a child of the child of T (inception)
             var prop = entity.GetType().GetProperty(propName);
             if (prop == null)
                 continue;
 
             var val = prop.GetValue(entity);
-            if (val is not DbModel child)
-            {
+            if (val is not DbModel child) {
                 if (val is not ICollection<DbModel> children)
                     continue;
 
-                foreach (var colChild in children)
-                {
+                foreach (var colChild in children) {
                     CacheEntity(colChild);
                     CacheChildren(colChild);
                 }
+
                 continue;
             }
 
             Logger.Debug($"Caching {child.Key} | {child.GetHashCode()}");
-            
+
             CacheEntity(child); // Add the child to its respective cache
 
             // Now cache the children of this child
             CacheChildren(child);
         }
     }
-    
-    public static async Task AddEntityAsync(DbModel entity)
-    {
+
+    public static async Task AddEntityAsync(DbModel entity) {
         var modelName = entity.Key.Split('.')[0];
-        switch (modelName)
-        {
+        switch (modelName) {
             case Account.KEY_BASE:
                 await Accounts.AddAsync(entity as Account);
                 break;
@@ -328,12 +318,10 @@ public static class DbCache
                 break;
         }
     }
-    
-    public static async Task DeleteEntityAsync(DbModel entity)
-    {
+
+    public static async Task DeleteEntityAsync(DbModel entity) {
         var modelName = entity.Key.Split('.')[0];
-        switch (modelName)
-        {
+        switch (modelName) {
             case Account.KEY_BASE:
                 await Accounts.DeleteAsync(entity as Account);
                 break;
@@ -399,68 +387,68 @@ public static class DbCache
                 break;
         }
     }
-    
-    public static async Task AddChildrenAsync(DbModel entity)
-    {
+
+    public static async Task AddChildrenAsync(DbModel entity) {
         var includePaths = GetIncludePaths(entity);
-        
+
         foreach (var path in includePaths) // Since include paths equal the property names, we can use reflection
         {
-            var propName = path.Split('.')[0]; // First property is always child of T, second is always a child of the child of T (inception)
+            var propName =
+                path.Split('.')
+                    [0]; // First property is always child of T, second is always a child of the child of T (inception)
             var prop = entity.GetType().GetProperty(propName);
             if (prop == null)
                 continue;
 
             var val = prop.GetValue(entity);
-            if (val is not DbModel child)
-            {
+            if (val is not DbModel child) {
                 if (val is not ICollection<DbModel> children)
                     continue;
 
-                foreach (var colChild in children)
-                {
+                foreach (var colChild in children) {
                     await AddEntityAsync(colChild);
                     await AddChildrenAsync(colChild);
                 }
+
                 continue;
             }
 
             Logger.Debug($"Adding {child.Key} | {child.GetHashCode()}");
-            
+
             await AddEntityAsync(child); // Add the child to its respective cache/table
 
             // Now add the children of this child
             await AddChildrenAsync(child);
         }
     }
-    
-    public static async Task DeleteChildrenAsync(DbModel entity)
-    {
+
+    public static async Task DeleteChildrenAsync(DbModel entity) {
         var includePaths = GetIncludePaths(entity);
-        
+
         foreach (var path in includePaths) // Since include paths equal the property names, we can use reflection
         {
-            var propName = path.Split('.')[0]; // First property is always child of T, second is always a child of the child of T (inception)
+            var propName =
+                path.Split('.')
+                    [0]; // First property is always child of T, second is always a child of the child of T (inception)
             var prop = entity.GetType().GetProperty(propName);
             if (prop == null)
                 continue;
 
             var val = prop.GetValue(entity);
-            if (val is not DbModel child)
-            {
+            if (val is not DbModel child) {
                 if (val is not ICollection<DbModel> children)
                     continue;
 
-                foreach (var colChild in children)
-                {
+                foreach (var colChild in children) {
                     await DeleteEntityAsync(colChild);
                     await DeleteChildrenAsync(colChild);
                 }
+
                 continue;
             }
 
             Logger.Debug($"Deleting {child.Key} | {child.GetHashCode()}");
-            
+
             await DeleteEntityAsync(child); // Delete the child to its respective cache/table
 
             // Now delete the children of this child
@@ -468,11 +456,9 @@ public static class DbCache
         }
     }
 
-    private static IEnumerable<string> GetIncludePaths(DbModel entity)
-    {
+    private static IEnumerable<string> GetIncludePaths(DbModel entity) {
         var modelName = entity.Key.Split('.')[0];
-        return modelName switch
-        {
+        return modelName switch {
             Account.KEY_BASE => Account.GetIncludes(),
             AccountSkin.KEY_BASE => AccountSkin.GetIncludes(),
             AccountStat.KEY_BASE => AccountStat.GetIncludes(),

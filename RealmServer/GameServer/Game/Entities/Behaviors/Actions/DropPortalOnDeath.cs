@@ -1,41 +1,36 @@
 ﻿#region
 
+using System;
 using Common.Resources.Xml;
 using Common.Utilities;
-using System;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public record DropPortalOnDeath : BehaviorScript
-{
+public record DropPortalOnDeath : BehaviorScript {
     private readonly string _portalId;
     private readonly float _probability;
     private readonly int _timeout;
 
-    public DropPortalOnDeath(string portalId, float probability = 1, int timeout = 0)
-    {
+    public DropPortalOnDeath(string portalId, float probability = 1, int timeout = 0) {
         _portalId = portalId;
         _probability = probability;
         _timeout = timeout;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         host.DeathEvent += HandleDeath;
     }
 
-    private void HandleDeath(Entity host)
-    {
+    private void HandleDeath(Entity host) {
         var owner = host.World;
 
         if (owner.Name.Contains("Arena") || host.Spawned)
             return;
 
-        if (Random.Shared.NextDouble() <= _probability)
-        {
+        if (Random.Shared.NextDouble() <= _probability) {
             var portalDesc = XmlLibrary.Id2Object(_portalId);
             var timeoutTime = _timeout == null ? portalDesc.XML.GetValue<int>("Timeout") : _timeout;
             var entity = Entity.Resolve(portalDesc.ObjectType);

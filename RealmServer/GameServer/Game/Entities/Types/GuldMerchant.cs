@@ -1,24 +1,20 @@
 ﻿#region
 
 using Common;
-using Common.Database;
 using Common.Utilities;
 
 #endregion
 
 namespace GameServer.Game.Entities.Types;
 
-public class GuildMerchant : SellableObject
-{
+public class GuildMerchant : SellableObject {
     public GuildMerchant(ushort objType)
-        : base(objType)
-    {
+        : base(objType) {
         Price = Desc.XML.GetValue<int>("Price");
         Currency = CurrencyType.GuildFame;
     }
 
-    public override string Purchase(Player plr)
-    {
+    public override string Purchase(Player plr) {
         if (World.DisplayName != "Guild Hall")
             return "Not in guild hall.";
 

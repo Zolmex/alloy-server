@@ -1,19 +1,17 @@
 ﻿#region
 
-using Common.Database;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using Common.Database;
 
 #endregion
 
 namespace WebServer.Handlers.Guild;
 
-public class GetBoard : RequestHandler
-{
+public class GetBoard : RequestHandler {
     public override string Path => "/guild/getBoard";
 
-    public override async Task<string> Handle(string ip, NameValueCollection query)
-    {
+    public override async Task<string> Handle(string ip, NameValueCollection query) {
         var verify = await DbClient.VerifyAccountAsync(query["username"], query["password"]);
 
         var acc = verify.Account;

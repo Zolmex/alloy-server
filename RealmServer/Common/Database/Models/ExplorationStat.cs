@@ -1,15 +1,43 @@
-﻿using Common.Network;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Common.Database.Models;
 
-public partial class ExplorationStat : DbModel, IDbQueryable
-{
+public class ExplorationStat : DbModel, IDbQueryable {
     public const string KEY_BASE = "explorationStat";
-    
+
+    public ExplorationStat() {
+        RegisterProperty("Id",
+            (ref wtr) => wtr.Write(Id),
+            (ref rdr) => Id = rdr.ReadInt32()
+        );
+        RegisterProperty("TilesUncovered",
+            (ref wtr) => wtr.Write(TilesUncovered),
+            (ref rdr) => TilesUncovered = rdr.ReadUInt32()
+        );
+        RegisterProperty("QuestsCompleted",
+            (ref wtr) => wtr.Write(QuestsCompleted),
+            (ref rdr) => QuestsCompleted = rdr.ReadUInt32()
+        );
+        RegisterProperty("Escapes",
+            (ref wtr) => wtr.Write(Escapes),
+            (ref rdr) => Escapes = rdr.ReadUInt32()
+        );
+        RegisterProperty("NearDeathEscapes",
+            (ref wtr) => wtr.Write(NearDeathEscapes),
+            (ref rdr) => NearDeathEscapes = rdr.ReadUInt32()
+        );
+        RegisterProperty("MinutesActive",
+            (ref wtr) => wtr.Write(MinutesActive),
+            (ref rdr) => Teleports = rdr.ReadUInt32()
+        );
+        RegisterProperty("Teleports",
+            (ref wtr) => wtr.Write(Teleports),
+            (ref rdr) => Teleports = rdr.ReadUInt32()
+        );
+    }
+
     public override string Key => KEY_BASE + $".{Id}";
-    
+
     public int Id { get; set; }
 
     public uint TilesUncovered { get; set; }
@@ -26,53 +54,18 @@ public partial class ExplorationStat : DbModel, IDbQueryable
 
     public virtual ICollection<Character> Characters { get; set; } = new List<Character>();
 
-    public ExplorationStat()
-    {
-        RegisterProperty("Id",
-           (ref wtr) => wtr.Write(Id),
-            (ref rdr) => Id = rdr.ReadInt32()
-        );
-        RegisterProperty("TilesUncovered",
-           (ref wtr) => wtr.Write(TilesUncovered),
-            (ref rdr) => TilesUncovered = rdr.ReadUInt32()
-        );
-        RegisterProperty("QuestsCompleted",
-           (ref wtr) => wtr.Write(QuestsCompleted),
-            (ref rdr) => QuestsCompleted = rdr.ReadUInt32()
-        );
-        RegisterProperty("Escapes",
-           (ref wtr) => wtr.Write(Escapes),
-            (ref rdr) => Escapes = rdr.ReadUInt32()
-        );
-        RegisterProperty("NearDeathEscapes",
-           (ref wtr) => wtr.Write(NearDeathEscapes),
-            (ref rdr) => NearDeathEscapes = rdr.ReadUInt32()
-        );
-        RegisterProperty("MinutesActive",
-           (ref wtr) => wtr.Write(MinutesActive),
-            (ref rdr) => Teleports = rdr.ReadUInt32()
-        );
-        RegisterProperty("Teleports",
-           (ref wtr) => wtr.Write(Teleports),
-            (ref rdr) => Teleports = rdr.ReadUInt32()
-        );
+    public static IEnumerable<string> GetIncludes() {
+        yield break;
     }
 
-    public static ExplorationStat Read(string key)
-    {
+    public static ExplorationStat Read(string key) {
         var ret = new ExplorationStat();
         var split = key.Split('.');
         ret.Id = int.Parse(split[1]);
         return ret;
     }
 
-    public static IEnumerable<string> GetIncludes()
-    {
-        yield break;
-    }
-    
-    public static string BuildKey(int id)
-    {
+    public static string BuildKey(int id) {
         return KEY_BASE + $".{id}";
     }
 }

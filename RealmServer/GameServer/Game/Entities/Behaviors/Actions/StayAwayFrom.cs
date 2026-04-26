@@ -1,9 +1,9 @@
 ﻿#region
 
-using Common.Utilities;
 using System;
 using System.Numerics;
 using System.Xml.Linq;
+using Common.Utilities;
 using GameServer.Game.Entities.Types;
 using static GameServer.Game.Entities.Behaviors.Actions.Follow;
 
@@ -11,16 +11,14 @@ using static GameServer.Game.Entities.Behaviors.Actions.Follow;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class StayAwayFromInfo
-{
+public class StayAwayFromInfo {
     public bool FirstTick;
     public int FollowTimer;
     public int TargetId;
     public bool Following => TargetId != -1;
 }
 
-public record StayAwayFrom : BehaviorScript
-{
+public record StayAwayFrom : BehaviorScript {
     private readonly float _acquireRadiusSqr;
     private readonly int _cooldownMS;
     private readonly int _cooldownOffsetMS;
@@ -30,8 +28,7 @@ public record StayAwayFrom : BehaviorScript
     private readonly string _target;
     private readonly TargetType _targetType;
 
-    public StayAwayFrom(XElement xml)
-    {
+    public StayAwayFrom(XElement xml) {
         _speed = xml.GetAttribute("speed", 1f);
         _distanceFromTarget = xml.GetAttribute("distFromTarget", 2f);
         _distanceFromTarget *= _distanceFromTarget;
@@ -42,9 +39,9 @@ public record StayAwayFrom : BehaviorScript
         _followTimeMs = xml.GetAttribute("followTimeMS", 1000);
     }
 
-    public StayAwayFrom(float speed = 1f, float distFromTarget = 2f, float acquireRange = 10f, int cooldownMS = 1000, int cooldownOffsetMS = 0, int followTimeMS = 1000, TargetType targetType = TargetType.ClosestPlayer,
-        string target = "player")
-    {
+    public StayAwayFrom(float speed = 1f, float distFromTarget = 2f, float acquireRange = 10f, int cooldownMS = 1000,
+        int cooldownOffsetMS = 0, int followTimeMS = 1000, TargetType targetType = TargetType.ClosestPlayer,
+        string target = "player") {
         _speed = speed;
         _distanceFromTarget = distFromTarget * distFromTarget;
         _acquireRadiusSqr = acquireRange * acquireRange;
@@ -55,22 +52,18 @@ public record StayAwayFrom : BehaviorScript
         _target = target;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var stayAwayFromInfo = host.ResolveResource<StayAwayFromInfo>(this);
         stayAwayFromInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
         stayAwayFromInfo.FirstTick = true;
         stayAwayFromInfo.TargetId = -1;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var stayAwayFromInfo = host.ResolveResource<StayAwayFromInfo>(this);
-        if (_cooldownMS >= 0)
-        {
+        if (_cooldownMS >= 0) {
             stayAwayFromInfo.FollowTimer -= time.ElapsedMsDelta;
-            if (stayAwayFromInfo.FollowTimer <= 0)
-            {
+            if (stayAwayFromInfo.FollowTimer <= 0) {
                 stayAwayFromInfo.TargetId = FindTarget(host, _targetType, _acquireRadiusSqr, _target);
                 stayAwayFromInfo.FirstTick = true;
 
@@ -81,10 +74,8 @@ public record StayAwayFrom : BehaviorScript
             }
         }
 
-        if (stayAwayFromInfo.Following)
-        {
-            if (!host.World.Entities.TryGetValue(stayAwayFromInfo.TargetId, out var target))
-            {
+        if (stayAwayFromInfo.Following) {
+            if (!host.World.Entities.TryGetValue(stayAwayFromInfo.TargetId, out var target)) {
                 stayAwayFromInfo.TargetId = FindTarget(host, _targetType, _acquireRadiusSqr, _target);
                 return BehaviorTickState.BehaviorFailed;
             }

@@ -2,22 +2,18 @@
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
-public class SequenceInfo
-{
+public class SequenceInfo {
     public int Index;
 }
 
-public record Sequence : BehaviorScript
-{
+public record Sequence : BehaviorScript {
     private readonly BehaviorScript[] _behaviors;
 
-    public Sequence(params BehaviorScript[] behaviors)
-    {
+    public Sequence(params BehaviorScript[] behaviors) {
         _behaviors = behaviors;
     }
 
-    public override void Start(CharacterEntity host)
-    {
+    public override void Start(CharacterEntity host) {
         var state = host.ResolveResource<SequenceInfo>(this);
         state.Index = 0;
 
@@ -25,13 +21,11 @@ public record Sequence : BehaviorScript
             behav.Start(host);
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time)
-    {
+    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
         var state = host.ResolveResource<SequenceInfo>(this);
         var status = _behaviors[state.Index].Tick(host, time);
         if (status == BehaviorTickState.BehaviorActive ||
-            status == BehaviorTickState.BehaviorFailed)
-        {
+            status == BehaviorTickState.BehaviorFailed) {
             state.Index++;
             if (state.Index == _behaviors.Length)
                 state.Index = 0;
