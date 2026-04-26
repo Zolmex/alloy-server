@@ -348,3 +348,15 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+## JetBrains Rider / IntelliJ
+.idea/
+*.iml
+*.iws
+
+## User-specific stuff
+.idea/workspace.xml
+.idea/shelf/
+.idea/tasks.xml
+.idea/dictionaries
+.idea/libraries/
