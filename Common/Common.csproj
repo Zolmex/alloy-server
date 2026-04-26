@@ -18,553 +18,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\alienInvasionGround.xml">
-            <Link>Resources\Xml\Data\Xmls\alienInvasionGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\alienInvasionObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\alienInvasionObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Allies.xml">
-            <Link>Resources\Xml\Data\Xmls\Allies.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\ancientRuinsGround.xml">
-            <Link>Resources\Xml\Data\Xmls\ancientRuinsGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\ancientRuinsObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\ancientRuinsObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\archbishopGround.xml">
-            <Link>Resources\Xml\Data\Xmls\archbishopGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\archbishopObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\archbishopObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\archbishopObjectsMen.xml">
-            <Link>Resources\Xml\Data\Xmls\archbishopObjectsMen.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Arena.xml">
-            <Link>Resources\Xml\Data\Xmls\Arena.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\autumnNexusGround.xml">
-            <Link>Resources\Xml\Data\Xmls\autumnNexusGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\autumnNexusObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\autumnNexusObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\battleOryxGround.xml">
-            <Link>Resources\Xml\Data\Xmls\battleOryxGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\battleOryxObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\battleOryxObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Belladonna.xml">
-            <Link>Resources\Xml\Data\Xmls\Belladonna.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\BTesting.xml">
-            <Link>Resources\Xml\Data\Xmls\BTesting.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\buffedBunnyObject.xml">
-            <Link>Resources\Xml\Data\Xmls\buffedBunnyObject.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\CandyLand.xml">
-            <Link>Resources\Xml\Data\Xmls\CandyLand.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\CaveOfAThousandTreasures.xml">
-            <Link>Resources\Xml\Data\Xmls\CaveOfAThousandTreasures.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\cnidarianReefGround.xml">
-            <Link>Resources\Xml\Data\Xmls\cnidarianReefGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\cnidarianReefObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\cnidarianReefObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Containers.xml">
-            <Link>Resources\Xml\Data\Xmls\Containers.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\crystalCaveGround.xml">
-            <Link>Resources\Xml\Data\Xmls\crystalCaveGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\crystalCaveObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\crystalCaveObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\cursedLibraryGround.xml">
-            <Link>Resources\Xml\Data\Xmls\cursedLibraryGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\cursedLibraryObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\cursedLibraryObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Dyes.xml">
-            <Link>Resources\Xml\Data\Xmls\Dyes.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EmbeddedData_xmasNexusObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\EmbeddedData_xmasNexusObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Encounters.xml">
-            <Link>Resources\Xml\Data\Xmls\Encounters.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EpicForestMaze.xml">
-            <Link>Resources\Xml\Data\Xmls\EpicForestMaze.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\epicHiveGround.xml">
-            <Link>Resources\Xml\Data\Xmls\epicHiveGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\epicHiveObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\epicHiveObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EpicPirateCave.xml">
-            <Link>Resources\Xml\Data\Xmls\EpicPirateCave.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EpicSpiderDen.xml">
-            <Link>Resources\Xml\Data\Xmls\EpicSpiderDen.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Equip.xml">
-            <Link>Resources\Xml\Data\Xmls\Equip.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EquipKeys.xml">
-            <Link>Resources\Xml\Data\Xmls\EquipKeys.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EquipmentSets.xml">
-            <Link>Resources\Xml\Data\Xmls\EquipmentSets.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EquipSkins.xml">
-            <Link>Resources\Xml\Data\Xmls\EquipSkins.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\EquipTest.xml">
-            <Link>Resources\Xml\Data\Xmls\EquipTest.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\eventChestObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\eventChestObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\ForbiddenJungle.xml">
-            <Link>Resources\Xml\Data\Xmls\ForbiddenJungle.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\ForestMaze.xml">
-            <Link>Resources\Xml\Data\Xmls\ForestMaze.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\fungalCavernGround.xml">
-            <Link>Resources\Xml\Data\Xmls\fungalCavernGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\fungalCavernObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\fungalCavernObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\GhostShip.xml">
-            <Link>Resources\Xml\Data\Xmls\GhostShip.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\GraveStones.xml">
-            <Link>Resources\Xml\Data\Xmls\GraveStones.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Ground.xml">
-            <Link>Resources\Xml\Data\Xmls\Ground.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\hanaminexusGround.xml">
-            <Link>Resources\Xml\Data\Xmls\hanaminexusGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\hanaminexusObject.xml">
-            <Link>Resources\Xml\Data\Xmls\hanaminexusObject.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\HauntedCemetery.xml">
-            <Link>Resources\Xml\Data\Xmls\HauntedCemetery.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Heroes.xml">
-            <Link>Resources\Xml\Data\Xmls\Heroes.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\High.xml">
-            <Link>Resources\Xml\Data\Xmls\High.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\iceCaveGround.xml">
-            <Link>Resources\Xml\Data\Xmls\iceCaveGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\iceCaveObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\iceCaveObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\IceTomb.xml">
-            <Link>Resources\Xml\Data\Xmls\IceTomb.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\innerWorkingsGround.xml">
-            <Link>Resources\Xml\Data\Xmls\innerWorkingsGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\innerWorkingsObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\innerWorkingsObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\KTesting.xml">
-            <Link>Resources\Xml\Data\Xmls\KTesting.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\LairOfDraconis.xml">
-            <Link>Resources\Xml\Data\Xmls\LairOfDraconis.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\lairOfDraconisGround.xml">
-            <Link>Resources\Xml\Data\Xmls\lairOfDraconisGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\lairOfDraconisObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\lairOfDraconisObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\LairOfShaitan.xml">
-            <Link>Resources\Xml\Data\Xmls\LairOfShaitan.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\lairOfShaitanObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\lairOfShaitanObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\lostHallsGround.xml">
-            <Link>Resources\Xml\Data\Xmls\lostHallsGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\lostHallsObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\lostHallsObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Low.xml">
-            <Link>Resources\Xml\Data\Xmls\Low.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\MadLab.xml">
-            <Link>Resources\Xml\Data\Xmls\MadLab.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\magicWoodsGround.xml">
-            <Link>Resources\Xml\Data\Xmls\magicWoodsGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\magicWoodsObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\magicWoodsObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\ManorOfTheImmortals.xml">
-            <Link>Resources\Xml\Data\Xmls\ManorOfTheImmortals.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Mid.xml">
-            <Link>Resources\Xml\Data\Xmls\Mid.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\miniDungeonHub.xml">
-            <Link>Resources\Xml\Data\Xmls\miniDungeonHub.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Mountains.xml">
-            <Link>Resources\Xml\Data\Xmls\Mountains.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\mountainTempleGround.xml">
-            <Link>Resources\Xml\Data\Xmls\mountainTempleGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\mountainTempleObject.xml">
-            <Link>Resources\Xml\Data\Xmls\mountainTempleObject.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\MTesting.xml">
-            <Link>Resources\Xml\Data\Xmls\MTesting.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\NexusDestroyed.xml">
-            <Link>Resources\Xml\Data\Xmls\NexusDestroyed.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\NPCs.xml">
-            <Link>Resources\Xml\Data\Xmls\NPCs.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Objects.xml">
-            <Link>Resources\Xml\Data\Xmls\Objects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\OceanTrench.xml">
-            <Link>Resources\Xml\Data\Xmls\OceanTrench.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\OryxCastle.xml">
-            <Link>Resources\Xml\Data\Xmls\OryxCastle.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\OryxChamber.xml">
-            <Link>Resources\Xml\Data\Xmls\OryxChamber.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\OryxChickenChamber.xml">
-            <Link>Resources\Xml\Data\Xmls\OryxChickenChamber.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\oryxHordeGround.xml">
-            <Link>Resources\Xml\Data\Xmls\oryxHordeGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\oryxHordeObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\oryxHordeObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\oryxSanctuaryGround.xml">
-            <Link>Resources\Xml\Data\Xmls\oryxSanctuaryGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\oryxSanctuaryObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\oryxSanctuaryObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\oryxSanctuaryUObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\oryxSanctuaryUObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\OryxWineCellar.xml">
-            <Link>Resources\Xml\Data\Xmls\OryxWineCellar.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\parasiteDenGround.xml">
-            <Link>Resources\Xml\Data\Xmls\parasiteDenGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\parasiteDenObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\parasiteDenObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\particles.xml">
-            <Link>Resources\Xml\Data\Xmls\particles.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\PermaFrostLord.xml">
-            <Link>Resources\Xml\Data\Xmls\PermaFrostLord.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Permapets.xml">
-            <Link>Resources\Xml\Data\Xmls\Permapets.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Pets.xml">
-            <Link>Resources\Xml\Data\Xmls\Pets.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\PirateCave.xml">
-            <Link>Resources\Xml\Data\Xmls\PirateCave.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Players.xml">
-            <Link>Resources\Xml\Data\Xmls\Players.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\PlayersZombies.xml">
-            <Link>Resources\Xml\Data\Xmls\PlayersZombies.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Portals.xml">
-            <Link>Resources\Xml\Data\Xmls\Portals.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Projectiles.xml">
-            <Link>Resources\Xml\Data\Xmls\Projectiles.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\PuppetMaster.xml">
-            <Link>Resources\Xml\Data\Xmls\PuppetMaster.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\PuppetMasterEncore.xml">
-            <Link>Resources\Xml\Data\Xmls\PuppetMasterEncore.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Regions.xml">
-            <Link>Resources\Xml\Data\Xmls\Regions.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\santaWorkshopGround.xml">
-            <Link>Resources\Xml\Data\Xmls\santaWorkshopGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\santaWorkshopObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\santaWorkshopObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\secludedThicketGround.xml">
-            <Link>Resources\Xml\Data\Xmls\secludedThicketGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\secludedThicketObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\secludedThicketObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Shatters.xml">
-            <Link>Resources\Xml\Data\Xmls\Shatters.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Shore.xml">
-            <Link>Resources\Xml\Data\Xmls\Shore.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Skins.xml">
-            <Link>Resources\Xml\Data\Xmls\Skins.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\SnakePit.xml">
-            <Link>Resources\Xml\Data\Xmls\SnakePit.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\SpiderDen.xml">
-            <Link>Resources\Xml\Data\Xmls\SpiderDen.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\SpriteWorld.xml">
-            <Link>Resources\Xml\Data\Xmls\SpriteWorld.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\StaticObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\StaticObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\STesting.xml">
-            <Link>Resources\Xml\Data\Xmls\STesting.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\stPatricksGround.xml">
-            <Link>Resources\Xml\Data\Xmls\stPatricksGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\stPatricksObject.xml">
-            <Link>Resources\Xml\Data\Xmls\stPatricksObject.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\summerNexusGround.xml">
-            <Link>Resources\Xml\Data\Xmls\summerNexusGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\summerNexusObject.xml">
-            <Link>Resources\Xml\Data\Xmls\summerNexusObject.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\TestingObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\TestingObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Textiles.xml">
-            <Link>Resources\Xml\Data\Xmls\Textiles.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\TheHive.xml">
-            <Link>Resources\Xml\Data\Xmls\TheHive.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\theMachineGround.xml">
-            <Link>Resources\Xml\Data\Xmls\theMachineGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\theMachineObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\theMachineObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\Token.xml">
-            <Link>Resources\Xml\Data\Xmls\Token.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\TombOfTheAncients.xml">
-            <Link>Resources\Xml\Data\Xmls\TombOfTheAncients.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\ToxicSewers.xml">
-            <Link>Resources\Xml\Data\Xmls\ToxicSewers.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\TTesting.xml">
-            <Link>Resources\Xml\Data\Xmls\TTesting.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\TutorialMonsters.xml">
-            <Link>Resources\Xml\Data\Xmls\TutorialMonsters.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\TutorialObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\TutorialObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\TutorialScript.xml">
-            <Link>Resources\Xml\Data\Xmls\TutorialScript.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\UndeadLair.xml">
-            <Link>Resources\Xml\Data\Xmls\UndeadLair.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\WillemTesting.xml">
-            <Link>Resources\Xml\Data\Xmls\WillemTesting.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\xmasNexusGround.xml">
-            <Link>Resources\Xml\Data\Xmls\xmasNexusGround.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="..\..\..\AlloyClient\AlloyClient\Content\Xmls\xmasNexusObjects.xml">
-            <Link>Resources\Xml\Data\Xmls\xmasNexusObjects.xml</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-
-
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Ionic.Zlib.Core" Version="1.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="StackExchange.Redis" Version="2.2.4"/>
-        <PackageReference Include="System.Drawing.Common" Version="8.0.4"/>
-        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
+        <PackageReference Include="Ionic.Zlib.Core" Version="1.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
+        <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+        <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -1039,7 +498,546 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Projectiles\"/>
+        <Folder Include="Projectiles\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\alienInvasionGround.xml">
+        <Link>Resources\Xml\Data\Xmls\alienInvasionGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\alienInvasionObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\alienInvasionObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Allies.xml">
+        <Link>Resources\Xml\Data\Xmls\Allies.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\ancientRuinsGround.xml">
+        <Link>Resources\Xml\Data\Xmls\ancientRuinsGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\ancientRuinsObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\ancientRuinsObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\archbishopGround.xml">
+        <Link>Resources\Xml\Data\Xmls\archbishopGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\archbishopObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\archbishopObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\archbishopObjectsMen.xml">
+        <Link>Resources\Xml\Data\Xmls\archbishopObjectsMen.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Arena.xml">
+        <Link>Resources\Xml\Data\Xmls\Arena.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\autumnNexusGround.xml">
+        <Link>Resources\Xml\Data\Xmls\autumnNexusGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\autumnNexusObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\autumnNexusObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\battleOryxGround.xml">
+        <Link>Resources\Xml\Data\Xmls\battleOryxGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\battleOryxObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\battleOryxObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Belladonna.xml">
+        <Link>Resources\Xml\Data\Xmls\Belladonna.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\BTesting.xml">
+        <Link>Resources\Xml\Data\Xmls\BTesting.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\buffedBunnyObject.xml">
+        <Link>Resources\Xml\Data\Xmls\buffedBunnyObject.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\CandyLand.xml">
+        <Link>Resources\Xml\Data\Xmls\CandyLand.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\CaveOfAThousandTreasures.xml">
+        <Link>Resources\Xml\Data\Xmls\CaveOfAThousandTreasures.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\cnidarianReefGround.xml">
+        <Link>Resources\Xml\Data\Xmls\cnidarianReefGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\cnidarianReefObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\cnidarianReefObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Containers.xml">
+        <Link>Resources\Xml\Data\Xmls\Containers.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\crystalCaveGround.xml">
+        <Link>Resources\Xml\Data\Xmls\crystalCaveGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\crystalCaveObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\crystalCaveObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\cursedLibraryGround.xml">
+        <Link>Resources\Xml\Data\Xmls\cursedLibraryGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\cursedLibraryObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\cursedLibraryObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Dyes.xml">
+        <Link>Resources\Xml\Data\Xmls\Dyes.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EmbeddedData_xmasNexusObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\EmbeddedData_xmasNexusObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Encounters.xml">
+        <Link>Resources\Xml\Data\Xmls\Encounters.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EpicForestMaze.xml">
+        <Link>Resources\Xml\Data\Xmls\EpicForestMaze.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\epicHiveGround.xml">
+        <Link>Resources\Xml\Data\Xmls\epicHiveGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\epicHiveObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\epicHiveObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EpicPirateCave.xml">
+        <Link>Resources\Xml\Data\Xmls\EpicPirateCave.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EpicSpiderDen.xml">
+        <Link>Resources\Xml\Data\Xmls\EpicSpiderDen.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Equip.xml">
+        <Link>Resources\Xml\Data\Xmls\Equip.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EquipKeys.xml">
+        <Link>Resources\Xml\Data\Xmls\EquipKeys.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EquipmentSets.xml">
+        <Link>Resources\Xml\Data\Xmls\EquipmentSets.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EquipSkins.xml">
+        <Link>Resources\Xml\Data\Xmls\EquipSkins.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\EquipTest.xml">
+        <Link>Resources\Xml\Data\Xmls\EquipTest.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\eventChestObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\eventChestObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\ForbiddenJungle.xml">
+        <Link>Resources\Xml\Data\Xmls\ForbiddenJungle.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\ForestMaze.xml">
+        <Link>Resources\Xml\Data\Xmls\ForestMaze.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\fungalCavernGround.xml">
+        <Link>Resources\Xml\Data\Xmls\fungalCavernGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\fungalCavernObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\fungalCavernObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\GhostShip.xml">
+        <Link>Resources\Xml\Data\Xmls\GhostShip.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\GraveStones.xml">
+        <Link>Resources\Xml\Data\Xmls\GraveStones.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Ground.xml">
+        <Link>Resources\Xml\Data\Xmls\Ground.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\hanaminexusGround.xml">
+        <Link>Resources\Xml\Data\Xmls\hanaminexusGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\hanaminexusObject.xml">
+        <Link>Resources\Xml\Data\Xmls\hanaminexusObject.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\HauntedCemetery.xml">
+        <Link>Resources\Xml\Data\Xmls\HauntedCemetery.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Heroes.xml">
+        <Link>Resources\Xml\Data\Xmls\Heroes.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\High.xml">
+        <Link>Resources\Xml\Data\Xmls\High.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\iceCaveGround.xml">
+        <Link>Resources\Xml\Data\Xmls\iceCaveGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\iceCaveObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\iceCaveObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\IceTomb.xml">
+        <Link>Resources\Xml\Data\Xmls\IceTomb.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\innerWorkingsGround.xml">
+        <Link>Resources\Xml\Data\Xmls\innerWorkingsGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\innerWorkingsObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\innerWorkingsObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\KTesting.xml">
+        <Link>Resources\Xml\Data\Xmls\KTesting.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\LairOfDraconis.xml">
+        <Link>Resources\Xml\Data\Xmls\LairOfDraconis.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\lairOfDraconisGround.xml">
+        <Link>Resources\Xml\Data\Xmls\lairOfDraconisGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\lairOfDraconisObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\lairOfDraconisObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\LairOfShaitan.xml">
+        <Link>Resources\Xml\Data\Xmls\LairOfShaitan.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\lairOfShaitanObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\lairOfShaitanObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\lostHallsGround.xml">
+        <Link>Resources\Xml\Data\Xmls\lostHallsGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\lostHallsObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\lostHallsObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Low.xml">
+        <Link>Resources\Xml\Data\Xmls\Low.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\MadLab.xml">
+        <Link>Resources\Xml\Data\Xmls\MadLab.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\magicWoodsGround.xml">
+        <Link>Resources\Xml\Data\Xmls\magicWoodsGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\magicWoodsObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\magicWoodsObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\ManorOfTheImmortals.xml">
+        <Link>Resources\Xml\Data\Xmls\ManorOfTheImmortals.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Mid.xml">
+        <Link>Resources\Xml\Data\Xmls\Mid.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\miniDungeonHub.xml">
+        <Link>Resources\Xml\Data\Xmls\miniDungeonHub.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Mountains.xml">
+        <Link>Resources\Xml\Data\Xmls\Mountains.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\mountainTempleGround.xml">
+        <Link>Resources\Xml\Data\Xmls\mountainTempleGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\mountainTempleObject.xml">
+        <Link>Resources\Xml\Data\Xmls\mountainTempleObject.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\MTesting.xml">
+        <Link>Resources\Xml\Data\Xmls\MTesting.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\NexusDestroyed.xml">
+        <Link>Resources\Xml\Data\Xmls\NexusDestroyed.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\NPCs.xml">
+        <Link>Resources\Xml\Data\Xmls\NPCs.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Objects.xml">
+        <Link>Resources\Xml\Data\Xmls\Objects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\OceanTrench.xml">
+        <Link>Resources\Xml\Data\Xmls\OceanTrench.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\OryxCastle.xml">
+        <Link>Resources\Xml\Data\Xmls\OryxCastle.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\OryxChamber.xml">
+        <Link>Resources\Xml\Data\Xmls\OryxChamber.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\OryxChickenChamber.xml">
+        <Link>Resources\Xml\Data\Xmls\OryxChickenChamber.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\oryxHordeGround.xml">
+        <Link>Resources\Xml\Data\Xmls\oryxHordeGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\oryxHordeObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\oryxHordeObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\oryxSanctuaryGround.xml">
+        <Link>Resources\Xml\Data\Xmls\oryxSanctuaryGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\oryxSanctuaryObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\oryxSanctuaryObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\oryxSanctuaryUObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\oryxSanctuaryUObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\OryxWineCellar.xml">
+        <Link>Resources\Xml\Data\Xmls\OryxWineCellar.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\parasiteDenGround.xml">
+        <Link>Resources\Xml\Data\Xmls\parasiteDenGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\parasiteDenObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\parasiteDenObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\particles.xml">
+        <Link>Resources\Xml\Data\Xmls\particles.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\PermaFrostLord.xml">
+        <Link>Resources\Xml\Data\Xmls\PermaFrostLord.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Permapets.xml">
+        <Link>Resources\Xml\Data\Xmls\Permapets.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Pets.xml">
+        <Link>Resources\Xml\Data\Xmls\Pets.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\PirateCave.xml">
+        <Link>Resources\Xml\Data\Xmls\PirateCave.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Players.xml">
+        <Link>Resources\Xml\Data\Xmls\Players.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\PlayersZombies.xml">
+        <Link>Resources\Xml\Data\Xmls\PlayersZombies.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Portals.xml">
+        <Link>Resources\Xml\Data\Xmls\Portals.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Projectiles.xml">
+        <Link>Resources\Xml\Data\Xmls\Projectiles.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\PuppetMaster.xml">
+        <Link>Resources\Xml\Data\Xmls\PuppetMaster.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\PuppetMasterEncore.xml">
+        <Link>Resources\Xml\Data\Xmls\PuppetMasterEncore.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Regions.xml">
+        <Link>Resources\Xml\Data\Xmls\Regions.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\santaWorkshopGround.xml">
+        <Link>Resources\Xml\Data\Xmls\santaWorkshopGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\santaWorkshopObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\santaWorkshopObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\secludedThicketGround.xml">
+        <Link>Resources\Xml\Data\Xmls\secludedThicketGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\secludedThicketObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\secludedThicketObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Shatters.xml">
+        <Link>Resources\Xml\Data\Xmls\Shatters.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Shore.xml">
+        <Link>Resources\Xml\Data\Xmls\Shore.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Skins.xml">
+        <Link>Resources\Xml\Data\Xmls\Skins.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\SnakePit.xml">
+        <Link>Resources\Xml\Data\Xmls\SnakePit.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\SpiderDen.xml">
+        <Link>Resources\Xml\Data\Xmls\SpiderDen.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\SpriteWorld.xml">
+        <Link>Resources\Xml\Data\Xmls\SpriteWorld.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\StaticObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\StaticObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\STesting.xml">
+        <Link>Resources\Xml\Data\Xmls\STesting.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\stPatricksGround.xml">
+        <Link>Resources\Xml\Data\Xmls\stPatricksGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\stPatricksObject.xml">
+        <Link>Resources\Xml\Data\Xmls\stPatricksObject.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\summerNexusGround.xml">
+        <Link>Resources\Xml\Data\Xmls\summerNexusGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\summerNexusObject.xml">
+        <Link>Resources\Xml\Data\Xmls\summerNexusObject.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\TestingObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\TestingObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Textiles.xml">
+        <Link>Resources\Xml\Data\Xmls\Textiles.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\TheHive.xml">
+        <Link>Resources\Xml\Data\Xmls\TheHive.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\theMachineGround.xml">
+        <Link>Resources\Xml\Data\Xmls\theMachineGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\theMachineObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\theMachineObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\Token.xml">
+        <Link>Resources\Xml\Data\Xmls\Token.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\TombOfTheAncients.xml">
+        <Link>Resources\Xml\Data\Xmls\TombOfTheAncients.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\ToxicSewers.xml">
+        <Link>Resources\Xml\Data\Xmls\ToxicSewers.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\TTesting.xml">
+        <Link>Resources\Xml\Data\Xmls\TTesting.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\TutorialMonsters.xml">
+        <Link>Resources\Xml\Data\Xmls\TutorialMonsters.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\TutorialObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\TutorialObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\TutorialScript.xml">
+        <Link>Resources\Xml\Data\Xmls\TutorialScript.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\UndeadLair.xml">
+        <Link>Resources\Xml\Data\Xmls\UndeadLair.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\WillemTesting.xml">
+        <Link>Resources\Xml\Data\Xmls\WillemTesting.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\xmasNexusGround.xml">
+        <Link>Resources\Xml\Data\Xmls\xmasNexusGround.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\AlloyClient\AlloyClient\Content\Xmls\xmasNexusObjects.xml">
+        <Link>Resources\Xml\Data\Xmls\xmasNexusObjects.xml</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

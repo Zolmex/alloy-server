@@ -8,7 +8,7 @@ using GameServer.Game.Entities.Types;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors.Classic;
+namespace GameServer.Game.Entities.Behaviors;
 
 public class State : IStateChild {
     private static readonly Logger _log = new(typeof(State));

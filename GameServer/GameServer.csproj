@@ -36,7 +36,6 @@
 
     <ItemGroup>
         <Folder Include="Game\Entities\Components\"/>
-        <Folder Include="Game\Entities\Controllers\"/>
     </ItemGroup>
 
 </Project>

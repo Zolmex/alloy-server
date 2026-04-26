@@ -16,7 +16,7 @@ using Common.Resources.Xml;
 using Common.Structs;
 using Common.Utilities;
 using GameServer.Game.Entities.Behaviors.Actions;
-using GameServer.Game.Entities.Behaviors.Classic;
+using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Behaviors.Library;
 using GameServer.Game.Entities.Behaviors.Transitions;
 using GameServer.Game.Entities.DamageSources.Types;

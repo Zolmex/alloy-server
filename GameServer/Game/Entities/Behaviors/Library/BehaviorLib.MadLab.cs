@@ -3,7 +3,7 @@
 using Common;
 using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
-using GameServer.Game.Entities.Behaviors.Classic;
+using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Behaviors.Transitions;
 
 namespace GameServer.Game.Entities.Behaviors.Library;

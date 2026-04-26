@@ -2,12 +2,12 @@
 
 using System.Collections.Generic;
 using Common.Utilities;
-using GameServer.Game.Entities.Behaviors.Classic;
+using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Types;
 
 #endregion
 
-namespace GameServer.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Controllers;
 
 public class BehaviorController {
     private static readonly Logger _log = new(typeof(BehaviorController));

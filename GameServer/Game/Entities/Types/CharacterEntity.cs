@@ -12,6 +12,7 @@ using Common.Structs;
 using Common.Utilities;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Behaviors.Actions;
+using GameServer.Game.Entities.Controllers;
 using GameServer.Game.Entities.DamageSources;
 using GameServer.Game.Entities.DamageSources.Types;
 using GameServer.Game.Entities.Loot;
