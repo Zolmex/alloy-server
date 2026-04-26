@@ -11,10 +11,11 @@ using GameServer.Game.Network.Messaging.Outgoing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameServer.Game.Entities.Types;
 
 #endregion
 
-namespace GameServer.Game.Worlds;
+namespace GameServer.Game.Worlds.Logic;
 
 //The mad god who look after the realm...
 public class Oryx

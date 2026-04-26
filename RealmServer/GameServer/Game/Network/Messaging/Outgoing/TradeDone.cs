@@ -3,6 +3,7 @@
 using Common.Network;
 using GameServer.Game.Entities;
 using System.IO;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

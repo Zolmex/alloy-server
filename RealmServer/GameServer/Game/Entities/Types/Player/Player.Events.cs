@@ -1,11 +1,11 @@
 using Common;
 using Common.Resources.Xml.Descriptors;
-using GameServer.Game.DamageSources;
-using GameServer.Game.DamageSources.Projectiles;
 using System;
 using System.Numerics;
+using GameServer.Game.Entities.DamageSources;
+using GameServer.Game.Entities.DamageSources.Types;
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public partial class Player
 {

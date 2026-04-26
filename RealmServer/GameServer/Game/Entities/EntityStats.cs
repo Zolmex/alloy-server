@@ -6,6 +6,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

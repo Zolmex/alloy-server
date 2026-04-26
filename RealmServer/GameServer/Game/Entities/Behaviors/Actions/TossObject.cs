@@ -8,6 +8,7 @@ using GameServer.Game.Network.Messaging.Outgoing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

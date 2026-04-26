@@ -5,7 +5,7 @@ using System.Linq;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public class VaultChest : Container
 {

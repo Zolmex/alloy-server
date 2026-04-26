@@ -12,6 +12,8 @@ using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using System;
 using System.Linq;
+using GameServer.Game.Entities.Types;
+using GameServer.Game.Worlds.Logic;
 
 #endregion
 

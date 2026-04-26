@@ -4,6 +4,7 @@ using Common;
 using Common.Utilities;
 using System;
 using System.Numerics;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

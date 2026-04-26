@@ -2,6 +2,7 @@
 
 using Common.Resources.Xml;
 using System;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

@@ -2,7 +2,6 @@
 
 using Common;
 using Common.Utilities;
-using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities.Collections;
@@ -10,10 +9,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Numerics;
+using GameServer.Game.Entities.DamageSources.Types;
+using GameServer.Game.Network;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public partial class Player
 {

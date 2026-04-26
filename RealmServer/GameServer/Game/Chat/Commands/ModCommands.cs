@@ -8,6 +8,8 @@ using GameServer.Game.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameServer.Game.Entities.Types;
+using GameServer.Game.Worlds.Logic;
 
 #endregion
 

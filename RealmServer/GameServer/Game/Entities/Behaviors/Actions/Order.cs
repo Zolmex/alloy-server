@@ -1,4 +1,6 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Actions;
+﻿using GameServer.Game.Entities.Types;
+
+namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public record Order : BehaviorScript
 {

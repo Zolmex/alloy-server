@@ -14,7 +14,7 @@ using System.Threading;
 
 #endregion
 
-namespace GameServer.Game;
+namespace GameServer.Game.Network;
 
 public enum ConnectionState
 {

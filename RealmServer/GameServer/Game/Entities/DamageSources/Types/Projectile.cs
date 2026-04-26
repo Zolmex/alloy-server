@@ -9,10 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using GameServer.Game.Entities.Types;
 
 #endregion
 
-namespace GameServer.Game.DamageSources.Projectiles;
+namespace GameServer.Game.Entities.DamageSources.Types;
 
 public class Projectile : DamageSource, IIdentifiable
 {

@@ -1,6 +1,7 @@
 ﻿#region
 
 using Common;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

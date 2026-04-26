@@ -3,14 +3,14 @@
 using Common;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Network.Messaging.Outgoing;
 using System.Collections.Generic;
 using System.Numerics;
+using GameServer.Game.Entities.DamageSources.Types;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public partial class Player
 {

@@ -4,10 +4,11 @@ using Common;
 using Common.Database;
 using Common.Resources.Config;
 using GameServer.Game.Worlds;
+using GameServer.Game.Worlds.Logic;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public class ClosedVaultChest : SellableObject
 {

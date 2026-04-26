@@ -7,18 +7,20 @@ using Common.Resources.Config;
 using Common.Resources.World;
 using Common.Utilities;
 using GameServer.Game.Chat;
-using GameServer.Game.DamageSources;
-using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Entities.Inventory;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using GameServer.Game.Entities.DamageSources;
+using GameServer.Game.Entities.DamageSources.Types;
+using GameServer.Game.Network;
+using GameServer.Game.Worlds.Logic;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public partial class Player : CharacterEntity
 {

@@ -5,10 +5,12 @@ using GameServer.Game.Entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GameServer.Game.Entities.Types;
+using GameServer.Game.Network;
 
 #endregion
 
-namespace GameServer.Game.Worlds;
+namespace GameServer.Game.Worlds.Logic;
 
 public class Vault : World
 {

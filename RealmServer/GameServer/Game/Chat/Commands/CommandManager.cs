@@ -5,6 +5,7 @@ using GameServer.Game.Entities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

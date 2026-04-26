@@ -1,4 +1,6 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Transitions;
+﻿using GameServer.Game.Entities.Types;
+
+namespace GameServer.Game.Entities.Behaviors.Transitions;
 
 public class EntityHpLessTransition : BehaviorTransition
 {

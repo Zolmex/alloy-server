@@ -5,8 +5,6 @@ using Common.Projectiles.ProjectilePaths;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using GameServer.Game.DamageSources;
-using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Loot;
@@ -17,13 +15,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using static GameServer.Game.DamageSources.Projectiles.Projectile;
+using GameServer.Game.Entities.DamageSources;
+using GameServer.Game.Entities.DamageSources.Types;
 using static GameServer.Game.Entities.Behaviors.BehaviorScript;
-using static GameServer.Game.Entities.Player;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public class CharacterEntity : Entity
 {
@@ -34,7 +32,7 @@ public class CharacterEntity : Entity
     private readonly Dictionary<int, LootCache> _playerLootCaches = new();
 
     protected readonly object _projIdLock = new();
-    private readonly Dictionary<ProjectileTargetType, IEnumerable<CharacterEntity>> _targetCache = new();
+    private readonly Dictionary<Projectile.ProjectileTargetType, IEnumerable<CharacterEntity>> _targetCache = new();
 
     public readonly DamageStorage DamageStorage = new();
 
@@ -191,16 +189,16 @@ public class CharacterEntity : Entity
 
             switch (proj.TargetType)
             {
-                case ProjectileTargetType.Player:
+                case Projectile.ProjectileTargetType.Player:
                     _targetCache.Add(proj.TargetType,
                         World.GetAllPlayersWithin(Position.X, Position.Y, PROJECTILE_DAMAGE_RANGE)
                             .Select(x => (CharacterEntity)x));
                     break;
-                case ProjectileTargetType.Enemy:
+                case Projectile.ProjectileTargetType.Enemy:
                     _targetCache.Add(proj.TargetType,
                         World.GetEnemiesWithin(Position.X, Position.Y, PROJECTILE_DAMAGE_RANGE));
                     break;
-                case ProjectileTargetType.All:
+                case Projectile.ProjectileTargetType.All:
                     _targetCache.Add(proj.TargetType,
                         World.GetAllPlayersWithin(Position.X, Position.Y, PROJECTILE_DAMAGE_RANGE)
                             .Concat(World.GetEnemiesWithin(Position.X, Position.Y, PROJECTILE_DAMAGE_RANGE)));
@@ -306,7 +304,7 @@ public class CharacterEntity : Entity
 
     public void ShootProjectiles(ProjectilePath path, byte projectileIndex = 0, int minDamage = 0, int maxDamage = 0,
         byte numShots = 1, float angle = 0, float? offsetX = null, float? offsetY = null, float angleInc = 0,
-        Action<CharacterEntity, CharacterEntity> onHitEvent = null, float radiusSqr = SIGHT_RADIUS_SQR,
+        Action<CharacterEntity, CharacterEntity> onHitEvent = null, float radiusSqr = Player.SIGHT_RADIUS_SQR,
         int? damage = null)
     {
         if (damage != null)
@@ -325,14 +323,14 @@ public class CharacterEntity : Entity
         {
             proj = new Projectile(this, firstBulletId + i, RealmManager.WorldTime.TotalElapsedMs,
                 angle + (angleInc * i), Position + new Vector2(offsetX ?? 0, offsetY ?? 0), dmg, path.Clone(),
-                ProjectileTargetType.Player, onHitEvent);
+                Projectile.ProjectileTargetType.Player, onHitEvent);
             proj.SetProps(props.Props);
             QueueProjectile(proj);
         }
 
         World.BroadcastAll(plr =>
         {
-            if (plr.DistSqr(this) <= Math.Max(radiusSqr, SIGHT_RADIUS_SQR))
+            if (plr.DistSqr(this) <= Math.Max(radiusSqr, Player.SIGHT_RADIUS_SQR))
             {
                 plr.User.SendPacket(new EnemyShoot(
                     firstBulletId,
@@ -429,7 +427,7 @@ public class CharacterEntity : Entity
         {
             World.BroadcastAll(player =>
             {
-                if (player.DistSqr(this) < SIGHT_RADIUS_SQR * 2)
+                if (player.DistSqr(this) < Player.SIGHT_RADIUS_SQR * 2)
                     player.GainXP(this, baseXp);
             });
         }

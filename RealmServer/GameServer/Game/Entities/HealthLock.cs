@@ -1,4 +1,5 @@
 ﻿using Common;
+using GameServer.Game.Entities.Types;
 
 namespace GameServer.Game.Entities;
 

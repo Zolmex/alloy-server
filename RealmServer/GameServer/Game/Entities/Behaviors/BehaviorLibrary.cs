@@ -5,7 +5,6 @@ using Common.Projectiles.ProjectilePaths;
 using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Utilities;
-using GameServer.Game.DamageSources.Projectiles;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Behaviors.Classic;
 using GameServer.Game.Entities.Behaviors.Library;
@@ -21,6 +20,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using GameServer.Game.Entities.DamageSources.Types;
 
 #endregion
 

@@ -1,4 +1,5 @@
 ﻿using Common.Resources.Xml.Descriptors;
+using GameServer.Game.Entities.Types;
 
 namespace GameServer.Game.Entities.Behaviors;
 

@@ -1,10 +1,12 @@
 ﻿#region
 
+using GameServer.Game.Network;
 using GameServer.Game.Worlds;
+using GameServer.Game.Worlds.Logic;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public class Portal : CharacterEntity
 {

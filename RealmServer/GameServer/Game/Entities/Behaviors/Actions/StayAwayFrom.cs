@@ -4,6 +4,7 @@ using Common.Utilities;
 using System;
 using System.Numerics;
 using System.Xml.Linq;
+using GameServer.Game.Entities.Types;
 using static GameServer.Game.Entities.Behaviors.Actions.Follow;
 
 #endregion

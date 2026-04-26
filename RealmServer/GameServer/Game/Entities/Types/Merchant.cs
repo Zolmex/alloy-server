@@ -9,7 +9,7 @@ using Common.Utilities;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 internal class Merchant : SellableObject
 {

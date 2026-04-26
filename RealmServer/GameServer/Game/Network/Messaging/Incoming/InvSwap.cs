@@ -4,6 +4,7 @@ using Common;
 using Common.Network;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Inventory;
+using GameServer.Game.Entities.Types;
 using GameServer.Game.Network.Messaging.Outgoing;
 
 #endregion

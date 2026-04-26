@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Numerics;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

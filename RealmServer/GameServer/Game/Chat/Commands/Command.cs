@@ -2,6 +2,7 @@
 
 using GameServer.Game.Entities;
 using System;
+using GameServer.Game.Entities.Types;
 using static GameServer.Game.Chat.Commands.Command;
 
 #endregion

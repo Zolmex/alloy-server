@@ -6,6 +6,7 @@ using GameServer.Utilities;
 using System;
 using System.Numerics;
 using System.Xml.Linq;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

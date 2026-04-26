@@ -1,4 +1,4 @@
-﻿namespace GameServer.Game;
+﻿namespace GameServer.Game.Network;
 
 public class ClientRandom
 {

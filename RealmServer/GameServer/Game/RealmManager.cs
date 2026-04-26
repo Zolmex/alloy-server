@@ -18,6 +18,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using GameServer.Game.Entities.Types;
+using GameServer.Game.Network;
+using GameServer.Game.Worlds.Logic;
 
 #endregion
 

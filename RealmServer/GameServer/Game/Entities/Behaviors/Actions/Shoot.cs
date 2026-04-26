@@ -7,6 +7,7 @@ using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using System;
 using System.Collections.Generic;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

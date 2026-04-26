@@ -4,11 +4,13 @@ using Common.Database;
 using Common.Database.Models;
 using Common.Utilities;
 using GameServer.Game.Entities;
+using GameServer.Game.Entities.Types;
 using GameServer.Game.Worlds;
+using GameServer.Game.Worlds.Logic;
 
 #endregion
 
-namespace GameServer.Game;
+namespace GameServer.Game.Network;
 
 public enum GameState
 {

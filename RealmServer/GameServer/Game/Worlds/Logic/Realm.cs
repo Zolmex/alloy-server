@@ -4,10 +4,11 @@ using Common.Resources.Config;
 using Common.Utilities;
 using GameServer.Game.Entities;
 using System.Linq;
+using GameServer.Game.Entities.Types;
 
 #endregion
 
-namespace GameServer.Game.Worlds;
+namespace GameServer.Game.Worlds.Logic;
 
 public class Realm : World
 {

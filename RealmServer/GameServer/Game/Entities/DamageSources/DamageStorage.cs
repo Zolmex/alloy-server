@@ -3,10 +3,11 @@
 using GameServer.Game.Entities;
 using System;
 using System.Collections.Generic;
+using GameServer.Game.Entities.Types;
 
 #endregion
 
-namespace GameServer.Game.DamageSources;
+namespace GameServer.Game.Entities.DamageSources;
 
 public class DamageStorage
 {

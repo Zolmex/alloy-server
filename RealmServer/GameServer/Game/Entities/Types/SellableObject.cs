@@ -4,7 +4,7 @@ using Common;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public class SellableObject : CharacterEntity
 {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public partial class Player
 {

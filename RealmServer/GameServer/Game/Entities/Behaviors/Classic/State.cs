@@ -4,6 +4,7 @@ using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Entities.Loot;
 using System.Collections.Generic;
+using GameServer.Game.Entities.Types;
 
 #endregion
 

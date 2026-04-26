@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace GameServer.Game.DamageSources;
+namespace GameServer.Game.Entities.DamageSources;
 
 public abstract class DamageSource
 {

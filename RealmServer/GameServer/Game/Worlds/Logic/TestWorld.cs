@@ -1,4 +1,4 @@
-﻿namespace GameServer.Game.Worlds;
+﻿namespace GameServer.Game.Worlds.Logic;
 
 public class TestWorld : World
 {

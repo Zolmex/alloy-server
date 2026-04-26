@@ -10,7 +10,7 @@ using System.Numerics;
 
 #endregion
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Types;
 
 public partial class Player
 {

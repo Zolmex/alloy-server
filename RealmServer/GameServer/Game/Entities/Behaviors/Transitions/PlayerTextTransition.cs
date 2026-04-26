@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using GameServer.Game.Entities.Types;
 
 namespace GameServer.Game.Entities.Behaviors.Transitions;
 

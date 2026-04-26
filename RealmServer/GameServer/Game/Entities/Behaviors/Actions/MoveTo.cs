@@ -2,6 +2,7 @@
 
 using Common;
 using System.Numerics;
+using GameServer.Game.Entities.Types;
 
 #endregion
 
