@@ -1,0 +1,22 @@
+﻿using Common.Network;
+
+namespace GameServerOld.Game.Network.Messaging.Incoming;
+
+[Packet(PacketId.PLAYERTEXT)]
+public record PlayerText : IIncomingPacket {
+    public string Text;
+
+    public void Handle(User user) {
+        // if (user.Account.Muted) // TODO: fix
+        // {
+        //     user.GameInfo.Player.SendError("You are muted.");
+        //     return;
+        // }
+
+        user.GameInfo.Player.Speak(Text);
+    }
+
+    public void Read(ref SpanReader rdr) {
+        Text = rdr.ReadUTF();
+    }
+}

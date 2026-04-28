@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11123.170
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServer", "GameServer\GameServer.csproj", "{4C3AE844-D2A1-49F6-910B-F1E16B9901CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameServerOld", "GameServerOld\GameServerOld.csproj", "{4C3AE844-D2A1-49F6-910B-F1E16B9901CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServer", "WebServer\WebServer.csproj", "{83F92C1C-1D9C-4B07-BBE1-5785D7465DF1}"
 EndProject

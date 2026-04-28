@@ -1,0 +1,106 @@
+﻿#region
+
+using System.Linq;
+using GameServerOld.Game.Chat.Commands;
+using GameServerOld.Game.Network.Messaging.Outgoing;
+
+#endregion
+
+namespace GameServerOld.Game.Entities.Types;
+
+public partial class Player {
+    private const int TextCooldown = 500;
+
+    private long _lastMessageSent;
+
+    public void SendInfo(string text) {
+        User.SendPacket(new Text(
+            "",
+            0,
+            -1,
+            0,
+            null,
+            text));
+    }
+
+    public void SendParty(string text, Player speaker = null) {
+        User.SendPacket(new Text(
+            speaker?.Name,
+            speaker?.Id ?? 0,
+            speaker?.NumStars ?? -1,
+            speaker is null ? (byte)0 : (byte)5,
+            "*Party*",
+            text));
+    }
+
+    public void SendError(string text) {
+        User.SendPacket(new Text(
+            "*Error*",
+            0,
+            -1,
+            0,
+            null,
+            text));
+    }
+
+    public void SendHelp(string text) {
+        User.SendPacket(new Text(
+            "*Help*",
+            0,
+            -1,
+            0,
+            null,
+            text));
+    }
+
+    public void SendEnemy(Entity entity, string text) {
+        User.SendPacket(new Text($"#{entity.Desc.DisplayName}", entity.Id, -1, 3, null, text));
+    }
+
+    public void SendEnemy(string name, string text) {
+        User.SendPacket(new Text($"#{name}", -1, -1, 3, null, text));
+    }
+
+    public void Speak(string text) {
+        if (!ValidateSpeak(RealmManager.WorldTime, text))
+            return;
+
+        if (text.StartsWith('/')) {
+            ExecuteCommand(text);
+            return;
+        }
+
+        var acc = User.Account;
+
+        // Speak to nearby entities
+        foreach (var en in World.GetEnemiesWithin(Position.X, Position.Y, SIGHT_RADIUS))
+            en.PlayerTextReceived(this, text);
+
+        // Send text message to players in current world
+        World.BroadcastAll(plr => {
+            var user = plr.User;
+            if (!user.Account.AccountIgnores?.Any(i => i.IgnoredId == acc.Id) ?? true)
+                User.SendPacket(new Text(acc.IsAdmin ? $"@{acc.Name}" : acc.Name, Id, NumStars, 5, null, text));
+        });
+    }
+
+    private bool ValidateSpeak(RealmTime time, string text) {
+        if (User.Account.IsAdmin)
+            return true;
+
+        // If desired, word filter goes here
+
+        if (time.TotalElapsedMs - _lastMessageSent < TextCooldown)
+            return false;
+
+        _lastMessageSent = time.TotalElapsedMs;
+        return true;
+    }
+
+    public void ExecuteCommand(string text) {
+        var spaceIndex = text.IndexOf(' ');
+        var command = text.Substring(0, spaceIndex == -1 ? text.Length : spaceIndex);
+        var args = spaceIndex == -1 ? null : text.Substring(spaceIndex + 1);
+        CommandManager.ExecuteCommand(this, command, args);
+    }
+}
