@@ -7,8 +7,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Game.Objects;
 using Common.Network;
 using Common.Resources.Xml;
+using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
 using Ionic.Zlib;
@@ -109,6 +111,18 @@ public class MapTileData {
     public TileRegion Region;
     public TerrainType Terrain;
 
+    public bool BlocksSight;
+    public bool FullOccupy;
+    public bool EnemyOccupySquare;
+    public bool OccupySquare;
+
+    public void SetObject(ObjectDesc desc) {
+        ObjectType = desc?.ObjectType ?? 0;
+        FullOccupy = desc?.FullOccupy ?? false;
+        EnemyOccupySquare = desc?.EnemyOccupySquare ?? false;
+        OccupySquare = desc?.OccupySquare ?? false;
+    }
+    
     public loc GetEntry() {
         var obj = new obj();
         if (ObjectType != 0) obj = new obj { id = XmlLibrary.ObjectDescs[ObjectType].ObjectId, name = Key };
@@ -125,6 +139,7 @@ public class MapData {
     private readonly Logger _log = new(typeof(MapData));
     public int Height;
     public Dictionary<TileRegion, List<IntPoint>> Regions;
+    public List<Entity> Entities = [];
 
     public MapTileData[,] Tiles;
     public int Width;
@@ -169,17 +184,25 @@ public class MapData {
 
         using (var rdr = new NetworkReader(new MemoryStream(buffer), false)) {
             for (var y = 0; y < json.height; y++)
-                for (var x = 0; x < json.width; x++)
-                    tiles[x, y] = dict[(ushort)rdr.ReadInt16()];
-        }
-
-        //Add composite under cave walls
-        for (var x = 0; x < json.width; x++)
-            for (var y = 0; y < json.height; y++)
-                if (tiles[x, y].ObjectType != 255)
+                for (var x = 0; x < json.width; x++) {
+                    var tile = tiles[x, y] = dict[(ushort)rdr.ReadInt16()];
                     if (XmlLibrary.ObjectDescs.TryGetValue(tiles[x, y].ObjectType, out var desc))
                         if ((desc.CaveWall || desc.ConnectedWall) && tiles[x, y].GroundType == 255)
                             tiles[x, y].GroundType = 0xfd;
+                    
+                    if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
+                        var entity = Entity.Resolve(tile.ObjectType);
+                        if (entity.Desc.Static) {
+                            if (entity.Desc.BlocksSight)
+                                tile.BlocksSight = true;
+                            tile.SetObject(entity.Desc);
+                        }
+
+                        entity.Move(x + 0.5f, y + 0.5f);
+                        Entities.Add(entity);
+                    }
+                }
+        }
 
         Tiles = tiles;
         Width = json.width;
@@ -331,6 +354,18 @@ public class MapData {
             if (ver == 2) tile.Elevation = elevations[i];
 
             Tiles[x, y] = tile;
+            if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
+                var entity = Entity.Resolve(tile.ObjectType);
+                if (entity.Desc.Static) {
+                    if (entity.Desc.BlocksSight)
+                        tile.BlocksSight = true;
+                    tile.SetObject(entity.Desc);
+                }
+
+                entity.Move(x + 0.5f, y + 0.5f);
+                lock (entity)
+                    Entities.Add(entity);
+            }
         });
     }
 

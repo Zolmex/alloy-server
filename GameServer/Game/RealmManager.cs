@@ -12,8 +12,13 @@ public class RealmManager {
     public static ImmutableDictionary<int, World> Worlds = ImmutableDictionary.Create<int, World>();
     
     public static void Init() {
-        Worlds = Worlds.Add(World.NEXUS_ID, new Nexus());
+        AddWorld(World.NEXUS_ID, 0, new Nexus());
         
         _log.Info("Realm Manager initialized.");
+    }
+
+    public static void AddWorld(int id, int mapId, World world) {
+        Worlds = Worlds.Add(id, world);
+        world.Load(mapId);
     }
 }

@@ -20,14 +20,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Game\Entities\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="MinVer" Version="7.0.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Game\Entities\" />
     </ItemGroup>
 
     <PropertyGroup>
