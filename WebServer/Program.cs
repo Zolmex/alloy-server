@@ -29,31 +29,19 @@ internal class Program {
         Console.Title = $"Realm Server v{Assembly.GetExecutingAssembly().GetName().Version} - WebServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-        // WebServer - as opposed to GameServer - doesn't need to be a high priority process
-        // since its operations are not time-critical
-
-        // The program should always be closed by pressing Ctrl + C
-        // to ensure the saving of any data that wasn't saved to the database
-
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
         var listener = new HttpListener();
         var config = AppEngineConfig.Config;
         using (var timer = new EasyTimer(LogLevel.Info, "Starting server...",
                    $"Listening on {config.Address + ":" + config.Port} ({EasyTimer.Time})")) {
-            EnumUtils.Load(); // Initialize and prepare our static classes for later use
+            EnumUtils.Load();
             RequestHandler.Load();
             XmlLibrary.Load(config.XmlsDir);
 
-            //DbClient.Connect(DatabaseConfig.Config); // Connect redis client used for communication with the database
             await DbClient.ConnectAsync(DatabaseConfig.Config);
 
-            // ServerControl.Connect(MemberType.AppEngine, "WebServer",
-            //     new ServerInfo { Address = config.Address });
-
-            // ServerControl.Subscribe<ShutdownInfo>(ControlChannel.Shutdown, OnShutdownRequested);
-
-            listener.Prefixes.Add($"http://{config.Address}:{config.Port}/"); // Start receiving HTTP requests
+            listener.Prefixes.Add($"http://{config.Address}:{config.Port}/");
             listener.Start();
         }
 
@@ -68,7 +56,7 @@ internal class Program {
                 break; // listener was stopped (e.g. on shutdown)
             }
 
-            await semaphore.WaitAsync(); // back-pressure: don't accept unbounded work
+            await semaphore.WaitAsync();
 
             _ = Task.Run(async () => {
                 try {

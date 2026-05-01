@@ -18,28 +18,23 @@ public class Program {
         
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
         
-        // You will see the use of these classes throughout the entire source, they are static
-        // because they don't need to be instantiated, they live and die with the application,
-        // and makes it easier to access data wherever in the project's source code
-        
         var config = GameServerConfig.Config;
         using (var timer =
                new EasyTimer(LogLevel.Info, "Starting server...", $"Listening on port {config.Port} ([TIME])")) {
-            EnumUtils.Load(); // Initialize and prepare our static classes for later use
+            EnumUtils.Load();
             XmlLibrary.Load(config.XmlsDir);
             MerchantsLibrary.Load(config.MerchantsDir);
             WorldLibrary.Load(config.WorldsDir);
-            // BehaviorLibrary.Load();
 
             await DbClient.ConnectAsync(DatabaseConfig.Config);
 
-            RealmManager.Init(); // Setup global game logic
+            RealmManager.Init();
 
             // SocketServer.Start(config.Port, // TODO: look into using System.IO.Pipelines' SocketServer and other networking classes
             //     config.MaxPlayers); // Start the socket server to accept and manage TCP connections
         }
 
-        RealmManager.Run(config.MsPT); // Run world, entities and other game logic
+        GameLogic.Run(config.MsPT);
     }
     
     private static void UnhandledException(object sender, UnhandledExceptionEventArgs args) {
