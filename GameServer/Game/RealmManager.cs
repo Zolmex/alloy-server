@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Common.Database.Models;
 using Common.Utilities;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
@@ -12,6 +13,7 @@ public class RealmManager {
 
     public static ImmutableDictionary<int, World> Worlds = ImmutableDictionary.Create<int, World>();
     public static ImmutableDictionary<int, User> Users = ImmutableDictionary.Create<int, User>();
+    public static ImmutableDictionary<int, Account> Accounts = ImmutableDictionary.Create<int, Account>();
     
     public static void Init() {
         AddWorld(World.NEXUS_ID, 0, new Nexus());

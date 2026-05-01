@@ -40,7 +40,6 @@ public class User : IIdentifiable {
     public readonly GameInfo GameInfo;
 
     public ConnectionState State;
-    public Account Account;
     public ClientRandom Random;
     public ClientRandom ServerRandom;
     
@@ -65,12 +64,10 @@ public class User : IIdentifiable {
     }
     
     public void SetGameInfo(Account acc, uint randomSeed, World world) {
-        Account = acc;
-
         Random = new ClientRandom(randomSeed);
         ServerRandom = new ClientRandom((uint)new Random().Next(1, int.MaxValue));
 
-        GameInfo.SetWorld(world);
+        GameInfo.SetWorld(acc, world);
     }
     
     public void Load(Character chr, World world) {
@@ -83,10 +80,10 @@ public class User : IIdentifiable {
             chr.AccCharId));
         SendPacket(new AccountList(
             AccountList.Locked,
-            Account.AccountLocks.Select(i => i.LockedId).ToArray()));
+            GameInfo.Account.AccountLocks.Select(i => i.LockedId).ToArray()));
         SendPacket(new AccountList(
             AccountList.Ignored,
-            Account.AccountIgnores.Select(i => i.IgnoredId).ToArray()));
+            GameInfo.Account.AccountIgnores.Select(i => i.IgnoredId).ToArray()));
     }
     
     public void Unload(bool reconnect, bool death = false) {

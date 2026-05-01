@@ -47,6 +47,5 @@ public class World {
     }
 
     public void Tick(ref RealmTime time) {
-        Console.WriteLine($"[{Id}] Entities:{Entities.Count} | Delta:{time.ElapsedMsDelta}");
     }
 }

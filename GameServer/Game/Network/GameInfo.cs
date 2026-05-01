@@ -15,6 +15,7 @@ public class GameInfo {
     private static readonly Logger _log = new(typeof(GameInfo));
 
     public readonly User User;
+    public Account Account;
     public World World;
     public Character Char;
     public Entity Player;
@@ -25,7 +26,8 @@ public class GameInfo {
 
     public GameState State { get; private set; }
 
-    public void SetWorld(World world) {
+    public void SetWorld(Account acc, World world) {
+        Account = acc;
         State = GameState.Loading;
         World = world;
     }

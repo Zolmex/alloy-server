@@ -19,6 +19,8 @@ public class GameLogic {
         var lagMs = (int)(mspt * 1.5);
         var sw = Stopwatch.StartNew();
         while (true) {
+            Update();
+            
             if (sw.ElapsedMilliseconds < mspt)
                 continue;
 
@@ -37,6 +39,13 @@ public class GameLogic {
             sw.Restart();
 
             TickWorlds(ref WorldTime);
+        }
+    }
+
+    private static void Update() {
+        foreach (var user in RealmManager.Users.Values) {
+            user.Network.HandleIncomingPackets();
+            user.Network.SendSocketData();
         }
     }
     

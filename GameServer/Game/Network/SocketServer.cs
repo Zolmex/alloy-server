@@ -12,6 +12,7 @@ namespace GameServer.Game.Network;
 
 // TCP socket server
 public static class SocketServer {
+    
     private static readonly Logger _log = new(typeof(SocketServer));
     private static ConcurrentFactory<User> _userFactory;
     private static Dictionary<string, int> _ips;
@@ -75,8 +76,6 @@ public static class SocketServer {
             StartAccept();
             return;
         }
-
-        _log.Debug($"Received client @ {ip}");
 
         user.Setup(ip, skt);
 

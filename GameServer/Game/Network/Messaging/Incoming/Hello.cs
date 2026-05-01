@@ -38,13 +38,18 @@ public record Hello : IIncomingPacket {
             return;
         }
 
-        var acc = user.Account;
+        var acc = user.GameInfo.Account;
         if (user.State != ConnectionState.Reconnecting) {
             var verify = await DbClient.VerifyAccountAsync(Username, Password);
             var status = verify.Status;
             acc = verify.Account;
             if (acc == null) {
                 user.SendFailure(Failure.DEFAULT, status.GetDescription());
+                return;
+            }
+            
+            if (RealmManager.Accounts.TryGetValue(acc.Id, out _)) {
+                user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.Id}");
                 return;
             }
         }
@@ -65,11 +70,6 @@ public record Hello : IIncomingPacket {
 
             acc.IsBanned = false; // Update bool value 
             await DbClient.FlushAsync(acc, a => a.IsBanned);
-        }
-
-        if (RealmManager.Users.TryGetValue(user.Id, out _) && user.State != ConnectionState.Reconnecting) {
-            user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.Id}");
-            return;
         }
 
         if (GameServerConfig.Config.AdminOnly && !acc.IsAdmin) {

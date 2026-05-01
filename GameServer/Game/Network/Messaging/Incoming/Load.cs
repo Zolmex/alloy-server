@@ -16,14 +16,14 @@ public record Load : IIncomingPacket {
     }
 
     public async Task Handle(User user) {
-        if (user.Account.IsBanned) {
+        if (user.GameInfo.Account.IsBanned) {
             user.SendFailure(Failure.DEFAULT, "Account has been banned.");
             return;
         }
 
         var chr = user.GameInfo.Char;
         if (user.State != ConnectionState.Reconnecting) {
-            chr = (await DbClient.GetCharacterAsync(user.Account.Id, CharId)).Character;
+            chr = (await DbClient.GetCharacterAsync(user.GameInfo.Account.Id, CharId)).Character;
             if (chr == null) {
                 user.SendFailure(Failure.DEFAULT, $"Failed to load character #{CharId}");
                 return;

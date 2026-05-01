@@ -18,7 +18,7 @@ public record Create : IIncomingPacket {
     }
 
     public async Task Handle(User user) {
-        var createChar = await DbClient.CreateCharacterAsync(user.Account, (ushort)ClassType, (ushort)SkinType);
+        var createChar = await DbClient.CreateCharacterAsync(user.GameInfo.Account, (ushort)ClassType, (ushort)SkinType);
         var chr = createChar.Character;
         var result = createChar.Status;
         if (chr == null) {
