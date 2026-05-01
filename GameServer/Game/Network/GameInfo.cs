@@ -1,4 +1,5 @@
 ﻿using Common.Database.Models;
+using Common.Game;
 using Common.Utilities;
 using GameServer.Game.Worlds;
 
@@ -15,6 +16,8 @@ public class GameInfo {
 
     public readonly User User;
     public World World;
+    public Character Char;
+    public Entity Player;
 
     public GameInfo(User user) {
         User = user;

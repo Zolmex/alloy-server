@@ -15,6 +15,10 @@ namespace GameServer.Game.Network;
 public class NetworkHandler {
     private static readonly Logger _log = new(typeof(NetworkHandler));
 
+    public string IP { get; private set; }
+    public User User { get; }
+    public Socket Socket { get; private set; }
+
     private readonly Dictionary<PacketId, Func<IIncomingPacket>> _packetFactory =
         PacketLib.LoadIncoming()
             .ToDictionary(kvp => kvp.Key, kvp =>
@@ -41,10 +45,6 @@ public class NetworkHandler {
         _receiveSAEA.Completed += ProcessReceive;
     }
 
-    public string IP { get; private set; }
-    public User User { get; }
-    public Socket Socket { get; private set; }
-
     // Reset this instance's values for a possible future connection
     public void Reset() {
         IP = null;
@@ -60,7 +60,7 @@ public class NetworkHandler {
     }
 
     public void WritePacket(IOutgoingPacket packet) {
-        // Console.WriteLine($"SENDING {packet.ID}");
+        Console.WriteLine($"SENDING {packet.ID}");
         _sendState.WritePacket(packet, (byte)packet.ID);
     }
 
@@ -132,7 +132,7 @@ public class NetworkHandler {
         while (_receiveState.PacketReady()) {
             var pktId = (PacketId)_receiveState.ReadPacket(out var rdr);
             try {
-                // Console.WriteLine($"RECEIVING {pktId}");
+                Console.WriteLine($"RECEIVING {pktId}");
                 if (_packetFactory.TryGetValue(pktId, out var pktGen)) {
                     var pkt = pktGen();
                     pkt.Read(ref rdr);
