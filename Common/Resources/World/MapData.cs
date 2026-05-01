@@ -1,13 +1,11 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Common.Game.Objects;
+using Common.Game;
 using Common.Network;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
@@ -15,8 +13,6 @@ using Common.Structs;
 using Common.Utilities;
 using Ionic.Zlib;
 using Newtonsoft.Json;
-
-#endregion
 
 namespace Common.Resources.World;
 
@@ -191,7 +187,7 @@ public class MapData {
                             tiles[x, y].GroundType = 0xfd;
                     
                     if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
-                        var entity = Entity.Resolve(tile.ObjectType);
+                        var entity = new Entity(tile.ObjectType);
                         if (entity.Desc.Static) {
                             if (entity.Desc.BlocksSight)
                                 tile.BlocksSight = true;
@@ -355,7 +351,7 @@ public class MapData {
 
             Tiles[x, y] = tile;
             if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
-                var entity = Entity.Resolve(tile.ObjectType);
+                var entity = new Entity(tile.ObjectType);
                 if (entity.Desc.Static) {
                     if (entity.Desc.BlocksSight)
                         tile.BlocksSight = true;
@@ -363,7 +359,7 @@ public class MapData {
                 }
 
                 entity.Move(x + 0.5f, y + 0.5f);
-                lock (entity)
+                lock (Entities)
                     Entities.Add(entity);
             }
         });

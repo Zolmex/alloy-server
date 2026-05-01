@@ -1,4 +1,4 @@
-using Common.Game.Objects;
+using Common.Game;
 using Common.Resources.World;
 using Common.Utilities.Collections;
 
@@ -12,15 +12,21 @@ public class World {
     public readonly int Id;
     public readonly WorldConfig Config;
 
-    public readonly LazyCollection<Entity> Entities = new();
+    public readonly EntityManager Entities;
     
     public MapData Map;
+    public string DisplayName;
+    public string Music;
 
-    private int _nextEntityId;
+    public bool Deleted;
 
     public World(int id, WorldConfig config) {
         Id = id;
         Config = config;
+        Entities = new EntityManager(this);
+
+        DisplayName = config.DisplayName;
+        Music = config.Music;
     }
 
     public void Load(int mapId) {
@@ -30,19 +36,14 @@ public class World {
 
     public void LoadEntities() {
         foreach (var orig in Map.Entities) {
-            var en = Entity.Resolve(orig.Desc.ObjectType);
+            var en = new Entity(orig.Desc.ObjectType);
             en.Move(orig.Pos.X, orig.Pos.Y);
-            EnterWorld(en);
+            EnterWorld(ref en);
         }
     }
 
-    public void EnterWorld(Entity en) {
-        en.Id = Interlocked.Increment(ref _nextEntityId);
-        Entities.Add(en);
-    }
-
-    public void Update() {
-        Entities.Update();
+    public void EnterWorld(ref Entity en) {
+        Entities.Add(ref en);
     }
 
     public void Tick(ref RealmTime time) {
