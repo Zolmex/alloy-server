@@ -32,5 +32,11 @@
 
     <PropertyGroup>
         <MinVerTagPrefix>v</MinVerTagPrefix>
+        
+        <!-- This removes the "height" (the number of commits since the tag) -->
+        <MinVerSkipHeight>true</MinVerSkipHeight>
+
+        <!-- This forces the version to ignore the commit hash -->
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 </Project>

@@ -13,7 +13,10 @@ public class Program {
     private static readonly Logger _log = new(typeof(Program));
     
     public static async Task Main(string[] args) {
-        Console.Title = $"Realm Server v{Assembly.GetExecutingAssembly().GetName().Version} - GameServer";
+        var version = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+        Console.Title = $"Realm Server v{version} - GameServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
