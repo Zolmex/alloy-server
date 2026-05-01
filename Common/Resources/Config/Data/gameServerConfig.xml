@@ -6,7 +6,7 @@
     <Address>127.0.0.1</Address>
     <ServerName>Localhost</ServerName>
     <TPS>20</TPS>
-    <MaxPlayers>2000</MaxPlayers>
+    <MaxPlayers>1000</MaxPlayers>
     <Version>0.3.3</Version>
     <!--<AdminOnly/>-->
     <BehaviorsDir>../../../GameServer/Game/Entities/Behaviors/Library</BehaviorsDir>

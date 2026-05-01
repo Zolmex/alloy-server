@@ -26,10 +26,6 @@
       </PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Game\Entities\" />
-    </ItemGroup>
-
     <PropertyGroup>
         <MinVerTagPrefix>v</MinVerTagPrefix>
         

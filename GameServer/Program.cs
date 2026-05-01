@@ -6,6 +6,7 @@ using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Utilities;
 using GameServer.Game;
+using GameServer.Game.Network;
 
 namespace GameServer;
 
@@ -33,8 +34,8 @@ public class Program {
 
             RealmManager.Init();
 
-            // SocketServer.Start(config.Port, // TODO: look into using System.IO.Pipelines' SocketServer and other networking classes
-            //     config.MaxPlayers); // Start the socket server to accept and manage TCP connections
+            SocketServer.Start(config.Port,
+                config.MaxPlayers); // Start the socket server to accept and manage TCP connections
         }
 
         GameLogic.Run(config.MsPT);
