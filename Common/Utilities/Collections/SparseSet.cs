@@ -1,20 +1,21 @@
 using System;
+using System.Buffers;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Common.Utilities.Collections;
 
 public class SparseSet<T> where T : struct, IIdentifiable {
 
     public int Count;
-    public int Capacity;
 
     private int[] _sparse;
     private T[] _dense;
 
     public SparseSet(int capacity = 0) {
-        Capacity = capacity;
-        _sparse = new int[capacity];
+        _sparse = ArrayPool<int>.Shared.Rent(capacity);
         Array.Fill(_sparse, -1);
-        _dense = new T[capacity];
+        _dense = ArrayPool<T>.Shared.Rent(capacity);
     }
 
     public void Add(ref T elem) {
@@ -45,26 +46,30 @@ public class SparseSet<T> where T : struct, IIdentifiable {
     public ref T Get(int id) {
         return ref _dense[_sparse[id]];
     }
+    
+    public ref T GetAt(int denseIndex) {
+        return ref _dense[denseIndex];
+    }
 
     private void ResizeSparse(int capacity) {
-        if (capacity < Capacity)
-            throw new ArgumentException($"New capacity cannot be lower than the current: {capacity} < {Capacity}");
+        if (capacity < _sparse.Length)
+            throw new ArgumentException($"New capacity cannot be lower than the current: {capacity} < {_sparse.Length}");
 
-        Capacity = capacity;
-        
-        var newSparse = new int[capacity];
+        var newSparse = ArrayPool<int>.Shared.Rent(capacity);
         _sparse.AsSpan().CopyTo(newSparse);
+        ArrayPool<int>.Shared.Return(_sparse);
+        
         _sparse = newSparse;
     }
     
     private void ResizeDense(int capacity) {
-        if (capacity < Capacity)
-            throw new ArgumentException($"New capacity cannot be lower than the current: {capacity} < {Capacity}");
+        if (capacity < _dense.Length)
+            throw new ArgumentException($"New capacity cannot be lower than the current: {capacity} < {_dense.Length}");
 
-        Capacity = capacity;
-        
-        var newDense = new T[capacity];
+        var newDense = ArrayPool<T>.Shared.Rent(capacity);
         _dense.AsSpan().CopyTo(newDense);
+        ArrayPool<T>.Shared.Return(_dense);
+        
         _dense = newDense;
     }
 }

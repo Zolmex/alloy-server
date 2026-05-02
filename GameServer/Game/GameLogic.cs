@@ -1,14 +1,8 @@
 using System.Diagnostics;
+using Common.Game;
 using Common.Utilities;
 
 namespace GameServer.Game;
-
-public struct RealmTime {
-    public float TickCountDecimal;
-    public long TickCount;
-    public long TotalElapsedMs;
-    public int ElapsedMsDelta;
-}
 
 public class GameLogic {
     private static readonly Logger _log = new(typeof(GameLogic));

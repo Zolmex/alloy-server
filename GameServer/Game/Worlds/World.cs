@@ -1,4 +1,6 @@
 using Common.Game;
+using Common.Game.Components;
+using Common.Game.Systems;
 using Common.Resources.World;
 using Common.Utilities.Collections;
 
@@ -13,6 +15,7 @@ public class World {
     public readonly WorldConfig Config;
 
     public readonly EntityManager Entities;
+    public readonly EntityStatsManager EntityStats;
     
     public MapData Map;
     public string DisplayName;
@@ -23,7 +26,8 @@ public class World {
     public World(int id, WorldConfig config) {
         Id = id;
         Config = config;
-        Entities = new EntityManager(this);
+        Entities = new EntityManager(config.Name == "Realm" ? 50_000 : 5_000);
+        EntityStats = new EntityStatsManager(config.Name == "Realm" ? 50_000 : 5_000);
 
         DisplayName = config.DisplayName;
         Music = config.Music;
@@ -43,9 +47,12 @@ public class World {
     }
 
     public void EnterWorld(ref Entity en) {
+        var stats = new StatsComponent();
+        EntityStats.Add(ref stats);
         Entities.Add(ref en);
     }
 
     public void Tick(ref RealmTime time) {
+        EntityStats.Tick(ref time);
     }
 }
