@@ -12,6 +12,7 @@ public class World {
 
     public const int NEXUS_ID = -1;
     public const int TEST_ID = -2;
+    public const int UNBLOCKED_SIGHT = 0;
     
     public readonly int Id;
     public readonly WorldConfig Config;
@@ -30,8 +31,8 @@ public class World {
         Id = id;
         Config = config;
         Entities = new EntityManager(5_000);
-        EntityStats = new EntityStatsManager(5_000);
-        PlayerSights = new PlayerSightManager(100);
+        EntityStats = new EntityStatsManager(this, 5_000);
+        PlayerSights = new PlayerSightManager(this, 100);
 
         DisplayName = config.DisplayName;
         Music = config.Music;
