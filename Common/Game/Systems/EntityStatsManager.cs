@@ -7,13 +7,16 @@ namespace Common.Game.Systems;
 
 public class EntityStatsManager(int capacity) : ManagerBase<StatsComponent>(capacity) {
     
-    public void Tick(ref RealmTime time) {
+    public override void Remove(int id) {
+        ref var elem = ref _set.Get(id);
+        elem.Dispose();
+        
+        base.Remove(id);
+    }
+
+    public override void Tick(ref RealmTime time) {
         for (var i = 0; i < _set.Count; i++) {
             ref var stats = ref _set.GetAt(i);
-
-            var maxHp = stats.GetInt(StatType.MaxHP); // DEBUG
-            stats.Set(StatType.MaxHP, maxHp + 1);
-            
             var publicCount = 0;
             var privateCount = 0;
             for (var j = 0; j < StatsComponent.STAT_COUNT; j++) {
@@ -25,9 +28,6 @@ public class EntityStatsManager(int capacity) : ManagerBase<StatsComponent>(capa
                 }
             }
             stats.ClearMasks();
-            
-            if (stats.Id == 1) // DEBUG
-                Console.WriteLine($"[{stats.Id}]: Public: {publicCount} | Private: {privateCount}");
         }
     }
 }

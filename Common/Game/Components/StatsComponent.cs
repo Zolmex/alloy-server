@@ -5,7 +5,7 @@ using Common.Utilities;
 
 namespace Common.Game.Components;
 
-public struct StatsComponent : IIdentifiable {
+public struct StatsComponent : IIdentifiable, IDisposable {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;
 
     public int Id { get; set; }
@@ -56,5 +56,9 @@ public struct StatsComponent : IIdentifiable {
     public void ClearMasks() {
         PublicMask.Clear();
         PrivateMask.Clear();
+    }
+
+    public void Dispose() {
+        ArrayPool<StatValue>.Shared.Return(Stats);
     }
 }

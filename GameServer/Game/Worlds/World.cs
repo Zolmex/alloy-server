@@ -47,9 +47,14 @@ public class World {
     }
 
     public void EnterWorld(ref Entity en) {
-        var stats = new StatsComponent();
-        EntityStats.Add(ref stats);
         Entities.Add(ref en);
+        var stats = new StatsComponent();
+        EntityStats.Add(ref stats, en.Id);
+    }
+
+    public void LeaveWorld(int entityId) {
+        Entities.Remove(entityId);
+        EntityStats.Remove(entityId);
     }
 
     public void Tick(ref RealmTime time) {
