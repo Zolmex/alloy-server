@@ -16,14 +16,13 @@ public class RealmManager {
     public static ImmutableDictionary<int, Account> Accounts = ImmutableDictionary.Create<int, Account>();
     
     public static void Init() {
-        AddWorld(World.NEXUS_ID, 0, new Nexus());
+        AddWorld(new Nexus());
         
         _log.Info("Realm Manager initialized.");
     }
 
-    public static void AddWorld(int id, int mapId, World world) {
-        Worlds = Worlds.Add(id, world);
-        world.Load(mapId);
+    public static void AddWorld(World world) {
+        Worlds = Worlds.Add(world.Id, world);
     }
 
     public static void UserConnected(User user) {

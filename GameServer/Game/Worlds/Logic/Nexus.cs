@@ -4,7 +4,7 @@ namespace GameServer.Game.Worlds.Logic;
 
 public class Nexus : World {
 
-    public Nexus() : base(NEXUS_ID, WorldLibrary.WorldConfigs["Nexus"]) {
+    public Nexus() : base(NEXUS_ID, 0, WorldLibrary.WorldConfigs["Nexus"]) {
         
     }
 }

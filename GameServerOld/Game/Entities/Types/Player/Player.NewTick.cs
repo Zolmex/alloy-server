@@ -21,7 +21,7 @@ public partial class Player {
         if (!_entityStatUpdates.TryGetValue(en.Id, out var status))
             status = new ObjectStatusData {
                 ObjectId = en.Id, Pos = en.Position,
-                Stats = ArrayPool<StatValue>.Shared.Rent((int)StatType.StatTypeCount), Update = true
+                Stats = ArrayPool<StatValue>.Shared.Rent((int)StatType.StatTypeCount), Force = true
             };
 
         status.SetPos(en.Position);

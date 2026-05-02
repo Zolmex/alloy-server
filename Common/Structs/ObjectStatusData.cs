@@ -1,4 +1,5 @@
 using Common.Network;
+using Common.Utilities;
 
 namespace Common.Structs;
 
@@ -6,8 +7,9 @@ public struct ObjectStatusData {
     public int ObjectId;
     public WorldPosData Pos;
     public StatValue[] Stats;
+    public BitMask256 StatsMask;
     public StatData[] UpdatedStats;
-    public bool Update;
+    public bool Force;
 
     public static ObjectStatusData Read(ref SpanReader rdr) {
         var ret = new ObjectStatusData();
@@ -30,7 +32,7 @@ public struct ObjectStatusData {
 
         for (var i = 0; i < (int)StatType.StatTypeCount; i++) {
             var value = Stats[i];
-            if (value.HasValue) {
+            if ((Force && value.HasValue) || StatsMask.IsSet(i)) {
                 statCount++;
                 StatData.Write(ref wtr, (StatType)i, value);
             }
@@ -40,12 +42,10 @@ public struct ObjectStatusData {
         wtr.Position = pos; // Write in the placeholder the real amount of stat counts
         wtr.Write((byte)statCount);
         wtr.Position = endPos;
-
-        Update = false;
     }
 
     public void SetStat(StatType type, StatValue value) {
-        Update = true;
+        Force = true;
         if (type == StatType.None)
             return;
 

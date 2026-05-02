@@ -19,7 +19,7 @@ public readonly record struct NewTick(Dictionary<int, ObjectStatusData> Statuses
         wtr.Write((short)0); // Placeholder
 
         foreach (var status in Statuses.Values) {
-            if (!status.Update)
+            if (!status.Force)
                 continue;
 
             updateCount++;

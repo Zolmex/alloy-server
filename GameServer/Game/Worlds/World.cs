@@ -27,9 +27,11 @@ public class World {
 
     public bool Deleted;
 
-    public World(int id, WorldConfig config) {
+    public World(int id, int mapId, WorldConfig config) {
         Id = id;
         Config = config;
+        Load(mapId);
+
         Entities = new EntityManager(5_000);
         EntityStats = new EntityStatsManager(this, 5_000);
         PlayerSights = new PlayerSightManager(this, 100);
