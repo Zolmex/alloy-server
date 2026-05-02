@@ -16,6 +16,7 @@ public class World {
 
     public readonly EntityManager Entities;
     public readonly EntityStatsManager EntityStats;
+    public readonly PlayerSightManager PlayerSights;
     
     public MapData Map;
     public string DisplayName;
@@ -28,6 +29,7 @@ public class World {
         Config = config;
         Entities = new EntityManager(config.Name == "Realm" ? 50_000 : 5_000);
         EntityStats = new EntityStatsManager(config.Name == "Realm" ? 50_000 : 5_000);
+        PlayerSights = new PlayerSightManager(config.Name == "Nexus" ? 500 : 100);
 
         DisplayName = config.DisplayName;
         Music = config.Music;
@@ -46,18 +48,48 @@ public class World {
         }
     }
 
-    public void EnterWorld(ref Entity en) {
+    public int EnterWorld(ref Entity en) {
         Entities.Add(ref en);
+        AddComponents(ref en);
+        return en.Id;
+    }
+
+    private void AddComponents(ref Entity en) {
         var stats = new StatsComponent();
-        EntityStats.Add(ref stats, en.Id);
+        EntityStats.Add(ref stats, en.Id); // All entities must have
+        
+        switch (en.Type) {
+            case EntityType.GameObject:
+                break;
+            case EntityType.StaticObject:
+                break;
+            case EntityType.Portal:
+                break;
+            case EntityType.Merchant:
+                break;
+            case EntityType.Character:
+                break;
+            case EntityType.Enemy:
+                break;
+            case EntityType.Container:
+                break;
+            case EntityType.Player:
+                var sight = new PlayerSightComponent();
+                PlayerSights.Add(ref sight, en.Id);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException($"{en.Type}");
+        }
     }
 
     public void LeaveWorld(int entityId) {
         Entities.Remove(entityId);
         EntityStats.Remove(entityId);
+        PlayerSights.Remove(entityId);
     }
 
     public void Tick(ref RealmTime time) {
         EntityStats.Tick(ref time);
+        PlayerSights.Tick(ref time);
     }
 }

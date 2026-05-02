@@ -34,6 +34,9 @@ public class SparseSet<T> where T : struct, IIdentifiable {
 
     public void Remove(int id) {
         var indexInDense = _sparse[id];
+        if (indexInDense == -1)
+            return;
+        
         var lastElement = _dense[Count - 1];
         
         _dense[indexInDense] = lastElement;

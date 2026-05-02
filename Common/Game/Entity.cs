@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using Common.Game.Components;
 using Common.Game.Systems;
+using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
@@ -13,12 +14,14 @@ namespace Common.Game;
 public struct Entity : IIdentifiable, IEquatable<Entity> {
     public int Id { get; set; }
     public ushort ObjectType { get; }
+    public EntityType Type { get; }
     public readonly ObjectDesc Desc => XmlLibrary.ObjectDescs[ObjectType];
     
     public WorldPosData Pos;
 
     public Entity(ushort objType) {
         ObjectType = objType;
+        Type = ResolveType(objType);
     }
 
     public void Move(float newX, float newY) {
@@ -43,5 +46,40 @@ public struct Entity : IIdentifiable, IEquatable<Entity> {
 
     public static bool operator !=(Entity left, Entity right) {
         return !left.Equals(right);
+    }
+
+    public static EntityType ResolveType(ushort objType) {
+        var desc = XmlLibrary.ObjectDescs[objType];
+        if (desc.Class != null)
+            switch (desc.Class) {
+                case "ConnectedWall":
+                case "CaveWall":
+                case "Wall":
+                    return EntityType.StaticObject;
+                case "Portal":
+                case "GuildHallPortal":
+                    return EntityType.Portal;
+                case "Character":
+                    if (desc.Enemy)
+                        return EntityType.Enemy;
+                    return EntityType.Character;
+                case "ClosedVaultChest":
+                case "Container":
+                    return EntityType.Container;
+                case "Merchant":
+                case "GuildMerchant":
+                    return EntityType.Merchant;
+            }
+
+        if (desc.Enemy)
+            return EntityType.Enemy;
+        
+        if (desc.Static)
+            return EntityType.StaticObject;
+
+        if (desc.Player)
+            return EntityType.Player;
+
+        return EntityType.GameObject;
     }
 }

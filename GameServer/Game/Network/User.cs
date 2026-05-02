@@ -76,7 +76,7 @@ public class User : IIdentifiable {
         GameInfo.Load(chr, world);
 
         SendPacket(new CreateSuccess(
-            GameInfo.Player.Id,
+            GameInfo.PlayerId,
             chr.AccCharId));
         SendPacket(new AccountList(
             AccountList.Locked,

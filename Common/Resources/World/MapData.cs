@@ -97,6 +97,9 @@ public struct obj {
 }
 
 public class MapTileData {
+    public short X;
+    public short Y;
+    
     public byte Elevation;
     public ushort GroundType;
     public string Key;
@@ -127,6 +130,12 @@ public class MapTileData {
             ground = XmlLibrary.TileDescs[GroundType].GroundId, objs = obj.id != null ? new[] { obj } : null,
             regions = Region != TileRegion.None ? new obj[] { new() { id = Region.ToString() } } : null
         };
+    }
+
+    public void Write(ref SpanWriter wtr) {
+        wtr.Write(X);
+        wtr.Write(Y);
+        wtr.Write(GroundType);
     }
 }
 
@@ -185,7 +194,9 @@ public class MapData {
                     if (XmlLibrary.ObjectDescs.TryGetValue(tiles[x, y].ObjectType, out var desc))
                         if ((desc.CaveWall || desc.ConnectedWall) && tiles[x, y].GroundType == 255)
                             tiles[x, y].GroundType = 0xfd;
-                    
+
+                    tile.X = (short)x;
+                    tile.Y = (short)y;
                     if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
                         var entity = new Entity(tile.ObjectType);
                         if (entity.Desc.Static) {
@@ -350,6 +361,8 @@ public class MapData {
             if (ver == 2) tile.Elevation = elevations[i];
 
             Tiles[x, y] = tile;
+            tile.X = (short)x;
+            tile.Y = (short)y;
             if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
                 var entity = new Entity(tile.ObjectType);
                 if (entity.Desc.Static) {

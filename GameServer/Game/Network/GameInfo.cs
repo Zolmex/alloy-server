@@ -18,7 +18,7 @@ public class GameInfo {
     public Account Account;
     public World World;
     public Character Char;
-    public Entity Player;
+    public int PlayerId;
 
     public GameInfo(User user) {
         User = user;
@@ -34,16 +34,24 @@ public class GameInfo {
 
     public void Load(Character chr, World world) {
         State = GameState.Playing;
-        // Save player and character info, enter player to world
+        Char = chr;
+        var plr = new Entity(chr.ObjectType);
+        PlayerId = world.EnterWorld(ref plr);
     }
 
     public void Unload(bool reconnect, bool death) {
         State = GameState.Idle;
-        // Save character and leave world
+        if (PlayerId == 0 || death)
+            return;
+        
+        World.LeaveWorld(PlayerId);
+        PlayerId = 0;
     }
 
     public void Reset() {
         State = GameState.Idle; // Change our state first
         World = null;
+        Char = null;
+        PlayerId = 0;
     }
 }
