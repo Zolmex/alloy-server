@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Common.Game.Components;
+using Common.Game;
 using Common.Utilities.Collections;
+using GameServer.Game.Entities.Components;
 
-namespace Common.Game.Systems;
+namespace GameServer.Game.Entities.Systems;
 
 public class PlayerSightManager(int capacity) : ManagerBase<PlayerSightComponent>(capacity) {
     

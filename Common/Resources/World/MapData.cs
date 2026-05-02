@@ -5,7 +5,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Common.Game;
 using Common.Network;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
@@ -144,7 +143,7 @@ public class MapData {
     private readonly Logger _log = new(typeof(MapData));
     public int Height;
     public Dictionary<TileRegion, List<IntPoint>> Regions;
-    public List<Entity> Entities = [];
+    public List<(ushort ObjType, WorldPosData Pos)> Entities = [];
 
     public MapTileData[,] Tiles;
     public int Width;
@@ -198,14 +197,14 @@ public class MapData {
                     tile.X = (short)x;
                     tile.Y = (short)y;
                     if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
-                        var entity = new Entity(tile.ObjectType);
-                        if (entity.Desc.Static) {
-                            if (entity.Desc.BlocksSight)
+                        var entity = (tile.ObjectType, new WorldPosData(x + 0.5f, y + 0.5f));
+                        var enDesc = XmlLibrary.ObjectDescs[tile.ObjectType];
+                        if (enDesc.Static) {
+                            if (enDesc.BlocksSight)
                                 tile.BlocksSight = true;
-                            tile.SetObject(entity.Desc);
+                            tile.SetObject(enDesc);
                         }
-
-                        entity.Move(x + 0.5f, y + 0.5f);
+                        
                         Entities.Add(entity);
                     }
                 }
@@ -364,14 +363,14 @@ public class MapData {
             tile.X = (short)x;
             tile.Y = (short)y;
             if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
-                var entity = new Entity(tile.ObjectType);
-                if (entity.Desc.Static) {
-                    if (entity.Desc.BlocksSight)
+                var entity = (tile.ObjectType, new WorldPosData(x + 0.5f, y + 0.5f));
+                var enDesc = XmlLibrary.ObjectDescs[tile.ObjectType];
+                if (enDesc.Static) {
+                    if (enDesc.BlocksSight)
                         tile.BlocksSight = true;
-                    tile.SetObject(entity.Desc);
+                    tile.SetObject(enDesc);
                 }
-
-                entity.Move(x + 0.5f, y + 0.5f);
+                
                 lock (Entities)
                     Entities.Add(entity);
             }

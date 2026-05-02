@@ -1,8 +1,10 @@
 using Common.Game;
-using Common.Game.Components;
-using Common.Game.Systems;
 using Common.Resources.World;
 using Common.Utilities.Collections;
+using GameServer.Game.Entities;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Systems;
+using GameServer.Game.Network;
 
 namespace GameServer.Game.Worlds;
 
@@ -27,9 +29,9 @@ public class World {
     public World(int id, WorldConfig config) {
         Id = id;
         Config = config;
-        Entities = new EntityManager(config.Name == "Realm" ? 50_000 : 5_000);
-        EntityStats = new EntityStatsManager(config.Name == "Realm" ? 50_000 : 5_000);
-        PlayerSights = new PlayerSightManager(config.Name == "Nexus" ? 500 : 100);
+        Entities = new EntityManager(5_000);
+        EntityStats = new EntityStatsManager(5_000);
+        PlayerSights = new PlayerSightManager(100);
 
         DisplayName = config.DisplayName;
         Music = config.Music;
@@ -42,7 +44,7 @@ public class World {
 
     public void LoadEntities() {
         foreach (var orig in Map.Entities) {
-            var en = new Entity(orig.Desc.ObjectType);
+            var en = new Entity(orig.ObjType);
             en.Move(orig.Pos.X, orig.Pos.Y);
             EnterWorld(ref en);
         }

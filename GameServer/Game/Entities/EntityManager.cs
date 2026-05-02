@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using Common.Game;
-using Common.Game.Components;
-using Common.Game.Systems;
 using Common.Utilities.Collections;
 
-namespace Common.Game;
+namespace GameServer.Game.Entities;
 
 public class EntityManager {
     protected readonly SparseSet<Entity> _set;

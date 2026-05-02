@@ -1,15 +1,13 @@
 using System;
 using System.ComponentModel;
 using System.Threading;
-using Common.Game.Components;
-using Common.Game.Systems;
 using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
 
-namespace Common.Game;
+namespace GameServer.Game.Entities;
 
 public struct Entity : IIdentifiable, IEquatable<Entity> {
     public int Id { get; set; }

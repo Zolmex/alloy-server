@@ -1,6 +1,7 @@
 ﻿using Common.Database.Models;
 using Common.Game;
 using Common.Utilities;
+using GameServer.Game.Entities;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Network;

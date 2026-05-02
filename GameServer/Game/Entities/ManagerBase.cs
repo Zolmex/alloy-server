@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Common.Game.Components;
+using Common.Game;
 using Common.Utilities;
 using Common.Utilities.Collections;
 
-namespace Common.Game;
+namespace GameServer.Game.Entities;
 
 public abstract class ManagerBase<T> where T : struct, IIdentifiable {
 

@@ -1,4 +1,4 @@
-namespace Common.Game;
+namespace GameServer.Game.Entities;
 
 public enum EntityType {
     GameObject,

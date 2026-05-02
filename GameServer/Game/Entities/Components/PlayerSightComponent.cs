@@ -1,7 +1,7 @@
 using System;
 using Common.Utilities;
 
-namespace Common.Game.Components;
+namespace GameServer.Game.Entities.Components;
 
 public struct PlayerSightComponent : IIdentifiable, IDisposable {
     public int Id { get; set; }

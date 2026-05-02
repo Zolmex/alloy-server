@@ -1,9 +1,10 @@
 using System;
 using System.Buffers;
+using Common;
 using Common.Structs;
 using Common.Utilities;
 
-namespace Common.Game.Components;
+namespace GameServer.Game.Entities.Components;
 
 public struct StatsComponent : IIdentifiable, IDisposable {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;
