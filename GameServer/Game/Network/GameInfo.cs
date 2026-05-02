@@ -37,7 +37,7 @@ public class GameInfo {
         State = GameState.Playing;
         Char = chr;
         var plr = new Entity(chr.ObjectType);
-        PlayerId = world.EnterWorld(ref plr);
+        PlayerId = world.EnterPlayer(ref plr, User);
     }
 
     public void Unload(bool reconnect, bool death) {
@@ -45,7 +45,7 @@ public class GameInfo {
         if (PlayerId == 0 || death)
             return;
         
-        World.LeaveWorld(PlayerId);
+        World.LeavePlayer(PlayerId);
         PlayerId = 0;
     }
 

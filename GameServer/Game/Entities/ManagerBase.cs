@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using Common.Game;
 using Common.Utilities;
 using Common.Utilities.Collections;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities;
 
-public abstract class ManagerBase<T> where T : struct, IIdentifiable {
+public abstract class ManagerBase<T> where T : struct, IEntityComponent {
 
     protected readonly SparseSet<T> _set;
     protected readonly World _world;

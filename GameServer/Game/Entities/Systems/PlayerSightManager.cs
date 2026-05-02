@@ -5,6 +5,7 @@ using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
@@ -19,8 +20,11 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         for (var i = 0; i < _set.Count; i++) {
             ref var sight = ref _set.GetAt(i);
             ref var player = ref _world.Entities.Get(sight.Id);
+            var user = _world.PlayerToUser[player.Id];
+            
             var newTiles = GetNewTiles(ref player, ref sight);
             var newEntities = GetNewEntities(ref player, ref sight);
+            user.SendPacket(new Update(newTiles, newEntities, new List<ObjectDropData>()));
         }
     }
     

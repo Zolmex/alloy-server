@@ -9,8 +9,7 @@ namespace GameServer.Game.Network.Messaging.Outgoing;
 public readonly record struct Update(
     List<MapTileData> Tiles,
     List<ObjectData> NewEntities,
-    List<ObjectDropData> OldEntities,
-    Dictionary<int, ObjectStatusData> Updates) : IOutgoingPacket {
+    List<ObjectDropData> OldEntities) : IOutgoingPacket {
     public PacketId ID => PacketId.UPDATE;
 
     public void Write(ref SpanWriter wtr) {
@@ -21,9 +20,7 @@ public readonly record struct Update(
         for (var i = 0; i < NewEntities.Count; i++)
             NewEntities[i].Write(ref wtr);
         wtr.Write((short)OldEntities.Count);
-        for (var i = 0; i < OldEntities.Count; i++) {
+        for (var i = 0; i < OldEntities.Count; i++)
             OldEntities[i].Write(ref wtr);
-            Updates.Remove(OldEntities[i].ObjectId);
-        }
     }
 }

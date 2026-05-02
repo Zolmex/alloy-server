@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Common.Game;
 using Common.Resources.World;
 using Common.Utilities.Collections;
@@ -21,6 +22,8 @@ public class World {
     public readonly EntityStatsManager EntityStats;
     public readonly PlayerSightManager PlayerSights;
     
+    public ImmutableDictionary<int, User> PlayerToUser;
+    
     public MapData Map;
     public string DisplayName;
     public string Music;
@@ -30,14 +33,16 @@ public class World {
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
         Config = config;
-        Load(mapId);
 
         Entities = new EntityManager(5_000);
         EntityStats = new EntityStatsManager(this, 5_000);
         PlayerSights = new PlayerSightManager(this, 100);
+        PlayerToUser = ImmutableDictionary<int, User>.Empty;
 
         DisplayName = config.DisplayName;
         Music = config.Music;
+        
+        Load(mapId);
     }
 
     public void Load(int mapId) {
@@ -53,6 +58,17 @@ public class World {
         }
     }
 
+    public int EnterPlayer(ref Entity en, User user) {
+        var ret = EnterWorld(ref en);
+        PlayerToUser = PlayerToUser.Add(en.Id, user);
+        return ret;
+    }
+
+    public void LeavePlayer(int id) {
+        LeaveWorld(id);
+        PlayerToUser = PlayerToUser.Remove(id);
+    }
+    
     public int EnterWorld(ref Entity en) {
         Entities.Add(ref en);
         AddComponents(ref en);
@@ -60,7 +76,7 @@ public class World {
     }
 
     private void AddComponents(ref Entity en) {
-        var stats = new StatsComponent();
+        var stats = new StatsComponent(ref en);
         EntityStats.Add(ref stats, en.Id); // All entities must have
         
         switch (en.Type) {
@@ -79,7 +95,7 @@ public class World {
             case EntityType.Container:
                 break;
             case EntityType.Player:
-                var sight = new PlayerSightComponent();
+                var sight = new PlayerSightComponent(ref en);
                 PlayerSights.Add(ref sight, en.Id);
                 break;
             default:
