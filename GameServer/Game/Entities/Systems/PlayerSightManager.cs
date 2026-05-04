@@ -20,11 +20,15 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         for (var i = 0; i < _set.Count; i++) {
             ref var sight = ref _set.GetAt(i);
             ref var player = ref _world.Entities.Get(sight.Id);
+            if (player.Id == 0)
+                continue;
+            
             var user = _world.PlayerToUser[player.Id];
             
             var newTiles = GetNewTiles(ref player, ref sight);
             var newEntities = GetNewEntities(ref player, ref sight);
             user.SendPacket(new Update(newTiles, newEntities, new List<ObjectDropData>()));
+            Console.WriteLine($"Player: {player.Pos} | Sending {newTiles.Count} tiles, {newEntities.Count} entities");
         }
     }
     

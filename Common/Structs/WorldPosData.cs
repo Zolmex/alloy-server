@@ -42,6 +42,10 @@ public struct WorldPosData : IEquatable<WorldPosData> {
     public static implicit operator Vector2(WorldPosData pos) {
         return new Vector2(pos.X, pos.Y);
     }
+    
+    public override string ToString() {
+        return $"X:{X}, Y:{Y}";
+    }
 }
 
 public static class WorldPosDataExtensions {

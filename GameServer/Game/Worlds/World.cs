@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Common.Game;
 using Common.Resources.World;
+using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Components;
@@ -37,6 +38,7 @@ public class World {
         Entities = new EntityManager(5_000);
         EntityStats = new EntityStatsManager(this, 5_000);
         PlayerSights = new PlayerSightManager(this, 100);
+        
         PlayerToUser = ImmutableDictionary<int, User>.Empty;
 
         DisplayName = config.DisplayName;
@@ -58,10 +60,10 @@ public class World {
         }
     }
 
-    public int EnterPlayer(ref Entity en, User user) {
-        var ret = EnterWorld(ref en);
+    public ref Entity EnterPlayer(ref Entity en, User user) {
+        ref var ret = ref EnterWorld(ref en);
         PlayerToUser = PlayerToUser.Add(en.Id, user);
-        return ret;
+        return ref ret;
     }
 
     public void LeavePlayer(int id) {
@@ -69,10 +71,10 @@ public class World {
         PlayerToUser = PlayerToUser.Remove(id);
     }
     
-    public int EnterWorld(ref Entity en) {
-        Entities.Add(ref en);
+    public ref Entity EnterWorld(ref Entity en) {
+        ref var ret = ref Entities.Add(ref en);
         AddComponents(ref en);
-        return en.Id;
+        return ref ret;
     }
 
     private void AddComponents(ref Entity en) {
@@ -107,6 +109,12 @@ public class World {
         Entities.Remove(entityId);
         EntityStats.Remove(entityId);
         PlayerSights.Remove(entityId);
+    }
+
+    public void MoveToSpawn(ref Entity en) {
+        var spawnTile = Map.Regions[TileRegion.Spawn].RandomElement();
+        en.Move(spawnTile.X, spawnTile.Y);
+        Console.WriteLine($"Moved entity to {spawnTile}");
     }
 
     public void Tick(ref RealmTime time) {

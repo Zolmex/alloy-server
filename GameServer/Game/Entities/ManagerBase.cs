@@ -17,9 +17,10 @@ public abstract class ManagerBase<T> where T : struct, IEntityComponent {
         _set = new SparseSet<T>(capacity);
     }
     
-    public void Add(ref T elem, int entityId) {
+    public ref T Add(ref T elem, int entityId) {
         elem.Id = entityId;
-        _set.Add(ref elem);
+        ref var ret = ref _set.Add(ref elem);
+        return ref ret;
     }
 
     public virtual void Remove(int id) {

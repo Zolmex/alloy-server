@@ -17,9 +17,10 @@ public class EntityManager {
         _freeIds = new Stack<int>(capacity);
     }
 
-    public virtual void Add(ref Entity elem) {
+    public ref Entity Add(ref Entity elem) {
         elem.Id = _freeIds.Count > 0 ? _freeIds.Pop() : _idCounter++;
-        _set.Add(ref elem);
+        ref var ret = ref _set.Add(ref elem);
+        return ref ret;
     }
 
     public virtual void Remove(int id) {

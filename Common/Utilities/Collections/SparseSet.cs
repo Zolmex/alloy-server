@@ -14,11 +14,13 @@ public class SparseSet<T> where T : struct, IIdentifiable {
 
     public SparseSet(int capacity = 0) {
         _sparse = ArrayPool<int>.Shared.Rent(capacity);
-        Array.Fill(_sparse, -1);
+        Array.Fill(_sparse, 0);
         _dense = ArrayPool<T>.Shared.Rent(capacity);
+        _dense[0] = default; // Invalid accesses return this, user must treat it as null
+        Count = 1;
     }
 
-    public void Add(ref T elem) {
+    public ref T Add(ref T elem) {
         if (elem.Id >= _sparse.Length) {
             ResizeSparse(elem.Id + 1);
         }
@@ -28,13 +30,13 @@ public class SparseSet<T> where T : struct, IIdentifiable {
         }
 
         _sparse[elem.Id] = Count;
-        _dense[Count] = elem;
-        Count++;
+        _dense[Count] = elem; // Copies element
+        return ref _dense[Count++];
     }
 
     public void Remove(int id) {
         var indexInDense = _sparse[id];
-        if (indexInDense == -1)
+        if (indexInDense == 0)
             return;
         
         var lastElement = _dense[Count - 1];
@@ -42,7 +44,7 @@ public class SparseSet<T> where T : struct, IIdentifiable {
         _dense[indexInDense] = lastElement;
         _sparse[lastElement.Id] = indexInDense;
 
-        _sparse[id] = -1;
+        _sparse[id] = 0; // Point to default
         Count--;
     }
 

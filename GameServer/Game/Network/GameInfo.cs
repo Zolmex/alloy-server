@@ -36,8 +36,11 @@ public class GameInfo {
     public void Load(Character chr, World world) {
         State = GameState.Playing;
         Char = chr;
+        
         var plr = new Entity(chr.ObjectType);
-        PlayerId = world.EnterPlayer(ref plr, User);
+        ref var newPlr = ref world.EnterPlayer(ref plr, User);
+        world.MoveToSpawn(ref newPlr);
+        PlayerId = newPlr.Id;
     }
 
     public void Unload(bool reconnect, bool death) {
