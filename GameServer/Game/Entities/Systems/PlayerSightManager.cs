@@ -48,8 +48,8 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                             player.TileDistSqr(x, y) <= SIGHT_RADIUS_SQR) {
                             var tile = _world.Map.Tiles[x, y];
 
-                            sight.VisibleTiles.Add(tile);
-                            if (sight.DiscoveredTiles.Add(tile)) // This is a newly discovered tile
+                            sight.VisibleTiles.Add(tile.Pos);
+                            if (sight.DiscoveredTiles.Add(tile.Pos)) // This is a newly discovered tile
                                 ret.Add(tile);
                         }
 

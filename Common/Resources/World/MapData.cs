@@ -98,6 +98,7 @@ public struct obj {
 public class MapTileData {
     public short X;
     public short Y;
+    public IntPoint Pos;
     
     public byte Elevation;
     public ushort GroundType;
@@ -135,6 +136,25 @@ public class MapTileData {
         wtr.Write(X);
         wtr.Write(Y);
         wtr.Write(GroundType);
+    }
+
+    public MapTileData Clone() {
+        return new MapTileData() {
+            X = X,
+            Y = Y,
+            Pos = Pos,
+            Elevation = Elevation,
+            GroundType = GroundType,
+            Key = Key,
+            ObjectCfg = ObjectCfg,
+            ObjectType = ObjectType,
+            Region = Region,
+            Terrain = Terrain,
+            BlocksSight = BlocksSight,
+            FullOccupy = FullOccupy,
+            EnemyOccupySquare = EnemyOccupySquare,
+            OccupySquare = OccupySquare,
+        };
     }
 }
 
@@ -189,13 +209,15 @@ public class MapData {
         using (var rdr = new NetworkReader(new MemoryStream(buffer), false)) {
             for (var y = 0; y < json.height; y++)
                 for (var x = 0; x < json.width; x++) {
-                    var tile = tiles[x, y] = dict[(ushort)rdr.ReadInt16()];
-                    if (XmlLibrary.ObjectDescs.TryGetValue(tiles[x, y].ObjectType, out var desc))
-                        if ((desc.CaveWall || desc.ConnectedWall) && tiles[x, y].GroundType == 255)
-                            tiles[x, y].GroundType = 0xfd;
+                    var tile = tiles[x, y] = dict[(ushort)rdr.ReadInt16()].Clone();
+                    
+                    if (XmlLibrary.ObjectDescs.TryGetValue(tile.ObjectType, out var desc))
+                        if ((desc.CaveWall || desc.ConnectedWall) && tile.GroundType == 255)
+                            tile.GroundType = 0xfd;
 
                     tile.X = (short)x;
                     tile.Y = (short)y;
+                    tile.Pos = new IntPoint(x, y);
                     if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
                         var entity = (tile.ObjectType, new WorldPosData(x + 0.5f, y + 0.5f));
                         var enDesc = XmlLibrary.ObjectDescs[tile.ObjectType];
@@ -355,13 +377,14 @@ public class MapData {
         Parallel.For(0, indexCount, i => {
             var x = i % Width;
             var y = i / Width;
-            var tile = tileDatas[indices[i]];
+            var tile = tileDatas[indices[i]].Clone();
 
             if (ver == 2) tile.Elevation = elevations[i];
 
             Tiles[x, y] = tile;
             tile.X = (short)x;
             tile.Y = (short)y;
+            tile.Pos = new IntPoint(x, y);
             if (tile.ObjectType != 0xff && tile.ObjectType != 0) {
                 var entity = (tile.ObjectType, new WorldPosData(x + 0.5f, y + 0.5f));
                 var enDesc = XmlLibrary.ObjectDescs[tile.ObjectType];
