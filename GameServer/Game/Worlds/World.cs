@@ -114,7 +114,6 @@ public class World {
     public void MoveToSpawn(ref Entity en) {
         var spawnTile = Map.Regions[TileRegion.Spawn].RandomElement();
         en.Move(spawnTile.X, spawnTile.Y);
-        Console.WriteLine($"Moved entity to {spawnTile}");
     }
 
     public void Tick(ref RealmTime time) {

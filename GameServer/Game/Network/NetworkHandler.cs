@@ -59,7 +59,7 @@ public class NetworkHandler {
         Socket.NoDelay = true;
     }
 
-    public void WritePacket(IOutgoingPacket packet) {
+    public void WritePacket<T>(in T packet) where T : IOutgoingPacket, allows ref struct {
         Console.WriteLine($"SENDING {packet.ID}");
         _sendState.WritePacket(packet, (byte)packet.ID);
     }

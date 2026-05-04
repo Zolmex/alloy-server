@@ -65,7 +65,7 @@ public class SocketSendState : IDisposable {
         return _writeLength < 48000;
     }
 
-    public void WritePacket(IWritable pkt, byte pktId) {
+    public void WritePacket<T>(in T pkt, byte pktId) where T : IWritable, allows ref struct {
         var start = _writeLength;
 
         var span = _writeBuffer.AsSpan();

@@ -235,6 +235,7 @@ public class MapData {
         Tiles = tiles;
         Width = json.width;
         Height = json.height;
+        dict.Clear();
     }
 
     public string ExportJson() {
@@ -398,6 +399,8 @@ public class MapData {
                     Entities.Add(entity);
             }
         });
+        
+        Array.Clear(tileDatas);
     }
 
     private ushort GetCachedObjectType(string objId, Dictionary<string, ushort> cache) {

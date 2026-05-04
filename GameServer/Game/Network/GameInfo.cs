@@ -20,6 +20,8 @@ public class GameInfo {
     public World World;
     public Character Char;
     public int PlayerId;
+    
+    public ref Entity Player => ref World.Entities.Get(PlayerId);
 
     public GameInfo(User user) {
         User = user;

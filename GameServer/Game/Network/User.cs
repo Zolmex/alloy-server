@@ -93,8 +93,8 @@ public class User : IIdentifiable {
         GameInfo.Unload(reconnect, death);
     }
     
-    public void SendPacket(IOutgoingPacket packet) {
-        Network.WritePacket(packet);
+    public void SendPacket<T>(in T packet) where T : IOutgoingPacket, allows ref struct {
+        Network.WritePacket(in packet);
     }
     
     public void SendFailure(int errorId = Failure.DEFAULT, string message = Failure.DEFAULT_MESSAGE,

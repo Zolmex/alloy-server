@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Common.Game;
 using Common.Resources.World;
 using Common.Structs;
@@ -17,6 +18,8 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     private const int SIGHT_RADIUS_SQR = SIGHT_RADIUS * SIGHT_RADIUS;
     
     public override void Tick(ref RealmTime time) {
+        var newTiles = new List<MapTileData>(50);
+        var newEntities = new List<ObjectData>(50);
         for (var i = 0; i < _set.Count; i++) {
             ref var sight = ref _set.GetAt(i);
             ref var player = ref _world.Entities.Get(sight.Id);
@@ -25,16 +28,15 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
             
             var user = _world.PlayerToUser[player.Id];
             
-            var newTiles = GetNewTiles(ref player, ref sight);
-            var newEntities = GetNewEntities(ref player, ref sight);
-            user.SendPacket(new Update(newTiles, newEntities, new List<ObjectDropData>()));
-            Console.WriteLine($"Player: {player.Pos} | Sending {newTiles.Count} tiles, {newEntities.Count} entities");
+            GetNewTiles(ref player, ref sight, ref newTiles);
+            GetNewEntities(ref player, ref sight, ref newEntities);
+            user.SendPacket(new Update(CollectionsMarshal.AsSpan(newTiles), CollectionsMarshal.AsSpan(newEntities),
+                Span<ObjectDropData>.Empty));
+            newTiles.Clear();
         }
     }
     
-    private List<MapTileData> GetNewTiles(ref Entity player, ref PlayerSightComponent sight) {
-        var ret = new List<MapTileData>();
-        
+    private void GetNewTiles(ref Entity player, ref PlayerSightComponent sight, ref List<MapTileData> newTiles) {
         sight.VisibleTiles.Clear();
         switch (_world.Config.Blocksight) {
             case World.UNBLOCKED_SIGHT:
@@ -50,18 +52,14 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
                             sight.VisibleTiles.Add(tile.Pos);
                             if (sight.DiscoveredTiles.Add(tile.Pos)) // This is a newly discovered tile
-                                ret.Add(tile);
+                                newTiles.Add(tile);
                         }
 
                 break;
         }
-
-        return ret;
     }
 
-    private List<ObjectData> GetNewEntities(ref Entity player, ref PlayerSightComponent sight) {
-        var ret = new List<ObjectData>();
-        
+    private void GetNewEntities(ref Entity player, ref PlayerSightComponent sight, ref List<ObjectData> newEntities) {
         // TODO: Implement map chunk system for efficient spatial queries
         for (var i = 0; i < _world.Entities.Count; i++) {
             ref var en = ref _world.Entities.Get(i);
@@ -70,7 +68,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
             if (sight.VisibleEntities.Add(en.Id)) {
                 ref var stats = ref _world.EntityStats.Get(en.Id);
-                ret.Add(new ObjectData() {
+                newEntities.Add(new ObjectData() {
                     ObjectType = en.ObjectType,
                     Status = new ObjectStatusData() {
                         ObjectId = en.Id,
@@ -81,7 +79,5 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                 });
             }
         }
-        
-        return ret;
     }
 }
