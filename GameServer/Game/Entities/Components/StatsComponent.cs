@@ -12,6 +12,7 @@ public struct StatsComponent : IEntityComponent {
     public int Id { get; set; }
     
     public readonly StatValue[] Stats;
+    public BitMask256 StatUpdates;
     public BitMask256 PublicMask;
     public BitMask256 PrivateMask;
 
@@ -50,15 +51,15 @@ public struct StatsComponent : IEntityComponent {
         var id = (int)statType;
 
         Stats[id] = sv;
+        StatUpdates.Set(id);
 
         if (!isPrivate)
             PublicMask.Set(id);
         PrivateMask.Set(id);
     }
 
-    public void ClearMasks() {
-        PublicMask.Clear();
-        PrivateMask.Clear();
+    public void ClearUpdates() {
+        StatUpdates.Clear();
     }
 
     public void Dispose() {

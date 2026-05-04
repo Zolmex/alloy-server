@@ -117,7 +117,7 @@ public class World {
     }
 
     public void Tick(ref RealmTime time) {
-        EntityStats.Tick(ref time);
         PlayerSights.Tick(ref time);
+        EntityStats.Tick(ref time); // Clears stat update masks, needs to happen AFTER player update
     }
 }

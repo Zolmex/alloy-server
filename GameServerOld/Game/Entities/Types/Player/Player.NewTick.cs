@@ -18,14 +18,14 @@ public partial class Player {
     }
 
     public void HandleEntityStatChanged(Entity en, StatType type, StatValue value) {
-        if (!_entityStatUpdates.TryGetValue(en.Id, out var status))
-            status = new ObjectStatusData {
-                ObjectId = en.Id, Pos = en.Position,
-                Stats = ArrayPool<StatValue>.Shared.Rent((int)StatType.StatTypeCount), Force = true
-            };
-
-        status.SetPos(en.Position);
-        status.SetStat(type, value);
-        _entityStatUpdates[en.Id] = status;
+        // if (!_entityStatUpdates.TryGetValue(en.Id, out var status))
+        //     status = new ObjectStatusData {
+        //         ObjectId = en.Id, Pos = en.Position,
+        //         Stats = ArrayPool<StatValue>.Shared.Rent((int)StatType.StatTypeCount), Force = true
+        //     };
+        //
+        // status.SetPos(en.Position);
+        // status.SetStat(type, value);
+        // _entityStatUpdates[en.Id] = status;
     }
 }

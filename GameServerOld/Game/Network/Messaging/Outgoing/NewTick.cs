@@ -18,14 +18,14 @@ public readonly record struct NewTick(Dictionary<int, ObjectStatusData> Statuses
         var updateCount = 0;
         wtr.Write((short)0); // Placeholder
 
-        foreach (var status in Statuses.Values) {
-            if (!status.Force)
-                continue;
-
-            updateCount++;
-            status.Write(ref wtr);
-            status.Stats.Clear();
-        }
+        // foreach (var status in Statuses.Values) {
+        //     if (!status.Force)
+        //         continue;
+        //
+        //     updateCount++;
+        //     status.Write(ref wtr);
+        //     status.Stats.Clear();
+        // }
 
         var end = wtr.Position;
 

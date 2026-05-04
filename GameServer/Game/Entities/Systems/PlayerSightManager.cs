@@ -6,6 +6,7 @@ using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
@@ -27,16 +28,24 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                 continue;
             
             var user = _world.PlayerToUser[player.Id];
-            
-            GetNewTiles(ref player, ref sight, ref newTiles);
-            GetNewEntities(ref player, ref sight, ref newEntities);
-            user.SendPacket(new Update(CollectionsMarshal.AsSpan(newTiles), CollectionsMarshal.AsSpan(newEntities),
-                Span<ObjectDropData>.Empty));
-            newTiles.Clear();
+            ProcessUpdate(user, ref player, ref sight, newTiles, newEntities);
+            ProcessNewtick(user, ref player, ref sight);
         }
     }
+
+    private void ProcessUpdate(User user, ref Entity player, ref PlayerSightComponent sight, List<MapTileData> newTiles, List<ObjectData> newEntities) {
+        GetNewTiles(ref player, ref sight, newTiles);
+        GetNewEntities(ref player, ref sight, newEntities);
+
+        if (newTiles.Count == 0 && newEntities.Count == 0)
+            return;
+        
+        user.SendPacket(new Update(CollectionsMarshal.AsSpan(newTiles), CollectionsMarshal.AsSpan(newEntities),
+            Span<ObjectDropData>.Empty));
+        newTiles.Clear();
+    }
     
-    private void GetNewTiles(ref Entity player, ref PlayerSightComponent sight, ref List<MapTileData> newTiles) {
+    private void GetNewTiles(ref Entity player, ref PlayerSightComponent sight, List<MapTileData> newTiles) {
         sight.VisibleTiles.Clear();
         switch (_world.Config.Blocksight) {
             case World.UNBLOCKED_SIGHT:
@@ -59,7 +68,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         }
     }
 
-    private void GetNewEntities(ref Entity player, ref PlayerSightComponent sight, ref List<ObjectData> newEntities) {
+    private void GetNewEntities(ref Entity player, ref PlayerSightComponent sight, List<ObjectData> newEntities) {
         // TODO: Implement map chunk system for efficient spatial queries
         for (var i = 0; i < _world.Entities.Count; i++) {
             ref var en = ref _world.Entities.Get(i);
@@ -70,14 +79,24 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                 ref var stats = ref _world.EntityStats.Get(en.Id);
                 newEntities.Add(new ObjectData() {
                     ObjectType = en.ObjectType,
+                    PrivateMask = en.Id == player.Id ? stats.PrivateMask : stats.PublicMask,
                     Status = new ObjectStatusData() {
                         ObjectId = en.Id,
                         Pos = en.Pos,
-                        Stats = stats.Stats,
-                        Force = true // Force all stats to send
+                        Stats = stats.Stats
                     }
+                });
+                
+                sight.Statuses.Add(new ObjectStatusData() {
+                    ObjectId = stats.Id,
+                    Pos = en.Pos,
+                    Stats = stats.Stats
                 });
             }
         }
+    }
+
+    private void ProcessNewtick(User user, ref Entity player, ref PlayerSightComponent sight) {
+        user.SendPacket(new NewTick(CollectionsMarshal.AsSpan(sight.Statuses), _world.EntityStats, player.Id));
     }
 }

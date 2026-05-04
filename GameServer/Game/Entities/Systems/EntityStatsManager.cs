@@ -19,17 +19,7 @@ public class EntityStatsManager(World world, int capacity) : ManagerBase<StatsCo
     public override void Tick(ref RealmTime time) {
         for (var i = 0; i < _set.Count; i++) {
             ref var stats = ref _set.GetAt(i);
-            var publicCount = 0;
-            var privateCount = 0;
-            for (var j = 0; j < StatsComponent.STAT_COUNT; j++) {
-                if (stats.PublicMask.IsSet(j)) {
-                    publicCount++;
-                }
-                if (stats.PrivateMask.IsSet(j)) {
-                    privateCount++;
-                }
-            }
-            stats.ClearMasks();
+            stats.ClearUpdates();
         }
     }
 }

@@ -7,22 +7,19 @@ public struct ObjectStatusData {
     public int ObjectId;
     public WorldPosData Pos;
     public StatValue[] Stats;
-    public BitMask256 StatsMask;
-    public StatData[] UpdatedStats;
-    public bool Force;
 
     public static ObjectStatusData Read(ref SpanReader rdr) {
         var ret = new ObjectStatusData();
         ret.ObjectId = rdr.ReadInt32();
         ret.Pos = WorldPosData.Read(ref rdr);
-        ret.UpdatedStats = new StatData[rdr.ReadByte()];
-        for (var i = 0; i < ret.UpdatedStats.Length; i++)
-            ret.UpdatedStats[i] = StatData.Read(ref rdr);
+        ret.Stats = new StatValue[rdr.ReadByte()];
+        for (var i = 0; i < ret.Stats.Length; i++)
+            ret.Stats[i] = StatData.Read(ref rdr).Value;
 
         return ret;
     }
 
-    public void Write(ref SpanWriter wtr) {
+    public void Write(ref SpanWriter wtr, ref BitMask256 privateMask, ref BitMask256 statUpdates) {
         wtr.Write(ObjectId);
         wtr.Write(Pos);
 
@@ -32,7 +29,7 @@ public struct ObjectStatusData {
 
         for (var i = 0; i < (int)StatType.StatTypeCount; i++) {
             var value = Stats[i];
-            if ((Force && value.HasValue) || StatsMask.IsSet(i)) {
+            if (value.HasValue && privateMask.IsSet(i) && statUpdates.IsSet(i)) {
                 statCount++;
                 StatData.Write(ref wtr, (StatType)i, value);
             }
@@ -42,18 +39,5 @@ public struct ObjectStatusData {
         wtr.Position = pos; // Write in the placeholder the real amount of stat counts
         wtr.Write((byte)statCount);
         wtr.Position = endPos;
-    }
-
-    public void SetStat(StatType type, StatValue value) {
-        Force = true;
-        if (type == StatType.None)
-            return;
-
-        var id = (int)type;
-        Stats[id] = value;
-    }
-
-    public void SetPos(WorldPosData pos) {
-        Pos = pos;
     }
 }

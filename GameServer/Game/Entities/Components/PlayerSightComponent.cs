@@ -11,6 +11,7 @@ public struct PlayerSightComponent : IEntityComponent {
     public HashSet<IntPoint> VisibleTiles = [];
     public HashSet<IntPoint> DiscoveredTiles = [];
     public HashSet<int> VisibleEntities = [];
+    public List<ObjectStatusData> Statuses = [];
 
     public PlayerSightComponent(ref Entity en) {
         
