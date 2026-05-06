@@ -21,11 +21,23 @@ public readonly ref struct NewTick : IOutgoingPacket {
     }
     
     public void Write(ref SpanWriter wtr) {
-        wtr.Write((short)_statuses.Length);
+        var begin = wtr.Position;
+        wtr.Write((short)0); // Placeholder
+
+        var count = 0;
         foreach (var status in _statuses) {
             ref var stats = ref _statsManager.Get(status.ObjectId);
             var mask = status.ObjectId == _playerId ? stats.PrivateMask : stats.PublicMask;
-            status.Write(ref wtr, ref mask, ref stats.StatUpdates);
+            if (stats.StatUpdates.IsEmpty())
+                continue;
+
+            status.Write(stats.Pos, ref wtr, ref mask, ref stats.StatUpdates);
+            count++;
         }
+        
+        var end = wtr.Position;
+        wtr.Position = begin;
+        wtr.Write((short)count);
+        wtr.Position = end;
     }
 }

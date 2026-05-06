@@ -2,6 +2,7 @@
 
 using Common.Network;
 using Common.Structs;
+using GameServer.Game.Entities.Extensions;
 
 #endregion
 
@@ -16,7 +17,7 @@ public record Move : IIncomingPacket {
             return;
 
         ref var player = ref user.GameInfo.Player;
-        player.Move(Pos.X, Pos.Y);
+        player.Move(user.GameInfo.World, Pos.X, Pos.Y);
     }
 
     public void Read(ref SpanReader rdr) {

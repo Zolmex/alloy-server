@@ -58,8 +58,9 @@ public class World {
     public void LoadEntities() {
         foreach (var orig in Map.Entities) {
             var en = new Entity(orig.ObjType);
-            en.Move(orig.Pos.X, orig.Pos.Y);
             EnterWorld(ref en);
+            ref var stats = ref EntityStats.Get(en.Id);
+            stats.Move(orig.Pos.X, orig.Pos.Y);
         }
     }
 

@@ -17,8 +17,7 @@ public class EntityStatsManager(World world, int capacity) : ManagerBase<StatsCo
     }
 
     public override void Tick(ref RealmTime time) {
-        for (var i = 0; i < _set.Count; i++) {
-            ref var stats = ref _set.GetAt(i);
+        foreach (ref var stats in this){
             stats.ClearUpdates();
         }
     }

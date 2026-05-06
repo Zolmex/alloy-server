@@ -15,15 +15,9 @@ public struct Entity : IIdentifiable, IEquatable<Entity> {
     public EntityType Type { get; }
     public readonly ObjectDesc Desc => XmlLibrary.ObjectDescs[ObjectType];
     
-    public WorldPosData Pos;
-
     public Entity(ushort objType) {
         ObjectType = objType;
         Type = ResolveType(objType);
-    }
-
-    public void Move(float newX, float newY) {
-        Pos = new WorldPosData(newX, newY);
     }
 
     public readonly bool Equals(Entity other) {

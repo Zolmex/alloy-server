@@ -19,9 +19,9 @@ public struct ObjectStatusData {
         return ret;
     }
 
-    public void Write(ref SpanWriter wtr, ref BitMask256 privateMask, ref BitMask256 statUpdates) {
+    public void Write(WorldPosData enPos, ref SpanWriter wtr, ref BitMask256 privateMask, ref BitMask256 statUpdates) {
         wtr.Write(ObjectId);
-        wtr.Write(Pos);
+        wtr.Write(enPos);
 
         var statCount = 0;
         var pos = wtr.Position;

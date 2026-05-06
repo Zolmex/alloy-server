@@ -25,15 +25,13 @@ public record Create : IIncomingPacket {
             user.SendFailure(Failure.DEFAULT, result.GetDescription());
         }
         else {
-            user.GameInfo.World?.Enqueue(() => {
-                var world = user.GameInfo.World;
-                if (world.Deleted) {
-                    user.SendFailure(Failure.DEFAULT, "Invalid world.");
-                    return;
-                }
+            var world = user.GameInfo.World;
+            if (world.Deleted) {
+                user.SendFailure(Failure.DEFAULT, "Invalid world.");
+                return;
+            }
 
-                user.Load(chr, world);
-            });
+            user.Load(chr, world);
         }
     }
 }

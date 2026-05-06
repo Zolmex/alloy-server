@@ -19,4 +19,11 @@ public unsafe struct BitMask256 {
         for (var i = 0; i < 8; i++)
             _bits[i] = 0;
     }
+
+    public bool IsEmpty() {
+        for (var i = 0; i < 8; i++)
+            if (_bits[i] != 0)
+                return false;
+        return true;
+    }
 }

@@ -10,7 +10,8 @@ public struct StatsComponent : IEntityComponent {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;
 
     public int Id { get; set; }
-    
+
+    public WorldPosData Pos;
     public readonly StatValue[] Stats;
     public BitMask256 StatUpdates;
     public BitMask256 PublicMask;
@@ -21,6 +22,12 @@ public struct StatsComponent : IEntityComponent {
         Stats.AsSpan(0, STAT_COUNT).Clear();
         
         Set(StatType.Name, en.Desc.ObjectId);
+    }
+
+    public void Move(float newX, float newY) {
+        Pos = new WorldPosData(newX, newY);
+        Set(StatType.PositionX, newX); // Internal, client doesn't care
+        Set(StatType.PositionY, newY);
     }
 
     public int GetInt(StatType s) {

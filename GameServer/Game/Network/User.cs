@@ -71,19 +71,21 @@ public class User : IIdentifiable {
     }
     
     public void Load(Character chr, World world) {
-        State = ConnectionState.Ready;
+        world.Enqueue(() => {
+            State = ConnectionState.Ready;
+            
+            GameInfo.Load(chr, world);
 
-        GameInfo.Load(chr, world);
-
-        SendPacket(new CreateSuccess(
-            GameInfo.PlayerId,
-            chr.AccCharId));
-        SendPacket(new AccountList(
-            AccountList.Locked,
-            GameInfo.Account.AccountLocks.Select(i => i.LockedId).ToArray()));
-        SendPacket(new AccountList(
-            AccountList.Ignored,
-            GameInfo.Account.AccountIgnores.Select(i => i.IgnoredId).ToArray()));
+            SendPacket(new CreateSuccess(
+                GameInfo.PlayerId,
+                chr.AccCharId));
+            SendPacket(new AccountList(
+                AccountList.Locked,
+                GameInfo.Account.AccountLocks.Select(i => i.LockedId).ToArray()));
+            SendPacket(new AccountList(
+                AccountList.Ignored,
+                GameInfo.Account.AccountIgnores.Select(i => i.IgnoredId).ToArray()));
+        });
     }
     
     public void Unload(bool reconnect, bool death = false) {

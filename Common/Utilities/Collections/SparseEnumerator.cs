@@ -1,0 +1,15 @@
+namespace Common.Utilities.Collections;
+
+public ref struct SparseEnumerator<T> where T : struct, IIdentifiable {
+    private readonly SparseSet<T> _set;
+    private int _index;
+
+    public SparseEnumerator(SparseSet<T> set) {
+        _set = set;
+        _index = 0;
+    }
+
+    public bool MoveNext() => ++_index < _set.Count;
+
+    public ref T Current => ref _set.GetAt(_index);
+}

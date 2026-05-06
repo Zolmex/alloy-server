@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Common.Game;
 using Common.Utilities.Collections;
@@ -28,4 +29,6 @@ public class EntityManager {
     }
 
     public ref Entity Get(int id) => ref _set.Get(id);
+    
+    public SparseEnumerator<Entity> GetEnumerator() => new(_set);
 }

@@ -14,6 +14,6 @@ public struct ObjectData {
 
     public void Write(ref SpanWriter wtr) {
         wtr.Write(ObjectType);
-        Status.Write(ref wtr, ref PrivateMask, ref PrivateMask);
+        Status.Write(Status.Pos, ref wtr, ref PrivateMask, ref PrivateMask);
     }
 }

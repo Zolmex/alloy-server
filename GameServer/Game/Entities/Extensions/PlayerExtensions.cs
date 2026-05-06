@@ -51,7 +51,7 @@ public static class PlayerExtensions {
         
         public void MoveToSpawn(World world) {
             var spawnTile = world.Map.Regions[TileRegion.Spawn].RandomElement();
-            player.Move(spawnTile.X, spawnTile.Y);
+            player.Move(world, spawnTile.X, spawnTile.Y);
         }
         
         public void Speak(World world, string message) {

@@ -31,4 +31,6 @@ public abstract class ManagerBase<T> where T : struct, IEntityComponent {
     }
 
     public abstract void Tick(ref RealmTime time);
+    
+    public SparseEnumerator<T> GetEnumerator() => new(_set);
 }
