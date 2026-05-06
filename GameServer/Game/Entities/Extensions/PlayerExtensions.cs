@@ -24,17 +24,15 @@ public static class PlayerExtensions {
         
         public void Speak(World world, string message) {
             ref var stats = ref world.EntityStats.Get(player.Id);
-            foreach (var (otherId, otherUser) in world.PlayerToUser) {
-                ref var otherPlayer = ref world.Entities.Get(otherId);
-                if (otherPlayer.DistSqr(player) < PlayerSightManager.SIGHT_RADIUS_SQR)
-                    otherUser.SendPacket(new Text(
-                        stats.GetString(StatType.Name),
-                        player.Id,
-                        stats.GetInt(StatType.NumStars), 
-                        5, 
-                        null,
-                        message
-                        ));
+            foreach (var otherUser in world.PlayerToUser.Values) {
+                otherUser.SendPacket(new Text(
+                    stats.GetString(StatType.Name),
+                    player.Id,
+                    stats.GetInt(StatType.NumStars), 
+                    5, 
+                    null,
+                    message
+                ));
             }
         }
     }
