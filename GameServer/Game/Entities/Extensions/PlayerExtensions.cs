@@ -3,8 +3,10 @@ using Common.Database.Models;
 using Common.Resources.Config;
 using Common.Resources.World;
 using Common.Utilities;
+using GameServer.Game.Chat.Commands;
 using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Systems;
+using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
@@ -54,8 +56,18 @@ public static class PlayerExtensions {
             player.Move(world, spawnTile.X, spawnTile.Y);
         }
         
-        public void Speak(World world, string message) {
+        public void Speak(World world, string text) {
             ref var stats = ref world.EntityStats.Get(player.Id);
+            ref var chat = ref world.PlayerChat.Get(player.Id);
+
+            if (!chat.ValidateSpeak(GameLogic.WorldTime, text))
+                return;
+            
+            if (text.StartsWith('/')) {
+                ExecuteCommand(world.PlayerToUser[player.Id], text);
+                return;
+            }
+            
             foreach (var otherUser in world.PlayerToUser.Values) {
                 otherUser.SendPacket(new Text(
                     stats.GetString(StatType.Name),
@@ -63,10 +75,17 @@ public static class PlayerExtensions {
                     stats.GetInt(StatType.NumStars),
                     5,
                     null,
-                    message
+                    text
                 ));
             }
         }
+    }
+    
+    public static void ExecuteCommand(User user, string text) {
+        var spaceIndex = text.IndexOf(' ');
+        var command = text.Substring(0, spaceIndex == -1 ? text.Length : spaceIndex);
+        var args = spaceIndex == -1 ? null : text.Substring(spaceIndex + 1);
+        CommandManager.ExecuteCommand(user, command, args);
     }
     
     public static int GetStars(ICollection<ClassStat> classStats) {

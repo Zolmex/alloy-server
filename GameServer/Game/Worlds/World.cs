@@ -23,6 +23,7 @@ public class World {
     public readonly EntityManager Entities;
     public readonly EntityStatsManager EntityStats;
     public readonly PlayerSightManager PlayerSights;
+    public readonly PlayerChatManager PlayerChat;
 
     public ImmutableDictionary<int, User> PlayerToUser;
 
@@ -41,6 +42,7 @@ public class World {
         Entities = new EntityManager(5_000);
         EntityStats = new EntityStatsManager(this, 5_000);
         PlayerSights = new PlayerSightManager(this, 100);
+        PlayerChat = new PlayerChatManager(this, 100);
 
         PlayerToUser = ImmutableDictionary<int, User>.Empty;
 
@@ -103,6 +105,8 @@ public class World {
             case EntityType.Player:
                 var sight = new PlayerSightComponent(ref en);
                 PlayerSights.Add(ref sight, en.Id);
+                var chat = new PlayerChatComponent(this, ref en);
+                PlayerChat.Add(ref chat, en.Id);
                 break;
             default:
                 throw new ArgumentOutOfRangeException($"{en.Type}");

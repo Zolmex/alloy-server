@@ -42,6 +42,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         
         user.SendPacket(new Update(CollectionsMarshal.AsSpan(newTiles), CollectionsMarshal.AsSpan(newEntities),
             Span<ObjectDropData>.Empty));
+        
         newTiles.Clear();
         newEntities.Clear();
     }

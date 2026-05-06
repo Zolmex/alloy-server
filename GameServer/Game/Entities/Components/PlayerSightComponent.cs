@@ -18,6 +18,9 @@ public struct PlayerSightComponent : IEntityComponent {
     }
     
     public void Dispose() {
-        
+        VisibleTiles.Clear();
+        DiscoveredTiles.Clear();
+        VisibleEntities.Clear();
+        Statuses.Clear();
     }
 }
