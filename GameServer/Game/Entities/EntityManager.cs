@@ -19,8 +19,7 @@ public class EntityManager {
 
     public ref Entity Add(ref Entity elem) {
         elem.Id = _freeIds.Count > 0 ? _freeIds.Pop() : _idCounter++;
-        ref var ret = ref _set.Add(ref elem);
-        return ref ret;
+        return ref _set.Add(ref elem);
     }
 
     public virtual void Remove(int id) {

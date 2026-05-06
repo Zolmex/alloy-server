@@ -2,6 +2,7 @@
 using Common.Game;
 using Common.Utilities;
 using GameServer.Game.Entities;
+using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Network;
@@ -41,7 +42,9 @@ public class GameInfo {
         
         var plr = new Entity(chr.ObjectType);
         ref var newPlr = ref world.EnterPlayer(ref plr, User);
-        world.MoveToSpawn(ref newPlr);
+        newPlr.Init(world, Account, Char);
+        newPlr.MoveToSpawn(world);
+        
         PlayerId = newPlr.Id;
     }
 

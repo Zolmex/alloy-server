@@ -19,8 +19,7 @@ public abstract class ManagerBase<T> where T : struct, IEntityComponent {
     
     public ref T Add(ref T elem, int entityId) {
         elem.Id = entityId;
-        ref var ret = ref _set.Add(ref elem);
-        return ref ret;
+        return ref _set.Add(ref elem);
     }
 
     public virtual void Remove(int id) {

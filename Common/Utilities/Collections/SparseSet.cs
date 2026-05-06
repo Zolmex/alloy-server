@@ -39,13 +39,15 @@ public class SparseSet<T> where T : struct, IIdentifiable {
         if (indexInDense == 0)
             return;
         
-        var lastElement = _dense[Count - 1];
-        
-        _dense[indexInDense] = lastElement;
-        _sparse[lastElement.Id] = indexInDense;
-
         _sparse[id] = 0; // Point to default
         Count--;
+        
+        if (indexInDense == Count) // Was the last element, no swap needed
+            return;
+        
+        ref var slot = ref _dense[indexInDense];
+        slot = _dense[Count]; // Swap with last element
+        _sparse[slot.Id] = indexInDense;
     }
 
     public ref T Get(int id) {

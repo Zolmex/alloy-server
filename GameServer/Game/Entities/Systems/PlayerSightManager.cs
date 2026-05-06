@@ -15,8 +15,8 @@ namespace GameServer.Game.Entities.Systems;
 
 public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerSightComponent>(world, capacity) {
 
-    private const int SIGHT_RADIUS = 20;
-    private const int SIGHT_RADIUS_SQR = SIGHT_RADIUS * SIGHT_RADIUS;
+    public const int SIGHT_RADIUS = 20;
+    public const int SIGHT_RADIUS_SQR = SIGHT_RADIUS * SIGHT_RADIUS;
     
     public override void Tick(ref RealmTime time) {
         var newTiles = new List<MapTileData>(50);
