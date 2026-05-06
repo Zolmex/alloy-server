@@ -1,5 +1,6 @@
 using Common;
 using Common.Database.Models;
+using Common.Resources.Config;
 using Common.Resources.World;
 using Common.Utilities;
 using GameServer.Game.Entities.Components;
@@ -15,6 +16,37 @@ public static class PlayerExtensions {
         public void Init(World world, Account acc, Character chr) {
             ref var stats = ref world.EntityStats.Get(player.Id);
             stats.Set(StatType.Name, acc.Name);
+            stats.Set(StatType.Fame, acc.AccStats.CurrentFame);
+            stats.Set(StatType.Credits, acc.AccStats.CurrentCredits);
+            stats.Set(StatType.GuildName, acc.GuildName);
+            stats.Set(StatType.GuildRank, acc.GuildMember?.GuildRank ?? 0);
+            stats.Set(StatType.NumStars, GetStars(acc.AccStats.ClassStats));
+            stats.Set(StatType.AccRank, acc.Rank);
+            player.LoadCharacterStats(ref stats, acc, chr);
+        }
+
+        private void LoadCharacterStats(ref StatsComponent stats, Account acc, Character chr) {
+            stats.Set(StatType.Level, chr.Level);
+            stats.Set(StatType.CharFame, (int)chr.CurrentFame);
+            stats.Set(StatType.Experience, (int)chr.XpPoints);
+            var classStat = acc.AccStats.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
+            stats.Set(StatType.NextClassQuestFame, GetNextClassQuestFame((int)(classStat.BestFame > chr.CurrentFame ? classStat.BestFame : chr.CurrentFame)));
+            stats.Set(StatType.NextLevelXp, GetNextLevelXPGoal(chr.Level));
+            stats.Set(StatType.HealthPotionStack, chr.HealthPotions);
+            stats.Set(StatType.MagicPotionStack, chr.MagicPotions);
+            
+            if (chr.CharStats != null) {
+                stats.Set(StatType.MaxHP, (int)chr.CharStats.MaxHp);
+                stats.Set(StatType.HP, (int)chr.CharStats.Hp);
+                stats.Set(StatType.MaxMP, (int)chr.CharStats.MaxMp);
+                stats.Set(StatType.MP, (int)chr.CharStats.Mp);
+                stats.Set(StatType.Attack, (int)chr.CharStats.Attack);
+                stats.Set(StatType.Defense, (int)chr.CharStats.Defense);
+                stats.Set(StatType.Speed, (int)chr.CharStats.Speed);
+                stats.Set(StatType.Dexterity, (int)chr.CharStats.Dexterity);
+                stats.Set(StatType.Vitality, (int)chr.CharStats.Vitality);
+                stats.Set(StatType.Wisdom, (int)chr.CharStats.Wisdom);
+            }
         }
         
         public void MoveToSpawn(World world) {
@@ -28,12 +60,38 @@ public static class PlayerExtensions {
                 otherUser.SendPacket(new Text(
                     stats.GetString(StatType.Name),
                     player.Id,
-                    stats.GetInt(StatType.NumStars), 
-                    5, 
+                    stats.GetInt(StatType.NumStars),
+                    5,
                     null,
                     message
                 ));
             }
         }
+    }
+    
+    public static int GetStars(ICollection<ClassStat> classStats) {
+        var goals = GameConfig.Config.StarGoals;
+        var stars = 0;
+        foreach (var classStat in classStats)
+            for (var i = 0; i < goals.Length; i++)
+                if (classStat.BestFame >= goals[i])
+                    stars++;
+        return stars;
+    }
+        
+    public static int GetNextLevelXPGoal(int level) {
+        return (int)(50f + (level - 1f) * 100f * (1f + level / 10f));
+    }
+
+    public static int GetNextClassQuestFame(int fame) {
+        var goals = GameConfig.Config.StarGoals;
+        for (var i = 0; i < goals.Length; i++) {
+            if (fame >= goals[i] && i == goals.Length - 1)
+                return 0;
+            if (fame < goals[i])
+                return goals[i];
+        }
+
+        return -1;
     }
 }
