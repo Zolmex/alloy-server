@@ -1,10 +1,4 @@
-﻿#region
-
-using System;
-
-#endregion
-
-namespace GameServerOld.Game.Entities.Behaviors;
+﻿namespace GameServer.Game.Entities.Behaviors;
 
 public class CharacterBehaviorAttribute : Attribute {
     public CharacterBehaviorAttribute(string objectId) {

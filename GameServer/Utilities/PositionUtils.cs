@@ -6,39 +6,39 @@ using GameServer.Game.Entities.Components;
 namespace GameServer.Utilities;
 
 public static class PositionUtils {
-    extension(ref StatsComponent stats) {
+    extension(ref EntityStats entityStats) {
         public float DistSqr(float x, float y) {
-            return DistSqr(stats.Pos.X, stats.Pos.Y, x, y);
+            return DistSqr(entityStats.Pos.X, entityStats.Pos.Y, x, y);
         }
 
-        public float DistSqr(ref StatsComponent b) {
-            var dx = stats.Pos.X - b.Pos.X;
-            var dy = stats.Pos.Y - b.Pos.Y;
+        public float DistSqr(ref EntityStats b) {
+            var dx = entityStats.Pos.X - b.Pos.X;
+            var dy = entityStats.Pos.Y - b.Pos.Y;
             return dx * dx + dy * dy;
         }
 
         public double TileDistSqr(int tileX, int tileY) {
-            var dx = (int)stats.Pos.X - tileX;
-            var dy = (int)stats.Pos.Y - tileY;
+            var dx = (int)entityStats.Pos.X - tileX;
+            var dy = (int)entityStats.Pos.Y - tileY;
             return dx * dx + dy * dy;
         }
 
-        public double TileDistSqr(ref StatsComponent b) {
-            var dx = (int)stats.Pos.X - (int)b.Pos.X;
-            var dy = (int)stats.Pos.Y - (int)b.Pos.Y;
+        public double TileDistSqr(ref EntityStats b) {
+            var dx = (int)entityStats.Pos.X - (int)b.Pos.X;
+            var dy = (int)entityStats.Pos.Y - (int)b.Pos.Y;
             return dx * dx + dy * dy;
         }
 
         public float GetAngleBetween(Vector2 pos) {
-            return stats.GetAngleBetween(pos.X, pos.Y);
+            return entityStats.GetAngleBetween(pos.X, pos.Y);
         }
 
-        public float GetAngleBetween(ref StatsComponent b) {
-            return stats.GetAngleBetween(b.Pos.X, b.Pos.Y);
+        public float GetAngleBetween(ref EntityStats b) {
+            return entityStats.GetAngleBetween(b.Pos.X, b.Pos.Y);
         }
 
         public float GetAngleBetween(float x, float y) {
-            return MathF.Atan2(y - stats.Pos.Y, x - stats.Pos.X);
+            return MathF.Atan2(y - entityStats.Pos.Y, x - entityStats.Pos.X);
         }
     }
     

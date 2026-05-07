@@ -1,6 +1,4 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -19,13 +17,10 @@ using GameServerOld.Game.Entities.Behaviors.Actions;
 using GameServerOld.Game.Entities.Behaviors;
 using GameServerOld.Game.Entities.Behaviors.Library;
 using GameServerOld.Game.Entities.Behaviors.Transitions;
-using GameServerOld.Game.Entities.DamageSources.Types;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-#endregion
-
-namespace GameServerOld.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Behaviors;
 
 public static class BehaviorLibrary {
     private static readonly Logger _log = new(typeof(BehaviorLibrary));
@@ -46,7 +41,7 @@ public static class BehaviorLibrary {
         MetadataReference.CreateFromFile(typeof(TimedTransition).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(State).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(AOE).GetTypeInfo().Assembly.Location),
-        MetadataReference.CreateFromFile(typeof(Projectile).GetTypeInfo().Assembly.Location),
+        // MetadataReference.CreateFromFile(typeof(Projectile).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(ProjectilePathSegment).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(ConditionEffectIndex).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(TileRegion).GetTypeInfo().Assembly.Location),

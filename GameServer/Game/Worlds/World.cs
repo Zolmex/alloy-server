@@ -84,7 +84,7 @@ public class World {
     }
 
     private void AddComponents(ref Entity en) {
-        var stats = new StatsComponent(ref en);
+        var stats = new EntityStats(ref en);
         EntityStats.Add(ref stats, en.Id); // All entities must have
 
         switch (en.Type) {
@@ -103,9 +103,9 @@ public class World {
             case EntityType.Container:
                 break;
             case EntityType.Player:
-                var sight = new PlayerSightComponent(ref en);
+                var sight = new PlayerSight(ref en);
                 PlayerSights.Add(ref sight, en.Id);
-                var chat = new PlayerChatComponent(this, ref en);
+                var chat = new PlayerChat(this, ref en);
                 PlayerChat.Add(ref chat, en.Id);
                 break;
             default:

@@ -14,8 +14,11 @@ using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Systems;
 
-public class PlayerChatManager(World world, int capacity) : ManagerBase<PlayerChat>(world, capacity) {
+public class EntityBehaviorManager(World world, int capacity) : ManagerBase<EntityBehavior>(world, capacity) {
 
     public override void Tick(ref RealmTime time) {
+        foreach (ref var behavior in this) {
+            behavior.Tick(ref time);
+        }
     }
 }

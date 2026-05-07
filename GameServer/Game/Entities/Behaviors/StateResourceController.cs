@@ -1,12 +1,6 @@
-#region
-
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
-#endregion
-
-namespace GameServerOld.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Behaviors;
 
 public class StateResourceController {
     private readonly ConcurrentDictionary<int, object> _stateResources = new();

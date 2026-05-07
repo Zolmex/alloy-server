@@ -17,7 +17,7 @@ public static class ChatExtensions {
                 text));
         }
 
-        public void SendParty(string text, ref StatsComponent speaker) {
+        public void SendParty(string text, ref EntityStats speaker) {
             user.SendPacket(new Text(
                 speaker.GetString(StatType.Name),
                 speaker.Id,

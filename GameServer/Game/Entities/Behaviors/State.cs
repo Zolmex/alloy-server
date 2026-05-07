@@ -1,28 +1,25 @@
-﻿#region
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Common.Game;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using GameServerOld.Game.Entities.Loot;
-using GameServerOld.Game.Entities.Types;
+using GameServer.Game.Entities.Components;
 
-#endregion
-
-namespace GameServerOld.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Behaviors;
 
 public class State : IStateChild {
     private static readonly Logger _log = new(typeof(State));
+
+    public string Name { get; }
+    public State Parent { get; private set; }
+    public List<BehaviorTransition> Transitions { get; }
+    public List<BehaviorScript> Scripts { get; }
+    public List<State> ChildStates { get; }
 
     public readonly Dictionary<string, State> States = new();
 
     public State(string name, params IStateChild[] children)
         : this(children) {
         Name = name;
-    }
-
-    public State(CharacterLoot loot, params IStateChild[] children)
-        : this(children) {
-        Loot = loot;
     }
 
     public State(params IStateChild[] children) {
@@ -47,19 +44,6 @@ public class State : IStateChild {
             }
     }
 
-    public string Name { get; }
-    public State Parent { get; private set; }
-    public List<BehaviorTransition> Transitions { get; }
-    public List<BehaviorScript> Scripts { get; }
-    public List<State> ChildStates { get; }
-    public CharacterLoot Loot { get; }
-
-    public void RegisterLoot(CharacterEntity host) {
-        if (Loot == null) return;
-
-        foreach (var loot in Loot.Loots) host.RegisterLoot(loot);
-    }
-
     public void AddToDictionary(Dictionary<string, State> dict) {
         dict.Add(Name, this);
         foreach (var state in ChildStates)
@@ -80,53 +64,53 @@ public class State : IStateChild {
             child.Setup(desc);
     }
 
-    public void Enter(CharacterEntity host) // Perform any initial setups we need for current and child states
+    public void Enter(ref EntityBehavior host) // Perform any initial setups we need for current and child states
     {
-        if (!host.ClassicBehavior.ActiveStates.Add(this))
+        if (!host.ActiveStates.Add(this))
             return;
 
-        Parent?.Enter(host); // Call parent to enter
+        Parent?.Enter(ref host); // Call parent to enter
 
-        foreach (var trans in Transitions) trans.Start(host);
+        foreach (var trans in Transitions) trans.Start(ref host);
 
-        foreach (var script in Scripts) script.Start(host);
+        foreach (var script in Scripts) script.Start(ref host);
     }
 
-    public string Tick(CharacterEntity host, RealmTime time) {
-        var targetState = Parent?.Tick(host, time);
+    public string Tick(ref EntityBehavior host, RealmTime time) {
+        var targetState = Parent?.Tick(ref host, time);
         if (targetState != null)
             return targetState;
 
         foreach (var trans in Transitions) { // Check if we have a transition to make
-            targetState = trans.Tick(host, time);
-            if (targetState != null && host.ClassicBehavior.PastTransitions.Add(trans))
+            targetState = trans.Tick(ref host, time);
+            if (targetState != null && host.PastTransitions.Add(trans))
                 // Make sure transitions only occur once (prevents parent state transitions to happen multiple times)
                 return targetState;
         }
 
         foreach (var script in Scripts)
-            script.Tick(host, time);
+            script.Tick(ref host, time);
 
         return null;
     }
 
-    public void Exit(CharacterEntity host, RealmTime time) {
-        if (!host.ClassicBehavior.ActiveStates.Remove(this)) // Prevents exiting the same state twice
+    public void Exit(ref EntityBehavior host, RealmTime time) {
+        if (!host.ActiveStates.Remove(this)) // Prevents exiting the same state twice
             return;
 
         // Instead of clearing resources (we might end up deleting parent state's resources), remove each script's resources
         foreach (var script in Scripts) {
-            script.End(host, time);
-            host.StateResources.RemoveResource(script);
+            script.End(ref host, time);
+            host.Resources.RemoveResource(script);
         }
 
         foreach (var trans in Transitions) {
-            host.ClassicBehavior.PastTransitions.Remove(trans);
-            trans.End(host, time);
+            host.PastTransitions.Remove(trans);
+            trans.End(ref host, time);
         }
     }
 
-    public void ExitInactiveParent(CharacterEntity host, RealmTime time, State targetState) {
+    public void ExitInactiveParent(ref EntityBehavior host, RealmTime time, State targetState) {
         // Will exit parent if it is not parent of the targetState
         if (Parent == null)
             return;
@@ -134,7 +118,7 @@ public class State : IStateChild {
         if (Parent.ChildStates.Contains(targetState))
             return;
 
-        Parent.Exit(host, time);
-        Parent.ExitInactiveParent(host, time, targetState); // Recursively call exit on each parent
+        Parent.Exit(ref host, time);
+        Parent.ExitInactiveParent(ref host, time, targetState); // Recursively call exit on each parent
     }
 }

@@ -5,7 +5,7 @@ using Common.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct PlayerSightComponent : IEntityComponent {
+public struct PlayerSight : IEntityComponent {
     public int Id { get; set; }
 
     public HashSet<IntPoint> VisibleTiles = [];
@@ -13,7 +13,7 @@ public struct PlayerSightComponent : IEntityComponent {
     public HashSet<int> VisibleEntities = [];
     public List<ObjectStatusData> Statuses = [];
 
-    public PlayerSightComponent(ref Entity en) {
+    public PlayerSight(ref Entity en) {
         
     }
     

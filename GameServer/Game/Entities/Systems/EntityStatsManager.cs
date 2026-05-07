@@ -7,7 +7,7 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Systems;
 
-public class EntityStatsManager(World world, int capacity) : ManagerBase<StatsComponent>(world, capacity) {
+public class EntityStatsManager(World world, int capacity) : ManagerBase<EntityStats>(world, capacity) {
     
     public override void Remove(int id) {
         ref var elem = ref _set.Get(id);

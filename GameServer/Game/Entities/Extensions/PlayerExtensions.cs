@@ -27,27 +27,27 @@ public static class PlayerExtensions {
             player.LoadCharacterStats(ref stats, acc, chr);
         }
 
-        private void LoadCharacterStats(ref StatsComponent stats, Account acc, Character chr) {
-            stats.Set(StatType.Level, chr.Level);
-            stats.Set(StatType.CharFame, (int)chr.CurrentFame);
-            stats.Set(StatType.Experience, (int)chr.XpPoints);
+        private void LoadCharacterStats(ref EntityStats entityStats, Account acc, Character chr) {
+            entityStats.Set(StatType.Level, chr.Level);
+            entityStats.Set(StatType.CharFame, (int)chr.CurrentFame);
+            entityStats.Set(StatType.Experience, (int)chr.XpPoints);
             var classStat = acc.AccStats.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
-            stats.Set(StatType.NextClassQuestFame, GetNextClassQuestFame((int)(classStat.BestFame > chr.CurrentFame ? classStat.BestFame : chr.CurrentFame)));
-            stats.Set(StatType.NextLevelXp, GetNextLevelXPGoal(chr.Level));
-            stats.Set(StatType.HealthPotionStack, chr.HealthPotions);
-            stats.Set(StatType.MagicPotionStack, chr.MagicPotions);
+            entityStats.Set(StatType.NextClassQuestFame, GetNextClassQuestFame((int)(classStat.BestFame > chr.CurrentFame ? classStat.BestFame : chr.CurrentFame)));
+            entityStats.Set(StatType.NextLevelXp, GetNextLevelXPGoal(chr.Level));
+            entityStats.Set(StatType.HealthPotionStack, chr.HealthPotions);
+            entityStats.Set(StatType.MagicPotionStack, chr.MagicPotions);
             
             if (chr.CharStats != null) {
-                stats.Set(StatType.MaxHP, (int)chr.CharStats.MaxHp);
-                stats.Set(StatType.HP, (int)chr.CharStats.Hp);
-                stats.Set(StatType.MaxMP, (int)chr.CharStats.MaxMp);
-                stats.Set(StatType.MP, (int)chr.CharStats.Mp);
-                stats.Set(StatType.Attack, (int)chr.CharStats.Attack);
-                stats.Set(StatType.Defense, (int)chr.CharStats.Defense);
-                stats.Set(StatType.Speed, (int)chr.CharStats.Speed);
-                stats.Set(StatType.Dexterity, (int)chr.CharStats.Dexterity);
-                stats.Set(StatType.Vitality, (int)chr.CharStats.Vitality);
-                stats.Set(StatType.Wisdom, (int)chr.CharStats.Wisdom);
+                entityStats.Set(StatType.MaxHP, (int)chr.CharStats.MaxHp);
+                entityStats.Set(StatType.HP, (int)chr.CharStats.Hp);
+                entityStats.Set(StatType.MaxMP, (int)chr.CharStats.MaxMp);
+                entityStats.Set(StatType.MP, (int)chr.CharStats.Mp);
+                entityStats.Set(StatType.Attack, (int)chr.CharStats.Attack);
+                entityStats.Set(StatType.Defense, (int)chr.CharStats.Defense);
+                entityStats.Set(StatType.Speed, (int)chr.CharStats.Speed);
+                entityStats.Set(StatType.Dexterity, (int)chr.CharStats.Dexterity);
+                entityStats.Set(StatType.Vitality, (int)chr.CharStats.Vitality);
+                entityStats.Set(StatType.Wisdom, (int)chr.CharStats.Wisdom);
             }
         }
         

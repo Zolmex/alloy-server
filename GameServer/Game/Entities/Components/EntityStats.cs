@@ -6,7 +6,7 @@ using Common.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct StatsComponent : IEntityComponent {
+public struct EntityStats : IEntityComponent {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;
 
     public int Id { get; set; }
@@ -17,7 +17,7 @@ public struct StatsComponent : IEntityComponent {
     public BitMask256 PublicMask;
     public BitMask256 PrivateMask;
 
-    public StatsComponent(ref Entity en) {
+    public EntityStats(ref Entity en) {
         Stats = ArrayPool<StatValue>.Shared.Rent(STAT_COUNT);
         Stats.AsSpan(0, STAT_COUNT).Clear();
         

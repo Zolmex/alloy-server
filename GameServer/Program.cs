@@ -7,6 +7,7 @@ using Common.Resources.Xml;
 using Common.Utilities;
 using GameServer.Game;
 using GameServer.Game.Chat.Commands;
+using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Network;
 
 namespace GameServer;
@@ -30,6 +31,7 @@ public class Program {
             XmlLibrary.Load(config.XmlsDir);
             MerchantsLibrary.Load(config.MerchantsDir);
             WorldLibrary.Load(config.WorldsDir);
+            BehaviorLibrary.Load();
             CommandManager.Load();
 
             await DbClient.ConnectAsync(DatabaseConfig.Config);
