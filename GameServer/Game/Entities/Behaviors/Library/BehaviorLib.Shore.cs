@@ -15,15 +15,7 @@ public partial class BehaviorLib {
             // ),
             // new Shoot(3, new LinePath(4f), targeted: true, projName: "Blade", damage: 4,
             //     lifetimeMs: 600, cooldownMS: 2500),
-            
-            new State("start",
-                new Follow(distFromTarget: 1, speed: 5.46f),
-                new Wander(2.94f),
-                new PlayerTextTransition("animus", "animus W?")
-                ),
-            new State("animus",
-                new Taunt("W ANIMUSSSS"),
-                new TimedTransition(100, "start")
-                )
+            new Follow(distFromTarget: 1, speed: 5.46f),
+            new Wander(2.94f)
         );
 }
