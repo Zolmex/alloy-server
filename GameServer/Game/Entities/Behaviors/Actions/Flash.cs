@@ -1,0 +1,36 @@
+﻿#region
+
+using Common;
+using Common.Structs;
+using GameServerOld.Game.Entities.Types;
+using GameServerOld.Game.Network.Messaging.Outgoing;
+
+#endregion
+
+namespace GameServerOld.Game.Entities.Behaviors.Actions;
+
+public record Flash : BehaviorScript {
+    private readonly int _color;
+    private readonly float _flashPeriod;
+    private readonly int _flashRepeats;
+
+    public Flash(int color, double flashPeriod, int flashRepeats) {
+        _color = color;
+        _flashPeriod = (float)flashPeriod;
+        _flashRepeats = flashRepeats;
+    }
+
+    public override void Start(CharacterEntity host) {
+        host.World.BroadcastAll(p => {
+            p.User.SendPacket(new
+                ShowEffect(
+                    (byte)ShowEffectIndex.Flash,
+                    host.Id,
+                    _color,
+                    0,
+                    new WorldPosData(_flashPeriod, _flashRepeats),
+                    new WorldPosData()
+                ));
+        });
+    }
+}
