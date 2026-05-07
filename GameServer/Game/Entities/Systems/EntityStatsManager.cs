@@ -18,7 +18,7 @@ public class EntityStatsManager(World world, int capacity) : ManagerBase<EntityS
 
     public override void Tick(ref RealmTime time) {
         foreach (ref var stats in this){
-            stats.ClearUpdates();
+            stats.Tick();
         }
     }
 }

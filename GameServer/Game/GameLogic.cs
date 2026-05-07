@@ -8,8 +8,11 @@ public class GameLogic {
     private static readonly Logger _log = new(typeof(GameLogic));
     
     public static RealmTime WorldTime;
+    public static int TPS;
     
     public static void Run(int mspt) {
+        TPS = 1000 / mspt;
+        
         var lagMs = (int)(mspt * 1.5);
         var sw = Stopwatch.StartNew();
         while (true) {

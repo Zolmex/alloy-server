@@ -1,6 +1,6 @@
-﻿using GameServerOld.Game.Entities.Types;
+﻿using Common.Game;
 
-namespace GameServerOld.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class TimedInfo {
     public int PeriodLeft;
@@ -16,13 +16,13 @@ public record Timed : BehaviorScript {
         _behaviors = behaviors;
     }
 
-    public override void Start(CharacterEntity host) {
-        var state = host.ResolveResource<TimedInfo>(this);
+    public override void Start(ref EntityView host) {
+        var state = host.Behavior.Resources.ResolveResource<TimedInfo>(this);
         state.PeriodLeft = _period;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
-        var state = host.ResolveResource<TimedInfo>(this);
+    public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {
+        var state = host.Behavior.Resources.ResolveResource<TimedInfo>(this);
 
         if (state.PeriodLeft > 0) {
             state.PeriodLeft -= time.ElapsedMsDelta;
@@ -33,11 +33,11 @@ public record Timed : BehaviorScript {
             if (!state.Start) {
                 state.Start = true;
                 foreach (var behavior in _behaviors)
-                    behavior.Start(host);
+                    behavior.Start(ref host);
             }
 
             foreach (var behavior in _behaviors)
-                behavior.Tick(host, time);
+                behavior.Tick(ref host, ref time);
         }
 
         return BehaviorTickState.BehaviorActive;

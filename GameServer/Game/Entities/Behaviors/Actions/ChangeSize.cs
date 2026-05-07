@@ -1,6 +1,8 @@
-﻿using GameServerOld.Game.Entities.Types;
+﻿using Common;
+using Common.Game;
+using GameServer.Game.Entities.Components;
 
-namespace GameServerOld.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class SizeInfo {
     public int CooldownLeft;
@@ -15,13 +17,13 @@ public record ChangeSize : BehaviorScript {
         _target = target;
     }
 
-    public override void Start(CharacterEntity host) {
-        var state = host.ResolveResource<SizeInfo>(this);
+    public override void Start(ref EntityView host) {
+        var state = host.Behavior.Resources.ResolveResource<SizeInfo>(this);
         state.CooldownLeft = 0;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
-        var state = host.ResolveResource<SizeInfo>(this);
+    public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {
+        var state = host.Behavior.Resources.ResolveResource<SizeInfo>(this);
 
         if (state.CooldownLeft > 0) {
             state.CooldownLeft -= time.ElapsedMsDelta;
@@ -29,12 +31,15 @@ public record ChangeSize : BehaviorScript {
         }
 
         if (state.CooldownLeft <= 0) {
-            if (host.Size != _target) {
-                host.Size += _rate;
-                if ((_rate > 0 && host.Size > _target) ||
-                    (_rate < 0 && host.Size < _target))
-                    host.Size = _target;
+            ref var stats = ref host.World.EntityStats.Get(host.Id);
+            var size = stats.GetInt(StatType.Size);
+            if (size != _target) {
+                size += _rate;
+                if ((_rate > 0 && size > _target) ||
+                    (_rate < 0 && size < _target))
+                    size = _target;
             }
+            stats.Set(StatType.Size, size);
 
             state.CooldownLeft = 150;
         }

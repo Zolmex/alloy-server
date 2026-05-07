@@ -1,7 +1,9 @@
 ﻿using System.Text.RegularExpressions;
-using GameServerOld.Game.Entities.Types;
+using Common.Game;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Events;
 
-namespace GameServerOld.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Behaviors.Transitions;
 
 public class PlayerTextInfo {
     public Regex Rgx;
@@ -18,27 +20,21 @@ public class PlayerTextTransition : BehaviorTransition {
         _ignoreCase = ignoreCase;
     }
 
-    public override void Start(CharacterEntity host) {
-        var state = host.ResolveResource<PlayerTextInfo>(this);
+    public override void Start(ref EntityView host) {
+        var state = host.Behavior.Resources.ResolveResource<PlayerTextInfo>(this);
         state.Rgx = _ignoreCase ? new Regex(_regex, RegexOptions.IgnoreCase) : new Regex(_regex);
-        host.OnPlayerText += HandlePlayerText;
     }
 
-    public override void End(CharacterEntity host, RealmTime time) {
-        host.OnPlayerText -= HandlePlayerText;
-    }
+    public override string Tick(ref EntityView host, ref RealmTime time) {
+        var state = host.Behavior.Resources.ResolveResource<PlayerTextInfo>(this);
+        foreach (var text in host.World.TextCache) {
+            var match = state.Rgx.Match(text);
+            if (!match.Success)
+                continue;
 
-    public override string Tick(CharacterEntity host, RealmTime time) {
-        var state = host.ResolveResource<PlayerTextInfo>(this);
+            state.Transition = true;
+        }
+
         return state.Transition ? GetTargetState() : null;
-    }
-
-    public void HandlePlayerText(CharacterEntity host, Player player, string text) {
-        var state = host.ResolveResource<PlayerTextInfo>(this);
-        var match = state.Rgx.Match(text);
-        if (!match.Success)
-            return;
-
-        state.Transition = true;
     }
 }

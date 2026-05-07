@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 namespace GameServer.Game.Entities.Behaviors;
 
 public class StateResourceController {
-    private readonly ConcurrentDictionary<int, object> _stateResources = new();
+    private readonly ConcurrentDictionary<object, object> _stateResources = new();
 
     public T ResolveResource<T>(IStateChild child) {
         var resource = GetResource(child);
@@ -15,17 +15,17 @@ public class StateResourceController {
     }
 
     public void InsertResource(object instance, object resource) {
-        _stateResources.TryAdd(instance.GetHashCode(), resource);
+        _stateResources.TryAdd(instance, resource);
     }
 
     public object GetResource(object instance) {
-        if (!_stateResources.TryGetValue(instance.GetHashCode(), out var resource))
+        if (!_stateResources.TryGetValue(instance, out var resource))
             return null;
         return resource;
     }
 
     public void RemoveResource(object instance) {
-        _stateResources.Remove(instance.GetHashCode(), out _);
+        _stateResources.Remove(instance, out _);
     }
 
     public void ClearResources() {

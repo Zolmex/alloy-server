@@ -1,15 +1,12 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Numerics;
 using Common;
+using Common.Game;
 using Common.Structs;
 using Common.Utilities;
-using GameServerOld.Game.Entities.Types;
+using GameServer.Game.Entities.Components;
 
-#endregion
-
-namespace GameServerOld.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class MoveLineInfo {
     public float DistLeft;
@@ -26,24 +23,25 @@ public record MoveLine : BehaviorScript {
         _distance = distance;
     }
 
-    public override void Start(CharacterEntity host) {
-        var state = host.ResolveResource<MoveLineInfo>(this);
+    public override void Start(ref EntityView host) {
+        var state = host.Behavior.Resources.ResolveResource<MoveLineInfo>(this);
         state.DistLeft = _distance;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
-        var state = host.ResolveResource<MoveLineInfo>(this);
-        if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed))
-            return BehaviorTickState.BehaviorFailed;
+    public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {
+        ref var stats = ref host.World.EntityStats.Get(host.Id);
+        var state = host.Behavior.Resources.ResolveResource<MoveLineInfo>(this);
+        // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: Condition effects
+        //     return BehaviorTickState.BehaviorFailed;
 
         var vect = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
-        vect += host.Position.ToVec2();
+        vect += stats.Pos.ToVec2();
         if (state.DistLeft > 0) {
-            var moveDist = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+            var moveDist = stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
             state.DistLeft -= moveDist;
         }
 
-        host.MoveTowards(time, vect, _speed);
+        stats.MoveTowards(ref time, ref vect, _speed);
 
         return BehaviorTickState.BehaviorActive;
     }

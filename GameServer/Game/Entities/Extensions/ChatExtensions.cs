@@ -57,7 +57,7 @@ public static class ChatExtensions {
                 text));
         }
 
-        public void SendEnemy(Entity entity, string text) {
+        public void SendEnemy(ref Entity entity, string text) {
             user.SendPacket(new Text($"#{entity.Desc.DisplayName}", entity.Id, -1, 3, null, text));
         }
 

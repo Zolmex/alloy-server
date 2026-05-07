@@ -16,18 +16,18 @@ public struct EntityBehavior : IEntityComponent {
 
     public int Id { get; set; }
 
+    public readonly World World;
     public readonly HashSet<State> ActiveStates = [];
     public readonly HashSet<BehaviorTransition> PastTransitions = [];
     public readonly StateResourceController Resources = new();
 
-    private readonly World _world;
     private readonly string _objectId;
 
     private State _rootState;
     private State _currentState;
 
     public EntityBehavior(World world, ref Entity en) {
-        _world = world;
+        World = world;
         _objectId = XmlLibrary.ObjectDescs[en.ObjectType].ObjectId;
     }
 
@@ -36,21 +36,23 @@ public struct EntityBehavior : IEntityComponent {
         Resources.ClearResources();
 
         _currentState = rootState.GetDeepState();
-        _currentState.Enter(ref this);
+        var view = new EntityView(World, ref World.Entities.Get(Id));
+        _currentState.Enter(ref view);
     }
 
-    public void TransitionTo(string targetState, RealmTime time) {
+    public void TransitionTo(string targetState, ref RealmTime time) {
         if (_currentState == null)
             return;
 
-        _currentState.Exit(ref this, time);
+        var view = new EntityView(World, ref World.Entities.Get(Id));
+        _currentState.Exit(ref view, ref time);
 
         if (_rootState.States.TryGetValue(targetState, out var newState)) {
-            _currentState.ExitInactiveParent(ref this, time,
+            _currentState.ExitInactiveParent(ref view, time,
                 newState); // Calls parent's Exit method if it's not parent of the new State
 
             _currentState = newState.GetDeepState();
-            _currentState.Enter(ref this);
+            _currentState.Enter(ref view);
         }
         else {
             _log.Error($"{_objectId}: State {targetState} not found.");
@@ -62,9 +64,10 @@ public struct EntityBehavior : IEntityComponent {
         if (_currentState == null)
             return;
 
-        var targetState = _currentState.Tick(ref this, time);
+        var view = new EntityView(World, ref World.Entities.Get(Id));
+        var targetState = _currentState.Tick(ref view, ref time);
         if (targetState != null)
-            TransitionTo(targetState, time);
+            TransitionTo(targetState, ref time);
     }
 
     public void Dispose() {

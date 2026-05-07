@@ -115,6 +115,8 @@ public class MapTileData {
     public bool EnemyOccupySquare;
     public bool OccupySquare;
 
+    public TileDesc Desc => XmlLibrary.TileDescs[GroundType];
+
     public void SetObject(ObjectDesc desc) {
         ObjectType = desc?.ObjectType ?? 0;
         FullOccupy = desc?.FullOccupy ?? false;

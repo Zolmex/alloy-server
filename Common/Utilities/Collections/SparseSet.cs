@@ -51,21 +51,22 @@ public class SparseSet<T> where T : struct, IIdentifiable {
     }
 
     public ref T Get(int id) {
+        if (id < 0 || id >= _sparse.Length)
+            return ref _dense[0];
         return ref _dense[_sparse[id]];
     }
     
     public ref T GetAt(int denseIndex) {
+        if (denseIndex < 0 || denseIndex >= _dense.Length)
+            return ref _dense[0];
         return ref _dense[denseIndex];
     }
 
     private void ResizeSparse(int capacity) {
-        if (capacity < _sparse.Length)
-            throw new ArgumentException($"New capacity cannot be lower than the current: {capacity} < {_sparse.Length}");
-
         var newSparse = ArrayPool<int>.Shared.Rent(capacity);
         _sparse.AsSpan().CopyTo(newSparse);
+        newSparse.AsSpan(_sparse.Length).Fill(0); // Clear the new region
         ArrayPool<int>.Shared.Return(_sparse);
-        
         _sparse = newSparse;
     }
     

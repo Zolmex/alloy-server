@@ -67,7 +67,8 @@ public static class PlayerExtensions {
                 ExecuteCommand(world.PlayerToUser[player.Id], text);
                 return;
             }
-            
+
+            world.PlayerText(text);
             foreach (var otherUser in world.PlayerToUser.Values) {
                 otherUser.SendPacket(new Text(
                     stats.GetString(StatType.Name),

@@ -1,12 +1,9 @@
-﻿#region
-
-using System.Numerics;
+﻿using System.Numerics;
+using Common.Game;
 using Common.Structs;
-using GameServerOld.Game.Entities.Types;
+using GameServer.Game.Entities.Components;
 
-#endregion
-
-namespace GameServerOld.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class MoveToState {
     public Vector2 StartPos;
@@ -23,15 +20,15 @@ public record MoveTo : BehaviorScript {
         _relative = relative;
     }
 
-    public override void Start(CharacterEntity host) {
-        var moveToState = host.ResolveResource<MoveToState>(this);
-        moveToState.StartPos = host.Position.ToVec2();
+    public override void Start(ref EntityView host) {
+        var moveToState = host.Behavior.Resources.ResolveResource<MoveToState>(this);
+        moveToState.StartPos = host.Stats.Pos.ToVec2();
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
-        var moveToState = host.ResolveResource<MoveToState>(this);
+    public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {
+        var moveToState = host.Behavior.Resources.ResolveResource<MoveToState>(this);
         var pos = _relative ? moveToState.StartPos + _targetPos : _targetPos;
-        host.MoveTowards(time, pos, _tilesPerSecond);
+        host.Stats.MoveTowards(ref time, ref pos, _tilesPerSecond);
         return BehaviorTickState.BehaviorActive;
     }
 }

@@ -64,9 +64,9 @@ public class State : IStateChild {
             child.Setup(desc);
     }
 
-    public void Enter(ref EntityBehavior host) // Perform any initial setups we need for current and child states
+    public void Enter(ref EntityView host) // Perform any initial setups we need for current and child states
     {
-        if (!host.ActiveStates.Add(this))
+        if (!host.Behavior.ActiveStates.Add(this))
             return;
 
         Parent?.Enter(ref host); // Call parent to enter
@@ -76,41 +76,41 @@ public class State : IStateChild {
         foreach (var script in Scripts) script.Start(ref host);
     }
 
-    public string Tick(ref EntityBehavior host, RealmTime time) {
-        var targetState = Parent?.Tick(ref host, time);
+    public string Tick(ref EntityView host, ref RealmTime time) {
+        var targetState = Parent?.Tick(ref host, ref time);
         if (targetState != null)
             return targetState;
 
         foreach (var trans in Transitions) { // Check if we have a transition to make
-            targetState = trans.Tick(ref host, time);
-            if (targetState != null && host.PastTransitions.Add(trans))
+            targetState = trans.Tick(ref host, ref time);
+            if (targetState != null && host.Behavior.PastTransitions.Add(trans))
                 // Make sure transitions only occur once (prevents parent state transitions to happen multiple times)
                 return targetState;
         }
 
         foreach (var script in Scripts)
-            script.Tick(ref host, time);
+            script.Tick(ref host, ref time);
 
         return null;
     }
 
-    public void Exit(ref EntityBehavior host, RealmTime time) {
-        if (!host.ActiveStates.Remove(this)) // Prevents exiting the same state twice
+    public void Exit(ref EntityView host, ref RealmTime time) {
+        if (!host.Behavior.ActiveStates.Remove(this)) // Prevents exiting the same state twice
             return;
 
         // Instead of clearing resources (we might end up deleting parent state's resources), remove each script's resources
         foreach (var script in Scripts) {
-            script.End(ref host, time);
-            host.Resources.RemoveResource(script);
+            script.End(ref host, ref time);
+            host.Behavior.Resources.RemoveResource(script);
         }
 
         foreach (var trans in Transitions) {
-            host.PastTransitions.Remove(trans);
-            trans.End(ref host, time);
+            host.Behavior.PastTransitions.Remove(trans);
+            trans.End(ref host, ref time);
         }
     }
 
-    public void ExitInactiveParent(ref EntityBehavior host, RealmTime time, State targetState) {
+    public void ExitInactiveParent(ref EntityView host, RealmTime time, State targetState) {
         // Will exit parent if it is not parent of the targetState
         if (Parent == null)
             return;
@@ -118,7 +118,7 @@ public class State : IStateChild {
         if (Parent.ChildStates.Contains(targetState))
             return;
 
-        Parent.Exit(ref host, time);
+        Parent.Exit(ref host, ref time);
         Parent.ExitInactiveParent(ref host, time, targetState); // Recursively call exit on each parent
     }
 }

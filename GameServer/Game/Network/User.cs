@@ -92,7 +92,7 @@ public class User : IIdentifiable {
         if (reconnect && GameInfo.State != GameState.Playing) // We can only unload when we've loaded in the first place
             return;
 
-        GameInfo.Unload(reconnect, death);
+        GameInfo.World?.Enqueue(() => GameInfo.Unload(reconnect, death));
     }
     
     public void SendPacket<T>(in T packet) where T : IOutgoingPacket, allows ref struct {

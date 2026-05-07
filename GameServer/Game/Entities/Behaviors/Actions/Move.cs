@@ -1,16 +1,13 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Numerics;
 using System.Xml.Linq;
+using Common.Game;
 using Common.Structs;
 using Common.Utilities;
-using GameServerOld.Game.Entities.Types;
-using GameServerOld.Utilities;
+using GameServer.Game.Entities.Components;
+using GameServer.Utilities;
 
-#endregion
-
-namespace GameServerOld.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class MoveInfo {
     public int CooldownMs;
@@ -35,25 +32,14 @@ public record Move : BehaviorScript {
         _ease = ease;
     }
 
-    public Move(XElement xml) {
-        var xDist = xml.GetAttribute<float>("xDist");
-        var yDist = xml.GetAttribute<float>("yDist");
-        var tilesPerSecond = xml.GetAttribute("tilesPerSecond", 1f);
-        _move = new Vector2(xDist, yDist);
-        _moveTime = MathF.Sqrt(xDist * xDist + yDist * yDist) / tilesPerSecond;
-        _moveTimeMs = (int)(_moveTime * 1000);
-        _cooldownMsDefault = xml.GetAttribute("cooldownMS", 1000);
-        _ease = Enum.Parse<Ease>(xml.GetAttribute("ease", "None"));
-    }
-
-    public override void Start(CharacterEntity host) {
-        var moveInfo = host.ResolveResource<MoveInfo>(this);
+    public override void Start(ref EntityView host) {
+        var moveInfo = host.Behavior.Resources.ResolveResource<MoveInfo>(this);
         moveInfo.CooldownMs = _cooldownMsDefault;
         moveInfo.Moving = false;
     }
 
-    public override BehaviorTickState Tick(CharacterEntity host, RealmTime time) {
-        var moveInfo = host.ResolveResource<MoveInfo>(this);
+    public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {
+        var moveInfo = host.Behavior.Resources.ResolveResource<MoveInfo>(this);
         var firstMove = false;
         if (!moveInfo.Moving && moveInfo.CooldownMs > 0) {
             moveInfo.CooldownMs -= time.ElapsedMsDelta;
@@ -63,7 +49,7 @@ public record Move : BehaviorScript {
         else if (!moveInfo.Moving && moveInfo.CooldownMs <= 0) {
             moveInfo.CooldownMs = _moveTimeMs - time.ElapsedMsDelta;
             moveInfo.Moving = true;
-            moveInfo.StartPos = host.Position.ToVec2();
+            moveInfo.StartPos = host.Stats.Pos.ToVec2();
             moveInfo.MoveStarted = time.TotalElapsedMs;
             firstMove = true;
         }
@@ -71,7 +57,8 @@ public record Move : BehaviorScript {
         var elapsedTimePerc = (time.TotalElapsedMs - moveInfo.MoveStarted) / 1000f / _moveTime;
         if (_ease != Ease.None)
             Easing.EaseVal(_ease, ref elapsedTimePerc);
-        host.Move(moveInfo.StartPos + _move * elapsedTimePerc);
+        host.Stats.Move(moveInfo.StartPos + _move * elapsedTimePerc);
+        
         if (firstMove)
             return BehaviorTickState.BehaviorActivate;
 

@@ -5,9 +5,12 @@ using Common.Resources.World;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities;
+using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Events;
 using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
+using GameServer.Utilities;
 
 namespace GameServer.Game.Worlds;
 
@@ -21,11 +24,15 @@ public class World {
     public readonly WorldConfig Config;
 
     public readonly EntityManager Entities;
+    
+    public readonly EntityBehaviorManager EntityBehaviors;
     public readonly EntityStatsManager EntityStats;
+    
     public readonly PlayerSightManager PlayerSights;
     public readonly PlayerChatManager PlayerChat;
 
     public ImmutableDictionary<int, User> PlayerToUser;
+    public ImmutableList<string> TextCache;
 
     public MapData Map;
     public string DisplayName;
@@ -34,17 +41,22 @@ public class World {
     public bool Deleted;
 
     private readonly ConcurrentQueue<Action> _pendingActions = [];
+    private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
         Config = config;
 
         Entities = new EntityManager(5_000);
+        
+        EntityBehaviors = new EntityBehaviorManager(this, 5_000);
         EntityStats = new EntityStatsManager(this, 5_000);
+        
         PlayerSights = new PlayerSightManager(this, 100);
         PlayerChat = new PlayerChatManager(this, 100);
 
         PlayerToUser = ImmutableDictionary<int, User>.Empty;
+        TextCache = ImmutableList<string>.Empty;
 
         DisplayName = config.DisplayName;
         Music = config.Music;
@@ -84,7 +96,7 @@ public class World {
     }
 
     private void AddComponents(ref Entity en) {
-        var stats = new EntityStats(ref en);
+        var stats = new EntityStats(this, ref en);
         EntityStats.Add(ref stats, en.Id); // All entities must have
 
         switch (en.Type) {
@@ -97,8 +109,11 @@ public class World {
             case EntityType.Merchant:
                 break;
             case EntityType.Character:
-                break;
             case EntityType.Enemy:
+                var behavior = new EntityBehavior(this, ref en);
+                ref var entityBehavior = ref EntityBehaviors.Add(ref behavior, en.Id);
+                if (BehaviorLibrary.ClassicBehaviors.TryGetValue(en.Desc.ObjectId, out var rootState))
+                    entityBehavior.Load(rootState);
                 break;
             case EntityType.Container:
                 break;
@@ -115,19 +130,48 @@ public class World {
 
     public void LeaveWorld(int entityId) {
         Entities.Remove(entityId);
+        EntityBehaviors.Remove(entityId);
         EntityStats.Remove(entityId);
         PlayerSights.Remove(entityId);
     }
 
+    private void HandleTimers() {
+        for (var i = 0; i < _timedActions.Count; i++) {
+            var timer = _timedActions[i];
+            if (timer.Delay <= GameLogic.WorldTime.TickCount) {
+                timer.Action(this);
+                _timedActions.RemoveAt(i);
+                i--;
+            }
+        }
+    }
+
+    public void AddTimedAction(int time, Action<World> act) {
+        _timedActions.Add((GameLogic.WorldTime.TickCount + TimeUtils.TicksFromTime(time, GameLogic.TPS), act));
+    }
+    
     public void Enqueue(Action act) {
         _pendingActions.Enqueue(act);
+    }
+
+    public void PlayerText(string text) {
+        TextCache = TextCache.Add(text);
+    }
+
+    private void ClearTextCache() {
+        TextCache = TextCache.Clear();
     }
 
     public void Tick(ref RealmTime time) {
         while (_pendingActions.TryDequeue(out var act))
             act();
         
+        HandleTimers();
+        
+        EntityBehaviors.Tick(ref time);
         PlayerSights.Tick(ref time);
         EntityStats.Tick(ref time); // Clears stat update masks, needs to happen AFTER player update
+        
+        ClearTextCache();
     }
 }

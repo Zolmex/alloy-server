@@ -108,4 +108,8 @@ public static class TimeUtils {
             return "just now";
         return string.Empty;
     }
+    
+    public static long TicksFromTime(long time, int tps) {
+        return time / (1000 / tps);
+    }
 }

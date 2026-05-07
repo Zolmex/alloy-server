@@ -49,21 +49,21 @@ public struct WorldPosData : IEquatable<WorldPosData> {
 }
 
 public static class WorldPosDataExtensions {
-    public static Vector2 ToVec2(this WorldPosData data) {
+    public static Vector2 ToVec2(this in WorldPosData data) {
         return new Vector2(data.X, data.Y);
     }
 
-    public static float DistSqr(this Vector2 vec1, Vector2 vec2) {
+    public static float DistSqr(this in Vector2 vec1, in Vector2 vec2) {
         var dx = vec1.X - vec2.X;
         var dy = vec1.Y - vec2.Y;
         return dx * dx + dy * dy;
     }
 
-    public static float AngleDegrees(this WorldPosData pos1, WorldPosData pos2) {
+    public static float AngleDegrees(this in WorldPosData pos1, in WorldPosData pos2) {
         return pos1.AngleRadians(pos2) * 180f / (float)Math.PI;
     }
 
-    public static float AngleRadians(this WorldPosData pos1, WorldPosData pos2) {
+    public static float AngleRadians(this in WorldPosData pos1, in WorldPosData pos2) {
         return (float)Math.Atan2(pos2.Y - pos1.Y, pos2.X - pos1.X);
     }
 }

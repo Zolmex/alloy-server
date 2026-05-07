@@ -13,10 +13,8 @@ using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Structs;
 using Common.Utilities;
-using GameServerOld.Game.Entities.Behaviors.Actions;
-using GameServerOld.Game.Entities.Behaviors;
-using GameServerOld.Game.Entities.Behaviors.Library;
-using GameServerOld.Game.Entities.Behaviors.Transitions;
+using GameServer.Game.Entities.Behaviors.Library;
+using GameServer.Game.Entities.Behaviors.Transitions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -40,7 +38,7 @@ public static class BehaviorLibrary {
         MetadataReference.CreateFromFile(typeof(BehaviorLibrary).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(TimedTransition).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(State).GetTypeInfo().Assembly.Location),
-        MetadataReference.CreateFromFile(typeof(AOE).GetTypeInfo().Assembly.Location),
+        // MetadataReference.CreateFromFile(typeof(AOE).GetTypeInfo().Assembly.Location),
         // MetadataReference.CreateFromFile(typeof(Projectile).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(ProjectilePathSegment).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(ConditionEffectIndex).GetTypeInfo().Assembly.Location),
