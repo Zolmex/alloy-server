@@ -97,7 +97,7 @@ public class State : IStateChild {
     public void Exit(ref EntityView host, ref RealmTime time) {
         if (!host.Behavior.ActiveStates.Remove(this)) // Prevents exiting the same state twice
             return;
-
+        
         // Instead of clearing resources (we might end up deleting parent state's resources), remove each script's resources
         foreach (var script in Scripts) {
             script.End(ref host, ref time);
@@ -105,6 +105,7 @@ public class State : IStateChild {
         }
 
         foreach (var trans in Transitions) {
+            host.Behavior.Resources.RemoveResource(trans);
             host.Behavior.PastTransitions.Remove(trans);
             trans.End(ref host, ref time);
         }
