@@ -11,7 +11,7 @@ using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityStats : IEntityComponent {
+public struct EntityStats : IIdentifiable {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;
 
     public int Id { get; set; }

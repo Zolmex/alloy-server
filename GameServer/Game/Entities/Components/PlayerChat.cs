@@ -8,7 +8,7 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct PlayerChat : IEntityComponent {
+public struct PlayerChat : IIdentifiable {
     private const int TextCooldown = 500;
     
     public int Id { get; set; }

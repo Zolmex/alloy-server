@@ -10,7 +10,7 @@ namespace GameServer.Game.Entities.Systems;
 public class EntityStatsManager(World world, int capacity) : ManagerBase<EntityStats>(world, capacity) {
     
     public override void Remove(int id) {
-        ref var elem = ref _set.Get(id);
+        ref var elem = ref Set.Get(id);
         elem.Dispose();
         
         base.Remove(id);

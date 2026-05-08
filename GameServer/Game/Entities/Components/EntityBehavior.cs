@@ -11,7 +11,7 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityBehavior : IEntityComponent {
+public struct EntityBehavior : IIdentifiable {
     private static readonly Logger _log = new(typeof(EntityBehavior));
 
     public int Id { get; set; }

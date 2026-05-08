@@ -7,30 +7,30 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities;
 
-public abstract class ManagerBase<T> where T : struct, IEntityComponent {
+public abstract class ManagerBase<T> where T : struct, IIdentifiable {
 
-    protected readonly SparseSet<T> _set;
+    public readonly SparseSet<T> Set;
     protected readonly World _world;
     
     protected ManagerBase(World world, int capacity) {
         _world = world;
-        _set = new SparseSet<T>(capacity);
+        Set = new SparseSet<T>(capacity);
     }
     
     public ref T Add(ref T elem, int entityId) {
         elem.Id = entityId;
-        return ref _set.Add(ref elem);
+        return ref Set.Add(ref elem);
     }
 
     public virtual void Remove(int id) {
-        _set.Remove(id);
+        Set.Remove(id);
     }
 
     public ref T Get(int id) {
-        return ref _set.Get(id);
+        return ref Set.Get(id);
     }
 
     public abstract void Tick(ref RealmTime time);
     
-    public SparseEnumerator<T> GetEnumerator() => new(_set);
+    public SparseEnumerator<T> GetEnumerator() => new(Set);
 }

@@ -89,29 +89,16 @@ public record Follow : BehaviorScript {
 
     public static int FindTarget(in EntityView host, TargetType targetType, float acquireRadiusSqr,
         string target = "player") {
-        // switch (targetType) { // TODO: Entity spatial queries
-        //     case TargetType.ClosestPlayer:
-        //         return host.GetNearestPlayer(acquireRadiusSqr)?.Id ?? -1;
-        //     case TargetType.RandomPlayerPerBehavior:
-        //         return host.GetPlayersWithin(acquireRadiusSqr).RandomElement()?.Id ?? -1;
-        //     case TargetType.Entity:
-        //         return host.GetNearestOtherEnemyByName(target, acquireRadiusSqr)?.Id ?? -1;
-        //     case TargetType.FarthestPlayer:
-        //         return host.GetFarthestPlayer(acquireRadiusSqr)?.Id ?? -1;
-        // }
-
-        var min = float.MaxValue;
-        var ret = 0;
-        foreach (var id in host.World.PlayerToUser.Keys) {
-            ref var stats = ref host.World.EntityStats.Get(id);
-            var dist = stats.DistSqr(ref host.Stats);
-            if (dist <= acquireRadiusSqr && dist < min) {
-                min = dist;
-                ret = stats.Id;
-            }
+        switch (targetType) {
+            case TargetType.ClosestPlayer:
+                return host.World.Map.GetNearestPlayer(host.Stats.Pos, acquireRadiusSqr);
+            case TargetType.RandomPlayerPerBehavior:
+                return host.World.Map.GetPlayersWithin(host.Stats.Pos, acquireRadiusSqr).RandomElement();
+            case TargetType.Entity:
+                return host.World.Map.GetNearestEntityByName(target, host.Stats.Pos, acquireRadiusSqr);
+            case TargetType.FarthestPlayer:
+                return host.World.Map.GetFarthestPlayer(host.Stats.Pos, acquireRadiusSqr);
         }
-        
-
-        return ret;
+        return -1;
     }
 }

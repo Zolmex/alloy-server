@@ -6,7 +6,7 @@ using Common.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct PlayerSight : IEntityComponent {
+public struct PlayerSight : IIdentifiable {
     public int Id { get; set; }
 
     public HashSet<IntPoint> VisibleTiles = [];
