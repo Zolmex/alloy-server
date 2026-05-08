@@ -30,14 +30,14 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                 continue;
             
             var user = _world.PlayerToUser[playerStats.Id];
-            ProcessUpdate(user, ref playerStats, ref sight);
-            ProcessNewtick(user, playerStats.Id, ref sight);
+            ProcessUpdate(user, ref playerStats, ref sight, out var statusCount);
+            ProcessNewtick(user, ref sight, statusCount);
         }
     }
 
-    private void ProcessUpdate(User user, ref EntityStats playerEntityStats, ref PlayerSight sight) {
+    private void ProcessUpdate(User user, ref EntityStats playerEntityStats, ref PlayerSight sight, out int statusCount) {
         var newTileCount = GetNewTiles(ref playerEntityStats, ref sight);
-        var newEntityCount = GetNewEntities(ref playerEntityStats, ref sight);
+        var newEntityCount = GetNewEntities(ref playerEntityStats, ref sight, out statusCount);
 
         if (newTileCount == 0 && newEntityCount == 0)
             return;
@@ -79,18 +79,37 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         return newTileCount;
     }
 
-    private int GetNewEntities(ref EntityStats playerEntityStats, ref PlayerSight sight) {
+    private int GetNewEntities(ref EntityStats playerEntityStats, ref PlayerSight sight, out int statusCount) {
         var newEntityCount = 0;
+        statusCount = 0;
         foreach (ref var en in _world.Map.GetEntitiesWithin(playerEntityStats.Pos, SIGHT_RADIUS_SQR)) {
             ref var stats = ref _world.EntityStats.Get(en.Id);
+
+            if (!stats.StatUpdates.IsEmpty()) { // Track status for newtick
+                sight.Statuses[statusCount++] = new ObjectStatusData {
+                    ObjectId = en.Id,
+                    Pos = stats.Pos,
+                    Stats = stats.Stats,
+                    StatUpdates = stats.StatUpdates,
+                    PrivacyMask = en.Id == playerEntityStats.Id ? stats.PrivateMask : stats.PublicMask
+                };
+                if (statusCount >= sight.Statuses.Length) {
+                    var newArr = ArrayPool<ObjectStatusData>.Shared.Rent(statusCount * 2);
+                    sight.Statuses.AsSpan().CopyTo(newArr);
+                    ArrayPool<ObjectStatusData>.Shared.Return(sight.Statuses);
+                    sight.Statuses = newArr;
+                }
+            }
+
             if (sight.VisibleEntities.Add(en.Id)) {
                 _newEntities[newEntityCount++] = new ObjectData() {
                     ObjectType = en.ObjectType,
-                    PrivateMask = en.Id == playerEntityStats.Id ? stats.PrivateMask : stats.PublicMask,
                     Status = new ObjectStatusData() {
                         ObjectId = en.Id,
                         Pos = stats.Pos,
-                        Stats = stats.Stats
+                        Stats = stats.Stats,
+                        StatUpdates = en.Id == playerEntityStats.Id ? stats.PrivateMask : stats.PublicMask,
+                        PrivacyMask = en.Id == playerEntityStats.Id ? stats.PrivateMask : stats.PublicMask,
                     }
                 };
                 if (newEntityCount >= _newEntities.Length) {
@@ -99,19 +118,13 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                     ArrayPool<ObjectData>.Shared.Return(_newEntities);
                     _newEntities = newArr;
                 }
-                
-                sight.Statuses.Add(new ObjectStatusData() {
-                    ObjectId = en.Id,
-                    Pos = stats.Pos,
-                    Stats = stats.Stats
-                });
             }
         }
 
         return newEntityCount;
     }
 
-    private void ProcessNewtick(User user, int playerId, ref PlayerSight sight) {
-        user.SendPacket(new NewTick(CollectionsMarshal.AsSpan(sight.Statuses), _world.EntityStats, playerId));
+    private void ProcessNewtick(User user, ref PlayerSight sight, int statusCount) {
+        user.SendPacket(new NewTick(sight.Statuses.AsSpan(0, statusCount)));
     }
 }

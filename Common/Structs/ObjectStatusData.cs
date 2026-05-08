@@ -7,6 +7,8 @@ public struct ObjectStatusData {
     public int ObjectId;
     public WorldPosData Pos;
     public StatValue[] Stats;
+    public BitMask256 StatUpdates;
+    public BitMask256 PrivacyMask;
 
     public static ObjectStatusData Read(ref SpanReader rdr) {
         var ret = new ObjectStatusData();
@@ -19,9 +21,9 @@ public struct ObjectStatusData {
         return ret;
     }
 
-    public void Write(WorldPosData enPos, ref SpanWriter wtr, ref BitMask256 privateMask, ref BitMask256 statUpdates) {
+    public void Write(ref SpanWriter wtr) {
         wtr.Write(ObjectId);
-        wtr.Write(enPos);
+        wtr.Write(Pos);
 
         var statCount = 0;
         var pos = wtr.Position;
@@ -29,7 +31,7 @@ public struct ObjectStatusData {
 
         for (var i = 0; i < (int)StatType.StatTypeCount; i++) {
             var value = Stats[i];
-            if (value.HasValue && privateMask.IsSet(i) && statUpdates.IsSet(i)) {
+            if (value.HasValue && PrivacyMask.IsSet(i) && StatUpdates.IsSet(i)) {
                 statCount++;
                 StatData.Write(ref wtr, (StatType)i, value);
             }

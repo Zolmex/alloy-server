@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
@@ -11,7 +12,7 @@ public struct PlayerSight : IEntityComponent {
     public HashSet<IntPoint> VisibleTiles = [];
     public HashSet<IntPoint> DiscoveredTiles = [];
     public HashSet<int> VisibleEntities = [];
-    public List<ObjectStatusData> Statuses = [];
+    public ObjectStatusData[] Statuses = ArrayPool<ObjectStatusData>.Shared.Rent(50);
 
     public PlayerSight(ref Entity en) {
         
@@ -21,6 +22,6 @@ public struct PlayerSight : IEntityComponent {
         VisibleTiles.Clear();
         DiscoveredTiles.Clear();
         VisibleEntities.Clear();
-        Statuses.Clear();
+        ArrayPool<ObjectStatusData>.Shared.Return(Statuses);
     }
 }
