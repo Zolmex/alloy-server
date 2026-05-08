@@ -24,6 +24,7 @@ public struct EntityStats : IEntityComponent {
     public BitMask256 PublicMask;
     public BitMask256 PrivateMask;
     public int StatUpdateCount;
+    public bool PositionUpdate;
 
     private readonly World _world;
     private readonly EntityType _type;
@@ -87,8 +88,7 @@ public struct EntityStats : IEntityComponent {
     
     public void Move(float newX, float newY) {
         Pos = new WorldPosData(newX, newY);
-        Set(StatType.PositionX, newX); // Internal, client doesn't care
-        Set(StatType.PositionY, newY);
+        PositionUpdate = true;
     }
 
     public int GetInt(StatType s) {
@@ -138,6 +138,7 @@ public struct EntityStats : IEntityComponent {
         }
 
         _statUpdatesMask.Clear();
+        PositionUpdate = false;
     }
 
     public void Dispose() {
