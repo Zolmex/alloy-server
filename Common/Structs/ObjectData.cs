@@ -13,6 +13,6 @@ public struct ObjectData {
 
     public void Write(ref SpanWriter wtr) {
         wtr.Write(ObjectType);
-        Status.Write(ref wtr);
+        Status.WriteForUpdate(ref wtr);
     }
 }

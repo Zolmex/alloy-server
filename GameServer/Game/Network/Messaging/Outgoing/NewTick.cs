@@ -7,18 +7,20 @@ using GameServer.Game.Network.Messaging;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
-public readonly ref struct NewTick : IOutgoingPacket {
+public readonly struct NewTick : IOutgoingPacket {
     public PacketId ID => PacketId.NEWTICK;
 
-    private readonly Span<ObjectStatusData> _statuses;
+    private readonly ObjectStatusData[] _statuses;
+    private readonly int _count;
 
-    public NewTick(Span<ObjectStatusData> statuses) {
+    public NewTick(ObjectStatusData[] statuses, int count) {
         _statuses = statuses;
+        _count = count;
     }
     
     public void Write(ref SpanWriter wtr) {
-        wtr.Write((short)_statuses.Length);
-        foreach (var status in _statuses)
-            status.Write(ref wtr);
+        wtr.Write((short)_count);
+        for (var i = 0; i < _count; i++)
+            _statuses[i].WriteForNewTick(ref wtr);
     }
 }

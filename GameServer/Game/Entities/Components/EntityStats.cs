@@ -20,12 +20,14 @@ public struct EntityStats : IEntityComponent {
     public MapTileData Tile;
     
     public readonly StatValue[] Stats;
-    public BitMask256 StatUpdates;
+    public readonly StatData[] StatUpdates;
     public BitMask256 PublicMask;
     public BitMask256 PrivateMask;
+    public int StatUpdateCount;
 
     private readonly World _world;
     private readonly EntityType _type;
+    private BitMask256 _statUpdatesMask;
 
     public EntityStats(World world, ref Entity en) {
         _world = world;
@@ -33,6 +35,9 @@ public struct EntityStats : IEntityComponent {
         
         Stats = ArrayPool<StatValue>.Shared.Rent(STAT_COUNT);
         Stats.AsSpan(0, STAT_COUNT).Clear();
+        
+        StatUpdates = ArrayPool<StatData>.Shared.Rent(STAT_COUNT);
+        StatUpdates.AsSpan(0, STAT_COUNT).Clear();
         
         Set(StatType.Name, en.Desc.ObjectId);
     }
@@ -112,9 +117,11 @@ public struct EntityStats : IEntityComponent {
     
     private void SetInternal(StatType statType, StatValue sv, bool isPrivate) {
         var id = (int)statType;
+        if (sv == Stats[id])
+            return;
 
         Stats[id] = sv;
-        StatUpdates.Set(id);
+        _statUpdatesMask.Set(id);
 
         if (!isPrivate)
             PublicMask.Set(id);
@@ -123,7 +130,14 @@ public struct EntityStats : IEntityComponent {
 
     public void Tick() {
         Tile = _world.Map[(int)Pos.X, (int)Pos.Y];
-        StatUpdates.Clear();
+
+        StatUpdateCount = 0;
+        for (var i = 0; i < STAT_COUNT; i++) {
+            if (_statUpdatesMask.IsSet(i))
+                StatUpdates[StatUpdateCount++] = new StatData((StatType)i, Stats[i]);
+        }
+
+        _statUpdatesMask.Clear();
     }
 
     public void Dispose() {

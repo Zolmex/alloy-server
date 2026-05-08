@@ -85,12 +85,12 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         foreach (ref var en in _world.Map.GetEntitiesWithin(playerEntityStats.Pos, SIGHT_RADIUS_SQR)) {
             ref var stats = ref _world.EntityStats.Get(en.Id);
 
-            if (!stats.StatUpdates.IsEmpty()) { // Track status for newtick
+            if (stats.StatUpdateCount != 0) { // Track status for newtick
                 sight.Statuses[statusCount++] = new ObjectStatusData {
                     ObjectId = en.Id,
                     Pos = stats.Pos,
-                    Stats = stats.Stats,
                     StatUpdates = stats.StatUpdates,
+                    StatCount = stats.StatUpdateCount,
                     PrivacyMask = en.Id == playerEntityStats.Id ? stats.PrivateMask : stats.PublicMask
                 };
                 if (statusCount >= sight.Statuses.Length) {
@@ -108,7 +108,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                         ObjectId = en.Id,
                         Pos = stats.Pos,
                         Stats = stats.Stats,
-                        StatUpdates = en.Id == playerEntityStats.Id ? stats.PrivateMask : stats.PublicMask,
+                        StatCount = EntityStats.STAT_COUNT,
                         PrivacyMask = en.Id == playerEntityStats.Id ? stats.PrivateMask : stats.PublicMask,
                     }
                 };
@@ -125,6 +125,6 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     }
 
     private void ProcessNewtick(User user, ref PlayerSight sight, int statusCount) {
-        user.SendPacket(new NewTick(sight.Statuses.AsSpan(0, statusCount)));
+        user.SendPacket(new NewTick(sight.Statuses, statusCount));
     }
 }
