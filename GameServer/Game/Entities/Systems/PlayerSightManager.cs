@@ -22,7 +22,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     
     private MapTileData[] _newTiles = ArrayPool<MapTileData>.Shared.Rent(50);
     private ObjectData[] _newEntities = ArrayPool<ObjectData>.Shared.Rent(50);
-    
+
     public override void Tick(ref RealmTime time) {
         foreach (ref var sight in this) {
             ref var playerStats = ref _world.EntityStats.Get(sight.Id);
@@ -85,7 +85,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         foreach (ref var en in _world.Map.GetEntitiesWithin(playerEntityStats.Pos, SIGHT_RADIUS_SQR)) {
             ref var stats = ref _world.EntityStats.Get(en.Id);
 
-            if (stats.StatUpdateCount != 0) { // Track status for newtick
+            if (stats.StatUpdateCount != 0 || stats.PositionUpdate) { // Track status for newtick
                 sight.Statuses[statusCount++] = new ObjectStatusData {
                     ObjectId = en.Id,
                     Pos = stats.Pos,

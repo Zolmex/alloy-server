@@ -171,9 +171,9 @@ public class World {
 
         Map.Tick(ref time);
         
+        EntityStats.Tick(ref time);
         EntityBehaviors.Tick(ref time);
         PlayerSights.Tick(ref time);
-        EntityStats.Tick(ref time); // Clears stat update masks, needs to happen AFTER player update
         
         ClearTextCache();
     }
