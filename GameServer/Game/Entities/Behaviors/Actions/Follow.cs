@@ -66,11 +66,11 @@ public record Follow : BehaviorScript {
                 return BehaviorTickState.BehaviorFailed;
             }
 
-            var distToTarget = host.Stats.DistSqr(targetStats);
+            var distToTarget = host.Stats.DistSqr(ref targetStats);
             if (distToTarget == 0f || distToTarget < _distanceFromTarget)
                 return BehaviorTickState.BehaviorFailed;
 
-            var angle = host.Stats.GetAngleBetween(targetStats);
+            var angle = host.Stats.GetAngleBetween(ref targetStats);
             var dist = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
             var speed = host.Stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
             dist *= speed;
@@ -104,7 +104,7 @@ public record Follow : BehaviorScript {
         var ret = 0;
         foreach (var id in host.World.PlayerToUser.Keys) {
             ref var stats = ref host.World.EntityStats.Get(id);
-            var dist = stats.DistSqr(host.Stats);
+            var dist = stats.DistSqr(ref host.Stats);
             if (dist <= acquireRadiusSqr && dist < min) {
                 min = dist;
                 ret = stats.Id;

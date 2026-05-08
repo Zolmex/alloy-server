@@ -52,7 +52,7 @@ public static class PlayerExtensions {
         }
         
         public void MoveToSpawn(World world) {
-            var spawnTile = world.Map.Regions[TileRegion.Spawn].RandomElement();
+            var spawnTile = world.Map.Data.Regions[TileRegion.Spawn].RandomElement();
             player.Move(world, spawnTile.X, spawnTile.Y);
         }
         

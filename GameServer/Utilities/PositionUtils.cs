@@ -6,12 +6,12 @@ using GameServer.Game.Entities.Components;
 namespace GameServer.Utilities;
 
 public static class PositionUtils {
-    extension(in EntityStats en) {
+    extension(ref EntityStats en) {
         public float DistSqr(float x, float y) {
             return DistSqr(en.Pos.X, en.Pos.Y, x, y);
         }
 
-        public float DistSqr(in EntityStats b) {
+        public float DistSqr(ref EntityStats b) {
             var dx = en.Pos.X - b.Pos.X;
             var dy = en.Pos.Y - b.Pos.Y;
             return dx * dx + dy * dy;
@@ -23,7 +23,7 @@ public static class PositionUtils {
             return dx * dx + dy * dy;
         }
 
-        public double TileDistSqr(in EntityStats b) {
+        public double TileDistSqr(ref EntityStats b) {
             var dx = (int)en.Pos.X - (int)b.Pos.X;
             var dy = (int)en.Pos.Y - (int)b.Pos.Y;
             return dx * dx + dy * dy;
@@ -33,7 +33,7 @@ public static class PositionUtils {
             return en.GetAngleBetween(pos.X, pos.Y);
         }
 
-        public float GetAngleBetween(in EntityStats b) {
+        public float GetAngleBetween(ref EntityStats b) {
             return en.GetAngleBetween(b.Pos.X, b.Pos.Y);
         }
 
@@ -41,7 +41,7 @@ public static class PositionUtils {
             return MathF.Atan2(y - en.Pos.Y, x - en.Pos.X);
         }
 
-        public float GetDistanceBetween(in EntityStats entity2) //the diagonal distance
+        public float GetDistanceBetween(ref EntityStats entity2) //the diagonal distance
         {
             return GetDistanceBetween(en.Pos.X, entity2.Pos.X, en.Pos.Y, entity2.Pos.Y);
         }

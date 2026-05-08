@@ -1,6 +1,6 @@
 namespace GameServer.Game.Entities;
 
-public enum EntityType {
+public enum EntityType : byte {
     GameObject,
     StaticObject,
     Portal,

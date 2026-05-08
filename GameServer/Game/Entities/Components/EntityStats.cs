@@ -122,7 +122,7 @@ public struct EntityStats : IEntityComponent {
     }
 
     public void Tick() {
-        Tile = _world.Map.Tiles[(int)Pos.X, (int)Pos.Y];
+        Tile = _world.Map[(int)Pos.X, (int)Pos.Y];
         StatUpdates.Clear();
     }
 

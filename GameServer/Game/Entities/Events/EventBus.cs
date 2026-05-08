@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GameServer.Game.Entities.Events;
 
-public delegate void RefAction<T>(in T data);
+public delegate void RefAction<T>(ref T data);
 
 public class EventBus<T>
 {
@@ -19,9 +19,9 @@ public class EventBus<T>
         _handlers.Remove(handler);
     }
 
-    public void Publish(in T data)
+    public void Publish(ref T data)
     {
         foreach (var handler in _handlers)
-            handler(data);
+            handler(ref data);
     }
 }

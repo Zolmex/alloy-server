@@ -114,8 +114,8 @@ public record Hello : IIncomingPacket {
         user.SetGameInfo(acc, seed, world);
 
         user.SendPacket(new MapInfo(
-            world.Map.Width,
-            world.Map.Height,
+            world.Map.Data.Width,
+            world.Map.Data.Height,
             world.Config.Name,
             world.DisplayName,
             seed,

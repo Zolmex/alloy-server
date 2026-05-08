@@ -53,13 +53,13 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
             case World.UNBLOCKED_SIGHT:
                 var pX = (int)playerEntityStats.Pos.X;
                 var pY = (int)playerEntityStats.Pos.Y;
-                var width = _world.Map.Width;
-                var height = _world.Map.Height;
+                var width = _world.Map.Data.Width;
+                var height = _world.Map.Data.Height;
                 for (var y = pY - SIGHT_RADIUS; y <= pY + SIGHT_RADIUS; y++)
                     for (var x = pX - SIGHT_RADIUS; x <= pX + SIGHT_RADIUS; x++)
                         if (x >= 0 && x < width && y >= 0 && y < height &&
                             playerEntityStats.TileDistSqr(x, y) <= SIGHT_RADIUS_SQR) {
-                            var tile = _world.Map.Tiles[x, y];
+                            var tile = _world.Map[x, y];
 
                             sight.VisibleTiles.Add(tile.Pos);
                             if (sight.DiscoveredTiles.Add(tile.Pos)) // This is a newly discovered tile
@@ -71,12 +71,8 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     }
 
     private void GetNewEntities(ref EntityStats playerEntityStats, ref PlayerSight sight, List<ObjectData> newEntities) {
-        // TODO: Implement map chunk system for efficient spatial queries
-        foreach (ref var en in _world.Entities) {
+        foreach (ref var en in _world.Map.GetEntitiesWithin(playerEntityStats.Pos, SIGHT_RADIUS_SQR)) {
             ref var stats = ref _world.EntityStats.Get(en.Id);
-            if (stats.DistSqr(ref playerEntityStats) >= SIGHT_RADIUS_SQR)
-                continue;
-
             if (sight.VisibleEntities.Add(en.Id)) {
                 newEntities.Add(new ObjectData() {
                     ObjectType = en.ObjectType,

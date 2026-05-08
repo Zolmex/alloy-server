@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Common.Game;
 using Common.Resources.World;
 using Common.Utilities;
@@ -34,7 +35,7 @@ public class World {
     public ImmutableDictionary<int, User> PlayerToUser;
     public ImmutableList<string> TextCache;
 
-    public MapData Map;
+    public WorldMap Map;
     public string DisplayName;
     public string Music;
 
@@ -65,12 +66,12 @@ public class World {
     }
 
     public void Load(int mapId) {
-        Map = WorldLibrary.MapDatas[Config.Name][mapId];
+        Map = new WorldMap(this, WorldLibrary.MapDatas[Config.Name][mapId]);
         LoadEntities();
     }
 
     public void LoadEntities() {
-        foreach (var orig in Map.Entities) {
+        foreach (var orig in Map.Data.Entities) {
             var en = new Entity(orig.ObjType);
             EnterWorld(ref en);
             ref var stats = ref EntityStats.Get(en.Id);
@@ -165,8 +166,10 @@ public class World {
     public void Tick(ref RealmTime time) {
         while (_pendingActions.TryDequeue(out var act))
             act();
-        
+
         HandleTimers();
+
+        Map.Tick(ref time);
         
         EntityBehaviors.Tick(ref time);
         PlayerSights.Tick(ref time);
