@@ -106,7 +106,7 @@ public class WorldMap {
     public int GetNearestPlayer(float x, float y, float radiusSqr) {
         var min = float.MaxValue;
         var ret = 0;
-        foreach (var id in _world.PlayerToUser.Keys) {
+        foreach (var (id, _) in _world.PlayerToUser) {
             ref var stats = ref _world.EntityStats.Get(id);
             var dist = stats.DistSqr(x, y);
             if (dist <= radiusSqr && dist < min) {
@@ -122,7 +122,7 @@ public class WorldMap {
         => GetPlayersWithin(pos.X, pos.Y, radiusSqr);
 
     public IEnumerable<int> GetPlayersWithin(float x, float y, float radiusSqr) {
-        foreach (var id in _world.PlayerToUser.Keys) {
+        foreach (var (id, _) in _world.PlayerToUser) {
             ref var stats = ref _world.EntityStats.Get(id);
             var dist = stats.DistSqr(x, y);
             if (dist <= radiusSqr)
