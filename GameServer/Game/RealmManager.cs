@@ -1,8 +1,11 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Common.Database.Models;
+using Common.Resources.Xml;
 using Common.Utilities;
+using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Network;
+using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Game.Worlds.Logic;
 
@@ -28,7 +31,21 @@ public class RealmManager {
     public static void UserConnected(User user) {
         Users = Users.Add(user.Id, user);
         user.StartNetwork();
+        SendServerProjectiles(user);
         _log.Debug($"User {user.Id} connected from {user.Network.IP}");
+    }
+    
+    private static void SendServerProjectiles(User user) {
+        foreach (var type in Shoot.CustomProjectileOwners) {
+            var desc = XmlLibrary.ObjectDescs[type];
+            foreach (var conProps in desc.Projectiles.Custom) {
+                var props = conProps.Props;
+                user.SendPacket(new ServerProjectileProps(
+                    type, conProps.ProjectileIndex, props.ObjectId, props.LifetimeMS, props.MultiHit, props.PassesCover,
+                    props.ArmorPiercing, props.Size, props.Effects)
+                );
+            }
+        }
     }
     
     public static void UserDisconnected(User user) {

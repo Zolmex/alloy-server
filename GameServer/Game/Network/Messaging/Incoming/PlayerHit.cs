@@ -21,7 +21,7 @@ public record PlayerHit : IIncomingPacket {
         }
 
         var projId = entityProjectiles.GetGlobalId(ProjectileId);
-        if (projId == -1) {
+        if (projId == 0) {
             _log.Debug($"DEAD PROJECTILE {ProjectileId}");
             return;
         }

@@ -8,18 +8,19 @@ using GameServer.Game.Worlds;
 namespace GameServer.Game.Entities.Extensions;
 
 public static class CombatExtensions {
-    extension(ref Entity en) {
-        public void ShootProjectiles(World world,
-            WorldPosData startPos,
+    extension(World world) {
+        public void ShootProjectiles(WorldPosData startPos,
             int ownerId,
             ushort containerType,
             byte propsId,
             float angle,
-            short damage,
+            int minDamage,
+            int maxDamage,
             byte numShots,
             float angleInc,
             ProjectilePath path,
             ref RealmTime time) {
+            var damage = Random.Shared.Next(minDamage, maxDamage);
             ushort? firstId = null;
             for (var i = 0; i < numShots; i++) {
                 var proj = new Projectile(world, startPos, ownerId, containerType, propsId, angle, damage, path.Id,

@@ -17,7 +17,7 @@ public struct Projectile : IIdentifiable, IDisposable {
     public readonly ushort ContainerType;
     public readonly byte ProjectilePropsId;
     public readonly float Angle;
-    public readonly short Damage;
+    public readonly int Damage;
     public readonly Guid ProjectilePathId;
     public readonly long StartTime;
     public readonly long EndTime;
@@ -27,7 +27,7 @@ public struct Projectile : IIdentifiable, IDisposable {
 
     private readonly World _world;
     
-    public Projectile(World world, WorldPosData startPos, int ownerId, ushort containerType, byte propsId, float angle, short damage, Guid projectilePathId, ref RealmTime time) {
+    public Projectile(World world, WorldPosData startPos, int ownerId, ushort containerType, byte propsId, float angle, int damage, Guid projectilePathId, ref RealmTime time) {
         _world = world;
         StartPos = startPos;
         OwnerId = ownerId;

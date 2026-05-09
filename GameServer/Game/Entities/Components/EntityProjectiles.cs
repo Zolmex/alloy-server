@@ -29,13 +29,9 @@ public struct EntityProjectiles : IIdentifiable, IDisposable {
     }
 
     public int GetGlobalId(int localProjId) {
-        return _projectileIds.IndexOf(localProjId);
+        return _projectileIds.GetAt(localProjId);
     }
     
-    public bool TryRemoveAt(int localProjId) {
-        return _projectileIds.RemoveAt(localProjId);
-    }
-
     public void Dispose() {
         _projectileIds.Dispose();
     }

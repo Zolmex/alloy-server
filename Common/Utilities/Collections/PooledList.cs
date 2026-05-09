@@ -60,6 +60,13 @@ public class PooledList<T> : IEnumerable<T>, IDisposable {
     public int IndexOf(T elem) {
         return Array.IndexOf(_arr, elem, 0, Count);
     }
+    
+    public T GetAt(int index) {
+        if (index < 0 || index >= Count)
+            return default;
+        
+        return _arr[index];
+    }
 
     public IEnumerator<T> GetEnumerator() {
         // Iterate only over the live portion of the rented array

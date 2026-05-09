@@ -10,7 +10,7 @@ public readonly record struct EnemyShoot(
     byte ProjId,
     WorldPosData StartPos,
     float Angle,
-    short Damage,
+    int Damage,
     byte NumShots,
     float AngleInc,
     ProjectilePath Path) : IOutgoingPacket {

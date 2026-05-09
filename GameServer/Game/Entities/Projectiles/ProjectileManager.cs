@@ -12,7 +12,7 @@ public class ProjectileManager : ManagerBase<Projectile> {
     private readonly World _world;
     private readonly Stack<int> _freeIds;
     
-    private int _idCounter;
+    private int _idCounter; // First element starts at id = 1
     
     public ProjectileManager(World world, int capacity) : base(world, capacity) {
         _world = world;
@@ -20,7 +20,7 @@ public class ProjectileManager : ManagerBase<Projectile> {
     }
     
     public override ref Projectile Add(ref Projectile elem) {
-        elem.Id = _freeIds.Count > 0 ? _freeIds.Pop() : _idCounter++;
+        elem.Id = _freeIds.Count > 0 ? _freeIds.Pop() : ++_idCounter;
         return ref Set.Add(ref elem);
     }
 

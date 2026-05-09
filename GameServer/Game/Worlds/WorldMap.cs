@@ -102,7 +102,7 @@ public class WorldMap {
 
     public int GetNearestPlayer(WorldPosData pos, float radiusSqr)
         => GetNearestPlayer(pos.X, pos.Y, radiusSqr);
-
+    
     public int GetNearestPlayer(float x, float y, float radiusSqr) {
         var min = float.MaxValue;
         var ret = 0;

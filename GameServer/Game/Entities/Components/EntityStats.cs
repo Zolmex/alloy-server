@@ -17,6 +17,7 @@ public struct EntityStats : IIdentifiable, IDisposable {
     public int Id { get; set; }
 
     public WorldPosData Pos;
+    public WorldPosData PrevPos;
     public MapTileData Tile;
     
     public readonly StatValue[] Stats;
@@ -130,6 +131,7 @@ public struct EntityStats : IIdentifiable, IDisposable {
     }
 
     public void Tick() {
+        PrevPos = Pos;
         Tile = _world.Map[(int)Pos.X, (int)Pos.Y];
         
         StatUpdateCount = 0;
