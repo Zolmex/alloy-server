@@ -19,7 +19,7 @@ public class CirclePath : ProjectilePathSegment {
         this.radius = radius;
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId, float angle) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -29,9 +29,8 @@ public class CirclePath : ProjectilePathSegment {
         ApplyModifiers(ref elapsedLifetimeMs);
 
         var elapsedSeconds = elapsedLifetimeMs / 1000f;
-        float angle = 0;
         if (elapsedSeconds != 0)
-            angle = Angle + Speed * elapsedSeconds * 360f.Deg2Rad();
+            angle = GetAngle(angle) + Speed * elapsedSeconds * 360f.Deg2Rad();
 
         p.X = MathF.Cos(angle) * radius;
         p.Y = MathF.Sin(angle) * radius;
@@ -44,6 +43,6 @@ public class CirclePath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new CirclePath(Speed / 50, radius, Angle, LifetimeMs, TimeOffset);
+        return new CirclePath(Speed / 50, radius, FixedAngle, LifetimeMs, TimeOffset);
     }
 }

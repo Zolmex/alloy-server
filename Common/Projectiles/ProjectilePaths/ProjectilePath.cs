@@ -11,8 +11,6 @@ using Common.Network;
 namespace Common.Projectiles.ProjectilePaths;
 
 public class ProjectilePath {
-    public Guid Id = Guid.NewGuid();
-
     public int SegmentCount => projectilePathSegments.Count;
     public int LifetimeMs => projectilePathSegments.Sum(p => p.LifetimeMs);
 
@@ -34,7 +32,7 @@ public class ProjectilePath {
         projectilePathSegments.Add(segment);
     }
 
-    public Vector2 PositionAt(int relativeElapsed, int projId) {
+    public Vector2 PositionAt(int relativeElapsed, int projId, float angle) {
         var segmentEnd = 0;
         var segmentsTotal = 0;
         var startPos = Vector2.Zero; // Origin
@@ -42,11 +40,11 @@ public class ProjectilePath {
             segmentEnd += segment.LifetimeMs;
             if (relativeElapsed <= segmentEnd) {
                 var ret = segment.PositionAt(relativeElapsed -
-                                             segmentsTotal, projId); // Position offset relative to the segment start
+                                             segmentsTotal, projId, angle); // Position offset relative to the segment start
                 return startPos + ret; // Position offset relative to the path start
             }
 
-            startPos += segment.PositionAtEnd(projId);
+            startPos += segment.PositionAtEnd(projId, angle);
             segmentsTotal += segment.LifetimeMs;
         }
 

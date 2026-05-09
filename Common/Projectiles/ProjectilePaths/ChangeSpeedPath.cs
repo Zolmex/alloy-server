@@ -25,7 +25,7 @@ public class ChangeSpeedPath : ProjectilePathSegment {
         Repeat = repeat;
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId, float angle) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -46,8 +46,8 @@ public class ChangeSpeedPath : ProjectilePathSegment {
             dist += relElapsed * (Speed + (increments + 1) * Increment) / 1000f;
         }
 
-        p.X = dist * MathF.Cos(Angle);
-        p.Y = dist * MathF.Sin(Angle);
+        p.X = dist * MathF.Cos(GetAngle(angle));
+        p.Y = dist * MathF.Sin(GetAngle(angle));
         return p;
     }
 
@@ -60,6 +60,6 @@ public class ChangeSpeedPath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new ChangeSpeedPath(Speed, Increment, Cooldown, Angle, LifetimeMs, CooldownOffset, Repeat, TimeOffset);
+        return new ChangeSpeedPath(Speed, Increment, Cooldown, FixedAngle, LifetimeMs, CooldownOffset, Repeat, TimeOffset);
     }
 }

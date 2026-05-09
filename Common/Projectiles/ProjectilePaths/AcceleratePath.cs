@@ -13,7 +13,7 @@ public class AcceleratePath : ProjectilePathSegment {
         params PathSegmentModifier[] mods)
         : base(PathType.AcceleratePath, speed, angle, lifetimeMs, timeOffset, mods) { }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId, float angle) {
         var speed = Speed;
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
@@ -26,12 +26,12 @@ public class AcceleratePath : ProjectilePathSegment {
         speed *= elapsedLifetimeMs / (float)LifetimeMs;
         var dist = elapsedLifetimeMs * (speed / 1000f);
 
-        p.X = dist * MathF.Cos(Angle);
-        p.Y = dist * MathF.Sin(Angle);
+        p.X = dist * MathF.Cos(GetAngle(angle));
+        p.Y = dist * MathF.Sin(GetAngle(angle));
         return p;
     }
 
     public override ProjectilePathSegment Clone() {
-        return new AcceleratePath(Speed, Angle, LifetimeMs, TimeOffset);
+        return new AcceleratePath(Speed, FixedAngle, LifetimeMs, TimeOffset);
     }
 }

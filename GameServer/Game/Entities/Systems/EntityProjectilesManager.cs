@@ -17,5 +17,8 @@ namespace GameServer.Game.Entities.Systems;
 public class EntityProjectilesManager(World world, int capacity) : ManagerBase<EntityProjectiles>(world, capacity) {
 
     public override void Tick(ref RealmTime time) {
+        foreach (ref var enProjs in this) {
+            enProjs.Tick(ref time);
+        }
     }
 }

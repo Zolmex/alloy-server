@@ -22,18 +22,26 @@ public static class CombatExtensions {
             ref RealmTime time) {
             var damage = Random.Shared.Next(minDamage, maxDamage);
             ushort? firstId = null;
+            int lifetimeMs = 0;
             for (var i = 0; i < numShots; i++) {
-                var proj = new Projectile(world, startPos, ownerId, containerType, propsId, angle, damage, path.Id,
+                var proj = new Projectile(world, startPos, ownerId, containerType, propsId, angle, damage, path,
                     ref time);
                 world.Projectiles.Add(ref proj);
-                
+
                 ref var ownerProjectiles = ref world.EntityProjectiles.Get(ownerId);
                 var localProjId = (ushort)ownerProjectiles.Add(proj.Id);
+                proj.SetLocalId(localProjId);
                 firstId ??= localProjId;
+                lifetimeMs = proj.Props.LifetimeMS;
             }
 
-            world.Map.BroadcastNearby(startPos, 20f, user
-                => user.SendPacket(new EnemyShoot(
+            ref var enProjs = ref world.EntityProjectiles.Get(ownerId);
+            enProjs.ScheduleClear(time.TotalElapsedMs + lifetimeMs);
+            foreach (var plrId in world.Map.GetPlayersWithin(startPos, 20f)) {
+                enProjs.AddTarget(plrId); // Cache for hit validation
+                
+                var user = world.PlayerToUser[plrId];
+                user.SendPacket(new EnemyShoot(
                     firstId ?? 0,
                     ownerId,
                     propsId,
@@ -42,8 +50,8 @@ public static class CombatExtensions {
                     damage,
                     numShots,
                     angleInc,
-                    path)
-                ));
+                    path));
+            }
         }
     }
 }

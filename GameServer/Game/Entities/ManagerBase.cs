@@ -23,7 +23,8 @@ public abstract class ManagerBase<T> where T : struct, IIdentifiable, IDisposabl
 
     public virtual void Remove(int id) {
         Set.Remove(id, out var elem);
-        elem.Dispose();
+        if (elem.Id != 0)
+            elem.Dispose();
     }
 
     public ref T Get(int id) {

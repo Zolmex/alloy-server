@@ -19,7 +19,7 @@ public class CombinedPath : ProjectilePathSegment {
         LifetimeMs = segments.Max(i => i.TimeOffset + i.LifetimeMs);
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId, float angle) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -36,7 +36,7 @@ public class CombinedPath : ProjectilePathSegment {
             if (segment.TimeOffset > 0 && elapsedLifetimeMs < segment.TimeOffset)
                 continue;
 
-            var segmentOffset = segment.PositionAt(elapsedLifetimeMs, projId);
+            var segmentOffset = segment.PositionAt(elapsedLifetimeMs, projId, angle);
             deltaX += segmentOffset.X;
             deltaY += segmentOffset.Y;
             count++;

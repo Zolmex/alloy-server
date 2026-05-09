@@ -15,7 +15,10 @@ public class PooledList<T> : IEnumerable<T>, IDisposable {
         _arr = ArrayPool<T>.Shared.Rent(capacity);
     }
 
-    public int Add(T elem) {
+    public int Add(T elem, bool checkForDuplicate = false) {
+        if (checkForDuplicate && _arr.IndexOf(elem) != -1)
+            return -1;
+        
         if (Count >= _arr.Length) {
             var newArr = ArrayPool<T>.Shared.Rent(Count * 2);
             _arr.AsSpan().CopyTo(newArr);
@@ -68,6 +71,11 @@ public class PooledList<T> : IEnumerable<T>, IDisposable {
         return _arr[index];
     }
 
+    public void Clear() {
+        Array.Clear(_arr);
+        Count = 0;
+    }
+    
     public IEnumerator<T> GetEnumerator() {
         // Iterate only over the live portion of the rented array
         for (int i = 0; i < Count; i++)

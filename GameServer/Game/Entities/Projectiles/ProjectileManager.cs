@@ -7,8 +7,6 @@ namespace GameServer.Game.Entities.Projectiles;
 
 public class ProjectileManager : ManagerBase<Projectile> {
 
-    public ImmutableDictionary<Guid, ProjectilePath> Paths = [];
-    
     private readonly World _world;
     private readonly Stack<int> _freeIds;
     
@@ -18,7 +16,7 @@ public class ProjectileManager : ManagerBase<Projectile> {
         _world = world;
         _freeIds = new Stack<int>(capacity);
     }
-    
+
     public override ref Projectile Add(ref Projectile elem) {
         elem.Id = _freeIds.Count > 0 ? _freeIds.Pop() : ++_idCounter;
         return ref Set.Add(ref elem);
@@ -28,14 +26,6 @@ public class ProjectileManager : ManagerBase<Projectile> {
         Set.Remove(id, out var elem);
         _freeIds.Push(id);
         elem.Dispose();
-    }
-
-    public void RegisterPath(ProjectilePath path) {
-        Paths = Paths.Add(path.Id, path);
-    }
-    
-    public void DiscardPath(Guid id) {
-        Paths = Paths.Remove(id);
     }
 
     public override void Tick(ref RealmTime time) {

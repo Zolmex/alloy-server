@@ -15,7 +15,7 @@ public class ProjectilePathSegment {
     public readonly PathType Type;
     public readonly float Speed;
     public readonly int TimeOffset;
-    public float Angle;
+    public float FixedAngle;
     public int LifetimeMs;
     
     protected readonly int _mods;
@@ -25,7 +25,7 @@ public class ProjectilePathSegment {
         Type = pathType;
         Speed = speed;
         TimeOffset = timeOffset ?? 0;
-        Angle = angle.Deg2Rad() ?? float.NaN;
+        FixedAngle = angle.Deg2Rad() ?? float.NaN;
         LifetimeMs = lifetimeMs ?? -1;
         _mods = GetModsFlag(mods);
     }
@@ -40,18 +40,24 @@ public class ProjectilePathSegment {
                 elapsedLifetimeMs = LifetimeMs - elapsedLifetimeMs;
     }
 
-    public virtual Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
+    public virtual Vector2 PositionAt(int elapsedLifetimeMs, int projId, float angle) {
         throw new NotImplementedException();
     }
 
-    public Vector2 PositionAtEnd(int projId) {
-        return PositionAt(LifetimeMs, projId);
+    public Vector2 PositionAtEnd(int projId, float angle) {
+        return PositionAt(LifetimeMs, projId, angle);
+    }
+
+    public float GetAngle(float angle) {
+        if (float.IsNaN(FixedAngle))
+            return angle;
+        return FixedAngle;
     }
 
     public virtual void Write(ref SpanWriter wtr) {
         wtr.Write(Speed);
         wtr.Write(LifetimeMs);
-        wtr.Write(Angle);
+        wtr.Write(FixedAngle);
         wtr.Write(TimeOffset);
         wtr.Write(_mods);
     }

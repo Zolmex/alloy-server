@@ -192,6 +192,7 @@ public class World {
         
         EntityStats.Tick(ref time);
         EntityCombat.Tick(ref time);
+        EntityProjectiles.Tick(ref time);
         EntityBehaviors.Tick(ref time);
         PlayerSights.Tick(ref time);
         
