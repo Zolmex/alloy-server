@@ -13,7 +13,7 @@ public class WavyPath : ProjectilePathSegment {
         params PathSegmentModifier[] mods)
         : base(PathType.WavyPath, speed, angle, lifetimeMs, timeOffset, mods) { }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -23,7 +23,7 @@ public class WavyPath : ProjectilePathSegment {
         ApplyModifiers(ref elapsedLifetimeMs);
 
         var dist = elapsedLifetimeMs * (Speed / 1000f);
-        var phase = Info.ProjId % 2 == 0 ? 0 : MathF.PI;
+        var phase = projId % 2 == 0 ? 0 : MathF.PI;
         var periodFactor = 6 * MathF.PI;
         var amplitudeFactor = MathF.PI / 64.0f;
         var theta = Angle + amplitudeFactor * MathF.Sin(phase + periodFactor * elapsedLifetimeMs / 1000.0f);
@@ -33,6 +33,6 @@ public class WavyPath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new WavyPath(Speed, _angle, _lifetimeMs, TimeOffset);
+        return new WavyPath(Speed, Angle, LifetimeMs, TimeOffset);
     }
 }

@@ -6,7 +6,7 @@ using Common.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct PlayerSight : IIdentifiable {
+public struct PlayerSight : IIdentifiable, IDisposable {
     public int Id { get; set; }
 
     public HashSet<IntPoint> VisibleTiles = [];
@@ -15,7 +15,7 @@ public struct PlayerSight : IIdentifiable {
     public ObjectStatusData[] Statuses = ArrayPool<ObjectStatusData>.Shared.Rent(50);
 
     public PlayerSight(ref Entity en) {
-        
+        Id = en.Id;
     }
     
     public void Dispose() {

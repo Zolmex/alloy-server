@@ -8,7 +8,7 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityLoot : IIdentifiable {
+public struct EntityLoot : IIdentifiable, IDisposable {
     public int Id { get; set; }
 
     private readonly World _world;

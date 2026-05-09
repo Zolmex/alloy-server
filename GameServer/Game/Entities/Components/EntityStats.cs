@@ -11,7 +11,7 @@ using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityStats : IIdentifiable {
+public struct EntityStats : IIdentifiable, IDisposable {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;
 
     public int Id { get; set; }
@@ -31,6 +31,7 @@ public struct EntityStats : IIdentifiable {
     private BitMask256 _statUpdatesMask;
 
     public EntityStats(World world, ref Entity en) {
+        Id = en.Id;
         _world = world;
         _type = en.Type;
         
@@ -130,7 +131,7 @@ public struct EntityStats : IIdentifiable {
 
     public void Tick() {
         Tile = _world.Map[(int)Pos.X, (int)Pos.Y];
-
+        
         StatUpdateCount = 0;
         for (var i = 0; i < STAT_COUNT; i++) {
             if (_statUpdatesMask.IsSet(i))
@@ -143,5 +144,6 @@ public struct EntityStats : IIdentifiable {
 
     public void Dispose() {
         ArrayPool<StatValue>.Shared.Return(Stats);
+        ArrayPool<StatData>.Shared.Return(StatUpdates);
     }
 }

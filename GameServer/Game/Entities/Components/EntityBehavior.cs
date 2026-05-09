@@ -11,7 +11,7 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityBehavior : IIdentifiable {
+public struct EntityBehavior : IIdentifiable, IDisposable {
     private static readonly Logger _log = new(typeof(EntityBehavior));
 
     public int Id { get; set; }
@@ -27,6 +27,7 @@ public struct EntityBehavior : IIdentifiable {
     private State _currentState;
 
     public EntityBehavior(World world, ref Entity en) {
+        Id = en.Id;
         World = world;
         _objectId = XmlLibrary.ObjectDescs[en.ObjectType].ObjectId;
     }

@@ -13,7 +13,7 @@ public class BoomerangPath : ProjectilePathSegment {
         params PathSegmentModifier[] mods)
         : base(PathType.BoomerangPath, speed, angle, lifetimeMs, timeOffset, mods) { }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -29,6 +29,6 @@ public class BoomerangPath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new BoomerangPath(Speed, _angle, _lifetimeMs, TimeOffset);
+        return new BoomerangPath(Speed, Angle, LifetimeMs, TimeOffset);
     }
 }

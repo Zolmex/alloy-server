@@ -19,7 +19,7 @@ public class CirclePath : ProjectilePathSegment {
         this.radius = radius;
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -44,6 +44,6 @@ public class CirclePath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new CirclePath(Speed / 50, radius, _angle, _lifetimeMs, TimeOffset);
+        return new CirclePath(Speed / 50, radius, Angle, LifetimeMs, TimeOffset);
     }
 }

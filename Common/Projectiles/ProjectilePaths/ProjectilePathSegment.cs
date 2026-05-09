@@ -11,66 +11,25 @@ using Common.Utilities;
 
 namespace Common.Projectiles.ProjectilePaths;
 
-/// <summary>
-///     Class for a segment as part of a chained sequence of segments that form a <see cref="ProjectilePath" />.
-/// </summary>
 public class ProjectilePathSegment {
+    public readonly PathType Type;
+    public readonly float Speed;
+    public readonly int TimeOffset;
+    public float Angle;
+    public int LifetimeMs;
+    
     protected readonly int _mods;
 
-    protected float? _angle;
-
-    protected int? _lifetimeMs;
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ProjectilePathSegment" /> class.
-    /// </summary>
-    /// <param name="pathType">Path type.</param>
     public ProjectilePathSegment(PathType pathType, float speed, float? angle = null, int? lifetimeMs = null,
         int? timeOffset = null, params PathSegmentModifier[] mods) {
         Type = pathType;
         Speed = speed;
         TimeOffset = timeOffset ?? 0;
-        _angle = angle.Deg2Rad();
-        _lifetimeMs = lifetimeMs;
+        Angle = angle.Deg2Rad() ?? float.NaN;
+        LifetimeMs = lifetimeMs ?? -1;
         _mods = GetModsFlag(mods);
     }
-
-    /// <summary>
-    ///     Gets or sets the type of Path, this is used so we can send to the client for correct parsing.
-    /// </summary>
-    public PathType Type { get; private set; }
-
-    /// <summary>
-    ///     Gets or sets information about the projectile that controls this path segment.
-    /// </summary>
-    public ProjectileInfo Info { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the speed of this path segment.
-    /// </summary>
-    public float Speed { get; }
-
-    /// <summary>
-    ///     Gets the time offset at which the segment starts modifying the projectile's position.
-    /// </summary>
-    public int TimeOffset { get; }
-
-    /// <summary>
-    ///     How long the path segment will run for in Ms.
-    /// </summary>
-    public int LifetimeMs {
-        get => _lifetimeMs ?? Info.LifetimeMs;
-        set => _lifetimeMs = value;
-    }
-
-    /// <summary>
-    ///     Gets or sets the angle of this path segment.
-    /// </summary>
-    public float Angle {
-        get => _angle ?? Info.ShootAngle;
-        set => _angle = value;
-    }
-
+    
     public bool HasMod(PathSegmentModifier mod) {
         return (_mods & (1 << (int)mod)) != 0;
     }
@@ -81,58 +40,26 @@ public class ProjectilePathSegment {
                 elapsedLifetimeMs = LifetimeMs - elapsedLifetimeMs;
     }
 
-    /// <summary>
-    ///     Gets the position offset of the projectile (relative to the start position of the segment), at a specified time
-    ///     relative to the start of the segment.
-    /// </summary>
-    /// <param name="startPos">Start position for this path.</param>
-    /// <param name="elapsedLifetimeMs">Time since the start of the segment.</param>
-    /// <returns>The position offset relative to the segment's start position.</returns>
-    /// <exception cref="NotImplementedException">Throws exception if not implemented in a derived class.</exception>
-    public virtual Vector2 PositionAt(int elapsedLifetimeMs) {
+    public virtual Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         throw new NotImplementedException();
     }
 
-    /// <summary>
-    ///     Gets the position offset at the end of this segment.
-    /// </summary>
-    /// <returns>Position offset at the end of the segment.</returns>
-    public Vector2 PositionAtEnd() {
-        return PositionAt(LifetimeMs);
+    public Vector2 PositionAtEnd(int projId) {
+        return PositionAt(LifetimeMs, projId);
     }
 
-    /// <summary>
-    ///     Writes the path data to the <see cref="NetworkWriter" /> so we can send it to the client. By default sends out
-    ///     Speed, LifetimeMS, and Angle.
-    /// </summary>
-    /// <param name="wtr">Network Writer.</param>
     public virtual void Write(ref SpanWriter wtr) {
         wtr.Write(Speed);
         wtr.Write(LifetimeMs);
-        wtr.Write(_angle ?? float.NaN);
+        wtr.Write(Angle);
         wtr.Write(TimeOffset);
         wtr.Write(_mods);
     }
 
-    public virtual void SetInfo(ProjectileInfo info) {
-        Info = info;
-    }
-
-    /// <summary>
-    ///     Clones itself into a new instance. Required since a behavior references a segment, and then that segment will be
-    ///     reused,
-    ///     so we need a new instance.
-    /// </summary>
-    /// <returns>A new instance of the segment with the same values.</returns>
     public virtual ProjectilePathSegment Clone() {
         return new ProjectilePathSegment(0, 0);
     }
 
-    /// <summary>
-    ///     Parse a projectile desc into a projectile path.
-    /// </summary>
-    /// <param name="projDesc">Projectile Desc.</param>
-    /// <returns>Projectile path segment.</returns>
     public static ProjectilePathSegment ParsePath(ProjectileDesc projDesc) {
         // No path defined, import path from old system
         ProjectilePathSegment path;
@@ -151,11 +78,6 @@ public class ProjectilePathSegment {
         return path;
     }
 
-    /// <summary>
-    ///     Parse an XML element into a projectile path.
-    /// </summary>
-    /// <param name="pathElement">XML element from file.</param>
-    /// <returns>Projectile path segment.</returns>
     public static ProjectilePathSegment ParsePath(XElement pathElement) {
         if (pathElement == null)
             return new LinePath(10, null, 100);
@@ -210,10 +132,6 @@ public class ProjectilePathSegment {
         };
     }
 
-    /// <summary>
-    ///     Convert a solo segment to a <see cref="ProjectilePath" />.
-    /// </summary>
-    /// <returns>Projectile Path.</returns>
     public ProjectilePath ToPath() {
         return new ProjectilePath(LifetimeMs, this);
     }
@@ -224,14 +142,6 @@ public class ProjectilePathSegment {
             ret |= 1 << (int)mod;
         return ret;
     }
-}
-
-public struct ProjectileInfo {
-    public Vector2 StartPos;
-    public float ShootAngle;
-    public int LifetimeMs;
-    public int ProjId;
-    public long StartTime;
 }
 
 public enum PathSegmentModifier : byte {

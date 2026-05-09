@@ -20,7 +20,7 @@ public class AmplitudePath : ProjectilePathSegment {
         this.frequency = frequency;
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -33,7 +33,7 @@ public class AmplitudePath : ProjectilePathSegment {
         p.X = dist * MathF.Cos(Angle);
         p.Y = dist * MathF.Sin(Angle);
 
-        var phase = Info.ProjId % 2 == 0 ? 0 : MathF.PI;
+        var phase = projId % 2 == 0 ? 0 : MathF.PI;
         var deflection =
             amplitude * MathF.Sin(phase + elapsedLifetimeMs / (float)LifetimeMs * frequency * 2 * MathF.PI);
         p.X = p.X + deflection * MathF.Cos(Angle + MathF.PI / 2);
@@ -48,6 +48,6 @@ public class AmplitudePath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new AmplitudePath(Speed, amplitude, frequency, _angle, _lifetimeMs, TimeOffset);
+        return new AmplitudePath(Speed, amplitude, frequency, Angle, LifetimeMs, TimeOffset);
     }
 }

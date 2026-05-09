@@ -9,7 +9,7 @@ using Common.Utilities;
 
 namespace GameServer.Game.Entities;
 
-public struct Entity : IIdentifiable, IEquatable<Entity> {
+public struct Entity : IIdentifiable, IEquatable<Entity>, IDisposable {
     public int Id { get; set; }
     public ushort ObjectType { get; }
     public EntityType Type { get; }
@@ -73,5 +73,9 @@ public struct Entity : IIdentifiable, IEquatable<Entity> {
             return EntityType.Player;
 
         return EntityType.GameObject;
+    }
+
+    public void Dispose() {
+        // Ignore
     }
 }

@@ -7,6 +7,7 @@ using Common.Structs;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Network;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Worlds;
@@ -166,5 +167,17 @@ public class WorldMap {
         }
 
         return ret;
+    }
+
+    public void BroadcastNearby(WorldPosData pos, float radiusSqr, Action<User> act)
+        => BroadcastNearby(pos.X, pos.Y, radiusSqr, act);
+
+    public void BroadcastNearby(float x, float y, float radiusSqr, Action<User> act) {
+        foreach (var (id, user) in _world.PlayerToUser) {
+            ref var stats = ref _world.EntityStats.Get(id);
+            var dist = stats.DistSqr(x, y);
+            if (dist <= radiusSqr)
+                act(user);
+        }
     }
 }

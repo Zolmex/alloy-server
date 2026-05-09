@@ -7,7 +7,7 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities;
 
-public abstract class ManagerBase<T> where T : struct, IIdentifiable {
+public abstract class ManagerBase<T> where T : struct, IIdentifiable, IDisposable {
 
     public readonly SparseSet<T> Set;
     protected readonly World _world;
@@ -17,13 +17,13 @@ public abstract class ManagerBase<T> where T : struct, IIdentifiable {
         Set = new SparseSet<T>(capacity);
     }
     
-    public ref T Add(ref T elem, int entityId) {
-        elem.Id = entityId;
+    public virtual ref T Add(ref T elem) {
         return ref Set.Add(ref elem);
     }
 
     public virtual void Remove(int id) {
-        Set.Remove(id);
+        Set.Remove(id, out var elem);
+        elem.Dispose();
     }
 
     public ref T Get(int id) {

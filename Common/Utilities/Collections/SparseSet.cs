@@ -34,11 +34,13 @@ public class SparseSet<T> where T : struct, IIdentifiable {
         return ref _dense[Count++];
     }
 
-    public void Remove(int id) {
+    public void Remove(int id, out T elem) {
+        elem = default;
         var indexInDense = _sparse[id];
         if (indexInDense == 0)
             return;
         
+        elem = _dense[indexInDense];
         _sparse[id] = 0; // Point to default
         Count--;
         

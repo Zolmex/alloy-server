@@ -16,10 +16,10 @@ public class CombinedPath : ProjectilePathSegment {
         : base(PathType.CombinedPath, 0, timeOffset: timeOffset) {
         _segments = segments;
 
-        _lifetimeMs = segments.Max(i => i.TimeOffset + i.LifetimeMs);
+        LifetimeMs = segments.Max(i => i.TimeOffset + i.LifetimeMs);
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -36,7 +36,7 @@ public class CombinedPath : ProjectilePathSegment {
             if (segment.TimeOffset > 0 && elapsedLifetimeMs < segment.TimeOffset)
                 continue;
 
-            var segmentOffset = segment.PositionAt(elapsedLifetimeMs);
+            var segmentOffset = segment.PositionAt(elapsedLifetimeMs, projId);
             deltaX += segmentOffset.X;
             deltaY += segmentOffset.Y;
             count++;
@@ -56,11 +56,6 @@ public class CombinedPath : ProjectilePathSegment {
 
         wtr.Write(TimeOffset);
         wtr.Write(_mods);
-    }
-
-    public override void SetInfo(ProjectileInfo info) {
-        base.SetInfo(info);
-        foreach (var segment in _segments) segment.SetInfo(info);
     }
 
     public override ProjectilePathSegment Clone() {

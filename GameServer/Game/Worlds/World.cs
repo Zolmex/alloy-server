@@ -9,6 +9,7 @@ using GameServer.Game.Entities;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Projectiles;
 using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
 using GameServer.Utilities;
@@ -25,9 +26,12 @@ public class World {
     public readonly WorldConfig Config;
 
     public readonly EntityManager Entities;
+    public readonly ProjectileManager Projectiles;
     
     public readonly EntityBehaviorManager EntityBehaviors;
     public readonly EntityStatsManager EntityStats;
+    public readonly EntityProjectilesManager EntityProjectiles;
+    public readonly EntityCombatManager EntityCombat;
     
     public readonly PlayerSightManager PlayerSights;
     public readonly PlayerChatManager PlayerChat;
@@ -48,10 +52,13 @@ public class World {
         Id = id;
         Config = config;
 
-        Entities = new EntityManager(5_000);
+        Entities = new EntityManager(this, 5_000);
+        Projectiles = new ProjectileManager(this, 5_000);
         
         EntityBehaviors = new EntityBehaviorManager(this, 5_000);
         EntityStats = new EntityStatsManager(this, 5_000);
+        EntityProjectiles = new EntityProjectilesManager(this, 1_000);
+        EntityCombat = new EntityCombatManager(this, 1_000);
         
         PlayerSights = new PlayerSightManager(this, 100);
         PlayerChat = new PlayerChatManager(this, 100);
@@ -92,13 +99,13 @@ public class World {
 
     public ref Entity EnterWorld(ref Entity en) {
         ref var ret = ref Entities.Add(ref en);
-        AddComponents(ref en);
+        AddComponents(ref ret);
         return ref ret;
     }
 
     private void AddComponents(ref Entity en) {
         var stats = new EntityStats(this, ref en);
-        EntityStats.Add(ref stats, en.Id); // All entities must have
+        EntityStats.Add(ref stats); // All entities must have
 
         switch (en.Type) {
             case EntityType.GameObject:
@@ -112,17 +119,25 @@ public class World {
             case EntityType.Character:
             case EntityType.Enemy:
                 var behavior = new EntityBehavior(this, ref en);
-                ref var entityBehavior = ref EntityBehaviors.Add(ref behavior, en.Id);
+                ref var entityBehavior = ref EntityBehaviors.Add(ref behavior);
                 if (BehaviorLibrary.ClassicBehaviors.TryGetValue(en.Desc.ObjectId, out var rootState))
                     entityBehavior.Load(rootState);
+                var enProjectiles = new EntityProjectiles(this, ref en);
+                EntityProjectiles.Add(ref enProjectiles);
+                var combat = new EntityCombat(this, ref en);
+                EntityCombat.Add(ref combat);
                 break;
             case EntityType.Container:
                 break;
             case EntityType.Player:
                 var sight = new PlayerSight(ref en);
-                PlayerSights.Add(ref sight, en.Id);
+                PlayerSights.Add(ref sight);
                 var chat = new PlayerChat(this, ref en);
-                PlayerChat.Add(ref chat, en.Id);
+                PlayerChat.Add(ref chat);
+                enProjectiles = new EntityProjectiles(this, ref en);
+                EntityProjectiles.Add(ref enProjectiles);
+                combat = new EntityCombat(this, ref en);
+                EntityCombat.Add(ref combat);
                 break;
             default:
                 throw new ArgumentOutOfRangeException($"{en.Type}");
@@ -132,8 +147,11 @@ public class World {
     public void LeaveWorld(int entityId) {
         Entities.Remove(entityId);
         EntityBehaviors.Remove(entityId);
+        EntityCombat.Remove(entityId);
         EntityStats.Remove(entityId);
+        EntityProjectiles.Remove(entityId);
         PlayerSights.Remove(entityId);
+        PlayerChat.Remove(entityId);
     }
 
     private void HandleTimers() {
@@ -169,9 +187,11 @@ public class World {
 
         HandleTimers();
 
+        Projectiles.Tick(ref time);
         Map.Tick(ref time);
         
         EntityStats.Tick(ref time);
+        EntityCombat.Tick(ref time);
         EntityBehaviors.Tick(ref time);
         PlayerSights.Tick(ref time);
         

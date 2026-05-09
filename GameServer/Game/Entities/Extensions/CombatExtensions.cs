@@ -1,0 +1,48 @@
+using Common.Game;
+using Common.Projectiles.ProjectilePaths;
+using Common.Structs;
+using GameServer.Game.Entities.Projectiles;
+using GameServer.Game.Network.Messaging.Outgoing;
+using GameServer.Game.Worlds;
+
+namespace GameServer.Game.Entities.Extensions;
+
+public static class CombatExtensions {
+    extension(ref Entity en) {
+        public void ShootProjectiles(World world,
+            WorldPosData startPos,
+            int ownerId,
+            ushort containerType,
+            byte propsId,
+            float angle,
+            short damage,
+            byte numShots,
+            float angleInc,
+            ProjectilePath path,
+            ref RealmTime time) {
+            ushort? firstId = null;
+            for (var i = 0; i < numShots; i++) {
+                var proj = new Projectile(world, startPos, ownerId, containerType, propsId, angle, damage, path.Id,
+                    ref time);
+                world.Projectiles.Add(ref proj);
+                
+                ref var ownerProjectiles = ref world.EntityProjectiles.Get(ownerId);
+                var localProjId = (ushort)ownerProjectiles.Add(proj.Id);
+                firstId ??= localProjId;
+            }
+
+            world.Map.BroadcastNearby(startPos, 20f, user
+                => user.SendPacket(new EnemyShoot(
+                    firstId ?? 0,
+                    ownerId,
+                    propsId,
+                    startPos,
+                    angle,
+                    damage,
+                    numShots,
+                    angleInc,
+                    path)
+                ));
+        }
+    }
+}

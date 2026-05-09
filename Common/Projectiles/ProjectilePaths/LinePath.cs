@@ -13,7 +13,7 @@ public class LinePath : ProjectilePathSegment {
         params PathSegmentModifier[] mods)
         : base(PathType.LinePath, speed, angle, lifetimeMs, timeOffset, mods) { }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -29,6 +29,6 @@ public class LinePath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new LinePath(Speed, _angle, _lifetimeMs, TimeOffset);
+        return new LinePath(Speed, Angle, LifetimeMs, TimeOffset);
     }
 }

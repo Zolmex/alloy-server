@@ -25,7 +25,7 @@ public class ChangeSpeedPath : ProjectilePathSegment {
         Repeat = repeat;
     }
 
-    public override Vector2 PositionAt(int elapsedLifetimeMs) {
+    public override Vector2 PositionAt(int elapsedLifetimeMs, int projId) {
         var p = Vector2.Zero;
         if (TimeOffset > 0 && elapsedLifetimeMs < TimeOffset)
             return p;
@@ -60,6 +60,6 @@ public class ChangeSpeedPath : ProjectilePathSegment {
     }
 
     public override ProjectilePathSegment Clone() {
-        return new ChangeSpeedPath(Speed, Increment, Cooldown, _angle, _lifetimeMs, CooldownOffset, Repeat, TimeOffset);
+        return new ChangeSpeedPath(Speed, Increment, Cooldown, Angle, LifetimeMs, CooldownOffset, Repeat, TimeOffset);
     }
 }
