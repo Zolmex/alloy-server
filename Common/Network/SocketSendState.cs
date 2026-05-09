@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using Common.Network.Messaging;
@@ -78,7 +79,7 @@ public class SocketSendState : IDisposable {
         try {
             pkt.Write(ref writer);
         }
-        catch (Exception e) when (e is ArgumentOutOfRangeException or IndexOutOfRangeException) {
+        catch (Exception e) when (e is ArgumentOutOfRangeException or IndexOutOfRangeException or InternalBufferOverflowException) {
             ResizeBuffer(ref _writeBuffer, _writeLength);
             WritePacket(pkt, pktId);
             return;
