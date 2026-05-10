@@ -18,7 +18,9 @@ public struct EntityStats : IIdentifiable, IDisposable {
 
     public WorldPosData Pos;
     public WorldPosData PrevPos;
+    public WorldPosData SpawnPos;
     public MapTileData Tile;
+    public BitMask256 Flags;
     
     public readonly StatValue[] Stats;
     public readonly StatData[] StatUpdates;
@@ -30,6 +32,7 @@ public struct EntityStats : IIdentifiable, IDisposable {
     private readonly World _world;
     private readonly EntityType _type;
     private BitMask256 _statUpdatesMask;
+    private bool _firstTick = true;
 
     public EntityStats(World world, ref Entity en) {
         Id = en.Id;
@@ -69,7 +72,7 @@ public struct EntityStats : IIdentifiable, IDisposable {
         return speed;
     }
     
-    public void MoveTowards(ref RealmTime time, ref Vector2 moveTo, float tilesPerSecond) {
+    public void MoveTowards(ref RealmTime time, ref WorldPosData moveTo, float tilesPerSecond) {
         var angle = this.GetAngleBetween(moveTo);
         var dist = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
         var speed = GetSpeed(tilesPerSecond) * (time.ElapsedMsDelta / 1000f);
@@ -131,6 +134,11 @@ public struct EntityStats : IIdentifiable, IDisposable {
     }
 
     public void Tick() {
+        if (_firstTick) {
+            _firstTick = false;
+            SpawnPos = Pos;
+        }
+        
         PrevPos = Pos;
         Tile = _world.Map[(int)Pos.X, (int)Pos.Y];
         

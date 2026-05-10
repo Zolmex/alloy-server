@@ -30,8 +30,8 @@ public class RealmManager {
 
     public static void UserConnected(User user) {
         Users = Users.Add(user.Id, user);
-        user.StartNetwork();
         SendServerProjectiles(user);
+        user.StartNetwork();
         _log.Debug($"User {user.Id} connected from {user.Network.IP}");
     }
     

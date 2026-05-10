@@ -6,23 +6,23 @@ using GameServer.Game.Entities.Components;
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class MoveToState {
-    public Vector2 StartPos;
+    public WorldPosData StartPos;
 }
 
 public record MoveTo : BehaviorScript {
     private readonly bool _relative;
-    private readonly Vector2 _targetPos;
+    private readonly WorldPosData _targetPos;
     private readonly float _tilesPerSecond;
 
     public MoveTo(float x = 0, float y = 0, float tilesPerSecond = 1f, bool relative = false) {
-        _targetPos = new Vector2(x, y);
+        _targetPos = new WorldPosData(x, y);
         _tilesPerSecond = tilesPerSecond;
         _relative = relative;
     }
 
     public override void Start(ref EntityView host) {
         var moveToState = host.Behavior.Resources.ResolveResource<MoveToState>(this);
-        moveToState.StartPos = host.Stats.Pos.ToVec2();
+        moveToState.StartPos = host.Stats.Pos;
     }
 
     public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {

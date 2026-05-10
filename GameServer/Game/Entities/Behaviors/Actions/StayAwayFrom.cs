@@ -1,0 +1,96 @@
+﻿using System;
+using System.Numerics;
+using System.Xml.Linq;
+using Common.Game;
+using Common.Utilities;
+using GameServer.Utilities;
+
+namespace GameServer.Game.Entities.Behaviors.Actions;
+
+public class StayAwayFromInfo {
+    public bool FirstTick;
+    public int FollowTimer;
+    public int TargetId;
+    public bool Following => TargetId != -1;
+}
+
+public record StayAwayFrom : BehaviorScript {
+    private readonly float _acquireRadiusSqr;
+    private readonly int _cooldownMS;
+    private readonly int _cooldownOffsetMS;
+    private readonly float _distanceFromTarget;
+    private readonly int _followTimeMs;
+    private readonly float _speed;
+    private readonly string _target;
+    private readonly TargetType _targetType;
+
+    public StayAwayFrom(XElement xml) {
+        _speed = xml.GetAttribute("speed", 1f);
+        _distanceFromTarget = xml.GetAttribute("distFromTarget", 2f);
+        _distanceFromTarget *= _distanceFromTarget;
+        _acquireRadiusSqr = xml.GetAttribute("acquireRange", 10f);
+        _acquireRadiusSqr *= _acquireRadiusSqr;
+        _cooldownMS = xml.GetAttribute("cooldownMS", 1000);
+        _cooldownOffsetMS = xml.GetAttribute<int>("cooldownOffsetMS");
+        _followTimeMs = xml.GetAttribute("followTimeMS", 1000);
+    }
+
+    public StayAwayFrom(float speed = 1f, float distFromTarget = 2f, float acquireRange = 10f, int cooldownMS = 1000,
+        int cooldownOffsetMS = 0, int followTimeMS = 1000, TargetType targetType = TargetType.ClosestPlayer,
+        string target = "player") {
+        _speed = speed;
+        _distanceFromTarget = distFromTarget * distFromTarget;
+        _acquireRadiusSqr = acquireRange * acquireRange;
+        _cooldownMS = cooldownMS;
+        _cooldownOffsetMS = cooldownOffsetMS;
+        _followTimeMs = followTimeMS;
+        _targetType = targetType;
+        _target = target;
+    }
+
+    public override void Start(ref EntityView host) {
+        var stayAwayFromInfo = host.Behavior.Resources.ResolveResource<StayAwayFromInfo>(this);
+        stayAwayFromInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
+        stayAwayFromInfo.FirstTick = true;
+        stayAwayFromInfo.TargetId = -1;
+    }
+
+    public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {
+        var stayAwayFromInfo = host.Behavior.Resources.ResolveResource<StayAwayFromInfo>(this);
+        if (_cooldownMS >= 0) {
+            stayAwayFromInfo.FollowTimer -= time.ElapsedMsDelta;
+            if (stayAwayFromInfo.FollowTimer <= 0) {
+                stayAwayFromInfo.TargetId = Follow.FindTarget(host, _targetType, _acquireRadiusSqr, _target);
+                stayAwayFromInfo.FirstTick = true;
+
+                stayAwayFromInfo.FollowTimer = stayAwayFromInfo.Following ? _followTimeMs : _cooldownMS;
+
+                if (!stayAwayFromInfo.Following)
+                    return BehaviorTickState.BehaviorDeactivate;
+            }
+        }
+
+        if (stayAwayFromInfo.Following) {
+            ref var targetStats = ref host.World.EntityStats.Get(stayAwayFromInfo.TargetId);
+            if (targetStats.Id == 0) {
+                stayAwayFromInfo.TargetId = Follow.FindTarget(host, _targetType, _acquireRadiusSqr, _target);
+                return BehaviorTickState.BehaviorFailed;
+            }
+
+            var distToTarget = host.Stats.DistSqr(ref targetStats);
+            if (distToTarget == 0f || distToTarget > _distanceFromTarget)
+                return BehaviorTickState.BehaviorFailed;
+
+            var angle = host.Stats.GetAngleBetween(ref targetStats);
+            var dist = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+            var speed = host.Stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+            dist *= -speed;
+            var newX = host.Stats.Pos.X + dist.X;
+            var newY = host.Stats.Pos.Y + dist.Y;
+            host.Stats.Move(newX, newY);
+            return BehaviorTickState.BehaviorActive;
+        }
+
+        return BehaviorTickState.OnCooldown;
+    }
+}

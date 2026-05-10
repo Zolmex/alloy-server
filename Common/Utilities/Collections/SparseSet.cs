@@ -36,6 +36,9 @@ public class SparseSet<T> where T : struct, IIdentifiable {
 
     public void Remove(int id, out T elem) {
         elem = default;
+        if (id < 0 || id >= _sparse.Length)
+            return;
+        
         var indexInDense = _sparse[id];
         if (indexInDense == 0)
             return;

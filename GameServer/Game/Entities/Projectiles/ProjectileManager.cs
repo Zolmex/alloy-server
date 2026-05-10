@@ -32,7 +32,8 @@ public class ProjectileManager : ManagerBase<Projectile> {
         foreach (ref var proj in this) {
             if (proj.Tick(ref time)) {
                 ref var ownerProjs = ref _world.EntityProjectiles.Get(proj.OwnerId);
-                ownerProjs.Remove(proj.Id);
+                if (ownerProjs.Id != 0)
+                    ownerProjs.Remove(proj.Id);
                 Remove(proj.Id);
             }
         }

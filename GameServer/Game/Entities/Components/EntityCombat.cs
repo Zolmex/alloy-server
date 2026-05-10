@@ -6,6 +6,7 @@ using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
 using GameServer.Game.Network;
+using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
@@ -23,6 +24,12 @@ public struct EntityCombat : IIdentifiable, IDisposable {
 
     public void Damage(int damage) { // Applies damage directly, perform any modifications to the amount before calling this
         TotalDamage += damage;
+    }
+
+    public void DamageWithText(int damage) {
+        Damage(damage);
+        var user = _world.PlayerToUser[Id];
+        user.SendPacket(new Notification(Id, "-" + damage, 0xFF0000, 24));
     }
 
     public void Tick(ref RealmTime time) {

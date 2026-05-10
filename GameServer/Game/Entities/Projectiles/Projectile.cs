@@ -58,8 +58,11 @@ public struct Projectile : IIdentifiable, IDisposable {
             return false;
 
         var pos = StartPos + Path.PositionAt((int)(time.TotalElapsedMs - StartTime), LocalId, Angle);
-        var targets = _world.EntityProjectiles.Get(OwnerId).TargetIds;
-        foreach (var targetId in targets) {
+        var targets = _world.EntityProjectiles.Get(OwnerId);
+        if (targets.Id == 0)
+            return true;
+        
+        foreach (var targetId in targets.TargetIds) {
             if (!Props.MultiHit && Hit.Count != 0)
                 break;
 

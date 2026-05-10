@@ -11,19 +11,21 @@ public readonly ref struct EntityView {
     
     public readonly ref EntityBehavior Behavior;
     public readonly ref EntityStats Stats;
+    public readonly ref EntityEvents Events;
     
     public readonly ref PlayerSight PlayerSight;
     public readonly ref PlayerChat PlayerChat;
 
-    public EntityView(World world, ref Entity entity) {
+    public EntityView(World world, int id) {
         World = world;
-        Id = entity.Id;
-        Entity = ref entity;
+        Id = id;
+        Entity = ref world.Entities.Get(id);
         
-        Behavior = ref world.EntityBehaviors.Get(entity.Id);
-        Stats = ref world.EntityStats.Get(entity.Id);
+        Behavior = ref world.EntityBehaviors.Get(id);
+        Stats = ref world.EntityStats.Get(id);
+        Events = ref world.EntityEvents.Get(id);
         
-        PlayerSight = ref world.PlayerSights.Get(entity.Id);
-        PlayerChat = ref world.PlayerChat.Get(entity.Id);
+        PlayerSight = ref world.PlayerSights.Get(id);
+        PlayerChat = ref world.PlayerChat.Get(id);
     }
 }

@@ -34,8 +34,8 @@ public record MoveLine : BehaviorScript {
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: Condition effects
         //     return BehaviorTickState.BehaviorFailed;
 
-        var vect = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle));
-        vect += stats.Pos.ToVec2();
+        var vect = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle)).ToWorldPos();
+        vect += stats.Pos;
         if (state.DistLeft > 0) {
             var moveDist = stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
             state.DistLeft -= moveDist;

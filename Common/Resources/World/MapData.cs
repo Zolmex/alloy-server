@@ -95,7 +95,7 @@ public struct obj {
     public string name { get; set; }
 }
 
-public class MapTileData {
+public class MapTileData { // Don't modify this tile data with game logic, use WorldTile instead
     public short X;
     public short Y;
     public IntPoint Pos;
@@ -110,6 +110,7 @@ public class MapTileData {
     public TileRegion Region;
     public TerrainType Terrain;
 
+    public int ObjectId; // Set at World.Load()
     public bool BlocksSight;
     public bool FullOccupy;
     public bool EnemyOccupySquare;
@@ -167,7 +168,7 @@ public class MapData {
     public Dictionary<TileRegion, List<IntPoint>> Regions;
     public List<(ushort ObjType, WorldPosData Pos)> Entities = [];
 
-    public MapTileData[,] Tiles;
+    public MapTileData[,] Tiles; // DO NOT modify this for a single world instance, this is map data from .jm/.wmap files
     public int Width;
 
     public MapData(byte[] data, string mapName) {

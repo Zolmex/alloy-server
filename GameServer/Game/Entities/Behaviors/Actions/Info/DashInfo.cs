@@ -14,5 +14,5 @@ public class DashInfo {
     public bool Dashing { get; set; }
     public bool InCycle { get; set; }
     public bool DashStartSent { get; set; }
-    public HashSet<Entity> HitThisDash { get; set; } = new();
+    public HashSet<int> HitThisDash { get; set; } = new();
 }

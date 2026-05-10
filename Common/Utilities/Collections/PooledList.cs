@@ -75,6 +75,10 @@ public class PooledList<T> : IEnumerable<T>, IDisposable {
         Array.Clear(_arr);
         Count = 0;
     }
+
+    public bool Contains(T elem) {
+        return Array.IndexOf(_arr, elem, 0, Count) != -1;
+    }
     
     public IEnumerator<T> GetEnumerator() {
         // Iterate only over the live portion of the rented array

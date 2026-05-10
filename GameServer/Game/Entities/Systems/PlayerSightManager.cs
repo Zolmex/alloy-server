@@ -22,6 +22,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     
     private MapTileData[] _newTiles = ArrayPool<MapTileData>.Shared.Rent(50);
     private ObjectData[] _newEntities = ArrayPool<ObjectData>.Shared.Rent(50);
+    private PooledList<IntPoint> _forcedTileUpdates = [];
 
     public override void Tick(ref RealmTime time) {
         foreach (ref var sight in this) {
@@ -33,6 +34,11 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
             ProcessUpdate(user, ref playerStats, ref sight, out var statusCount);
             ProcessNewtick(user, ref sight, statusCount);
         }
+        _forcedTileUpdates.Clear();
+    }
+
+    public void TileUpdate(IntPoint pos) {
+        _forcedTileUpdates.Add(pos);
     }
 
     private void ProcessUpdate(User user, ref EntityStats playerEntityStats, ref PlayerSight sight, out int statusCount) {
@@ -62,7 +68,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                             var tile = _world.Map[x, y];
 
                             sight.VisibleTiles.Add(tile.Pos);
-                            if (sight.DiscoveredTiles.Add(tile.Pos)) { // This is a newly discovered tile
+                            if (_forcedTileUpdates.Contains(tile.Pos) || sight.DiscoveredTiles.Add(tile.Pos)) { // This is a newly discovered tile
                                 _newTiles[newTileCount++] = tile;
                                 if (newTileCount >= _newTiles.Length) {
                                     var newArr = ArrayPool<MapTileData>.Shared.Rent(newTileCount * 2);

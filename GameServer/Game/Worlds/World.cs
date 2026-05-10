@@ -32,6 +32,7 @@ public class World {
     public readonly EntityStatsManager EntityStats;
     public readonly EntityProjectilesManager EntityProjectiles;
     public readonly EntityCombatManager EntityCombat;
+    public readonly EntityEventsManager EntityEvents;
     
     public readonly PlayerSightManager PlayerSights;
     public readonly PlayerChatManager PlayerChat;
@@ -59,6 +60,7 @@ public class World {
         EntityStats = new EntityStatsManager(this, 5_000);
         EntityProjectiles = new EntityProjectilesManager(this, 1_000);
         EntityCombat = new EntityCombatManager(this, 1_000);
+        EntityEvents = new EntityEventsManager(this, 1_000);
         
         PlayerSights = new PlayerSightManager(this, 100);
         PlayerChat = new PlayerChatManager(this, 100);
@@ -83,6 +85,8 @@ public class World {
             EnterWorld(ref en);
             ref var stats = ref EntityStats.Get(en.Id);
             stats.Move(orig.Pos.X, orig.Pos.Y);
+            var tile = Map[(int)orig.Pos.X, (int)orig.Pos.Y];
+            tile.ObjectId = en.Id;
         }
     }
 
@@ -118,6 +122,8 @@ public class World {
                 break;
             case EntityType.Character:
             case EntityType.Enemy:
+                var events = new EntityEvents(this, ref en);
+                EntityEvents.Add(ref events);
                 var behavior = new EntityBehavior(this, ref en);
                 ref var entityBehavior = ref EntityBehaviors.Add(ref behavior);
                 if (BehaviorLibrary.ClassicBehaviors.TryGetValue(en.Desc.ObjectId, out var rootState))
@@ -130,6 +136,8 @@ public class World {
             case EntityType.Container:
                 break;
             case EntityType.Player:
+                events = new EntityEvents(this, ref en);
+                EntityEvents.Add(ref events);
                 var sight = new PlayerSight(ref en);
                 PlayerSights.Add(ref sight);
                 var chat = new PlayerChat(this, ref en);
@@ -145,6 +153,7 @@ public class World {
     }
 
     public void LeaveWorld(int entityId) {
+        EntityEvents.Remove(entityId); // First to go is events, so DeathEvent gets called before getting removed from the rest of component managers
         Entities.Remove(entityId);
         EntityBehaviors.Remove(entityId);
         EntityCombat.Remove(entityId);

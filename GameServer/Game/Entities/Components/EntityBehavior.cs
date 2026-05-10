@@ -20,6 +20,8 @@ public struct EntityBehavior : IIdentifiable, IDisposable {
     public readonly HashSet<State> ActiveStates = [];
     public readonly HashSet<BehaviorTransition> PastTransitions = [];
     public readonly StateResourceController Resources = new();
+    
+    public int ParentId;
 
     private readonly string _objectId;
 
@@ -37,7 +39,7 @@ public struct EntityBehavior : IIdentifiable, IDisposable {
         Resources.ClearResources();
 
         _currentState = rootState.GetDeepState();
-        var view = new EntityView(World, ref World.Entities.Get(Id));
+        var view = new EntityView(World, Id);
         _currentState.Enter(ref view);
     }
 
@@ -45,7 +47,7 @@ public struct EntityBehavior : IIdentifiable, IDisposable {
         if (_currentState == null)
             return;
 
-        var view = new EntityView(World, ref World.Entities.Get(Id));
+        var view = new EntityView(World, Id);
         _currentState.Exit(ref view, ref time);
 
         if (_rootState.States.TryGetValue(targetState, out var newState)) {
@@ -65,7 +67,7 @@ public struct EntityBehavior : IIdentifiable, IDisposable {
         if (_currentState == null)
             return;
 
-        var view = new EntityView(World, ref World.Entities.Get(Id));
+        var view = new EntityView(World, Id);
         var targetState = _currentState.Tick(ref view, ref time);
         if (targetState != null)
             TransitionTo(targetState, ref time);

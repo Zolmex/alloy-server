@@ -17,6 +17,14 @@ public struct WorldPosData : IEquatable<WorldPosData> {
         return new WorldPosData { X = rdr.ReadSingle(), Y = rdr.ReadSingle() };
     }
 
+    public void operator +=(WorldPosData pos2) {
+        X += pos2.X;
+        Y += pos2.Y;
+    }
+    
+    public static WorldPosData operator +(WorldPosData pos1, WorldPosData pos2) {
+        return new WorldPosData(pos1.X + pos2.X, pos1.Y + pos2.Y);
+    }
 
     public override int GetHashCode() {
         return (X, Y).GetHashCode();
@@ -49,6 +57,9 @@ public struct WorldPosData : IEquatable<WorldPosData> {
 }
 
 public static class WorldPosDataExtensions {
+    public static WorldPosData ToWorldPos(this in Vector2 data) {
+        return new WorldPosData(data.X, data.Y);
+    }
     public static Vector2 ToVec2(this in WorldPosData data) {
         return new Vector2(data.X, data.Y);
     }
@@ -56,6 +67,12 @@ public static class WorldPosDataExtensions {
     public static float DistSqr(this in Vector2 vec1, in Vector2 vec2) {
         var dx = vec1.X - vec2.X;
         var dy = vec1.Y - vec2.Y;
+        return dx * dx + dy * dy;
+    }
+    
+    public static float DistSqr(this in WorldPosData pos1, in WorldPosData pos2) {
+        var dx = pos1.X - pos2.X;
+        var dy = pos1.Y - pos2.Y;
         return dx * dx + dy * dy;
     }
 

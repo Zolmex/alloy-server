@@ -2,6 +2,7 @@ using System.Numerics;
 using Common.Structs;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Worlds;
 
 namespace GameServer.Utilities;
 
@@ -46,6 +47,9 @@ public static class PositionUtils {
             return GetDistanceBetween(en.Pos.X, entity2.Pos.X, en.Pos.Y, entity2.Pos.Y);
         }
     }
+
+    public static float GetDistanceBetween(WorldPosData pos1, WorldPosData pos2) //the diagonal distance
+        => GetDistanceBetween(pos1.X, pos2.X, pos1.Y, pos2.Y);
     
     public static float GetDistanceBetween(float x1, float x2, float y1, float y2) //the diagonal distance
     {

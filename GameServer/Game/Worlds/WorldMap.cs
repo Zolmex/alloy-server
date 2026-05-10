@@ -1,33 +1,127 @@
 using System.Buffers;
+using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using Common;
 using Common.Game;
 using Common.Resources.World;
 using Common.Structs;
+using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Worlds;
 
 public class WorldMap {
-    public MapTileData this[int x, int y] => Data.Tiles[x, y];
+    private static readonly Logger _log = new Logger(typeof(WorldMap));
+
+    public MapTileData this[int x, int y] {
+        get {
+            if (x < 0 || x >= Data.Width || y < 0 || y >= Data.Height)
+                return null;
+            return _tiles[x, y];
+        }
+    }
+    public Dictionary<TileRegion, HashSet<IntPoint>> Regions = [];
+
     public readonly MapData Data;
 
     private readonly World _world;
     private readonly ChunkMap _chunkMap;
+    private readonly MapTileData[,] _tiles;
 
     public WorldMap(World world, MapData data) {
         _world = world;
         _chunkMap = new ChunkMap(world, data.Width, data.Height);
+        _tiles = new MapTileData[data.Width, data.Height];
+        for (var y = 0; y < data.Height; y++)
+            for (var x = 0; x < data.Width; x++) {
+                var tile = data.Tiles[x, y];
+                _tiles[x, y] = tile.Clone();
+                if (tile.Region == TileRegion.None)
+                    continue;
+                
+                if (!Regions.TryGetValue(tile.Region, out var regions))
+                    regions = new HashSet<IntPoint>();
+                regions.Add(new IntPoint(x, y));
+            }
 
         Data = data;
     }
 
     public void Tick(ref RealmTime time) {
         _chunkMap.Rebuild();
+    }
+
+    public bool IsPassable(int x, int y, bool spawning = false, bool bypassNoWalk = false) {
+        if (x < 0 || x >= Data.Width || y < 0 || y >= Data.Height)
+            return false;
+
+        var tile = this[x, y];
+        if (tile.Desc.NoWalk && !bypassNoWalk)
+            return false;
+
+        if (tile.ObjectType == 0)
+            return true;
+
+        return !tile.FullOccupy && !tile.EnemyOccupySquare && (spawning || !tile.OccupySquare);
+    }
+
+    public void SpawnSetPiece(string spName, int spawnX, int spawnY, int mapIndex = -1, bool center = false) {
+        if (spawnX < 0 || spawnY < 0 || spawnX > Data.Width || spawnY > Data.Height)
+            return;
+
+        if (!WorldLibrary.MapDatas.TryGetValue(spName, out var setpiece)) {
+            _log.Error($"Invalid setpiece: {spName}");
+            return;
+        }
+
+        var map = mapIndex == -1 ? setpiece.RandomElement() : setpiece[mapIndex];
+        if (center) {
+            spawnX -= map.Width / 2;
+            spawnY -= map.Height / 2;
+        }
+
+        for (var spY = 0; spY < map.Height; spY++)
+            for (var spX = 0; spX < map.Width; spX++) {
+                var x = spawnX + spX;
+                var y = spawnY + spY;
+                if (x < 0 || y < 0 || x > Data.Width || y > Data.Height)
+                    continue;
+
+                var tile = this[x, y]; // Clone because we'll be making changes to this tile
+                var spTile = map.Tiles[spX, spY];
+                if (spTile.GroundType != 255) {
+                    tile.GroundType = spTile.GroundType;
+                }
+
+                if (spTile.ObjectType != 0xff && spTile.ObjectType != 0) {
+                    _world.LeaveWorld(tile.ObjectId);
+
+                    var entity = new Entity(spTile.ObjectType);
+                    if (entity.Desc.Static) {
+                        if (entity.Desc.BlocksSight)
+                            tile.BlocksSight = true;
+                        tile.SetObject(entity.Desc);
+                    }
+
+                    _world.EnterWorld(ref entity);
+                    ref var enStats = ref _world.EntityStats.Get(entity.Id);
+                    enStats.Move(x + 0.5f, y + 0.5f);
+                    tile.ObjectId = entity.Id;
+                }
+
+                var pos = new IntPoint { X = x, Y = y };
+                if (spTile.Region == TileRegion.None)
+                    Regions[tile.Region].Remove(pos);
+                else
+                    Regions[spTile.Region].Add(pos);
+
+                _world.PlayerSights.TileUpdate(pos);
+            }
     }
     
     public int[] GetEntityIdsWithin(float x, float y, float radiusSqr, out int count) { // Array is from ArrayPool, must be returned if count != 0
@@ -47,6 +141,9 @@ public class WorldMap {
                 var chunk = _chunkMap.Chunks[cX, cY];
                 foreach (var enId in chunk.Entities) {
                     ref var stats = ref _world.EntityStats.Get(enId);
+                    if (stats.Id == 0)
+                        continue;
+                    
                     if (stats.DistSqr(x, y) > radiusSqr)
                         continue;
                     
@@ -78,28 +175,6 @@ public class WorldMap {
         return new RefEnumerator<Entity>(_world.Entities.Set, selected, count);
     }
     
-    public RefEnumerator<EntityStats> GetEntityStatsWithin(WorldPosData pos, float radiusSqr) // Methods like this one can be recycled for any entity component
-        => GetEntityStatsWithin(pos.X, pos.Y, radiusSqr);
-
-    public RefEnumerator<EntityStats> GetEntityStatsWithin(float x, float y, float radiusSqr) {
-        var selected = GetEntityIdsWithin(x, y, radiusSqr, out var count);
-        if (count == 0)
-            return RefEnumerator<EntityStats>.Empty;
-        
-        return new RefEnumerator<EntityStats>(_world.EntityStats.Set, selected, count);
-    }
-    
-    public RefEnumerator<EntityBehavior> GetEntityBehaviorWithin(WorldPosData pos, float radiusSqr)
-        => GetEntityBehaviorWithin(pos.X, pos.Y, radiusSqr);
-
-    public RefEnumerator<EntityBehavior> GetEntityBehaviorWithin(float x, float y, float radiusSqr) {
-        var selected = GetEntityIdsWithin(x, y, radiusSqr, out var count);
-        if (count == 0)
-            return RefEnumerator<EntityBehavior>.Empty;
-        
-        return new RefEnumerator<EntityBehavior>(_world.EntityBehaviors.Set, selected, count);
-    }
-
     public int GetNearestPlayer(WorldPosData pos, float radiusSqr)
         => GetNearestPlayer(pos.X, pos.Y, radiusSqr);
     
@@ -108,6 +183,9 @@ public class WorldMap {
         var ret = 0;
         foreach (var (id, _) in _world.PlayerToUser) {
             ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
             var dist = stats.DistSqr(x, y);
             if (dist <= radiusSqr && dist < min) {
                 min = dist;
@@ -124,9 +202,27 @@ public class WorldMap {
     public IEnumerable<int> GetPlayersWithin(float x, float y, float radiusSqr) {
         foreach (var (id, _) in _world.PlayerToUser) {
             ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
             var dist = stats.DistSqr(x, y);
             if (dist <= radiusSqr)
                 yield return stats.Id;
+        }
+    }
+    
+    public IEnumerable<User> GetUsersWithin(WorldPosData pos, float radiusSqr)
+        => GetUsersWithin(pos.X, pos.Y, radiusSqr);
+
+    public IEnumerable<User> GetUsersWithin(float x, float y, float radiusSqr) {
+        foreach (var (id, user) in _world.PlayerToUser) {
+            ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
+            var dist = stats.DistSqr(x, y);
+            if (dist <= radiusSqr)
+                yield return user;
         }
     }
 
@@ -138,6 +234,9 @@ public class WorldMap {
         var ret = 0;
         foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
             ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
             if (stats.GetString(StatType.Name) != name)
                 continue;
             
@@ -150,6 +249,69 @@ public class WorldMap {
 
         return ret;
     }
+    
+    public int GetNearestOtherEntityByName(WorldPosData pos, int entityId, string name, float radiusSqr)
+        => GetNearestOtherEntityByName(pos.X, pos.Y,entityId, name, radiusSqr);
+    
+    public int GetNearestOtherEntityByName(float x, float y, int entityId, string name, float radiusSqr) {
+        var min = float.MaxValue;
+        var ret = 0;
+        foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
+            if (id == entityId)
+                continue;
+            
+            ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
+            if (name != null && stats.GetString(StatType.Name) != name)
+                continue;
+            
+            var dist = stats.DistSqr(x, y);
+            if (dist <= radiusSqr && dist < min) {
+                min = dist;
+                ret = stats.Id;
+            }
+        }
+
+        return ret;
+    }
+    
+    public IEnumerable<int> GetEntitiesByName(WorldPosData pos, string name, float radiusSqr)
+        => GetEntitiesByName(pos.X, pos.Y, name, radiusSqr);
+    
+    public IEnumerable<int> GetEntitiesByName(float x, float y, string name, float radiusSqr) {
+        foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
+            ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
+            if (stats.GetString(StatType.Name) != name)
+                continue;
+            
+            var dist = stats.DistSqr(x, y);
+            if (dist <= radiusSqr)
+                yield return id;
+        }
+    }
+    
+    public IEnumerable<int> GetEntitiesByName(WorldPosData pos, string[] names, float radiusSqr)
+        => GetEntitiesByName(pos.X, pos.Y, names, radiusSqr);
+    
+    public IEnumerable<int> GetEntitiesByName(float x, float y, string[] names, float radiusSqr) {
+        foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
+            ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
+            if (!names.Contains(stats.GetString(StatType.Name)))
+                continue;
+            
+            var dist = stats.DistSqr(x, y);
+            if (dist <= radiusSqr)
+                yield return id;
+        }
+    }
 
     public int GetFarthestPlayer(WorldPosData pos, float radiusSqr)
         => GetFarthestPlayer(pos.X, pos.Y, radiusSqr);
@@ -159,6 +321,9 @@ public class WorldMap {
         var ret = 0;
         foreach (var id in _world.PlayerToUser.Keys) {
             ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
             var dist = stats.DistSqr(x, y);
             if (dist <= radiusSqr && dist > max) {
                 max = dist;
@@ -175,6 +340,9 @@ public class WorldMap {
     public void BroadcastNearby(float x, float y, float radiusSqr, Action<User> act) {
         foreach (var (id, user) in _world.PlayerToUser) {
             ref var stats = ref _world.EntityStats.Get(id);
+            if (stats.Id == 0)
+                continue;
+            
             var dist = stats.DistSqr(x, y);
             if (dist <= radiusSqr)
                 act(user);
