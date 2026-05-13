@@ -1,6 +1,8 @@
+using System;
+
 namespace Common.Structs;
 
-public struct IntPoint {
+public struct IntPoint : IEquatable<IntPoint> {
     public int X;
     public int Y;
 
@@ -21,17 +23,16 @@ public struct IntPoint {
         return X == other.X && Y == other.Y;
     }
 
-    public override bool Equals(object obj) {
-        if (obj is IntPoint p) return Equals(p);
-
-        return false;
-    }
-
     public override int GetHashCode() {
         return (Y << 16) ^ X;
     }
 
     public override string ToString() {
         return $"X:{X}, Y:{Y}";
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is IntPoint && Equals((IntPoint)obj);
     }
 }

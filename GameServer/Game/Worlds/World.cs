@@ -138,7 +138,7 @@ public class World {
             case EntityType.Player:
                 events = new EntityEvents(this, ref en);
                 EntityEvents.Add(ref events);
-                var sight = new PlayerSight(ref en);
+                var sight = new PlayerSight(this, ref en);
                 PlayerSights.Add(ref sight);
                 var chat = new PlayerChat(this, ref en);
                 PlayerChat.Add(ref chat);

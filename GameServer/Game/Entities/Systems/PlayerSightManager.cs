@@ -54,7 +54,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     
     private int GetNewTiles(ref EntityStats playerEntityStats, ref PlayerSight sight) {
         var newTileCount = 0;
-        sight.VisibleTiles.Clear();
+        var visibileTileCount = 0;
         switch (_world.Config.Blocksight) {
             case World.UNBLOCKED_SIGHT:
                 var pX = (int)playerEntityStats.Pos.X;
@@ -67,7 +67,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
                             playerEntityStats.TileDistSqr(x, y) <= SIGHT_RADIUS_SQR) {
                             var tile = _world.Map[x, y];
 
-                            sight.VisibleTiles.Add(tile.Pos);
+                            sight.VisibleTiles[visibileTileCount] = tile.Pos;
                             if (_forcedTileUpdates.Contains(tile.Pos) || sight.DiscoveredTiles.Add(tile.Pos)) { // This is a newly discovered tile
                                 _newTiles[newTileCount++] = tile;
                                 if (newTileCount >= _newTiles.Length) {
