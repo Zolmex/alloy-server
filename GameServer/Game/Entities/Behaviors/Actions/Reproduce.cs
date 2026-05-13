@@ -46,7 +46,7 @@ public record Reproduce : BehaviorScript {
         var world = host.World;
         var hostId = host.Id;
 
-        host.World.Enqueue(() => {
+        host.World.Enqueue(_ => {
             var child = new Entity(type);
             world.EnterWorld(ref child);
             ref var childBehavior = ref world.EntityBehaviors.Get(child.Id);

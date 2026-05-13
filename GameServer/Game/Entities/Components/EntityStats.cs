@@ -32,7 +32,7 @@ public struct EntityStats : IIdentifiable, IDisposable {
     private readonly World _world;
     private readonly EntityType _type;
     private BitMask256 _statUpdatesMask;
-    private bool _firstTick = true;
+    private bool _spawnSet = false;
 
     public EntityStats(World world, ref Entity en) {
         Id = en.Id;
@@ -94,6 +94,10 @@ public struct EntityStats : IIdentifiable, IDisposable {
     public void Move(float newX, float newY) {
         Pos = new WorldPosData(newX, newY);
         PositionUpdate = true;
+        if (!_spawnSet) {
+            _spawnSet = true;
+            SpawnPos = Pos;
+        }
     }
 
     public int GetInt(StatType s) {
@@ -134,11 +138,6 @@ public struct EntityStats : IIdentifiable, IDisposable {
     }
 
     public void Tick() {
-        if (_firstTick) {
-            _firstTick = false;
-            SpawnPos = Pos;
-        }
-        
         PrevPos = Pos;
         Tile = _world.Map[(int)Pos.X, (int)Pos.Y];
         
