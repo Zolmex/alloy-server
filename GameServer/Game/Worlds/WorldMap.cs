@@ -32,6 +32,7 @@ public class WorldMap {
     private readonly World _world;
     private readonly ChunkMap _chunkMap;
     private readonly MapTileData[,] _tiles;
+    private readonly SpatialQueryCache _queryCache = new();
 
     public WorldMap(World world, MapData data) {
         _world = world;
@@ -54,6 +55,7 @@ public class WorldMap {
 
     public void Tick(ref RealmTime time) {
         _chunkMap.Rebuild();
+        _queryCache.Invalidate();
     }
 
     public bool IsPassable(int x, int y, bool spawning = false, bool bypassNoWalk = false) {
@@ -123,56 +125,71 @@ public class WorldMap {
                 _world.PlayerSights.TileUpdate(pos);
             }
     }
-    
-    public int[] GetEntityIdsWithin(float x, float y, float radiusSqr, out int count) { // Array is from ArrayPool, must be returned if count != 0
-        count = 0;
-        
+
+    public int[] GetEntityIdsWithin(float x, float y, float radiusSqr, out int count)
+    {
+        return _queryCache.GetOrComputeWithCount(x, y, radiusSqr,
+            compute: () => ComputeEntityIdsWithin(x, y, radiusSqr),
+            out count);
+    }
+
+    // Raw chunk-map traversal — only called on cache miss
+    private (int[] ids, int count) ComputeEntityIdsWithin(float x, float y, float radiusSqr)
+    {
         var chunkX = (int)x / Chunk.CHUNK_SIZE;
         var chunkY = (int)y / Chunk.CHUNK_SIZE;
         if (chunkX < 0 || chunkX >= _chunkMap.Width || chunkY < 0 || chunkY >= _chunkMap.Height)
-            return [];
+            return ([], 0);
 
         var selected = ArrayPool<int>.Shared.Rent(10);
+        var count = 0;
+
         for (var cY = chunkY - 1; cY <= chunkY + 1; cY++)
-            for (var cX = chunkX - 1; cX <= chunkX + 1; cX++) {
+            for (var cX = chunkX - 1; cX <= chunkX + 1; cX++)
+            {
                 if (cX < 0 || cX >= _chunkMap.Width || cY < 0 || cY >= _chunkMap.Height)
                     continue;
 
                 var chunk = _chunkMap.Chunks[cX, cY];
-                foreach (var enId in chunk.Entities) {
+                foreach (var enId in chunk.Entities)
+                {
                     ref var stats = ref _world.EntityStats.Get(enId);
                     if (stats.Id == 0)
                         continue;
-                    
                     if (stats.DistSqr(x, y) > radiusSqr)
                         continue;
-                    
+
                     selected[count++] = enId;
-                    if (count >= selected.Length) {
-                        var newSelected = ArrayPool<int>.Shared.Rent(count * 2);
-                        selected.AsSpan().CopyTo(newSelected);
+                    if (count >= selected.Length)
+                    {
+                        var grown = ArrayPool<int>.Shared.Rent(count * 2);
+                        selected.AsSpan().CopyTo(grown);
                         ArrayPool<int>.Shared.Return(selected);
-                        selected = newSelected;
+                        selected = grown;
                     }
                 }
             }
 
-        if (count != 0)
-            return selected;
-        
-        ArrayPool<int>.Shared.Return(selected);
-        return [];
+        // Return the ArrayPool array + count; cache will copy and return it.
+        if (count == 0)
+        {
+            ArrayPool<int>.Shared.Return(selected);
+            return ([], 0);
+        }
+        return (selected, count);
     }
 
     public RefEnumerator<Entity> GetEntitiesWithin(WorldPosData pos, float radiusSqr)
         => GetEntitiesWithin(pos.X, pos.Y, radiusSqr);
 
     public RefEnumerator<Entity> GetEntitiesWithin(float x, float y, float radiusSqr) {
-        var selected = GetEntityIdsWithin(x, y, radiusSqr, out var count);
+        var ids = GetEntityIdsWithin(x, y, radiusSqr, out var count);
         if (count == 0)
             return RefEnumerator<Entity>.Empty;
         
-        return new RefEnumerator<Entity>(_world.Entities.Set, selected, count);
+        var pooled = ArrayPool<int>.Shared.Rent(count);
+        ids.AsSpan(0, count).CopyTo(pooled);
+        return new RefEnumerator<Entity>(_world.Entities.Set, pooled, count);
     }
     
     public int GetNearestPlayer(WorldPosData pos, float radiusSqr)

@@ -1,14 +1,15 @@
 ﻿#region
 
-using System;
-using System.Linq;
-using System.Net.Sockets;
-using System.Threading;
 using Common.Database.Models;
 using Common.Utilities;
 using GameServer.Game.Network.Messaging;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Net.Sockets;
+using System.Threading;
 
 #endregion
 
@@ -92,7 +93,7 @@ public class User : IIdentifiable {
         if (reconnect && GameInfo.State != GameState.Playing) // We can only unload when we've loaded in the first place
             return;
 
-        GameInfo.World?.Enqueue(_ => GameInfo.Unload(reconnect, death));
+        GameInfo.Unload(reconnect, death);
     }
     
     public void SendPacket<T>(in T packet) where T : IOutgoingPacket, allows ref struct {
@@ -114,6 +115,14 @@ public class User : IIdentifiable {
 
         State = ConnectionState.Disconnected;
 
+        if (GameInfo.World != null)
+            GameInfo.World.Enqueue(_ => FinishDisconnect(reason));
+        else
+            FinishDisconnect(reason);
+    }
+
+    private void FinishDisconnect(DisconnectReason reason)
+    {
         Unload(false, reason == DisconnectReason.Death);
 
         RealmManager.UserDisconnected(this);

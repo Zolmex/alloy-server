@@ -175,9 +175,8 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
         foreach (var enId in sight.VisibleEntities) {
             ref var stats = ref _world.EntityStats.Get(enId);
-            if (stats.Id != 0)
-                if (IsInSight(_world.Config.Blocksight, ref sight, ref stats))
-                    continue;
+            if (stats.Id != 0 && IsInSight(_world.Config.Blocksight, ref sight, ref stats))
+                continue;
 
             _removedEntities.Add(enId);
             _dropEntities.Add(new ObjectDropData() {
