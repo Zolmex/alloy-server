@@ -13,18 +13,19 @@ public struct PlayerSight : IIdentifiable, IDisposable {
 
     public HashSet<int> VisibleEntities = [];
     public PooledList<ObjectStatusData> Statuses = new(50);
-    public HashSet<IntPoint> VisibleTiles = [];
+    public BitArray2D VisibleTiles;
     public BitArray2D DiscoveredTiles;
 
     public PlayerSight(World world, ref Entity en) {
         Id = en.Id;
         DiscoveredTiles = new BitArray2D(world.Map.Data.Width, world.Map.Data.Height);
+        VisibleTiles = new BitArray2D(world.Map.Data.Width, world.Map.Data.Height);
     }
     
     public void Dispose() {
         VisibleEntities.Clear();
         Statuses.Dispose();
-        VisibleTiles.Clear();
+        VisibleTiles.Dispose();
         DiscoveredTiles.Dispose();
     }
 }

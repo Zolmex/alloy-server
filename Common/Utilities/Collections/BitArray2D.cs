@@ -33,5 +33,10 @@ public struct BitArray2D : IDisposable
         return (_bits[p.Y * _stride + (p.X >> 6)] & mask) != 0;
     }
 
+    public void Clear()
+    {
+        _bits.AsSpan().Clear();
+    }
+
     public void Dispose() => ArrayPool<ulong>.Shared.Return(_bits);
 }

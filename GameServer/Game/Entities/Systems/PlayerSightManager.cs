@@ -1,7 +1,3 @@
-using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Common;
 using Common.Game;
 using Common.Resources.World;
@@ -12,10 +8,22 @@ using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
+using System;
+using System.Buffers;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace GameServer.Game.Entities.Systems;
 
 public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerSight>(world, capacity) {
+    private struct Frustum
+    {
+        public int Row;
+        public float Start;
+        public float End;
+    }
+
     public const int SIGHT_RADIUS = 20;
     public const int SIGHT_RADIUS_SQR = SIGHT_RADIUS * SIGHT_RADIUS;
 
@@ -25,7 +33,13 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     private PooledList<IntPoint> _forcedTileUpdates = [];
     private PooledList<int> _removedEntities = new(50);
 
+    private Dictionary<int, ObjectData> _entityDataCache = new(200);
+    private Dictionary<int, ObjectStatusData> _entityStatusCache = new(200);
+
     public override void Tick(ref RealmTime time) {
+        _entityDataCache.Clear();
+        _entityStatusCache.Clear();
+
         foreach (ref var sight in this) {
             ref var playerStats = ref _world.EntityStats.Get(sight.Id);
             if (playerStats.Id == 0)
@@ -86,49 +100,63 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
     private void Scan(int row, float startSlope, float endSlope, int octant, int px, int py,
         int width, int height, ref PlayerSight sight) {
-        if (startSlope >= endSlope || row > SIGHT_RADIUS)
-            return;
+        // A radius of 20 will never need more than ~20-30 stack depth
+        Span<Frustum> stack = stackalloc Frustum[SIGHT_RADIUS + 5];
+        int stackIdx = 0;
 
-        var nextStartSlope = startSlope;
-        var prevTileBlocked = false;
-        for (var col = 0; col <= row; col++) {
-            // Calculate slopes for the edges of the current tile
-            var leftSlope = (col - 0.5f) / row;
-            var rightSlope = (col + 0.5f) / row;
+        // Push initial frustum
+        stack[stackIdx++] = new Frustum { Row = 1, Start = 0f, End = 1f };
 
-            // Skip tiles outside the current frustum
-            if (rightSlope < startSlope)
-                continue;
+        while (stackIdx > 0)
+        {
+            var f = stack[--stackIdx];
+            if (f.Row > SIGHT_RADIUS || f.Start >= f.End) continue;
 
-            if (leftSlope > endSlope)
-                break;
+            float nextStartSlope = f.Start;
+            bool prevTileBlocked = false;
 
-            var (wx, wy) = OctantTransform(octant, px, py, row, col);
-            // Bounds and Distance Check
-            if (wx >= 0 && wx < width && wy >= 0 && wy < height) {
-                float dx = wx - px;
-                float dy = wy - py;
-                if ((dx * dx + dy * dy) <= SIGHT_RADIUS_SQR) {
-                    AddVisibleTile(wx, wy, ref sight);
+            for (int col = 0; col <= f.Row; col++)
+            {
+                float leftSlope = (col - 0.5f) / f.Row;
+                float rightSlope = (col + 0.5f) / f.Row;
+
+                if (rightSlope < f.Start) continue;
+                if (leftSlope > f.End) break;
+
+                var (wx, wy) = OctantTransform(octant, px, py, f.Row, col);
+
+                // Inline the visibility check logic
+                if (wx >= 0 && wx < width && wy >= 0 && wy < height)
+                {
+                    int dx = wx - px;
+                    int dy = wy - py;
+                    if ((dx * dx + dy * dy) <= SIGHT_RADIUS_SQR)
+                    {
+                        AddVisibleTile(wx, wy, ref sight);
+                    }
                 }
+
+                bool currentBlocked = (wx < 0 || wx >= width || wy < 0 || wy >= height) || _world.Map[wx, wy].BlocksSight;
+
+                if (prevTileBlocked && !currentBlocked)
+                {
+                    nextStartSlope = leftSlope;
+                }
+                else if (!prevTileBlocked && currentBlocked && col > 0)
+                {
+                    // Instead of recursion, push the "branch" to our stack
+                    if (stackIdx < stack.Length)
+                    {
+                        stack[stackIdx++] = new Frustum { Row = f.Row + 1, Start = nextStartSlope, End = leftSlope };
+                    }
+                }
+                prevTileBlocked = currentBlocked;
             }
 
-            var currentBlocked = (wx < 0 || wx >= width || wy < 0 || wy >= height) || _world.Map[wx, wy].BlocksSight;
-            if (prevTileBlocked && !currentBlocked) {
-                // Transition from blocked to transparent: update the start slope for this frustum
-                nextStartSlope = leftSlope;
+            if (!prevTileBlocked)
+            {
+                stack[stackIdx++] = new Frustum { Row = f.Row + 1, Start = nextStartSlope, End = f.End };
             }
-            else if (!prevTileBlocked && currentBlocked && col > 0) {
-                // Transition from transparent to blocked: split the frustum and scan the "branch"
-                Scan(row + 1, nextStartSlope, leftSlope, octant, px, py, width, height, ref sight);
-            }
-
-            prevTileBlocked = currentBlocked;
-        }
-
-        // If the last tile in the row was transparent, keep scanning the next row
-        if (!prevTileBlocked) {
-            Scan(row + 1, nextStartSlope, endSlope, octant, px, py, width, height, ref sight);
         }
     }
 
@@ -147,9 +175,9 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
         foreach (var enId in sight.VisibleEntities) {
             ref var stats = ref _world.EntityStats.Get(enId);
-            if (IsInSight(_world.Config.Blocksight, ref sight, ref stats)) {
-                continue;
-            }
+            if (stats.Id != 0)
+                if (IsInSight(_world.Config.Blocksight, ref sight, ref stats))
+                    continue;
 
             _removedEntities.Add(enId);
             _dropEntities.Add(new ObjectDropData() {
@@ -164,31 +192,52 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         sight.Statuses.Reset();
         foreach (ref var en in _world.Map.GetEntitiesWithin(playerStats.Pos, SIGHT_RADIUS_SQR)) {
             ref var stats = ref _world.EntityStats.Get(en.Id);
-            if (!IsInSight(_world.Config.Blocksight, ref sight, ref stats)) {
+            if (stats.Id == 0 || !IsInSight(_world.Config.Blocksight, ref sight, ref stats)) {
                 continue;
             }
 
             if (stats.StatUpdateCount != 0 || stats.PositionUpdate) { // Track status for newtick
-                sight.Statuses.Add(new ObjectStatusData {
-                    ObjectId = en.Id,
-                    Pos = stats.Pos,
-                    StatUpdates = stats.StatUpdates,
-                    StatCount = stats.StatUpdateCount,
-                    PrivacyMask = en.Id == playerStats.Id ? stats.PrivateMask : stats.PublicMask
-                });
+                ObjectStatusData status;
+                if (!_entityStatusCache.TryGetValue(en.Id, out status))
+                {
+                    status = new ObjectStatusData
+                    {
+                        ObjectId = en.Id,
+                        Pos = stats.Pos,
+                        StatUpdates = stats.StatUpdates,
+                        StatCount = stats.StatUpdateCount,
+                        PrivacyMask = stats.PublicMask
+                    };
+                    _entityStatusCache[en.Id] = status;
+                }
+
+                if (en.Id == playerStats.Id)
+                    status.PrivacyMask = stats.PrivateMask;
+                sight.Statuses.Add(status);
             }
 
             if (sight.VisibleEntities.Add(en.Id)) {
-                _newEntities.Add(new ObjectData() {
-                    ObjectType = en.ObjectType,
-                    Status = new ObjectStatusData() {
-                        ObjectId = en.Id,
-                        Pos = stats.Pos,
-                        Stats = stats.Stats,
-                        StatCount = EntityStats.STAT_COUNT,
-                        PrivacyMask = en.Id == playerStats.Id ? stats.PrivateMask : stats.PublicMask,
-                    }
-                });
+                ObjectData objData;
+                if (!_entityDataCache.TryGetValue(en.Id, out objData))
+                {
+                    objData = new ObjectData()
+                    {
+                        ObjectType = en.ObjectType,
+                        Status = new ObjectStatusData()
+                        {
+                            ObjectId = en.Id,
+                            Pos = stats.Pos,
+                            Stats = stats.Stats,
+                            StatCount = EntityStats.STAT_COUNT,
+                            PrivacyMask = stats.PublicMask, // Set mask as public initially, reset when saving
+                        }
+                    };
+                    _entityDataCache[en.Id] = objData;
+                }
+
+                if (en.Id == playerStats.Id)
+                    objData.Status.PrivacyMask = stats.PrivateMask;
+                _newEntities.Add(objData);
             }
         }
     }
@@ -197,17 +246,14 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         user.SendPacket(new NewTick(sight.Statuses));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsInSight(int blocksight, ref PlayerSight sight, ref EntityStats stats) {
-        switch (blocksight) {
-            case World.UNBLOCKED_SIGHT:
-                return true; // This entity is already in SIGHT_RADIUS
-            case World.LINE_OF_SIGHT:
-                return sight.VisibleTiles.Contains(stats.Tile.Pos);
-            default:
-                return true;
-        }
+        if (blocksight == World.UNBLOCKED_SIGHT)
+            return true;
+        return sight.VisibleTiles.Contains(stats.Tile.Pos); // Line of Sight
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static (int wx, int wy) OctantTransform(int octant, int px, int py, int row, int col) =>
         octant switch {
             0 => (px + col, py - row),

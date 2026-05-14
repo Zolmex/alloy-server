@@ -18,8 +18,12 @@ public readonly struct NewTick : IOutgoingPacket {
     }
     
     public void Write(ref SpanWriter wtr) {
-        wtr.Write((short)_statuses.Count);
-        foreach (var status in _statuses)
+        var span = _statuses.AsSpan();
+        wtr.Write((short)span.Length);
+        for (int i = 0; i < span.Length; i++)
+        {
+            ref readonly var status = ref span[i];
             status.WriteForNewTick(ref wtr);
+        }
     }
 }
