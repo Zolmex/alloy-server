@@ -40,7 +40,7 @@ public class User : IIdentifiable {
     public readonly NetworkHandler Network;
     public readonly GameInfo GameInfo;
 
-    public ConnectionState State;
+    public volatile ConnectionState State;
     public ClientRandom Random;
     public ClientRandom ServerRandom;
     
