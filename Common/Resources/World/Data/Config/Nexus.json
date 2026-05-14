@@ -4,7 +4,7 @@
   "Music": "Nexus",
   "Difficulty": -1,
   "MaxPlayers": -1,
-  "Blocksight": 0,
+  "Blocksight": 1,
   "LongLasting": true,
   "ShowDisplays": true,
   "Maps": [

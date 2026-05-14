@@ -97,6 +97,7 @@ public struct EntityStats : IIdentifiable, IDisposable {
         if (!_spawnSet) {
             _spawnSet = true;
             SpawnPos = Pos;
+            Tile = _world.Map[(int)newX, (int)newY];
         }
     }
 

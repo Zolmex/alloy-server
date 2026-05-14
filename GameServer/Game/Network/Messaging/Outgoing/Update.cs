@@ -10,33 +10,27 @@ public readonly ref struct Update : IOutgoingPacket {
     public PacketId ID => PacketId.UPDATE;
 
     private readonly Span<MapTileData> _tiles;
-    private readonly int _tileCount;
     private readonly Span<ObjectData> _newEntities;
-    private readonly int _newEntityCount;
     private readonly Span<ObjectDropData> _oldEntities;
-    private readonly int _dropCount;
     
     public Update(
-        Span<MapTileData> tiles, int newTileCount,
-        Span<ObjectData> newEntities, int newEntityCount,
-        Span<ObjectDropData> oldEntities, int dropCount) {
+        Span<MapTileData> tiles,
+        Span<ObjectData> newEntities,
+        Span<ObjectDropData> oldEntities) {
         _tiles = tiles;
-        _tileCount = newTileCount;
         _newEntities = newEntities;
-        _newEntityCount = newEntityCount;
         _oldEntities = oldEntities;
-        _dropCount = dropCount;
     }
 
     public void Write(ref SpanWriter wtr) {
-        wtr.Write((short)_tileCount);
-        for (var i = 0; i < _tileCount; i++)
+        wtr.Write((short)_tiles.Length);
+        for (var i = 0; i < _tiles.Length; i++)
             _tiles[i].Write(ref wtr);
-        wtr.Write((short)_newEntityCount);
-        for (var i = 0; i < _newEntityCount; i++)
+        wtr.Write((short)_newEntities.Length);
+        for (var i = 0; i < _newEntities.Length; i++)
             _newEntities[i].Write(ref wtr);
-        wtr.Write((short)_dropCount);
-        for (var i = 0; i < _dropCount; i++)
+        wtr.Write((short)_oldEntities.Length);
+        for (var i = 0; i < _oldEntities.Length; i++)
             _oldEntities[i].Write(ref wtr);
     }
 }

@@ -11,10 +11,10 @@ namespace GameServer.Game.Entities.Components;
 public struct PlayerSight : IIdentifiable, IDisposable {
     public int Id { get; set; }
 
-    public BitArray2D DiscoveredTiles;
-    public IntPoint[] VisibleTiles = ArrayPool<IntPoint>.Shared.Rent(2000);
     public HashSet<int> VisibleEntities = [];
-    public ObjectStatusData[] Statuses = ArrayPool<ObjectStatusData>.Shared.Rent(50);
+    public PooledList<ObjectStatusData> Statuses = new(50);
+    public HashSet<IntPoint> VisibleTiles = [];
+    public BitArray2D DiscoveredTiles;
 
     public PlayerSight(World world, ref Entity en) {
         Id = en.Id;
@@ -22,9 +22,9 @@ public struct PlayerSight : IIdentifiable, IDisposable {
     }
     
     public void Dispose() {
-        DiscoveredTiles.Dispose();
         VisibleEntities.Clear();
-        ArrayPool<IntPoint>.Shared.Return(VisibleTiles);
-        ArrayPool<ObjectStatusData>.Shared.Return(Statuses);
+        Statuses.Dispose();
+        VisibleTiles.Clear();
+        DiscoveredTiles.Dispose();
     }
 }

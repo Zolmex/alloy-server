@@ -1,6 +1,8 @@
-using Common.Structs;
 using System;
 using System.Buffers;
+using Common.Structs;
+
+namespace Common.Utilities.Collections;
 
 public struct BitArray2D : IDisposable
 {

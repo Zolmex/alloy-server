@@ -123,6 +123,7 @@ public class MapTileData { // Don't modify this tile data with game logic, use W
         FullOccupy = desc?.FullOccupy ?? false;
         EnemyOccupySquare = desc?.EnemyOccupySquare ?? false;
         OccupySquare = desc?.OccupySquare ?? false;
+        BlocksSight = desc?.BlocksSight ?? false;
     }
     
     public loc GetEntry() {

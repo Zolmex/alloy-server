@@ -2,6 +2,7 @@
 using Common.Network;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network.Messaging;
 
@@ -10,17 +11,15 @@ namespace GameServer.Game.Network.Messaging.Outgoing;
 public readonly struct NewTick : IOutgoingPacket {
     public PacketId ID => PacketId.NEWTICK;
 
-    private readonly ObjectStatusData[] _statuses;
-    private readonly int _count;
+    private readonly PooledList<ObjectStatusData> _statuses;
 
-    public NewTick(ObjectStatusData[] statuses, int count) {
+    public NewTick(PooledList<ObjectStatusData> statuses) {
         _statuses = statuses;
-        _count = count;
     }
     
     public void Write(ref SpanWriter wtr) {
-        wtr.Write((short)_count);
-        for (var i = 0; i < _count; i++)
-            _statuses[i].WriteForNewTick(ref wtr);
+        wtr.Write((short)_statuses.Count);
+        foreach (var status in _statuses)
+            status.WriteForNewTick(ref wtr);
     }
 }

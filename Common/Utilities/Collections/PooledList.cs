@@ -30,10 +30,10 @@ public class PooledList<T> : IEnumerable<T>, IDisposable {
         return Count - 1;
     }
 
-    public void Remove(T elem) {
+    public bool Remove(T elem) {
         int index = Array.IndexOf(_arr, elem, 0, Count);
         if (index < 0)
-            return;
+            return false;
 
         // Shift elements left to fill the gap
         _arr.AsSpan(index + 1, Count - index - 1).CopyTo(_arr.AsSpan(index));
@@ -43,6 +43,7 @@ public class PooledList<T> : IEnumerable<T>, IDisposable {
             _arr[Count - 1] = default!;
     
         Count--;
+        return true;
     }
     
     public bool RemoveAt(int index) {
@@ -76,8 +77,16 @@ public class PooledList<T> : IEnumerable<T>, IDisposable {
         Count = 0;
     }
 
+    public void Reset() { // Doesn't reset array values, it only resets the count
+        Count = 0;
+    }
+
     public bool Contains(T elem) {
         return Array.IndexOf(_arr, elem, 0, Count) != -1;
+    }
+
+    public Span<T> AsSpan() {
+        return _arr.AsSpan(0, Count);
     }
     
     public IEnumerator<T> GetEnumerator() {

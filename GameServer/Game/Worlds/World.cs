@@ -21,6 +21,7 @@ public class World {
     public const int NEXUS_ID = -1;
     public const int TEST_ID = -2;
     public const int UNBLOCKED_SIGHT = 0;
+    public const int LINE_OF_SIGHT = 1;
 
     public readonly int Id;
     public readonly WorldConfig Config;
