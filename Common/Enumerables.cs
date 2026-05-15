@@ -405,9 +405,3 @@ public enum GuildRank {
     Member = 10,
     Initiate = 0
 }
-
-public enum LootDropRarity {
-    All,
-    Legendary,
-    Primal
-}

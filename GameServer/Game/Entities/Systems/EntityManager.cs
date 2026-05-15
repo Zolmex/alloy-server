@@ -7,6 +7,8 @@ using GameServer.Game.Worlds;
 namespace GameServer.Game.Entities.Systems;
 
 public class EntityManager : ManagerBase<Entity> {
+
+    public int Count => _idCounter;
     
     private readonly Stack<int> _freeIds;
     

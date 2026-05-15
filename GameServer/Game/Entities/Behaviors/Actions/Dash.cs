@@ -82,7 +82,7 @@ public record Dash : BehaviorScript {
                 foreach (var plrId in host.World.Map.GetPlayersWithin(host.Stats.Pos, dashDamageRadius)) {
                     ref var plr = ref host.World.EntityCombat.Get(plrId);
                     if (dashInfo.HitThisDash.Add(plrId))
-                        plr.DamageWithText(damage);
+                        plr.DamageWithText(host.Id, damage);
                 }
 
             dashInfo.DashCooldown -= time.ElapsedMsDelta;

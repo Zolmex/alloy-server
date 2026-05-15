@@ -14,7 +14,7 @@ public abstract class ManagerBase<T> where T : struct, IIdentifiable, IDisposabl
     
     protected ManagerBase(World world, int capacity) {
         _world = world;
-        Set = new SparseSet<T>(capacity);
+        Set = new SparseSet<T>(capacity, capacity);
     }
     
     public virtual ref T Add(ref T elem) {

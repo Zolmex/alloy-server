@@ -79,7 +79,7 @@ public struct Projectile : IIdentifiable, IDisposable {
 
         var totalDamage = Damage; // TODO: Condition effects checks + other damage alterations
         ref var combat = ref _world.EntityCombat.Get(enId);
-        combat.Damage(totalDamage);
+        combat.Damage(OwnerId, totalDamage);
     }
 
     public void Dispose() {

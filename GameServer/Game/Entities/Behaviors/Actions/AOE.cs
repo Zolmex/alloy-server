@@ -113,7 +113,7 @@ public record AOE : BehaviorScript {
         }
 
         var dmg = (short)Random.Shared.Next(_minDamage, _maxDamage);
-        aoeInfo.AoeDamagerList.Add(new AOEDamager(host.World, dmg, _throwTime, _damageCooldown, _activateCount,
+        aoeInfo.AoeDamagerList.Add(new AOEDamager(host.Id, host.World, dmg, _throwTime, _damageCooldown, _activateCount,
             _damageColor, new Vector2(aoeX, aoeY), _radius, _effects));
         aoeInfo.CooldownLeft = _cooldownMS;
         return BehaviorTickState.BehaviorActive;
@@ -121,6 +121,7 @@ public record AOE : BehaviorScript {
 }
 
 public class AOEDamager {
+    private int _hostId;
     private int _activateCount;
     public int ActivateCount;
     public int? Color;
@@ -132,9 +133,10 @@ public class AOEDamager {
     public float Radius;
     public World World;
 
-    public AOEDamager(World world, short damage, int cooldown, int damageCooldown, int activateCount, int? color,
+    public AOEDamager(int hostId, World world, short damage, int cooldown, int damageCooldown, int activateCount, int? color,
         Vector2 pos, float radius,
         (ConditionEffectIndex, int)[] effects = null) {
+        _hostId = hostId;
         World = world;
         Damage = damage;
         CooldownMS = damageCooldown;
@@ -150,7 +152,7 @@ public class AOEDamager {
     public void AOEActivate(World world) {
         foreach (var plrId in World.Map.GetPlayersWithin(Pos.X, Pos.Y, Radius)) {
             ref var plr = ref World.EntityCombat.Get(plrId);
-            plr.DamageWithText(Damage);
+            plr.DamageWithText(_hostId, Damage);
         }
 
         if (Color.HasValue)

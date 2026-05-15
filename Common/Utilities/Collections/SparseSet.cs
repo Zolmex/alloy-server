@@ -5,17 +5,17 @@ using System.Collections.Generic;
 
 namespace Common.Utilities.Collections;
 
-public class SparseSet<T> where T : struct, IIdentifiable {
+public sealed class SparseSet<T> : IDisposable where T : struct, IIdentifiable{
 
     public int Count;
 
     private int[] _sparse;
     private T[] _dense;
 
-    public SparseSet(int capacity = 0) {
-        _sparse = ArrayPool<int>.Shared.Rent(capacity);
+    public SparseSet(int sparseCapacity = 10, int denseCapacity = 10) {
+        _sparse = ArrayPool<int>.Shared.Rent(sparseCapacity);
         Array.Fill(_sparse, 0);
-        _dense = ArrayPool<T>.Shared.Rent(capacity);
+        _dense = ArrayPool<T>.Shared.Rent(denseCapacity);
         _dense[0] = default; // Invalid accesses return this, user must treat it as null
         Count = 1;
     }
@@ -33,26 +33,48 @@ public class SparseSet<T> where T : struct, IIdentifiable {
         _dense[Count] = elem; // Copies element
         return ref _dense[Count++];
     }
+    
+    public ref T GetOrAdd(int id, out bool added) {
+        if (id >= _sparse.Length)
+            ResizeSparse(id + 1);
 
-    public void Remove(int id, out T elem) {
+        var idx = _sparse[id];
+        if (idx != 0) {
+            added = false;
+            return ref _dense[idx];
+        }
+
+        // Insert new
+        if (Count >= _dense.Length)
+            ResizeDense(Count * 2);
+
+        _sparse[id] = Count;
+        _dense[Count] = default;
+        added = true;
+        return ref _dense[Count++];
+    }
+
+    public bool Remove(int id, out T elem) {
         elem = default;
         if (id < 0 || id >= _sparse.Length)
-            return;
+            return false;
         
         var indexInDense = _sparse[id];
         if (indexInDense == 0)
-            return;
+            return false;
         
         elem = _dense[indexInDense];
         _sparse[id] = 0; // Point to default
         Count--;
         
         if (indexInDense == Count) // Was the last element, no swap needed
-            return;
+            return true;
         
         ref var slot = ref _dense[indexInDense];
         slot = _dense[Count]; // Swap with last element
         _sparse[slot.Id] = indexInDense;
+        _dense[Count] = default;
+        return true;
     }
 
     public ref T Get(int id) {
@@ -85,4 +107,11 @@ public class SparseSet<T> where T : struct, IIdentifiable {
         
         _dense = newDense;
     }
+
+    public void Dispose() {
+        ArrayPool<int>.Shared.Return(_sparse);
+        ArrayPool<T>.Shared.Return(_dense);
+    }
+
+    public SparseEnumerator<T> GetEnumerator() => new(this);
 }

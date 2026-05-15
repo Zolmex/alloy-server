@@ -26,8 +26,8 @@ public struct EntityEvents : IIdentifiable, IDisposable {
 
     public void Tick(ref RealmTime time) {
         ref var combat = ref _world.EntityCombat.Get(Id);
-        if (combat.TotalDamage > 0) {
-            var dmgEvent = new DamageReceivedEvent(_world, Id, combat.TotalDamage);
+        if (combat.TotalDamageReceived > 0) {
+            var dmgEvent = new DamageReceivedEvent(_world, Id, combat.TotalDamageReceived);
             OnDamageReceived.Publish(ref dmgEvent);
         }
     }
