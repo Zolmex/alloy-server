@@ -2,6 +2,8 @@ using Common;
 using Common.Database.Models;
 using Common.Resources.Config;
 using Common.Resources.World;
+using Common.Resources.Xml;
+using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Chat.Commands;
 using GameServer.Game.Entities.Components;
@@ -17,6 +19,12 @@ public static class PlayerExtensions {
     extension(ref Entity player) {
         public void Init(World world, Account acc, Character chr) {
             ref var stats = ref world.EntityStats.Get(player.Id);
+            ref var inv = ref world.EntityInventories.Get(player.Id);
+            Entity.InitPlayerStats(ref stats, acc, chr);
+            Entity.InitPlayerInventory(ref inv, acc, chr);
+        }
+
+        private static void InitPlayerStats(ref EntityStats stats, Account acc, Character chr) {
             stats.Set(StatType.Name, acc.Name);
             stats.Set(StatType.Fame, acc.AccStats.CurrentFame);
             stats.Set(StatType.Credits, acc.AccStats.CurrentCredits);
@@ -24,10 +32,10 @@ public static class PlayerExtensions {
             stats.Set(StatType.GuildRank, acc.GuildMember?.GuildRank ?? 0);
             stats.Set(StatType.NumStars, GetStars(acc.AccStats.ClassStats));
             stats.Set(StatType.AccRank, acc.Rank);
-            player.LoadCharacterStats(ref stats, acc, chr);
+            Entity.LoadCharacterStats(ref stats, acc, chr);
         }
 
-        private void LoadCharacterStats(ref EntityStats entityStats, Account acc, Character chr) {
+        private static void LoadCharacterStats(ref EntityStats entityStats, Account acc, Character chr) {
             entityStats.Set(StatType.Level, chr.Level);
             entityStats.Set(StatType.CharFame, (int)chr.CurrentFame);
             entityStats.Set(StatType.Experience, (int)chr.XpPoints);
@@ -48,6 +56,13 @@ public static class PlayerExtensions {
                 entityStats.Set(StatType.Dexterity, (int)chr.CharStats.Dexterity);
                 entityStats.Set(StatType.Vitality, (int)chr.CharStats.Vitality);
                 entityStats.Set(StatType.Wisdom, (int)chr.CharStats.Wisdom);
+            }
+        }
+
+        private static void InitPlayerInventory(ref EntityInventory inv, Account acc, Character chr) {
+            foreach (var slot in chr.CharacterInventories) {
+                var itemData = slot.ItemData != null ? new Item(XmlLibrary.ItemDescs[slot.ItemType].Root) : null;
+                inv.SetItem(slot.SlotId, itemData);
             }
         }
         

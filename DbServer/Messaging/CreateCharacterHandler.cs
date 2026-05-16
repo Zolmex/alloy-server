@@ -64,6 +64,17 @@ public class CreateCharacterHandler : IMessageHandler {
                 KillStats = new KillStat(),
                 DungeonStats = new DungeonStat()
             };
+            
+            for (var i = 0; i < classDesc.Equipment.Length; i++) {
+                var itemType = classDesc.Equipment[i];
+                if (itemType == -1)
+                    continue;
+                
+                chr.CharacterInventories.Add(new CharacterInventory() {
+                    ItemType = (ushort)itemType,
+                    SlotId = i
+                });
+            }
 
             acc.NextCharId++;
             acc.Characters.Add(chr);

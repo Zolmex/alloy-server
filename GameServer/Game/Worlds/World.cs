@@ -3,6 +3,8 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Common.Game;
 using Common.Resources.World;
+using Common.Resources.Xml;
+using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities;
@@ -34,6 +36,7 @@ public class World {
     public readonly EntityProjectilesManager EntityProjectiles;
     public readonly EntityCombatManager EntityCombat;
     public readonly EntityEventsManager EntityEvents;
+    public readonly EntityInventoryManager EntityInventories;
     
     public readonly PlayerSightManager PlayerSights;
     public readonly PlayerChatManager PlayerChat;
@@ -62,6 +65,7 @@ public class World {
         EntityProjectiles = new EntityProjectilesManager(this, 1_000);
         EntityCombat = new EntityCombatManager(this, 1_000);
         EntityEvents = new EntityEventsManager(this, 1_000);
+        EntityInventories = new EntityInventoryManager(this, 1_000);
         
         PlayerSights = new PlayerSightManager(this, 100);
         PlayerChat = new PlayerChatManager(this, 100);
@@ -135,8 +139,16 @@ public class World {
                 EntityCombat.Add(ref combat);
                 break;
             case EntityType.Container:
+                var desc = XmlLibrary.ContainerDescs[en.Desc.ObjectType];
+                var inv = new EntityInventory(this, ref en, 8);
+                inv.Init(desc.SlotTypes, []);
+                EntityInventories.Add(ref inv);
                 break;
             case EntityType.Player:
+                var slotTypes = XmlLibrary.PlayerDescs[en.Desc.ObjectType].SlotTypes;
+                inv = new EntityInventory(this, ref en, 20);
+                inv.Init(slotTypes, []);
+                EntityInventories.Add(ref inv);
                 events = new EntityEvents(this, ref en);
                 EntityEvents.Add(ref events);
                 var sight = new PlayerSight(this, ref en);
@@ -200,6 +212,7 @@ public class World {
         Projectiles.Tick(ref time);
         Map.Tick(ref time);
         
+        EntityInventories.Tick(ref time);
         EntityCombat.Tick(ref time);
         EntityProjectiles.Tick(ref time);
         EntityBehaviors.Tick(ref time);
