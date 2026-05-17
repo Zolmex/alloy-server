@@ -16,34 +16,36 @@ public struct Projectile : IIdentifiable, IDisposable {
     
     public int Id { get; set; }
 
-    public readonly ProjectileProps Props;
     public readonly WorldPosData StartPos;
     public readonly int OwnerId;
-    public readonly ushort ContainerType;
-    public readonly byte ProjectilePropsId;
-    public readonly float Angle;
-    public readonly int Damage;
-    public readonly ProjectilePath Path;
     public readonly long StartTime;
-    public readonly long EndTime;
     public readonly PooledList<int> Hit = [];
+    
+    public ProjectilePath Path;
+    public float Angle;
+    public int Damage;
+    public int LifetimeMs;
+    public long EndTime;
+    public bool MultiHit;
     
     public ushort LocalId;
 
     private readonly World _world;
     
-    public Projectile(World world, WorldPosData startPos, int ownerId, ushort containerType, byte propsId, float angle, int damage, ProjectilePath path, ref RealmTime time) {
+    public Projectile(World world, WorldPosData startPos, int ownerId, ref RealmTime time) {
         _world = world;
         StartPos = startPos;
         OwnerId = ownerId;
-        ContainerType = containerType;
-        ProjectilePropsId = propsId;
-        Props = XmlLibrary.ObjectDescs[ContainerType].Projectiles[ProjectilePropsId].Props;
+        StartTime = time.TotalElapsedMs;
+    }
+
+    public void SetProps(ProjectilePath path, float angle, int damage, int lifetimeMs, bool multiHit) {
         Angle = angle.Deg2Rad();
         Damage = damage;
         Path = path;
-        StartTime = time.TotalElapsedMs;
-        EndTime = StartTime + Props.LifetimeMS;
+        LifetimeMs = lifetimeMs;
+        EndTime = StartTime + lifetimeMs;
+        MultiHit = multiHit;
     }
 
     public void SetLocalId(ushort localId) {
@@ -54,7 +56,7 @@ public struct Projectile : IIdentifiable, IDisposable {
         if (time.TotalElapsedMs >= EndTime)
             return true;
 
-        if (!Props.MultiHit && Hit.Count != 0)
+        if (!MultiHit && Hit.Count != 0)
             return false;
 
         var pos = StartPos + Path.PositionAt((int)(time.TotalElapsedMs - StartTime), LocalId, Angle);
@@ -63,7 +65,7 @@ public struct Projectile : IIdentifiable, IDisposable {
             return true;
         
         foreach (var targetId in targets.TargetIds) {
-            if (!Props.MultiHit && Hit.Count != 0)
+            if (!MultiHit && Hit.Count != 0)
                 break;
 
             ref var targetStats = ref _world.EntityStats.Get(targetId);

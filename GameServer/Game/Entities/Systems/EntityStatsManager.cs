@@ -11,7 +11,8 @@ public class EntityStatsManager(World world, int capacity) : ManagerBase<EntityS
     
     public override void Remove(int id) {
         ref var elem = ref Set.Get(id);
-        elem.Dispose();
+        if (elem.Id != 0)
+            elem.Dispose();
         
         base.Remove(id);
     }

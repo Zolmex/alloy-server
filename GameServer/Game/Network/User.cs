@@ -89,11 +89,11 @@ public class User : IIdentifiable {
         });
     }
     
-    public void Unload(bool reconnect, bool death = false) {
+    public void Unload(bool reconnect) {
         if (reconnect && GameInfo.State != GameState.Playing) // We can only unload when we've loaded in the first place
             return;
 
-        GameInfo.Unload(reconnect, death);
+        GameInfo.Unload();
     }
     
     public void SendPacket<T>(in T packet) where T : IOutgoingPacket, allows ref struct {
@@ -116,14 +116,14 @@ public class User : IIdentifiable {
         State = ConnectionState.Disconnected;
 
         if (GameInfo.World != null)
-            GameInfo.World.Enqueue(_ => FinishDisconnect(reason));
+            GameInfo.World.Enqueue(_ => FinishDisconnect());
         else
-            FinishDisconnect(reason);
+            FinishDisconnect();
     }
 
-    private void FinishDisconnect(DisconnectReason reason)
+    private void FinishDisconnect()
     {
-        Unload(false, reason == DisconnectReason.Death);
+        Unload(false);
 
         RealmManager.UserDisconnected(this);
         SocketServer.DisconnectUser(this);

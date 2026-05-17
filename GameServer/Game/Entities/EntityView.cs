@@ -13,6 +13,7 @@ public readonly ref struct EntityView {
     public readonly ref EntityStats Stats;
     public readonly ref EntityEvents Events;
     public readonly ref EntityCombat Combat;
+    public readonly ref EntityInventory Inventory;
     
     public readonly ref PlayerSight PlayerSight;
     public readonly ref PlayerChat PlayerChat;
@@ -26,6 +27,7 @@ public readonly ref struct EntityView {
         Stats = ref world.EntityStats.Get(id);
         Events = ref world.EntityEvents.Get(id);
         Combat = ref world.EntityCombat.Get(id);
+        Inventory = ref world.EntityInventories.Get(id);
         
         PlayerSight = ref world.PlayerSights.Get(id);
         PlayerChat = ref world.PlayerChat.Get(id);

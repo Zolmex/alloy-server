@@ -2,7 +2,7 @@ using Common.Network;
 
 namespace Common.Structs;
 
-public struct SlotObjectData {
+public record struct SlotObjectData {
     public int ObjectId;
     public byte SlotId;
 

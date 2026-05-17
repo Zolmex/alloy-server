@@ -63,7 +63,7 @@ public record RingAttack : BehaviorScript {
         var entityId = _radius == 0 ? 0 : host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, null, _radius);
         ref var entity = ref host.World.EntityStats.Get(entityId);
         var angleInc = 2 * MathF.PI / _count;
-        var desc = host.Entity.Desc.Projectiles[_projectileIndex].Props;
+        var projProps = host.Entity.Desc.Projectiles[_projectileIndex].Props;
 
         float angle = 0;
         if (state.Targeted) {
@@ -88,21 +88,12 @@ public record RingAttack : BehaviorScript {
         // if (host.HasConditionEffect(ConditionEffectIndex.Dazed)) // TODO: condition effects
         //     count = Math.Max(1, count / 2);
 
-        var dmg = Random.Shared.Next(desc.MinDamage, desc.MaxDamage);
+        var dmg = host.Combat.GetProjectileDamage(projProps.MinDamage, projProps.MaxDamage);
         var startAngle = angle * (count - 1) / 2;
-
-        host.World.ShootProjectiles(
-            host.Stats.Pos,
-            host.Id,
-            host.Entity.ObjectType,
-            _projectileIndex,
-            startAngle.Rad2Deg(),
-            dmg,
-            dmg,
-            (byte)count,
-            angleInc.Rad2Deg(),
-            ProjectilePathSegment.ParsePath(desc).ToPath(),
-            ref time);
+        var path = ProjectilePathSegment.ParsePath(projProps).ToPath();
+        host.World.EnemyShootProjectiles(host.Stats.Pos, host.Id, 
+            _projectileIndex, startAngle.Rad2Deg(), dmg, (byte)count,
+            angleInc.Rad2Deg(), path, path.LifetimeMs, projProps.MultiHit, ref time);
 
         state.CoolDownLeft = time.ElapsedMsDelta;
         return BehaviorTickState.BehaviorActive;

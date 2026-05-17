@@ -46,6 +46,8 @@ public struct EntityStats : IIdentifiable, IDisposable {
         StatUpdates.AsSpan(0, STAT_COUNT).Clear();
         
         Set(StatType.Name, en.Desc.ObjectId);
+        Set(StatType.HP, en.Desc.MaxHP);
+        Set(StatType.MaxHP, en.Desc.MaxHP);
     }
 
     public float GetSpeed(float speed) { // TODO: Condition effect system

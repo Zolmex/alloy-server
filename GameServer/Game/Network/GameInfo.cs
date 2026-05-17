@@ -42,18 +42,15 @@ public class GameInfo {
         
         var plr = new Entity(chr.ObjectType);
         ref var newPlr = ref world.EnterPlayer(ref plr, User);
-        newPlr.Init(world, Account, Char);
+        newPlr.Init(User, world, Account, Char);
         newPlr.MoveToSpawn(world);
         
         PlayerId = newPlr.Id;
     }
 
-    public void Unload(bool reconnect, bool death) {
+    public void Unload() {
         State = GameState.Idle;
-        if (PlayerId == 0 || death)
-            return;
-        
-        World.LeavePlayer(PlayerId);
+        World?.LeaveWorld(PlayerId);
         PlayerId = 0;
     }
 

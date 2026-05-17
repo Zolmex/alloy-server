@@ -29,20 +29,20 @@ public record Shoot : BehaviorScript {
     private static readonly ProjectilePath _bladePath = new LinePath(3).ToPath();
 
     private readonly float _angleOffsetDefault;
-    private readonly bool _armorPiercing;
     private readonly int _cooldownMs;
     private readonly int _cooldownOffsetMs;
     private readonly byte _count;
     private readonly (ConditionEffectIndex, int)[] _effects;
     private readonly float _fixedAngle;
     private readonly int _lifetimeMs;
-    private readonly int _maxDamage;
     private readonly float _maxRadiusSqr;
-    private readonly int _minDamage;
+    private int _maxDamage;
+    private int _minDamage;
+    private bool _multiHit;
+    private bool _passesCover;
+    private bool _armorPiercing;
 
     private readonly float _minRadiusSqr;
-    private readonly bool _multiHit;
-    private readonly bool _passesCover;
     private readonly float _predictive;
     private readonly ushort _projType;
     private readonly float _rotateAngle;
@@ -234,6 +234,11 @@ public record Shoot : BehaviorScript {
             }
 
             _path = ProjectilePathSegment.ParsePath(props.Props).ToPath();
+            _minDamage = props.Props.MinDamage;
+            _maxDamage = props.Props.MaxDamage;
+            _multiHit = props.Props.MultiHit;
+            _passesCover = props.Props.PassesCover;
+            _armorPiercing = props.Props.ArmorPiercing;
         }
         else // Custom behavior-defined projectile properties
         {
@@ -286,7 +291,12 @@ public record Shoot : BehaviorScript {
         }
 
         var startPos = new WorldPosData(host.Stats.Pos.X + _xOffset, host.Stats.Pos.Y + _yOffset);
-        host.World.ShootProjectiles(startPos, host.Id, host.Entity.ObjectType, _projectilePropsId, startAngle.Rad2Deg(), _minDamage, _maxDamage, _count, _shootAngle.Rad2Deg(), _path, ref time);
+        var projProps = host.Entity.Desc.Projectiles[_projectilePropsId].Props;
+        var dmg = host.Combat.GetProjectileDamage(_minDamage, _maxDamage);
+        host.World.EnemyShootProjectiles(startPos, host.Id, 
+            _projectilePropsId, startAngle.Rad2Deg(), dmg, _count,
+            _shootAngle.Rad2Deg(), _path,
+            _path.LifetimeMs, projProps.MultiHit, ref time);
 
         shootInfo.CooldownLeft = _cooldownMs;
         return BehaviorTickState.BehaviorActive;

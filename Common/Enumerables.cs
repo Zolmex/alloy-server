@@ -405,3 +405,12 @@ public enum GuildRank {
     Member = 10,
     Initiate = 0
 }
+
+public enum BagType {
+    Common = 0,
+    Pink = 1,
+    Cyan = 2,
+    Blue = 3,
+    White = 4,
+    Purple = 5
+}

@@ -140,7 +140,7 @@ public class NetworkHandler {
                 }
             }
             catch (Exception ex) {
-                _log.Error($"Error handling message {pktId}: {ex.Message}");
+                _log.Error($"Error handling message {pktId}: {ex}");
             }
         }
 

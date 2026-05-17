@@ -52,6 +52,7 @@ public class World {
 
     private readonly ConcurrentQueue<Action<World>> _pendingActions = [];
     private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
+    private readonly ConcurrentQueue<int> _pendingRemove = [];
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -99,11 +100,6 @@ public class World {
         ref var ret = ref EnterWorld(ref en);
         PlayerToUser = PlayerToUser.Add(en.Id, user);
         return ref ret;
-    }
-
-    public void LeavePlayer(int id) {
-        LeaveWorld(id);
-        PlayerToUser = PlayerToUser.Remove(id);
     }
 
     public ref Entity EnterWorld(ref Entity en) {
@@ -166,14 +162,20 @@ public class World {
     }
 
     public void LeaveWorld(int entityId) {
+        _pendingRemove.Enqueue(entityId);
+    }
+    
+    private void RemoveEntity(int entityId) {
         EntityEvents.Remove(entityId); // First to go is events, so DeathEvent gets called before getting removed from the rest of component managers
         Entities.Remove(entityId);
         EntityBehaviors.Remove(entityId);
         EntityCombat.Remove(entityId);
         EntityStats.Remove(entityId);
         EntityProjectiles.Remove(entityId);
+        EntityInventories.Remove(entityId);
         PlayerSights.Remove(entityId);
         PlayerChat.Remove(entityId);
+        PlayerToUser = PlayerToUser.Remove(entityId);
     }
 
     private void HandleTimers() {
@@ -203,10 +205,15 @@ public class World {
         TextCache = TextCache.Clear();
     }
 
-    public void Tick(ref RealmTime time) {
+    public void Update() { // Runs in-between ticks
+        while (_pendingRemove.TryDequeue(out var entityId))
+            RemoveEntity(entityId);
+        
         while (_pendingActions.TryDequeue(out var act))
             act(this);
-
+    }
+    
+    public void Tick(ref RealmTime time) {
         HandleTimers();
 
         Projectiles.Tick(ref time);

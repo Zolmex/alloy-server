@@ -27,6 +27,9 @@ public record PlayerHit : IIncomingPacket {
         }
         
         ref var proj = ref user.GameInfo.World.Projectiles.Get(projId);
+        if (proj.Id == 0)
+            return;
+        
         proj.TryHitEntity(user.GameInfo.PlayerId);
     }
 

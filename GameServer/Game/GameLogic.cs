@@ -40,6 +40,9 @@ public class GameLogic {
     }
 
     private static void Update() {
+        foreach (var world in RealmManager.Worlds.Values)
+            world.Update();
+        
         foreach (var user in RealmManager.Users.Values) {
             user.Network.HandleIncomingPackets();
             user.Network.SendSocketData();
