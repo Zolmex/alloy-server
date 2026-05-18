@@ -1,4 +1,5 @@
 using Common;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
@@ -10,7 +11,7 @@ public static class ChatExtensions {
         public void SendInfo(string text) {
             user.SendPacket(new Text(
                 "",
-                0,
+                EntityId.Null,
                 -1,
                 0,
                 null,
@@ -30,7 +31,7 @@ public static class ChatExtensions {
         public void SendPartyAnnounce(string text) {
             user.SendPacket(new Text(
                 null,
-                0,
+                EntityId.Null,
                 -1,
                 0,
                 "*Party*",
@@ -40,7 +41,7 @@ public static class ChatExtensions {
         public void SendError(string text) {
             user.SendPacket(new Text(
                 "*Error*",
-                0,
+                EntityId.Null,
                 -1,
                 0,
                 null,
@@ -50,7 +51,7 @@ public static class ChatExtensions {
         public void SendHelp(string text) {
             user.SendPacket(new Text(
                 "*Help*",
-                0,
+                EntityId.Null,
                 -1,
                 0,
                 null,
@@ -62,7 +63,7 @@ public static class ChatExtensions {
         }
 
         public void SendEnemy(string name, string text) {
-            user.SendPacket(new Text($"#{name}", -1, -1, 3, null, text));
+            user.SendPacket(new Text($"#{name}", EntityId.Null, -1, 3, null, text));
         }
     }
 }

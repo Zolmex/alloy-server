@@ -1,6 +1,7 @@
 using Common.Game;
 using Common.Projectiles.ProjectilePaths;
 using Common.Structs;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Projectiles;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
@@ -11,7 +12,7 @@ namespace GameServer.Game.Entities.Extensions;
 public static class CombatExtensions {
     extension(World world) {
         public void EnemyShootProjectiles(WorldPosData startPos,
-            int ownerId, byte propsId, float angleDeg, int damage, byte count, float angleIncDeg,
+            EntityId ownerId, byte propsId, float angleDeg, int damage, byte count, float angleIncDeg,
             ProjectilePath path, int lifetimeMs, bool multiHit, ref RealmTime time) {
             var firstProjId = world.SpawnProjectiles(startPos, ownerId, angleDeg, angleIncDeg, damage, count, path, lifetimeMs, multiHit, ref time);
             
@@ -35,7 +36,7 @@ public static class CombatExtensions {
         }
 
         public ushort SpawnProjectiles(WorldPosData startPos,
-            int ownerId,
+            EntityId ownerId,
             float angleDeg,
             float angleIncDeg,
             int damage,

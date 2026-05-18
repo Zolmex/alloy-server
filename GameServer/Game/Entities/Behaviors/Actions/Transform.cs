@@ -14,14 +14,20 @@ public record Transform : BehaviorScript {
         if (obj.Class.Contains("Portal"))
             return;
 
-        var entity = new Entity(obj.ObjectType);
-        host.World.EnterWorld(ref entity);
-        ref var enStats = ref host.World.EntityStats.Get(entity.Id);
-        if (host.Stats.Flags.IsSet((int)EntityFlags.Spawned))
-            enStats.Flags.Set((int)EntityFlags.Spawned);
+        var hostId = host.Id;
+        var spawnX = host.Stats.Pos.X;
+        var spawnY = host.Stats.Pos.Y;
+        var isSpawned = host.Stats.Flags.IsSet((int)EntityFlags.Spawned);
+        host.World.Enqueue(w => {
+            var entity = new Entity(obj.ObjectType);
+            ref var newEn = ref w.EnterWorld(ref entity);
+            ref var enStats = ref w.EntityStats.Get(newEn.Id);
+            if (isSpawned)
+                enStats.Flags.Set((int)EntityFlags.Spawned);
 
-        enStats.Move(host.Stats.Pos.X, host.Stats.Pos.Y);
+            enStats.Move(spawnX, spawnY);
 
-        host.World.LeaveWorld(host.Id);
+            w.LeaveWorld(hostId);
+        });
     }
 }

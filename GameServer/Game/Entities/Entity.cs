@@ -6,11 +6,12 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Entities;
 
-public struct Entity : IIdentifiable, IEquatable<Entity>, IDisposable {
-    public int Id { get; set; }
+public struct Entity : IEntityIdentifiable, IEquatable<Entity>, IDisposable {
+    public EntityId Id { get; set; }
     public ushort ObjectType { get; }
     public EntityType Type { get; }
     public readonly ObjectDesc Desc => XmlLibrary.ObjectDescs[ObjectType];
@@ -29,7 +30,7 @@ public struct Entity : IIdentifiable, IEquatable<Entity>, IDisposable {
     }
 
     public readonly override int GetHashCode() {
-        return Id;
+        return Id.Value;
     }
 
     public static bool operator ==(Entity left, Entity right) {

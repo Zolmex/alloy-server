@@ -1,12 +1,13 @@
 ﻿using Common.Network;
 using Common.Projectiles.ProjectilePaths;
 using Common.Structs;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
 public readonly record struct EnemyShoot(
     ushort FirstBulletId,
-    int OwnerId,
+    EntityId OwnerId,
     byte ProjId,
     WorldPosData StartPos,
     float Angle,
@@ -18,7 +19,7 @@ public readonly record struct EnemyShoot(
 
     public void Write(ref SpanWriter wtr) {
         wtr.Write(FirstBulletId);
-        wtr.Write(OwnerId);
+        wtr.Write(OwnerId.Value);
         wtr.Write(ProjId);
         wtr.Write(StartPos);
         wtr.Write(Angle);

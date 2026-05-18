@@ -52,7 +52,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
             return false;
 
         ref var playerInv = ref _world.EntityInventories.Get(cmd.SlotA.ObjectId);
-        if (playerInv.Id == 0)
+        if (playerInv.Id == EntityId.Null)
             return false;
 
         if (cmd.SlotA.SlotId is 255 or 254) { // Handle potion un-stacking
@@ -93,11 +93,11 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         // if we are swapping to hotbar, item must be equippable in that slot
 
         ref var ent1 = ref _world.EntityInventories.Get(cmd.SlotA.ObjectId);
-        if (ent1.Id == 0)
+        if (ent1.Id == EntityId.Null)
             return false;
 
         ref var ent2 = ref _world.EntityInventories.Get(cmd.SlotB.ObjectId);
-        if (ent2.Id == 0)
+        if (ent2.Id == EntityId.Null)
             return false;
 
         ref var en1 = ref _world.Entities.Get(ent1.Id);
@@ -120,7 +120,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
             }
         }
         
-        if (playerStats.Id == 0 || containerInv.Id == 0)
+        if (playerStats.Id == EntityId.Null || containerInv.Id == EntityId.Null)
             return false;
 
         if (containerInv.OwnerAccountId != -1 && containerInv.OwnerAccountId != cmd.User.GameInfo.Account.Id)
@@ -173,7 +173,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
     // Player can only perform a swap in a container if the container is public or owned by the player
     public bool DoContainerInvSwap(ref SwapCommand cmd) {
         ref var containerInv = ref _world.EntityInventories.Get(cmd.SlotA.ObjectId);
-        if (containerInv.Id == 0)
+        if (containerInv.Id == EntityId.Null)
             return false;
 
         if (containerInv.OwnerAccountId != -1 && containerInv.OwnerAccountId != cmd.User.GameInfo.Account.Id)
@@ -184,8 +184,8 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         if (plrStats.DistSqr(ref containerStats) > 3f * 3f)
             return false;
 
-        var itemA = containerInv[cmd.SlotA.ObjectId];
-        var itemB = containerInv[cmd.SlotB.ObjectId];
+        var itemA = containerInv[cmd.SlotA.SlotId];
+        var itemB = containerInv[cmd.SlotB.SlotId];
         Swap(ref containerInv, ref containerInv, cmd.SlotA.SlotId, cmd.SlotB.SlotId, itemA, itemB);
         return true;
     }

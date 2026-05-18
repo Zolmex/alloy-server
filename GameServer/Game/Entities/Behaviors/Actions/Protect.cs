@@ -2,6 +2,7 @@
 using System.Numerics;
 using Common;
 using Common.Game;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -46,7 +47,7 @@ public record Protect : BehaviorScript {
         var entityId = host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, _protectee, _acquireRange);
         switch (s) {
             case ProtectState.DontKnowWhere:
-                if (entityId != 0) {
+                if (entityId != EntityId.Null) {
                     s = ProtectState.Protecting;
 
                     goto case ProtectState.Protecting;
@@ -55,7 +56,7 @@ public record Protect : BehaviorScript {
                 break;
 
             case ProtectState.Protecting:
-                if (entityId == 0) {
+                if (entityId == EntityId.Null) {
                     s = ProtectState.DontKnowWhere;
 
                     break;
@@ -78,7 +79,7 @@ public record Protect : BehaviorScript {
                 break;
 
             case ProtectState.Protected:
-                if (entityId == 0) {
+                if (entityId == EntityId.Null) {
                     s = ProtectState.DontKnowWhere;
 
                     break;

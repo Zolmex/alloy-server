@@ -8,24 +8,25 @@ namespace GameServer.Game.Entities.Systems;
 
 public class EntityManager : ManagerBase<Entity> {
 
-    public int Count => _idCounter;
+    public int Count => _idxCounter;
     
-    private readonly Stack<int> _freeIds;
+    private readonly Stack<int> _freeIdxs;
     
-    private int _idCounter;
+    private int _idxCounter;
 
     public EntityManager(World world, int capacity) : base(world, capacity) {
-        _freeIds = new Stack<int>(capacity);
+        _freeIdxs = new Stack<int>(capacity);
     }
 
     public override ref Entity Add(ref Entity elem) {
-        elem.Id = _freeIds.Count > 0 ? _freeIds.Pop() : _idCounter++;
+        int index = _freeIdxs.Count > 0 ? _freeIdxs.Pop() : ++_idxCounter;
+        elem.Id = new EntityId(index, Set.MoveNextGeneration(index));
         return ref Set.Add(ref elem);
     }
 
-    public override void Remove(int id) {
+    public override void Remove(EntityId id) {
         Set.Remove(id, out _);
-        _freeIds.Push(id);
+        _freeIdxs.Push(id.Index);
     }
 
     public override void Tick(ref RealmTime time) {

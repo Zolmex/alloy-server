@@ -5,15 +5,15 @@ using System.Linq;
 
 namespace Common.Utilities.Collections;
 
-public ref struct RefEnumerator<T> where T : struct, IIdentifiable {
+public ref struct RefEnumerator<T> where T : struct, IEntityIdentifiable {
     public static RefEnumerator<T> Empty => new();
     
     private readonly SparseSet<T> _set;
-    private readonly int[] _buffer;
+    private readonly EntityId[] _buffer;
     private readonly int _count;
     private int _index;
 
-    public RefEnumerator(SparseSet<T> set, int[] buffer, int count) {
+    public RefEnumerator(SparseSet<T> set, EntityId[] buffer, int count) {
         _set = set;
         _buffer = buffer;
         _count = count;
@@ -26,6 +26,6 @@ public ref struct RefEnumerator<T> where T : struct, IIdentifiable {
     
     public void Dispose() {
         if (_buffer != null)
-            ArrayPool<int>.Shared.Return(_buffer);
+            ArrayPool<EntityId>.Shared.Return(_buffer);
     }
 }

@@ -11,6 +11,7 @@ using GameServer.Game.Entities;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Entities.Projectiles;
 using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
@@ -41,7 +42,7 @@ public class World {
     public readonly PlayerSightManager PlayerSights;
     public readonly PlayerChatManager PlayerChat;
 
-    public ImmutableDictionary<int, User> PlayerToUser;
+    public ImmutableDictionary<EntityId, User> PlayerToUser;
     public ImmutableList<string> TextCache;
 
     public WorldMap Map;
@@ -52,7 +53,7 @@ public class World {
 
     private readonly ConcurrentQueue<Action<World>> _pendingActions = [];
     private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
-    private readonly ConcurrentQueue<int> _pendingRemove = [];
+    private readonly ConcurrentQueue<EntityId> _pendingRemove = [];
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -71,7 +72,7 @@ public class World {
         PlayerSights = new PlayerSightManager(this, 100);
         PlayerChat = new PlayerChatManager(this, 100);
 
-        PlayerToUser = ImmutableDictionary<int, User>.Empty;
+        PlayerToUser = ImmutableDictionary<EntityId, User>.Empty;
         TextCache = ImmutableList<string>.Empty;
 
         DisplayName = config.DisplayName;
@@ -88,17 +89,14 @@ public class World {
     public void LoadEntities() {
         foreach (var orig in Map.Data.Entities) {
             var en = new Entity(orig.ObjType);
-            EnterWorld(ref en);
-            ref var stats = ref EntityStats.Get(en.Id);
-            stats.Move(orig.Pos.X, orig.Pos.Y);
-            var tile = Map[(int)orig.Pos.X, (int)orig.Pos.Y];
-            tile.ObjectId = en.Id;
+            ref var newEn = ref EnterWorld(ref en);
+            newEn.Init(this, orig.Pos);
         }
     }
 
     public ref Entity EnterPlayer(ref Entity en, User user) {
         ref var ret = ref EnterWorld(ref en);
-        PlayerToUser = PlayerToUser.Add(en.Id, user);
+        PlayerToUser = PlayerToUser.Add(ret.Id, user);
         return ref ret;
     }
 
@@ -161,11 +159,11 @@ public class World {
         }
     }
 
-    public void LeaveWorld(int entityId) {
+    public void LeaveWorld(EntityId entityId) {
         _pendingRemove.Enqueue(entityId);
     }
     
-    private void RemoveEntity(int entityId) {
+    private void RemoveEntity(EntityId entityId) {
         EntityEvents.Remove(entityId); // First to go is events, so DeathEvent gets called before getting removed from the rest of component managers
         Entities.Remove(entityId);
         EntityBehaviors.Remove(entityId);

@@ -6,15 +6,16 @@ using Common.Game;
 using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityStats : IIdentifiable, IDisposable {
+public struct EntityStats : IEntityIdentifiable, IDisposable {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;
 
-    public int Id { get; set; }
+    public EntityId Id { get; set; }
 
     public WorldPosData Pos;
     public WorldPosData PrevPos;

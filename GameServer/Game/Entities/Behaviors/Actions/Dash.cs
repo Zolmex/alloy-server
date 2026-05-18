@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Behaviors.Actions.Info;
 using GameServer.Utilities;
 
@@ -133,7 +134,7 @@ public record Dash : BehaviorScript {
             case TargetType.RandomPlayerPerBehavior:
             case TargetType.FarthestPlayer:
                 var targetId = host.World.GetAttackTarget(host.Stats.Pos, acquireRadiusSqr, targetType);
-                if (targetId == 0) {
+                if (targetId == EntityId.Null) {
                     dashInfo.Dashing = false;
                     dashInfo.DashCooldown = cooldownMS;
                     return;
@@ -146,10 +147,10 @@ public record Dash : BehaviorScript {
                 targetId = dashInfo.InCycle
                     ? dashInfo.CurrentTargetID
                     : host.World.GetAttackTarget(host.Stats.Pos, acquireRadiusSqr, targetType);
-                if (targetId == 0) {
+                if (targetId == EntityId.Null) {
                     dashInfo.Dashing = false;
                     dashInfo.DashCooldown = cooldownMS;
-                    dashInfo.CurrentTargetID = -1;
+                    dashInfo.CurrentTargetID = EntityId.Null;
                     return;
                 }
 

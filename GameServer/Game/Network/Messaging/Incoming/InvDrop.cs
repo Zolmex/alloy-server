@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Network;
 using Common.Resources.Xml.Descriptors;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities;
 using GameServer.Utilities;
 
@@ -13,7 +14,7 @@ public record InvDrop : IIncomingPacket {
     public async Task Handle(User user) {
         user.GameInfo.World.Enqueue(w => {
             ref var playerInv = ref w.EntityInventories.Get(user.GameInfo.PlayerId);
-            if (playerInv.Id == 0)
+            if (playerInv.Id == EntityId.Null)
                 return;
 
             var item = playerInv[SlotId];

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Common.Game;
 using Common.Utilities;
@@ -9,6 +10,8 @@ public class GameLogic {
     
     public static RealmTime WorldTime;
     public static int TPS;
+
+    private static readonly ConcurrentQueue<Action> _pendingActions = [];
     
     public static void Run(int mspt) {
         TPS = 1000 / mspt;
@@ -39,7 +42,14 @@ public class GameLogic {
         }
     }
 
+    public static void Enqueue(Action act) {
+        _pendingActions.Enqueue(act);
+    }
+
     private static void Update() {
+        while (_pendingActions.TryDequeue(out var act))
+            act();
+        
         foreach (var world in RealmManager.Worlds.Values)
             world.Update();
         

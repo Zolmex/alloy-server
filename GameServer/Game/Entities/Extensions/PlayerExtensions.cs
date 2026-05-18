@@ -17,7 +17,7 @@ namespace GameServer.Game.Entities.Extensions;
 
 public static class PlayerExtensions {
     extension(ref Entity player) {
-        public void Init(User user, World world, Account acc, Character chr) {
+        public void InitPlayer(User user, World world, Account acc, Character chr) {
             ref var stats = ref world.EntityStats.Get(player.Id);
             ref var inv = ref world.EntityInventories.Get(player.Id);
             Entity.InitPlayerStats(ref stats, acc, chr);

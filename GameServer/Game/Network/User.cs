@@ -115,10 +115,7 @@ public class User : IIdentifiable {
 
         State = ConnectionState.Disconnected;
 
-        if (GameInfo.World != null)
-            GameInfo.World.Enqueue(_ => FinishDisconnect());
-        else
-            FinishDisconnect();
+        GameLogic.Enqueue(FinishDisconnect);
     }
 
     private void FinishDisconnect()

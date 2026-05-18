@@ -11,15 +11,15 @@ using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Projectiles;
 
-public struct Projectile : IIdentifiable, IDisposable {
+public struct Projectile : IEntityIdentifiable, IDisposable {
     public const float HIT_DIST_SQR = 0.5f * 0.5f;
     
-    public int Id { get; set; }
+    public EntityId Id { get; set; }
 
     public readonly WorldPosData StartPos;
-    public readonly int OwnerId;
+    public readonly EntityId OwnerId;
     public readonly long StartTime;
-    public readonly PooledList<int> Hit = [];
+    public readonly PooledList<EntityId> Hit = [];
     
     public ProjectilePath Path;
     public float Angle;
@@ -32,7 +32,7 @@ public struct Projectile : IIdentifiable, IDisposable {
 
     private readonly World _world;
     
-    public Projectile(World world, WorldPosData startPos, int ownerId, ref RealmTime time) {
+    public Projectile(World world, WorldPosData startPos, EntityId ownerId, ref RealmTime time) {
         _world = world;
         StartPos = startPos;
         OwnerId = ownerId;
@@ -61,7 +61,7 @@ public struct Projectile : IIdentifiable, IDisposable {
 
         var pos = StartPos + Path.PositionAt((int)(time.TotalElapsedMs - StartTime), LocalId, Angle);
         var targets = _world.EntityProjectiles.Get(OwnerId);
-        if (targets.Id == 0)
+        if (targets.Id == EntityId.Null)
             return true;
         
         foreach (var targetId in targets.TargetIds) {
@@ -75,7 +75,7 @@ public struct Projectile : IIdentifiable, IDisposable {
         return false;
     }
 
-    public void TryHitEntity(int enId) {
+    public void TryHitEntity(EntityId enId) {
         if (Hit.Add(enId, true) == -1)
             return;
 

@@ -1,16 +1,15 @@
 using Common.Utilities;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Entities.Components.Data;
 
-public record struct DamageRecord : IIdentifiable {
-    public int Id { get; set; }
+public record struct DamageRecord : IEntityIdentifiable {
+    public EntityId Id { get; set; }
     
-    public int FromId;
     public int DamageDealt;
     
-    public DamageRecord(int fromId, int damageDealt) {
+    public DamageRecord(EntityId fromId, int damageDealt) {
         Id = fromId;
-        FromId = fromId;
         DamageDealt = damageDealt;
     }
 }

@@ -5,23 +5,24 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityBehavior : IIdentifiable, IDisposable {
+public struct EntityBehavior : IEntityIdentifiable, IDisposable {
     private static readonly Logger _log = new(typeof(EntityBehavior));
 
-    public int Id { get; set; }
+    public EntityId Id { get; set; }
 
     public readonly World World;
     public readonly HashSet<State> ActiveStates = [];
     public readonly HashSet<BehaviorTransition> PastTransitions = [];
     public readonly StateResourceController Resources = new();
     
-    public int ParentId;
+    public EntityId ParentId;
 
     private readonly string _objectId;
 

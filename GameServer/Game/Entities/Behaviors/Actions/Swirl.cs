@@ -2,6 +2,7 @@
 using System.Numerics;
 using Common;
 using Common.Game;
+using Common.Utilities.Collections;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -42,7 +43,7 @@ public record Swirl : BehaviorScript {
         if (!swirlState.Acquired && swirlState.RemainingTime <= 0 && _targeted) {
             var entityId = host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, null, _acquireRange);
             ref var enStats = ref host.World.EntityStats.Get(entityId);
-            if (entityId != 0 && enStats.Pos.X != host.Stats.Pos.X && enStats.Pos.Y != host.Stats.Pos.Y) {
+            if (entityId != EntityId.Null && enStats.Pos.X != host.Stats.Pos.X && enStats.Pos.Y != host.Stats.Pos.Y) {
                 //find circle which pass through host and player pos
                 var l = enStats.DistSqr(ref host.Stats);
                 var hx = (host.Stats.Pos.X + enStats.Pos.X) / 2;
@@ -65,7 +66,7 @@ public record Swirl : BehaviorScript {
 
                 var entityId = host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, null, _acquireRange);
 
-                if (entityId != 0)
+                if (entityId != EntityId.Null)
                     swirlState.RemainingTime = 0;
                 else
                     swirlState.RemainingTime = 5000;

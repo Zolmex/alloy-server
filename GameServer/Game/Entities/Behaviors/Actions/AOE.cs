@@ -6,6 +6,7 @@ using Common;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
@@ -83,7 +84,7 @@ public record AOE : BehaviorScript {
         var throwDist = _range;
         if (_targetType != TargetType.FixedAngle) {
             var attackTargetId = host.World.GetAttackTarget(host.Stats.Pos, _rangeSqr, _targetType);
-            if (attackTargetId == 0)
+            if (attackTargetId == EntityId.Null)
                 return BehaviorTickState.BehaviorFailed;
 
             ref var attackTarget = ref host.World.EntityStats.Get(attackTargetId);
@@ -121,7 +122,7 @@ public record AOE : BehaviorScript {
 }
 
 public class AOEDamager {
-    private int _hostId;
+    private EntityId _hostId;
     private int _activateCount;
     public int ActivateCount;
     public int? Color;
@@ -133,7 +134,7 @@ public class AOEDamager {
     public float Radius;
     public World World;
 
-    public AOEDamager(int hostId, World world, short damage, int cooldown, int damageCooldown, int activateCount, int? color,
+    public AOEDamager(EntityId hostId, World world, short damage, int cooldown, int damageCooldown, int activateCount, int? color,
         Vector2 pos, float radius,
         (ConditionEffectIndex, int)[] effects = null) {
         _hostId = hostId;
@@ -159,7 +160,7 @@ public class AOEDamager {
             foreach (var user in World.Map.GetUsersWithin(Pos.X, Pos.Y, 32f))
                 user.SendPacket(new ShowEffect(
                     (byte)ShowEffectIndex.Nova,
-                    -1,
+                    EntityId.Null,
                     Color.Value,
                     Radius,
                     new WorldPosData(Pos.X, Pos.Y),

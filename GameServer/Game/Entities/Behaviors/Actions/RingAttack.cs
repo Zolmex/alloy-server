@@ -3,6 +3,7 @@ using Common;
 using Common.Game;
 using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Extensions;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -60,7 +61,7 @@ public record RingAttack : BehaviorScript {
             return BehaviorTickState.OnCooldown;
         }
 
-        var entityId = _radius == 0 ? 0 : host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, null, _radius);
+        var entityId = _radius == 0 ? EntityId.Null : host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, null, _radius);
         ref var entity = ref host.World.EntityStats.Get(entityId);
         var angleInc = 2 * MathF.PI / _count;
         var projProps = host.Entity.Desc.Projectiles[_projectileIndex].Props;
@@ -78,7 +79,7 @@ public record RingAttack : BehaviorScript {
             angle = state.FixedAngle;
         }
         else {
-            angle = entityId == 0
+            angle = entityId == EntityId.Null
                 ? _angleOffset
                 : (float)Math.Atan2(entity.Pos.Y - host.Stats.Pos.Y, entity.Pos.X - host.Stats.Pos.X) +
                   _angleOffset;

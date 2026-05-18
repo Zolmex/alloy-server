@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Worlds;
 
@@ -7,7 +8,7 @@ internal sealed class SpatialQueryCache
     private const float CACHE_CELL_SIZE = 2f; // quantization grid; tune to taste
 
     private readonly record struct CacheKey(int CellX, int CellY, float RadiusSqr);
-    private readonly record struct CacheEntry(uint Generation, int[] Ids, int Count);
+    private readonly record struct CacheEntry(uint Generation, EntityId[] Ids, int Count);
 
     private readonly Dictionary<CacheKey, CacheEntry> _cache = new(256);
     private uint _generation;
@@ -17,8 +18,8 @@ internal sealed class SpatialQueryCache
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Invalidate() => _generation++;
 
-    public int[] GetOrCompute(float x, float y, float radiusSqr,
-                               Func<int[]> compute, out int count)
+    public EntityId[] GetOrCompute(float x, float y, float radiusSqr,
+                               Func<EntityId[]> compute, out int count)
     {
         var key = MakeKey(x, y, radiusSqr);
         if (_cache.TryGetValue(key, out var entry) && entry.Generation == _generation)
@@ -32,8 +33,8 @@ internal sealed class SpatialQueryCache
         return pooled;
     }
 
-    public int[] GetOrComputeWithCount(float x, float y, float radiusSqr,
-                                        Func<(int[] ids, int count)> compute,
+    public EntityId[] GetOrComputeWithCount(float x, float y, float radiusSqr,
+                                        Func<(EntityId[] ids, int count)> compute,
                                         out int count)
     {
         var key = MakeKey(x, y, radiusSqr);
@@ -47,16 +48,16 @@ internal sealed class SpatialQueryCache
         count = freshCount;
 
         // Copy to a cache-owned array so we can return pooledIds to ArrayPool.
-        int[] owned;
+        EntityId[] owned;
         if (freshCount == 0)
         {
             owned = [];
         }
         else
         {
-            owned = new int[freshCount];
+            owned = new EntityId[freshCount];
             pooledIds.AsSpan(0, freshCount).CopyTo(owned);
-            System.Buffers.ArrayPool<int>.Shared.Return(pooledIds);
+            System.Buffers.ArrayPool<EntityId>.Shared.Return(pooledIds);
         }
 
         _cache[key] = new CacheEntry(_generation, owned, freshCount);

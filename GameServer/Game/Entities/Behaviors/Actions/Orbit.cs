@@ -2,6 +2,7 @@
 using System.Numerics;
 using Common;
 using Common.Game;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -10,7 +11,7 @@ public class OrbitInfo {
     public float FinalRadius;
     public float FinalSpeed;
     public bool FirstTick;
-    public int TargetId;
+    public EntityId TargetId;
 }
 
 public record Orbit : BehaviorScript {
@@ -49,16 +50,16 @@ public record Orbit : BehaviorScript {
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
 
-        int targetId;
+        EntityId targetId;
         if (_targetPlayer)
             targetId = host.World.Map.GetNearestPlayer(host.Stats.Pos, _acquireRange * _acquireRange);
         else
-            targetId = orbitInfo.TargetId == 0 ? host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, _target, _acquireRange) : orbitInfo.TargetId;
+            targetId = orbitInfo.TargetId == EntityId.Null ? host.World.Map.GetNearestOtherEntityByName(host.Stats.Pos, host.Id, _target, _acquireRange) : orbitInfo.TargetId;
 
         orbitInfo.TargetId = targetId;
 
         
-        if (targetId == 0) {
+        if (targetId == EntityId.Null) {
             return BehaviorTickState.BehaviorFailed;
         }
 

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Game;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Entities.Behaviors.Transitions;
 
@@ -17,7 +18,7 @@ public class EntityHpLessTransition : BehaviorTransition {
 
     public override string Tick(ref EntityView host, ref RealmTime time) {
         var entityId = host.World.Map.GetNearestEntityByName(_entity, host.Stats.Pos.X, host.Stats.Pos.Y, _dist);
-        if (entityId == 0)
+        if (entityId == EntityId.Null)
             return null;
 
         ref var enStats = ref host.World.EntityStats.Get(entityId);

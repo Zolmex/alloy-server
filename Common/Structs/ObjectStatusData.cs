@@ -1,10 +1,11 @@
 using Common.Network;
 using Common.Utilities;
+using Common.Utilities.Collections;
 
 namespace Common.Structs;
 
 public struct ObjectStatusData {
-    public int ObjectId;
+    public EntityId ObjectId;
     public WorldPosData Pos;
     public StatValue[] Stats;
     public StatData[] StatUpdates;
@@ -13,7 +14,7 @@ public struct ObjectStatusData {
 
     public static ObjectStatusData Read(ref SpanReader rdr) {
         var ret = new ObjectStatusData();
-        ret.ObjectId = rdr.ReadInt32();
+        ret.ObjectId = EntityId.Read(ref rdr);
         ret.Pos = WorldPosData.Read(ref rdr);
         ret.Stats = new StatValue[rdr.ReadByte()];
         for (var i = 0; i < ret.Stats.Length; i++)
@@ -24,7 +25,7 @@ public struct ObjectStatusData {
     }
 
     public void WriteHeader(ref SpanWriter wtr) {
-        wtr.Write(ObjectId);
+        wtr.Write(ObjectId.Value);
         wtr.Write(Pos);
     }
 

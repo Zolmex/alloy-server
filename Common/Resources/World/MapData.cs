@@ -10,6 +10,7 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using Ionic.Zlib;
 using Newtonsoft.Json;
 
@@ -110,7 +111,7 @@ public class MapTileData { // Don't modify this tile data with game logic, use W
     public TileRegion Region;
     public TerrainType Terrain;
 
-    public int ObjectId; // Set at World.Load()
+    public EntityId ObjectId; // Set at World.Load()
     public bool BlocksSight;
     public bool FullOccupy;
     public bool EnemyOccupySquare;

@@ -8,10 +8,10 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct PlayerSight : IIdentifiable, IDisposable {
-    public int Id { get; set; }
+public struct PlayerSight : IEntityIdentifiable, IDisposable {
+    public EntityId Id { get; set; }
 
-    public HashSet<int> VisibleEntities = [];
+    public HashSet<EntityId> VisibleEntities = [];
     public PooledList<ObjectStatusData> Statuses = new(50);
     public BitArray2D VisibleTiles;
     public BitArray2D DiscoveredTiles;

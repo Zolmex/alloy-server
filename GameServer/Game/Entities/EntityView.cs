@@ -1,3 +1,4 @@
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Events;
 using GameServer.Game.Worlds;
@@ -6,7 +7,7 @@ namespace GameServer.Game.Entities;
 
 public readonly ref struct EntityView {
     public readonly World World;
-    public readonly int Id;
+    public readonly EntityId Id;
     public readonly ref Entity Entity;
     
     public readonly ref EntityBehavior Behavior;
@@ -18,7 +19,7 @@ public readonly ref struct EntityView {
     public readonly ref PlayerSight PlayerSight;
     public readonly ref PlayerChat PlayerChat;
 
-    public EntityView(World world, int id) {
+    public EntityView(World world, EntityId id) {
         World = world;
         Id = id;
         Entity = ref world.Entities.Get(id);

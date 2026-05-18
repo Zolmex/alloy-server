@@ -1,11 +1,12 @@
 ﻿using Common.Network;
 using Common.Structs;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;
 
 public readonly record struct ShowEffect(
     byte EffectType,
-    int TargetId,
+    EntityId TargetId,
     int Color,
     float EffectParam,
     WorldPosData Pos1,
@@ -14,7 +15,7 @@ public readonly record struct ShowEffect(
 
     public void Write(ref SpanWriter wtr) {
         wtr.Write(EffectType);
-        wtr.Write(TargetId);
+        wtr.Write(TargetId.Value);
         wtr.Write(Color);
         wtr.Write(EffectParam);
         wtr.Write(Pos1);

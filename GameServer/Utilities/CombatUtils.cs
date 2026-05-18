@@ -1,6 +1,7 @@
 using Common;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Components;
@@ -10,7 +11,7 @@ namespace GameServer.Utilities;
 
 public static class CombatUtils {
     extension(World world) {
-        public int GetAttackTarget(WorldPosData pos, float radiusSqr, BehaviorScript.TargetType targetType) {
+        public EntityId GetAttackTarget(WorldPosData pos, float radiusSqr, BehaviorScript.TargetType targetType) {
             switch (targetType) {
                 case BehaviorScript.TargetType.ClosestPlayer:
                     return world.Map.GetNearestPlayer(pos, radiusSqr);
@@ -20,7 +21,7 @@ public static class CombatUtils {
                 case BehaviorScript.TargetType.FarthestPlayer:
                     return world.Map.GetFarthestPlayer(pos, radiusSqr);
                 default:
-                    return 0;
+                    return EntityId.Null;
             }
         }
     }

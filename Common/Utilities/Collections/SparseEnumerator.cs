@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Common.Utilities.Collections;
 
-public ref struct SparseEnumerator<T> where T : struct, IIdentifiable {
+public ref struct SparseEnumerator<T> where T : struct, IEntityIdentifiable {
     private readonly SparseSet<T> _set;
     private int _index = 0;
 

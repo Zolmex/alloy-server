@@ -7,6 +7,7 @@ using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Network.Messaging.Outgoing;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -100,7 +101,7 @@ public record TossObject : BehaviorScript {
                 return BehaviorTickState.BehaviorDeactivate;
             }
 
-            var playerId = _targeted ? host.World.Map.GetNearestPlayer(host.Stats.Pos, _range) : 0;
+            var playerId = _targeted ? host.World.Map.GetNearestPlayer(host.Stats.Pos, _range) : EntityId.Null;
             if (_densityRange != 0 && _maxDensity != 0) {
                 var cnt = 0;
                 if (_children.Length > 1)
@@ -123,7 +124,7 @@ public record TossObject : BehaviorScript {
                 a = (float)(_minAngle + Random.Shared.NextDouble() * (_maxAngle - _minAngle));
 
             WorldPosData target;
-            if (playerId == 0)
+            if (playerId == EntityId.Null)
                 target = new WorldPosData {
                     X = host.Stats.Pos.X + (float)(r * Math.Cos(a)), Y = host.Stats.Pos.Y + (float)(r * Math.Sin(a))
                 };

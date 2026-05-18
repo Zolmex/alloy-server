@@ -1,6 +1,7 @@
 ﻿using Common.Database.Models;
 using Common.Game;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities;
 using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Worlds;
@@ -20,7 +21,7 @@ public class GameInfo {
     public Account Account;
     public World World;
     public Character Char;
-    public int PlayerId;
+    public EntityId PlayerId;
     
     public ref Entity Player => ref World.Entities.Get(PlayerId);
 
@@ -42,7 +43,7 @@ public class GameInfo {
         
         var plr = new Entity(chr.ObjectType);
         ref var newPlr = ref world.EnterPlayer(ref plr, User);
-        newPlr.Init(User, world, Account, Char);
+        newPlr.InitPlayer(User, world, Account, Char);
         newPlr.MoveToSpawn(world);
         
         PlayerId = newPlr.Id;
@@ -50,14 +51,13 @@ public class GameInfo {
 
     public void Unload() {
         State = GameState.Idle;
-        World?.LeaveWorld(PlayerId);
-        PlayerId = 0;
+        PlayerId = EntityId.Null;
     }
 
     public void Reset() {
         State = GameState.Idle; // Change our state first
         World = null;
         Char = null;
-        PlayerId = 0;
+        PlayerId = EntityId.Null;
     }
 }

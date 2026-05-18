@@ -43,7 +43,7 @@ public class ChunkMap {
 public class Chunk {
     public const int CHUNK_SIZE = 16;
 
-    public readonly List<int> Entities = [];
+    public readonly List<EntityId> Entities = [];
 
     public void Clear() {
         Entities.Clear();

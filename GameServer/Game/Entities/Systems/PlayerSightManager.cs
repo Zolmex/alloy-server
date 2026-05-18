@@ -31,10 +31,10 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     private PooledList<ObjectData> _newEntities = new(50);
     private PooledList<ObjectDropData> _dropEntities = new(50);
     private PooledList<IntPoint> _forcedTileUpdates = [];
-    private PooledList<int> _removedEntities = new(50);
+    private PooledList<EntityId> _removedEntities = new(50);
 
-    private Dictionary<int, ObjectData> _entityDataCache = new(200);
-    private Dictionary<int, ObjectStatusData> _entityStatusCache = new(200);
+    private Dictionary<EntityId, ObjectData> _entityDataCache = new(200);
+    private Dictionary<EntityId, ObjectStatusData> _entityStatusCache = new(200);
 
     public override void Tick(ref RealmTime time) {
         _entityDataCache.Clear();
@@ -42,7 +42,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
         foreach (ref var sight in this) {
             ref var playerStats = ref _world.EntityStats.Get(sight.Id);
-            if (playerStats.Id == 0)
+            if (playerStats.Id == EntityId.Null)
                 continue;
 
             var user = _world.PlayerToUser[playerStats.Id];
@@ -175,7 +175,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
         foreach (var enId in sight.VisibleEntities) {
             ref var stats = ref _world.EntityStats.Get(enId);
-            if (stats.Id != 0 && IsInSight(_world.Config.Blocksight, ref sight, ref stats))
+            if (stats.Id != EntityId.Null && IsInSight(_world.Config.Blocksight, ref sight, ref stats))
                 continue;
 
             _removedEntities.Add(enId);
@@ -191,7 +191,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         sight.Statuses.Reset();
         foreach (ref var en in _world.Map.GetEntitiesWithin(playerStats.Pos, SIGHT_RADIUS_SQR)) {
             ref var stats = ref _world.EntityStats.Get(en.Id);
-            if (stats.Id == 0 || !IsInSight(_world.Config.Blocksight, ref sight, ref stats)) {
+            if (stats.Id == EntityId.Null || !IsInSight(_world.Config.Blocksight, ref sight, ref stats)) {
                 continue;
             }
 

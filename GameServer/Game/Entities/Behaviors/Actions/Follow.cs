@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Xml.Linq;
 using Common.Game;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -10,8 +11,8 @@ namespace GameServer.Game.Entities.Behaviors.Actions;
 public class FollowInfo {
     public bool FirstTick;
     public int FollowTimer;
-    public int TargetId;
-    public bool Following => TargetId != -1;
+    public EntityId TargetId;
+    public bool Following => TargetId != EntityId.Null;
 }
 
 public record Follow : BehaviorScript {
@@ -41,7 +42,7 @@ public record Follow : BehaviorScript {
         var followInfo = host.Behavior.Resources.ResolveResource<FollowInfo>(this);
         followInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
         followInfo.FirstTick = true;
-        followInfo.TargetId = -1;
+        followInfo.TargetId = EntityId.Null;
     }
 
     public override BehaviorTickState Tick(ref EntityView host, ref RealmTime time) {
@@ -61,7 +62,7 @@ public record Follow : BehaviorScript {
 
         if (followInfo.Following) {
             ref var targetStats = ref host.World.EntityStats.Get(followInfo.TargetId);
-            if (targetStats.Id == 0) {
+            if (targetStats.Id == EntityId.Null) {
                 followInfo.TargetId = FindTarget(host, _targetType, _acquireRadiusSqr, _target);
                 return BehaviorTickState.BehaviorFailed;
             }
@@ -87,7 +88,7 @@ public record Follow : BehaviorScript {
         return BehaviorTickState.OnCooldown;
     }
 
-    public static int FindTarget(in EntityView host, TargetType targetType, float acquireRadiusSqr,
+    public static EntityId FindTarget(in EntityView host, TargetType targetType, float acquireRadiusSqr,
         string target = "player") {
         switch (targetType) {
             case TargetType.ClosestPlayer:
@@ -99,6 +100,6 @@ public record Follow : BehaviorScript {
             case TargetType.FarthestPlayer:
                 return host.World.Map.GetFarthestPlayer(host.Stats.Pos, acquireRadiusSqr);
         }
-        return -1;
+        return EntityId.Null;
     }
 }

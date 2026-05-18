@@ -5,14 +5,15 @@ using Common.Game;
 using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Events;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityEvents : IIdentifiable, IDisposable {
-    public int Id { get; set; }
+public struct EntityEvents : IEntityIdentifiable, IDisposable {
+    public EntityId Id { get; set; }
 
     private readonly World _world;
     

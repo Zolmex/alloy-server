@@ -7,27 +7,26 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities;
 
-public abstract class ManagerBase<T> where T : struct, IIdentifiable, IDisposable {
+public abstract class ManagerBase<T> where T : struct, IEntityIdentifiable, IDisposable {
 
     public readonly SparseSet<T> Set;
     protected readonly World _world;
     
-    protected ManagerBase(World world, int capacity) {
+    protected ManagerBase(World world, int capacity, bool proj = false) {
         _world = world;
-        Set = new SparseSet<T>(capacity, capacity);
+        Set = new SparseSet<T>(capacity, capacity, proj);
     }
     
     public virtual ref T Add(ref T elem) {
         return ref Set.Add(ref elem);
     }
 
-    public virtual void Remove(int id) {
-        Set.Remove(id, out var elem);
-        if (elem.Id != 0)
+    public virtual void Remove(EntityId id) {
+        if (Set.Remove(id, out var elem))
             elem.Dispose();
     }
 
-    public ref T Get(int id) {
+    public ref T Get(EntityId id) {
         return ref Set.Get(id);
     }
 

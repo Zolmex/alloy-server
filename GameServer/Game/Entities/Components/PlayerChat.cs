@@ -3,18 +3,19 @@ using Common.Game;
 using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct PlayerChat : IIdentifiable, IDisposable {
+public struct PlayerChat : IEntityIdentifiable, IDisposable {
     private const int TextCooldown = 500;
     
-    public int Id { get; set; }
+    public EntityId Id { get; set; }
 
     private readonly World _world;
-    private readonly int _playerId;
+    private readonly EntityId _playerId;
 
     private long _lastMessageSent;
     

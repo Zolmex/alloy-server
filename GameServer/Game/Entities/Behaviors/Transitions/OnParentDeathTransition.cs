@@ -1,4 +1,5 @@
 ﻿using Common.Game;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Entities.Behaviors.Transitions;
 
@@ -15,7 +16,7 @@ public class OnParentDeathTransition : BehaviorTransition {
         var state = host.Behavior.Resources.ResolveResource<OnParentDeathInfo>(this);
         ref var parentStats = ref host.World.EntityStats.Get(host.Behavior.ParentId);
         ref var parentEvents = ref host.World.EntityEvents.Get(host.Behavior.ParentId);
-        state.ParentDead = parentStats.Id == 0;
+        state.ParentDead = parentStats.Id == EntityId.Null;
         if (!state.ParentDead)
             parentEvents.OnDeath.Subscribe((ref evt) => state.ParentDead = true);
     }

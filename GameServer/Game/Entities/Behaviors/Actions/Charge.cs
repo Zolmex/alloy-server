@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Common;
 using Common.Game;
+using Common.Utilities.Collections;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -35,7 +36,7 @@ public record Charge : BehaviorScript {
         if (chargeState.RemainingTime <= 0) {
             if (chargeState.Direction == Vector2.Zero) {
                 var plrId = host.World.Map.GetNearestPlayer(host.Stats.Pos, _range);
-                if (plrId == 0)
+                if (plrId == EntityId.Null)
                     return status;
                 
                 ref var player = ref host.World.EntityStats.Get(plrId);

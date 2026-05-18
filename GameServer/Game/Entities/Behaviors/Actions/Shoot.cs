@@ -7,6 +7,7 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Worlds;
@@ -272,7 +273,7 @@ public record Shoot : BehaviorScript {
         var startAngle = _fixedAngle;
         if (_targetType != TargetType.FixedAngle) {
             var attackTargetId = host.World.GetAttackTarget(host.Stats.Pos, _maxRadiusSqr, _targetType);
-            if (attackTargetId == 0)
+            if (attackTargetId == EntityId.Null)
                 return BehaviorTickState.BehaviorFailed;
 
             ref var attackTarget = ref host.World.EntityStats.Get(attackTargetId);

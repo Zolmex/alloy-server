@@ -7,13 +7,14 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
+using Common.Utilities.Collections;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityInventory : IIdentifiable, IDisposable {
-    public int Id { get; set; }
+public struct EntityInventory : IEntityIdentifiable, IDisposable {
+    public EntityId Id { get; set; }
 
     public int OwnerAccountId;
     public Item this[int slot] {
@@ -112,7 +113,7 @@ public struct EntityInventory : IIdentifiable, IDisposable {
     
     public void Tick(ref RealmTime time) {
         ref var stats = ref _world.EntityStats.Get(Id);
-        if (stats.Id == 0 || _itemUpdates.IsEmpty)
+        if (stats.Id == EntityId.Null || _itemUpdates.IsEmpty)
             return;
         
         stats.Set(StatType.HealthPotionStack, _potionStacks[0]);

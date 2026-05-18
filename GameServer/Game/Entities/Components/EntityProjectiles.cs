@@ -10,15 +10,15 @@ using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Entities.Components;
 
-public struct EntityProjectiles : IIdentifiable, IDisposable {
+public struct EntityProjectiles : IEntityIdentifiable, IDisposable {
     public const int MAX_PROJECTILES = 2000; // Maximum amount of concurrent projectiles
     
-    public int Id { get; set; }
+    public EntityId Id { get; set; }
 
-    public readonly PooledList<int> TargetIds = new(); // Possible hit targets
+    public readonly PooledList<EntityId> TargetIds = new(); // Possible hit targets
     
     private readonly World _world;
-    private readonly int[] _localToGlobalIds = ArrayPool<int>.Shared.Rent(2000); // Stores global Ids
+    private readonly EntityId[] _localToGlobalIds = ArrayPool<EntityId>.Shared.Rent(2000); // Stores global Ids
     private long _timeToClear;
     private ushort _nextProjId;
     
@@ -36,7 +36,7 @@ public struct EntityProjectiles : IIdentifiable, IDisposable {
         _timeToClear = timeToClear;
     }
     
-    public ushort Add(int globalId) { // Returns local projectile id
+    public ushort Add(EntityId globalId) { // Returns local projectile id
         if (_nextProjId >= MAX_PROJECTILES)
             _nextProjId = 0;
         
@@ -46,14 +46,14 @@ public struct EntityProjectiles : IIdentifiable, IDisposable {
     }
 
     public void Remove(int localId) {
-        _localToGlobalIds[localId] = 0;
+        _localToGlobalIds[localId] = EntityId.Null;
     }
 
-    public int GetGlobalId(int localId) {
+    public EntityId GetGlobalId(int localId) {
         return _localToGlobalIds[localId];
     }
 
-    public void AddTarget(int targetId) {
+    public void AddTarget(EntityId targetId) {
         TargetIds.Add(targetId);
     }
     
@@ -62,7 +62,7 @@ public struct EntityProjectiles : IIdentifiable, IDisposable {
     }
     
     public void Dispose() {
-        ArrayPool<int>.Shared.Return(_localToGlobalIds);
+        ArrayPool<EntityId>.Shared.Return(_localToGlobalIds);
         TargetIds.Dispose();
     }
 }
