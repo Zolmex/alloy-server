@@ -72,7 +72,7 @@ public class User : IIdentifiable {
     }
     
     public void Load(Character chr, World world) {
-        world.Enqueue(_ => {
+        GameLogic.Enqueue(() => {
             State = ConnectionState.Ready;
             
             GameInfo.Load(chr, world);

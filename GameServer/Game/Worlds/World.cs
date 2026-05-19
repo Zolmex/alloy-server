@@ -51,7 +51,6 @@ public class World {
 
     public bool Deleted;
 
-    private readonly ConcurrentQueue<Action<World>> _pendingActions = [];
     private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
     private readonly ConcurrentQueue<EntityId> _pendingRemove = [];
 
@@ -191,10 +190,6 @@ public class World {
         _timedActions.Add((GameLogic.WorldTime.TickCount + TimeUtils.TicksFromTime(time, GameLogic.TPS), act));
     }
     
-    public void Enqueue(Action<World> act) {
-        _pendingActions.Enqueue(act);
-    }
-
     public void PlayerText(string text) {
         TextCache = TextCache.Add(text);
     }
@@ -206,9 +201,6 @@ public class World {
     public void Update() { // Runs in-between ticks
         while (_pendingRemove.TryDequeue(out var entityId))
             RemoveEntity(entityId);
-        
-        while (_pendingActions.TryDequeue(out var act))
-            act(this);
     }
     
     public void Tick(ref RealmTime time) {

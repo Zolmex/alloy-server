@@ -19,12 +19,13 @@ public record EnemyHit : IIncomingPacket {
             return;
 
         var plrId = user.GameInfo.PlayerId;
-        user.GameInfo.World.Enqueue(w => {
-            ref var enProjs = ref w.EntityProjectiles.Get(plrId);
+        var world = user.GameInfo.World;
+        GameLogic.Enqueue(() => {
+            ref var enProjs = ref world.EntityProjectiles.Get(plrId);
             if (enProjs.Id == EntityId.Null)
                 return;
             
-            ref var proj = ref w.Projectiles.Get(enProjs.GetGlobalId(ProjectileId));
+            ref var proj = ref world.Projectiles.Get(enProjs.GetGlobalId(ProjectileId));
             if (proj.Id == EntityId.Null)
                 return;
             

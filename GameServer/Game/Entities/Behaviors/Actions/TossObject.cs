@@ -162,7 +162,7 @@ public record TossObject : BehaviorScript {
             var objType = XmlLibrary.Id2Object(_children[Random.Shared.Next(_children.Length)]).ObjectType;
             var isSpawned = host.Stats.Flags.IsSet((int)EntityFlags.Spawned);
 
-            host.World.Enqueue(_ => {
+            GameLogic.Enqueue(() => {
                 var child = new Entity(objType);
                 world.EnterWorld(ref child);
                 ref var childStats = ref world.EntityStats.Get(child.Id);

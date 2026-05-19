@@ -12,8 +12,9 @@ public record InvDrop : IIncomingPacket {
     public byte SlotId;
 
     public async Task Handle(User user) {
-        user.GameInfo.World.Enqueue(w => {
-            ref var playerInv = ref w.EntityInventories.Get(user.GameInfo.PlayerId);
+        var world = user.GameInfo.World;
+        GameLogic.Enqueue(() => {
+            ref var playerInv = ref world.EntityInventories.Get(user.GameInfo.PlayerId);
             if (playerInv.Id == EntityId.Null)
                 return;
 
@@ -22,8 +23,8 @@ public record InvDrop : IIncomingPacket {
                 return;
 
             var bag = new Entity(InventoryUtils.GetBagIdFromType(BagType.Pink));
-            w.EnterWorld(ref bag);
-            ref var bagInv = ref w.EntityInventories.Get(bag.Id);
+            world.EnterWorld(ref bag);
+            ref var bagInv = ref world.EntityInventories.Get(bag.Id);
             bagInv.SetItem(0, item);
             
             playerInv.SetItem(SlotId, null);

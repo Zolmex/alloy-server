@@ -31,8 +31,8 @@ public record PlayerShoot : IIncomingPacket {
 
         var damage = player.Combat.GetProjectileDamage(projDesc.MinDamage, projDesc.MaxDamage);
         var pos = player.Stats.Pos;
-        
-        player.World.Enqueue(w => w.SpawnProjectiles(pos, user.GameInfo.PlayerId, Angle.Rad2Deg(), weapon.ArcGap, damage, weapon.NumProjectiles,
+        var world = player.World;
+        GameLogic.Enqueue(() => world.SpawnProjectiles(pos, user.GameInfo.PlayerId, Angle.Rad2Deg(), weapon.ArcGap, damage, weapon.NumProjectiles,
             ProjectilePathSegment.ParsePath(projDesc).ToPath(), projDesc.LifetimeMS, projDesc.MultiHit,
             ref GameLogic.WorldTime));
     }

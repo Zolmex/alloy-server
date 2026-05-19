@@ -638,14 +638,7 @@ public partial class BehaviorLib {
             new State("Attack",
                 new TimedTransition(10000, "Wait"),
                 new State("Randomize",
-                    new TimedTransition(100, "Toss1"),
-                    new TimedTransition(100, "Toss2"),
-                    new TimedTransition(100, "Toss3"),
-                    new TimedTransition(100, "Toss4"),
-                    new TimedTransition(100, "Toss5"),
-                    new TimedTransition(100, "Toss6"),
-                    new TimedTransition(100, "Toss7"),
-                    new TimedTransition(100, "Toss8")
+                    new TimedTransition(100, TransitionType.Random, "Toss1", "Toss2", "Toss3", "Toss4", "Toss5", "Toss6", "Toss7", "Toss8")
                 ),
                 new State("Toss1",
                     new TossObject("Aberrant Blaster", 5, 0, 40000),

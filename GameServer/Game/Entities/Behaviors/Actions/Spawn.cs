@@ -110,7 +110,7 @@ public record Spawn : BehaviorScript {
             var world = host.World;
             var hostId = host.Id;
 
-            host.World.Enqueue(_ => {
+            GameLogic.Enqueue(() => {
                 var child = new Entity(objectType);
                 world.EnterWorld(ref child);
                 ref var childBehavior = ref world.EntityBehaviors.Get(child.Id);

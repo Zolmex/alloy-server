@@ -18,16 +18,17 @@ public record Transform : BehaviorScript {
         var spawnX = host.Stats.Pos.X;
         var spawnY = host.Stats.Pos.Y;
         var isSpawned = host.Stats.Flags.IsSet((int)EntityFlags.Spawned);
-        host.World.Enqueue(w => {
+        var world = host.World;
+        GameLogic.Enqueue(() => {
             var entity = new Entity(obj.ObjectType);
-            ref var newEn = ref w.EnterWorld(ref entity);
-            ref var enStats = ref w.EntityStats.Get(newEn.Id);
+            ref var newEn = ref world.EnterWorld(ref entity);
+            ref var enStats = ref world.EntityStats.Get(newEn.Id);
             if (isSpawned)
                 enStats.Flags.Set((int)EntityFlags.Spawned);
 
             enStats.Move(spawnX, spawnY);
 
-            w.LeaveWorld(hostId);
+            world.LeaveWorld(hostId);
         });
     }
 }
