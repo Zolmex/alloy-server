@@ -34,19 +34,19 @@ public struct EntityCombat : IEntityIdentifiable, IDisposable {
         return dmg;
     }
     
-    public void Damage(EntityId fromId, int damage) { // Applies damage directly, perform any modifications to the amount before calling this
+    public void Damage(EntityId fromId, int damage, int fromAccId) { // Applies damage directly, perform any modifications to the amount before calling this
         TotalDamageReceived += damage;
 
         ref var record = ref DamageRecords.GetOrAdd(fromId, out var added);
         if (added) {
-            record = new DamageRecord(fromId, damage);
+            record = new DamageRecord(fromId, damage, fromAccId);
         } else {
             record.DamageDealt += damage;
         }
     }
 
-    public void DamageWithText(EntityId fromId, int damage) {
-        Damage(fromId, damage);
+    public void DamageWithText(EntityId fromId, int damage, int fromAccId) {
+        Damage(fromId, damage, fromAccId);
         var user = _world.PlayerToUser[Id];
         user.SendPacket(new Notification(Id, "-" + damage, 0xFF0000, 24));
     }

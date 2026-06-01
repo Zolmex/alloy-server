@@ -16,7 +16,7 @@ namespace GameServer.Game.Entities.Components;
 public struct EntityInventory : IEntityIdentifiable, IDisposable {
     public EntityId Id { get; set; }
 
-    public int OwnerAccountId;
+    public readonly List<int> OwnerAccIds = [];
     public Item this[int slot] {
         get {
             if (slot < 0 || slot >= _items.Length)
@@ -36,7 +36,6 @@ public struct EntityInventory : IEntityIdentifiable, IDisposable {
         Id = en.Id;
         _world = world;
         _size = size;
-        OwnerAccountId = -1;
         
         _slotTypes = ArrayPool<int>.Shared.Rent(size);
         Array.Fill(_slotTypes, 0);
@@ -66,6 +65,18 @@ public struct EntityInventory : IEntityIdentifiable, IDisposable {
         
         _items[slot] = item;
         _itemUpdates.Set(slot);
+    }
+    
+    public void SetItems(IEnumerable<Item> items) {
+        var slot = 0;
+        foreach (var item in items) {
+            if (item != null && _slotTypes[slot] != 0 && item.SlotType != _slotTypes[slot])
+                continue;
+
+            _items[slot] = item;
+            _itemUpdates.Set(slot);
+            slot++;
+        }
     }
 
     public bool IsEmpty() {
@@ -109,6 +120,10 @@ public struct EntityInventory : IEntityIdentifiable, IDisposable {
         _items[slot2] = temp;
         _itemUpdates.Set(slot1);
         _itemUpdates.Set(slot2);
+    }
+
+    public bool OwnedBy(int accId) {
+        return OwnerAccIds.Count == 0 || OwnerAccIds.Contains(accId);
     }
     
     public void Tick(ref RealmTime time) {

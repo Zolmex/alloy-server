@@ -18,6 +18,7 @@ public struct Projectile : IEntityIdentifiable, IDisposable {
 
     public readonly WorldPosData StartPos;
     public readonly EntityId OwnerId;
+    public readonly int OwnerAccId;
     public readonly long StartTime;
     public readonly PooledList<EntityId> Hit = [];
     
@@ -37,6 +38,8 @@ public struct Projectile : IEntityIdentifiable, IDisposable {
         StartPos = startPos;
         OwnerId = ownerId;
         StartTime = time.TotalElapsedMs;
+        var user = _world.PlayerToUser.TryGetValue(OwnerId, out var userOwner);
+        OwnerAccId = user ? userOwner.GameInfo.Account.Id : -1;
     }
 
     public void SetProps(ProjectilePath path, float angle, int damage, int lifetimeMs, bool multiHit) {
@@ -81,7 +84,7 @@ public struct Projectile : IEntityIdentifiable, IDisposable {
 
         var totalDamage = Damage; // TODO: Condition effects checks + other damage alterations
         ref var combat = ref _world.EntityCombat.Get(enId);
-        combat.Damage(OwnerId, totalDamage);
+        combat.Damage(OwnerId, totalDamage, OwnerAccId);
     }
 
     public void Dispose() {

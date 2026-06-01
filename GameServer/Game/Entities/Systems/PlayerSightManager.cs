@@ -175,7 +175,8 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
         foreach (var enId in sight.VisibleEntities) {
             ref var stats = ref _world.EntityStats.Get(enId);
-            if (stats.Id != EntityId.Null && IsInSight(_world.Config.Blocksight, ref sight, ref stats))
+            ref var enInv = ref _world.EntityInventories.Get(enId);
+            if (stats.Id != EntityId.Null && IsVisible(_world.Config.Blocksight, ref sight, ref stats, ref enInv))
                 continue;
 
             _removedEntities.Add(enId);
@@ -191,7 +192,8 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         sight.Statuses.Reset();
         foreach (ref var en in _world.Map.GetEntitiesWithin(playerStats.Pos, SIGHT_RADIUS_SQR)) {
             ref var stats = ref _world.EntityStats.Get(en.Id);
-            if (stats.Id == EntityId.Null || !IsInSight(_world.Config.Blocksight, ref sight, ref stats)) {
+            ref var enInv = ref _world.EntityInventories.Get(en.Id);
+            if (stats.Id == EntityId.Null || !IsVisible(_world.Config.Blocksight, ref sight, ref stats, ref enInv)) {
                 continue;
             }
 
@@ -245,11 +247,18 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
         user.SendPacket(new NewTick(sight.Statuses));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool IsInSight(int blocksight, ref PlayerSight sight, ref EntityStats stats) {
-        if (blocksight == World.UNBLOCKED_SIGHT)
-            return true;
-        return sight.VisibleTiles.Contains(stats.Tile.Pos); // Line of Sight
+    private bool IsVisible(int blocksight, ref PlayerSight sight, ref EntityStats stats, ref EntityInventory enInv) {
+        if (enInv.Id != EntityId.Null) {
+            var user = _world.PlayerToUser[sight.Id];
+            if (!enInv.OwnedBy(user.GameInfo.Account.Id))
+                return false;
+        }
+
+        return blocksight switch {
+            World.UNBLOCKED_SIGHT => true,
+            World.LINE_OF_SIGHT => !sight.VisibleTiles.Contains(stats.Tile.Pos),
+            _ => true
+        };;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -153,7 +153,7 @@ public class AOEDamager {
     public void AOEActivate(World world) {
         foreach (var plrId in World.Map.GetPlayersWithin(Pos.X, Pos.Y, Radius)) {
             ref var plr = ref World.EntityCombat.Get(plrId);
-            plr.DamageWithText(_hostId, Damage);
+            plr.DamageWithText(_hostId, Damage, -1);
         }
 
         if (Color.HasValue)

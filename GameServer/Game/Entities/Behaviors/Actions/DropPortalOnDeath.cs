@@ -25,7 +25,6 @@ public record DropPortalOnDeath : BehaviorScript {
     private void HandleDeath(ref DeathEvent evt) {
         var host = new EntityView(evt.World, evt.HostId);
 
-        host.Events.OnDeath.Unsubscribe(HandleDeath);
         if (host.World.DisplayName.Contains("Arena") || host.Stats.Flags.IsSet((int)EntityFlags.Spawned))
             return;
 

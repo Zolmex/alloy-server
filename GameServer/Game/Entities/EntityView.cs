@@ -8,6 +8,7 @@ namespace GameServer.Game.Entities;
 public readonly ref struct EntityView {
     public readonly World World;
     public readonly EntityId Id;
+    public readonly int OwnerAccId;
     public readonly ref Entity Entity;
     
     public readonly ref EntityBehavior Behavior;
@@ -22,6 +23,9 @@ public readonly ref struct EntityView {
     public EntityView(World world, EntityId id) {
         World = world;
         Id = id;
+        // ref var ally = ref world.AllyEntities.Get(id); // TODO: Ally entities
+        // OwnerId = ally.OwnerId;
+        // OwnerAccId = ally.OwnerAccId;
         Entity = ref world.Entities.Get(id);
         
         Behavior = ref world.EntityBehaviors.Get(id);

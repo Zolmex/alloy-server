@@ -17,13 +17,13 @@ public class ItemLoot : ILoot {
         _chance = chance;
     }
     
-    public void Populate(ref EntityView host, ref List<Item> drops, ref DamageRecord record) {
+    public void Populate(ref EntityView host, ref Queue<Item> drops, ref DamageRecord record) {
         if ((float)record.DamageDealt / host.Stats.GetInt(StatType.MaxHP) < _threshold)
             return;
         
         if (Random.Shared.NextDouble() > _chance)
             return;
         
-        drops.Add(new Item(XmlLibrary.Id2Item(_objectId).Root));
+        drops.Enqueue(new Item(XmlLibrary.Id2Item(_objectId).Root));
     }
 }

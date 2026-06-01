@@ -123,7 +123,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         if (playerStats.Id == EntityId.Null || containerInv.Id == EntityId.Null)
             return false;
 
-        if (containerInv.OwnerAccountId != -1 && containerInv.OwnerAccountId != cmd.User.GameInfo.Account.Id)
+        if (!containerInv.OwnedBy(cmd.User.GameInfo.Account.Id))
             return false;
         
         if (playerStats.DistSqr(ref containerStats) > 3f * 3f)
@@ -176,7 +176,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         if (containerInv.Id == EntityId.Null)
             return false;
 
-        if (containerInv.OwnerAccountId != -1 && containerInv.OwnerAccountId != cmd.User.GameInfo.Account.Id)
+        if (!containerInv.OwnedBy(cmd.User.GameInfo.Account.Id))
             return false;
 
         ref var plrStats = ref _world.EntityStats.Get(cmd.User.GameInfo.PlayerId);

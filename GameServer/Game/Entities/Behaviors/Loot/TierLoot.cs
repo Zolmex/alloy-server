@@ -10,7 +10,7 @@ public class TierLoot : ILoot {
         
     }
     
-    public void Populate(ref EntityView host, ref List<Item> drops, ref DamageRecord record) {
+    public void Populate(ref EntityView host, ref Queue<Item> drops, ref DamageRecord record) {
         throw new NotImplementedException();
     }
 }
