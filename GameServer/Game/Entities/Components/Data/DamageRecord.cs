@@ -7,7 +7,7 @@ public record struct DamageRecord : IEntityIdentifiable {
     public EntityId Id { get; set; }
     
     public int DamageDealt;
-    public int FromAccId;
+    public readonly int FromAccId;
     
     public DamageRecord(EntityId fromId, int damageDealt, int fromAccId) {
         Id = fromId;
