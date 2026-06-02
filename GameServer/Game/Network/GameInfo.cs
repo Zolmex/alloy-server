@@ -50,6 +50,7 @@ public class GameInfo {
     }
 
     public void Unload() {
+        World?.LeaveWorld(PlayerId);
         State = GameState.Idle;
         PlayerId = EntityId.Null;
     }

@@ -52,7 +52,7 @@ public class World {
     public bool Deleted;
 
     private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
-    private readonly ConcurrentQueue<EntityId> _pendingRemove = [];
+    private readonly ConcurrentQueue<EntityId> _removeEntities = [];
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -159,7 +159,7 @@ public class World {
     }
 
     public void LeaveWorld(EntityId entityId) {
-        _pendingRemove.Enqueue(entityId);
+        _removeEntities.Enqueue(entityId);
     }
     
     private void RemoveEntity(EntityId entityId) {
@@ -199,7 +199,7 @@ public class World {
     }
 
     public void Update() { // Runs in-between ticks
-        while (_pendingRemove.TryDequeue(out var entityId))
+        while (_removeEntities.TryDequeue(out var entityId))
             RemoveEntity(entityId);
     }
     

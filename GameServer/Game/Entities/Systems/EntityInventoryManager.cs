@@ -184,7 +184,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         if (plrStats.DistSqr(ref containerStats) > 3f * 3f)
             return false;
 
-        var itemA = containerInv[cmd.SlotA.SlotId];
+        var itemA = containerInv[cmd.SlotA.SlotId]; // TODO: clone itemA
         var itemB = containerInv[cmd.SlotB.SlotId];
         Swap(ref containerInv, ref containerInv, cmd.SlotA.SlotId, cmd.SlotB.SlotId, itemA, itemB);
         return true;

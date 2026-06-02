@@ -71,6 +71,7 @@ public struct EntityCombat : IEntityIdentifiable, IDisposable {
         if (en.Type == EntityType.Player) {
             // TODO: Spawn gravestone, announce death, register death in database
             _world.PlayerToUser[Id].Disconnect(reason: DisconnectReason.Death);
+            return;
         }
         _world.LeaveWorld(Id);
     }
