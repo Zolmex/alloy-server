@@ -12,9 +12,9 @@ public abstract class ManagerBase<T> where T : struct, IEntityIdentifiable, IDis
     public readonly SparseSet<T> Set;
     protected readonly World _world;
     
-    protected ManagerBase(World world, int capacity, bool proj = false) {
+    protected ManagerBase(World world, int capacity) {
         _world = world;
-        Set = new SparseSet<T>(capacity, capacity, proj);
+        Set = new SparseSet<T>(capacity, capacity);
     }
     
     public virtual ref T Add(ref T elem) {

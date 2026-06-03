@@ -25,7 +25,7 @@ public struct EntityCombat : IEntityIdentifiable, IDisposable {
     public EntityCombat(World world, ref Entity en) {
         Id = en.Id;
         _world = world;
-        DamageRecords = new SparseSet<DamageRecord>(world.Entities.Count, 10, true);
+        DamageRecords = new SparseSet<DamageRecord>(world.Entities.Count);
     }
 
     public int GetProjectileDamage(int minDamage, int maxDamage) {

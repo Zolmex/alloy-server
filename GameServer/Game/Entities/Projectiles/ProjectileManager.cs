@@ -15,7 +15,7 @@ public class ProjectileManager : ManagerBase<Projectile> {
     
     private int _idxCounter; // First element starts at id = 1
     
-    public ProjectileManager(World world, int capacity) : base(world, capacity, true) {
+    public ProjectileManager(World world, int capacity) : base(world, capacity) {
         _world = world;
         _freeIdxs = new Stack<int>(capacity);
     }

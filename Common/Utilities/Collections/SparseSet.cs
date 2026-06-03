@@ -9,10 +9,8 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
     private int[] _sparse;
     private int[] _generations; // parallel to _sparse, stores expected generation
     private T[] _dense;
-    private bool _proj;
 
-    public SparseSet(int sparseCapacity = 10, int denseCapacity = 10, bool projectiles = false) {
-        _proj = projectiles;
+    public SparseSet(int sparseCapacity = 10, int denseCapacity = 10) {
         _sparse = ArrayPool<int>.Shared.Rent(sparseCapacity);
         _generations = ArrayPool<int>.Shared.Rent(sparseCapacity);
         Array.Fill(_sparse, 0);
