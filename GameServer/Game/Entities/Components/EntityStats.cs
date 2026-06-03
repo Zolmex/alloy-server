@@ -146,10 +146,11 @@ public struct EntityStats : IEntityIdentifiable, IDisposable {
         Tile = _world.Map[(int)Pos.X, (int)Pos.Y];
         
         StatUpdateCount = 0;
-        for (var i = 0; i < STAT_COUNT; i++) {
-            if (_statUpdatesMask.IsSet(i))
-                StatUpdates[StatUpdateCount++] = new StatData((StatType)i, Stats[i]);
-        }
+        if (!_statUpdatesMask.IsEmpty)
+            for (var i = 0; i < STAT_COUNT; i++) {
+                if (_statUpdatesMask.IsSet(i))
+                    StatUpdates[StatUpdateCount++] = new StatData((StatType)i, Stats[i]);
+            }
 
         _statUpdatesMask.Clear();
         PositionUpdate = false;
