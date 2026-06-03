@@ -25,7 +25,7 @@ public record Taunt : BehaviorScript {
     public override void Start(ref EntityView host) {
         if (_cooldownMS == 0 && _rand.NextDouble() < _probability) {
             var text = _text.RandomElement();
-            foreach (var user in host.World.PlayerToUser.Values)
+            foreach (var user in host.World.Users.Values)
                 user.SendEnemy(ref host.Entity, text);
         }
     }
@@ -43,7 +43,7 @@ public record Taunt : BehaviorScript {
         tauntInfo.CooldownLeft = _cooldownMS;
         if (_rand.NextDouble() < _probability) {
             var text = _text.RandomElement();
-            foreach (var user in host.World.PlayerToUser.Values)
+            foreach (var user in host.World.Users.Values)
                 user.SendEnemy(ref host.Entity, text);
         }
         return BehaviorTickState.BehaviorActive;

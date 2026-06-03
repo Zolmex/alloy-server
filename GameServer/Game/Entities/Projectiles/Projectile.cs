@@ -38,7 +38,7 @@ public struct Projectile : IEntityIdentifiable, IDisposable {
         StartPos = startPos;
         OwnerId = ownerId;
         StartTime = time.TotalElapsedMs;
-        var user = _world.PlayerToUser.TryGetValue(OwnerId, out var userOwner);
+        var user = _world.Users.TryGetValue(OwnerId, out var userOwner);
         OwnerAccId = user ? userOwner.GameInfo.Account.Id : -1;
     }
 

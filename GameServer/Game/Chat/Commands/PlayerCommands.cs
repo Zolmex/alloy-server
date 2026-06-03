@@ -17,7 +17,7 @@ public class OnlineCommand : Command
     public override void Execute(User user, string args)
     {
         var totalCount = RealmManager.Users.Count;
-        var localCount = user.GameInfo.World.PlayerToUser.Count;
+        var localCount = user.GameInfo.World.Users.Count;
         user.SendInfo($"There are {totalCount} players online. {localCount} of them are in this world.");
     }
 }

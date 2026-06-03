@@ -45,7 +45,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
             if (playerStats.Id == EntityId.Null)
                 continue;
 
-            var user = _world.PlayerToUser[playerStats.Id];
+            var user = _world.Users[playerStats.Id];
             ProcessUpdate(user, ref playerStats, ref sight);
             ProcessNewtick(user, ref sight);
         }
@@ -249,7 +249,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
 
     private bool IsVisible(int blocksight, ref PlayerSight sight, ref EntityStats stats, ref EntityInventory enInv) {
         if (enInv.Id != EntityId.Null) {
-            var user = _world.PlayerToUser[sight.Id];
+            var user = _world.Users[sight.Id];
             if (!enInv.OwnedBy(user.GameInfo.Account.Id))
                 return false;
         }

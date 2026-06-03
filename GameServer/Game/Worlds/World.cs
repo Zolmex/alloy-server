@@ -38,12 +38,13 @@ public class World {
     public readonly EntityCombatManager EntityCombat;
     public readonly EntityEventsManager EntityEvents;
     public readonly EntityInventoryManager EntityInventories;
+    public readonly PortalDatasManager PortalDatas;
     
     public readonly PlayerSightManager PlayerSights;
     public readonly PlayerChatManager PlayerChat;
 
-    public ImmutableDictionary<EntityId, User> PlayerToUser;
-    public ImmutableList<string> TextCache;
+    public readonly List<string> TextCache = [];
+    public ImmutableDictionary<EntityId, User> Users;
 
     public WorldMap Map;
     public string DisplayName;
@@ -55,7 +56,7 @@ public class World {
     private readonly ConcurrentQueue<EntityId> _removeEntities = [];
 
     public World(int id, int mapId, WorldConfig config) {
-        Id = id;
+        Id = id == 0 ? RealmManager.GetNextWorldId() : id;
         Config = config;
 
         Entities = new EntityManager(this, 5_000);
@@ -67,12 +68,12 @@ public class World {
         EntityCombat = new EntityCombatManager(this, 1_000);
         EntityEvents = new EntityEventsManager(this, 1_000);
         EntityInventories = new EntityInventoryManager(this, 1_000);
+        PortalDatas = new PortalDatasManager(this, 1_000);
         
         PlayerSights = new PlayerSightManager(this, 100);
         PlayerChat = new PlayerChatManager(this, 100);
 
-        PlayerToUser = ImmutableDictionary<EntityId, User>.Empty;
-        TextCache = ImmutableList<string>.Empty;
+        Users = ImmutableDictionary<EntityId, User>.Empty;
 
         DisplayName = config.DisplayName;
         Music = config.Music;
@@ -81,7 +82,11 @@ public class World {
     }
 
     public void Load(int mapId) {
-        Map = new WorldMap(this, WorldLibrary.MapDatas[Config.Name][mapId]);
+        var maps = WorldLibrary.MapDatas[Config.Name];
+        if (mapId == -1)
+            mapId = Random.Shared.Next(maps.Length - 1);
+        
+        Map = new WorldMap(this, maps[mapId]);
         LoadEntities();
     }
 
@@ -95,7 +100,7 @@ public class World {
 
     public ref Entity EnterPlayer(ref Entity en, User user) {
         ref var ret = ref EnterWorld(ref en);
-        PlayerToUser = PlayerToUser.Add(ret.Id, user);
+        Users = Users.Add(ret.Id, user);
         return ref ret;
     }
 
@@ -115,6 +120,8 @@ public class World {
             case EntityType.StaticObject:
                 break;
             case EntityType.Portal:
+                var portalData = new PortalData(this, ref en);
+                PortalDatas.Add(ref portalData);
                 break;
             case EntityType.Merchant:
                 break;
@@ -170,9 +177,10 @@ public class World {
         EntityStats.Remove(entityId);
         EntityProjectiles.Remove(entityId);
         EntityInventories.Remove(entityId);
+        PortalDatas.Remove(entityId);
         PlayerSights.Remove(entityId);
         PlayerChat.Remove(entityId);
-        PlayerToUser = PlayerToUser.Remove(entityId);
+        Users = Users.Remove(entityId);
     }
 
     private void HandleTimers() {
@@ -191,11 +199,11 @@ public class World {
     }
     
     public void PlayerText(string text) {
-        TextCache = TextCache.Add(text);
+        TextCache.Add(text);
     }
 
     private void ClearTextCache() {
-        TextCache = TextCache.Clear();
+        TextCache.Clear();
     }
 
     public void Update() { // Runs in-between ticks
@@ -209,6 +217,7 @@ public class World {
         Projectiles.Tick(ref time);
         Map.Tick(ref time);
         
+        PortalDatas.Tick(ref time);
         EntityInventories.Tick(ref time);
         EntityCombat.Tick(ref time);
         EntityProjectiles.Tick(ref time);

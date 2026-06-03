@@ -79,12 +79,12 @@ public static class PlayerExtensions {
                 return;
             
             if (text.StartsWith('/')) {
-                ExecuteCommand(world.PlayerToUser[player.Id], text);
+                ExecuteCommand(world.Users[player.Id], text);
                 return;
             }
 
             world.PlayerText(text);
-            foreach (var otherUser in world.PlayerToUser.Values) {
+            foreach (var otherUser in world.Users.Values) {
                 otherUser.SendPacket(new Text(
                     stats.GetString(StatType.Name),
                     player.Id,

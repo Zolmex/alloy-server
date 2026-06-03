@@ -26,7 +26,7 @@ public struct PlayerChat : IEntityIdentifiable, IDisposable {
     }
 
     public bool ValidateSpeak(RealmTime time, string text) {
-        var user = _world.PlayerToUser[_playerId];
+        var user = _world.Users[_playerId];
         if (user.GameInfo.Account.IsAdmin)
             return true;
 

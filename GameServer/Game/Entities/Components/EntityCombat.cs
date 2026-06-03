@@ -47,7 +47,7 @@ public struct EntityCombat : IEntityIdentifiable, IDisposable {
 
     public void DamageWithText(EntityId fromId, int damage, int fromAccId) {
         Damage(fromId, damage, fromAccId);
-        var user = _world.PlayerToUser[Id];
+        var user = _world.Users[Id];
         user.SendPacket(new Notification(Id, "-" + damage, 0xFF0000, 24));
     }
 
@@ -70,7 +70,7 @@ public struct EntityCombat : IEntityIdentifiable, IDisposable {
         ref var en = ref _world.Entities.Get(Id);
         if (en.Type == EntityType.Player) {
             // TODO: Spawn gravestone, announce death, register death in database
-            _world.PlayerToUser[Id].Disconnect(reason: DisconnectReason.Death);
+            _world.Users[Id].Disconnect(reason: DisconnectReason.Death);
             return;
         }
         _world.LeaveWorld(Id);

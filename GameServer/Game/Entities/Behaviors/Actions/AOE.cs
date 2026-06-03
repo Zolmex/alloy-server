@@ -102,7 +102,7 @@ public record AOE : BehaviorScript {
         var aoeX = host.Stats.Pos.X + MathF.Cos(startAngle) * throwDist;
         var aoeY = host.Stats.Pos.Y + MathF.Sin(startAngle) * throwDist;
         foreach (var plrId in host.World.Map.GetPlayersWithin(host.Stats.Pos.X, host.Stats.Pos.Y, 32f)) {
-            var user = host.World.PlayerToUser[plrId];
+            var user = host.World.Users[plrId];
             user.SendPacket(new
                 ShowEffect(
                     (byte)ShowEffectIndex.Throw,

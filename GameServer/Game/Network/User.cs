@@ -106,6 +106,17 @@ public class User : IIdentifiable {
         if (disconnect)
             Disconnect(message, DisconnectReason.Failure);
     }
+    
+    public void ReconnectTo(World world) {
+        if (world == null || world.Deleted)
+            return;
+
+        State = ConnectionState.Reconnecting;
+
+        Unload(true); // Begin reconnect process, player leaves world and set gamestate to idle
+
+        SendPacket(new Reconnect(world.Id));
+    }
 
     public void Disconnect(string message = null, DisconnectReason reason = DisconnectReason.Unknown) {
         if (State == ConnectionState.Disconnected)

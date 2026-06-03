@@ -21,7 +21,7 @@ public static class CombatExtensions {
             foreach (var plrId in world.Map.GetPlayersWithin(startPos, 20f)) {
                 enProjs.AddTarget(plrId); // Cache for hit validation
 
-                var user = world.PlayerToUser[plrId];
+                var user = world.Users[plrId];
                 user.SendPacket(new EnemyShoot(
                     firstProjId,
                     ownerId,

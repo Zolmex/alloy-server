@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Common.Database.Models;
+using Common.Resources.Config;
 using Common.Resources.Xml;
 using Common.Utilities;
 using GameServer.Game.Entities.Behaviors.Actions;
@@ -17,6 +18,9 @@ public class RealmManager {
     public static ImmutableDictionary<int, World> Worlds = ImmutableDictionary.Create<int, World>();
     public static ImmutableDictionary<int, User> Users = ImmutableDictionary.Create<int, User>();
     public static ImmutableDictionary<int, Account> Accounts = ImmutableDictionary.Create<int, Account>();
+    public static ImmutableList<string> ActiveRealms = ImmutableList.Create<string>();
+
+    private static int _nextWorldId;
     
     public static void Init() {
         AddWorld(new Nexus());
@@ -35,6 +39,21 @@ public class RealmManager {
         _log.Debug($"User {user.Id} connected from {user.Network.IP}");
     }
     
+    public static void UserDisconnected(User user) {
+        Users = Users.Remove(user.Id);
+    }
+
+    public static int GetNextWorldId() {
+        return Interlocked.Increment(ref _nextWorldId);
+    }
+    
+    public static string GetNewRealmName() {
+        string ret = null;
+        while (ret == null || ActiveRealms.Any(i => i.EqualsIgnoreCase(ret)))
+            ret = RealmConfig.Config.Names.RandomElement();
+        return ret;
+    }
+
     private static void SendServerProjectiles(User user) {
         foreach (var type in Shoot.CustomProjectileOwners) {
             var desc = XmlLibrary.ObjectDescs[type];
@@ -46,9 +65,5 @@ public class RealmManager {
                 );
             }
         }
-    }
-    
-    public static void UserDisconnected(User user) {
-        Users = Users.Remove(user.Id);
     }
 }

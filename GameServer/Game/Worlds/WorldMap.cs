@@ -25,7 +25,7 @@ public class WorldMap {
             return _tiles[x, y];
         }
     }
-    public Dictionary<TileRegion, HashSet<IntPoint>> Regions = [];
+    public readonly Dictionary<TileRegion, HashSet<IntPoint>> Regions = [];
 
     public readonly MapData Data;
 
@@ -46,7 +46,7 @@ public class WorldMap {
                     continue;
                 
                 if (!Regions.TryGetValue(tile.Region, out var regions))
-                    regions = new HashSet<IntPoint>();
+                    regions = Regions[tile.Region] = new HashSet<IntPoint>();
                 regions.Add(new IntPoint(x, y));
             }
 
@@ -195,7 +195,7 @@ public class WorldMap {
     public EntityId GetNearestPlayer(float x, float y, float radiusSqr) {
         var min = float.MaxValue;
         var ret = EntityId.Null;
-        foreach (var (id, _) in _world.PlayerToUser) {
+        foreach (var (id, _) in _world.Users) {
             ref var stats = ref _world.EntityStats.Get(id);
             if (stats.Id == EntityId.Null)
                 continue;
@@ -214,7 +214,7 @@ public class WorldMap {
         => GetPlayersWithin(pos.X, pos.Y, radiusSqr);
 
     public IEnumerable<EntityId> GetPlayersWithin(float x, float y, float radiusSqr) {
-        foreach (var (id, _) in _world.PlayerToUser) {
+        foreach (var (id, _) in _world.Users) {
             ref var stats = ref _world.EntityStats.Get(id);
             if (stats.Id == EntityId.Null)
                 continue;
@@ -229,7 +229,7 @@ public class WorldMap {
         => GetUsersWithin(pos.X, pos.Y, radiusSqr);
 
     public IEnumerable<User> GetUsersWithin(float x, float y, float radiusSqr) {
-        foreach (var (id, user) in _world.PlayerToUser) {
+        foreach (var (id, user) in _world.Users) {
             ref var stats = ref _world.EntityStats.Get(id);
             if (stats.Id == EntityId.Null)
                 continue;
@@ -333,7 +333,7 @@ public class WorldMap {
     public EntityId GetFarthestPlayer(float x, float y, float radiusSqr) {
         var max = 0f;
         var ret = EntityId.Null;
-        foreach (var id in _world.PlayerToUser.Keys) {
+        foreach (var id in _world.Users.Keys) {
             ref var stats = ref _world.EntityStats.Get(id);
             if (stats.Id == EntityId.Null)
                 continue;
@@ -352,7 +352,7 @@ public class WorldMap {
         => BroadcastNearby(pos.X, pos.Y, radiusSqr, act);
 
     public void BroadcastNearby(float x, float y, float radiusSqr, Action<User> act) {
-        foreach (var (id, user) in _world.PlayerToUser) {
+        foreach (var (id, user) in _world.Users) {
             ref var stats = ref _world.EntityStats.Get(id);
             if (stats.Id == EntityId.Null)
                 continue;
