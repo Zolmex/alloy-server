@@ -210,6 +210,10 @@ public class World {
         while (_removeEntities.TryDequeue(out var entityId))
             RemoveEntity(entityId);
     }
+
+    public virtual World GetInstance(User user) {
+        return this;
+    }
     
     public void Tick(ref RealmTime time) {
         HandleTimers();

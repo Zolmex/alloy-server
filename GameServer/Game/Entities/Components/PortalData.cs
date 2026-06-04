@@ -27,11 +27,11 @@ public struct PortalData : IEntityIdentifiable, IDisposable {
     
     public EntityId Id { get; set; }
 
-    public World WorldLink;
     public bool DisplayPlayerCount;
     public bool Disabled;
     
     private readonly World _world;
+    private World _worldLink;
     
     public PortalData(World world, ref Entity en) {
         Id = en.Id;
@@ -69,20 +69,26 @@ public struct PortalData : IEntityIdentifiable, IDisposable {
     }
 
     public void LinkTo(World worldLink) {
-        WorldLink = worldLink;
+        _worldLink = worldLink;
+    }
+
+    public World GetWorldInstance(User user) {
+        if (_worldLink == null)
+            return null;
+        return _worldLink.GetInstance(user);
     }
 
     public void Tick(ref RealmTime time) {
-        if (WorldLink == null)
+        if (_worldLink == null)
             return;
 
-        if (WorldLink.Deleted) {
+        if (_worldLink.Deleted) {
             _world.LeaveWorld(Id);
         }
         
         if (DisplayPlayerCount) {
             ref var stats = ref _world.EntityStats.Get(Id);
-            stats.Set(StatType.Name, $"{WorldLink.DisplayName} ({WorldLink.Users.Count}/{WorldLink.Config.MaxPlayers})");
+            stats.Set(StatType.Name, $"{_worldLink.DisplayName} ({_worldLink.Users.Count}/{_worldLink.Config.MaxPlayers})");
         }
     }
     
