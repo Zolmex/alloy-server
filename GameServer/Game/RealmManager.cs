@@ -29,6 +29,7 @@ public class RealmManager {
     }
 
     public static void AddWorld(World world) {
+        world.Id = world.Id == 0 ? GetNextWorldId() : world.Id;
         Worlds = Worlds.Add(world.Id, world);
     }
 

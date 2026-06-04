@@ -26,7 +26,8 @@ public class World {
     public const int UNBLOCKED_SIGHT = 0;
     public const int LINE_OF_SIGHT = 1;
 
-    public readonly int Id;
+    public int Id;
+    public readonly int MapId;
     public readonly WorldConfig Config;
 
     public readonly EntityManager Entities;
@@ -56,7 +57,8 @@ public class World {
     private readonly ConcurrentQueue<EntityId> _removeEntities = [];
 
     public World(int id, int mapId, WorldConfig config) {
-        Id = id == 0 ? RealmManager.GetNextWorldId() : id;
+        Id = id;
+        MapId = mapId;
         Config = config;
 
         Entities = new EntityManager(this, 5_000);

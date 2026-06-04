@@ -18,7 +18,7 @@ public struct PortalData : IEntityIdentifiable, IDisposable {
     static PortalData() {
         var asm = Assembly.GetExecutingAssembly();
         foreach (var type in asm.GetTypes()) {
-            if (type != typeof(World) || !type.IsAssignableFrom(typeof(World)))
+            if (type == typeof(World) || !type.IsSubclassOf(typeof(World)))
                 continue;
 
             _worldTypes[type.Name] = type;
