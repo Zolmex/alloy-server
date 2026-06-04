@@ -50,6 +50,9 @@ public class GameInfo {
     }
 
     public void Unload() {
+        ref var inv = ref World.EntityInventories.Get(PlayerId);
+        inv.Save(Char);
+        
         World?.LeaveWorld(PlayerId);
         State = GameState.Idle;
         PlayerId = EntityId.Null;

@@ -170,7 +170,7 @@ public class AppConnection {
                 await msg.HandleAsync(this);
             }
             catch (Exception ex) {
-                _log.Error($"Error handling message {msg.MessageId}: {ex.Message}");
+                _log.Error($"Error handling message {msg.MessageId}: {ex}");
             }
         }
 

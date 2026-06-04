@@ -1,6 +1,8 @@
 using System;
 using System.Buffers;
 using Common;
+using Common.Database;
+using Common.Database.Models;
 using Common.Game;
 using Common.Resources.World;
 using Common.Resources.Xml;
@@ -140,6 +142,25 @@ public struct EntityInventory : IEntityIdentifiable, IDisposable {
             }
 
         _itemUpdates.Clear();
+    }
+
+    public void Save(Character chr) {
+        chr.CharacterInventories.Clear();
+        for (var i = 0; i < _items.Length; i++) {
+            var item = _items[i];
+            if (item == null)
+                continue;
+            
+            chr.CharacterInventories.Add(new CharacterInventory() {
+                Character = chr,
+                CharacterId = chr.Id,
+                ItemType = item.ObjectType,
+                ItemData = item.Export().ToArray(),
+                SlotId = i
+            });
+        }
+
+        _ = DbClient.FlushAsync(chr, c => c.CharacterInventories);
     }
 
     public void Dispose() {
