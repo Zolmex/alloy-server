@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Common;
 using Common.Game;
 using Common.Resources.World;
@@ -11,6 +12,19 @@ using GameServer.Game.Worlds;
 namespace GameServer.Game.Entities.Components;
 
 public struct PortalData : IEntityIdentifiable, IDisposable {
+    private static readonly Dictionary<string, Type> _worldTypes = [];
+    private static readonly Logger _log = new(typeof(PortalData));
+
+    static PortalData() {
+        var asm = Assembly.GetExecutingAssembly();
+        foreach (var type in asm.GetTypes()) {
+            if (type != typeof(World) || !type.IsAssignableFrom(typeof(World)))
+                continue;
+
+            _worldTypes[type.Name] = type;
+        }
+    }
+    
     public EntityId Id { get; set; }
 
     public World WorldLink;
@@ -22,6 +36,31 @@ public struct PortalData : IEntityIdentifiable, IDisposable {
     public PortalData(World world, ref Entity en) {
         Id = en.Id;
         _world = world;
+
+        LoadWorld(ref en);
+    }
+
+    private void LoadWorld(ref Entity en) {
+        if (en.Desc.RealmPortal)
+            return;
+
+        var worldName = en.Desc.DungeonName;
+        var worldConfig = WorldLibrary.WorldConfigs.Values.FirstOrDefault(i => i.DisplayName == worldName);
+        if (worldConfig.Name == null) {
+            _log.Error($"World '{worldName}' not found ({en.Desc.ObjectId})");
+            return;
+        }
+
+        if (!_worldTypes.TryGetValue(worldConfig.Name, out var worldType)) {
+            _log.Error($"World logic doesn't exist for '{worldName}' ({en.Desc.ObjectId})");
+            return;
+        }
+        
+        var worldInstance = worldConfig.Id == 0
+            ? (World)Activator.CreateInstance(worldType, worldConfig.Id, -1, worldConfig)
+            : RealmManager.Worlds[worldConfig.Id];
+        
+        Init(worldInstance);
     }
 
     public void Init(World worldLink) {

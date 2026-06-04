@@ -4,6 +4,7 @@
 ///     Contains important information about a specific world type
 /// </summary>
 public struct WorldConfig {
+    public int Id { get; set; }
     public string Name { get; set; }
     public string DisplayName { get; set; }
     public int Difficulty { get; set; }
