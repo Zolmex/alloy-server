@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace DbServer.Migrations
+namespace DbServerOld.Migrations
 {
     /// <inheritdoc />
     public partial class MakeBooleansNotNull : Migration

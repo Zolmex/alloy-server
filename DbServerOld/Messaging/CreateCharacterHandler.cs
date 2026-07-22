@@ -8,7 +8,7 @@ using Common.Resources.Xml;
 using Common.Utilities;
 using DbServer.Database;
 
-namespace DbServer.Messaging;
+namespace DbServerOld.Messaging;
 
 public class CreateCharacterHandler : IMessageHandler {
     public AppMessageId MessageId => AppMessageId.CreateCharacter;

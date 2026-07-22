@@ -3,16 +3,19 @@ using System;
 using DbServer.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DbServer.Migrations
+namespace DbServerOld.Migrations
 {
     [DbContext(typeof(AlloyContext))]
-    partial class AlloyContextModelSnapshot : ModelSnapshot
+    [Migration("20260116223917_MakeBooleansNotNull")]
+    partial class MakeBooleansNotNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

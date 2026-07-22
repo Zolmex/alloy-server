@@ -3,7 +3,7 @@ using Common.Database.Models;
 using Common.Utilities;
 using DbServer.Service;
 
-namespace DbServer.Database;
+namespace DbServerOld.Database;
 
 public static class DbCache {
     public static readonly DbEntityCache<Account> Accounts = new();

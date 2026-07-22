@@ -4,7 +4,7 @@ using Common.Network.Messaging.Impl;
 using Common.Utilities;
 using DbServer.Database;
 
-namespace DbServer.Messaging;
+namespace DbServerOld.Messaging;
 
 public class UnbanAccountHandler : IMessageHandler {
     private static readonly Logger _log = new(typeof(UnbanAccountHandler));

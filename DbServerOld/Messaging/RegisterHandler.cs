@@ -7,7 +7,7 @@ using Common.Resources.Config;
 using Common.Utilities;
 using DbServer.Database;
 
-namespace DbServer.Messaging;
+namespace DbServerOld.Messaging;
 
 public class RegisterHandler : IMessageHandler {
     private const int MAX_ACCOUNTS_PER_IP = 3000;

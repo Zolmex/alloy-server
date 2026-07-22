@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DbServer.Migrations
+namespace DbServerOld.Migrations
 {
     [DbContext(typeof(AlloyContext))]
     [Migration("20260116223804_InitialMigration")]

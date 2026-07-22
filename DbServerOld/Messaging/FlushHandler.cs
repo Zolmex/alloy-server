@@ -5,7 +5,7 @@ using Common.Network.Messaging.Impl;
 using Common.Utilities;
 using DbServer.Database;
 
-namespace DbServer.Messaging;
+namespace DbServerOld.Messaging;
 
 public class FlushHandler : IMessageHandler {
     public AppMessageId MessageId => AppMessageId.Flush;

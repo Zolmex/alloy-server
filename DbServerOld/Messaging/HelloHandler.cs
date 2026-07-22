@@ -4,7 +4,7 @@ using Common.Network.Messaging.Impl;
 using Common.Utilities;
 using DbServer.Service;
 
-namespace DbServer.Messaging;
+namespace DbServerOld.Messaging;
 
 public class HelloHandler : IMessageHandler {
     public AppMessageId MessageId => AppMessageId.Hello;

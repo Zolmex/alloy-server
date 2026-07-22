@@ -7,7 +7,7 @@ using Common.Utilities;
 using DbServer.Service;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbServer.Database;
+namespace DbServerOld.Database;
 
 public class DbEntityCache<T> where T : DbModel, IDbQueryable {
     private readonly ConcurrentDictionary<string, T> _cache = new();

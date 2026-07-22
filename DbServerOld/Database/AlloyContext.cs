@@ -1,7 +1,7 @@
 ﻿using Common.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbServer.Database;
+namespace DbServerOld.Database;
 
 public partial class AlloyContext : DbContext {
     public AlloyContext() { }

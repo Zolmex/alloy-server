@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace DbServer.Migrations
+namespace DbServerOld.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

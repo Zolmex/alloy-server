@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace DbServer.Service;
+namespace DbServerOld.Service;
 
 public class NetworkService : BackgroundService {
     public static IDbContextFactory<AlloyContext>
