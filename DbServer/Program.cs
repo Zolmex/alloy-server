@@ -12,7 +12,7 @@ internal class Program {
     private static void Main(string[] args) {
         XmlLibrary.Load(Config["XmlsDir"]); // Load game data
         
-        // TODO: connect to SQLite DB
+        // TODO: Start LiteDB instance
         
         // TODO: start tcp listener
 
