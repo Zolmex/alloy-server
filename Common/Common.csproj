@@ -1043,4 +1043,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Protobuf Include="Database\Protos\db_service.proto">
+        <Generator>MSBuild:Compile</Generator>
+      </Protobuf>
+    </ItemGroup>
+
 </Project>
