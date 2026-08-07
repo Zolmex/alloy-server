@@ -79,13 +79,13 @@ public class User : IIdentifiable {
 
             SendPacket(new CreateSuccess(
                 GameInfo.PlayerId,
-                chr.AccCharId));
+                chr.CharId));
             SendPacket(new AccountList(
                 AccountList.Locked,
-                GameInfo.Account.LockedAccounts.Select(i => i.LockedId).ToArray()));
+                GameInfo.Account.LockedAccounts.ToArray()));
             SendPacket(new AccountList(
                 AccountList.Ignored,
-                GameInfo.Account.IgnoredAccounts.Select(i => i.IgnoredId).ToArray()));
+                GameInfo.Account.IgnoredAccounts.ToArray()));
         });
     }
     

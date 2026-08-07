@@ -39,7 +39,7 @@ internal class Program {
             RequestHandler.Load();
             XmlLibrary.Load(config.XmlsDir);
 
-            await DbClient.ConnectAsync(DatabaseConfig.Config);
+            DbClient.Load(DatabaseConfig.Config.DbFile);
 
             listener.Prefixes.Add($"http://{config.Address}:{config.Port}/");
             listener.Start();

@@ -34,11 +34,7 @@ public class Program {
             BehaviorLibrary.Load();
             CommandManager.Load();
 
-            var db = DatabaseConfig.Config;
-            // Old: custom TCP model-diffing protocol via DbClient.ConnectAsync.
-            // New: gRPC over HTTP/2 — DbServer is hosting DatabaseService.
-            var grpcAddress = $"http://{db.Host}:{db.Port}";
-            await DbCommandExample.InitializeAsync(grpcAddress);
+            DbClient.Load(DatabaseConfig.Config.DbFile);
 
             RealmManager.Init();
 

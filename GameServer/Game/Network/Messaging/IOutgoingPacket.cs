@@ -1,4 +1,4 @@
-﻿using Common.Network.Messaging;
+﻿using Common.Network;
 
 namespace GameServer.Game.Network.Messaging;
 

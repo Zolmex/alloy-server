@@ -4,16 +4,16 @@ using LiteDB;
 
 namespace Common.Database;
 
-public class DbClient {
-    public readonly ILiteCollection<Account> Accounts;
-    public readonly ILiteCollection<Login> Logins;
-    public readonly ILiteCollection<Guild> Guilds;
-    public readonly ILiteCollection<MuteRecord> Mutes;
-    public readonly ILiteCollection<BanRecord> Bans;
+public static class DbClient {
+    public static ILiteCollection<Account> Accounts;
+    public static ILiteCollection<Login> Logins;
+    public static ILiteCollection<Guild> Guilds;
+    public static ILiteCollection<MuteRecord> Mutes;
+    public static ILiteCollection<BanRecord> Bans;
     
-    private readonly LiteDatabase _db;
+    private static LiteDatabase _db;
     
-    public DbClient(string dbFilePath) {
+    public static void Load(string dbFilePath) {
         var connectionString = new ConnectionString() {
             Filename = dbFilePath,
             Connection = ConnectionType.Shared

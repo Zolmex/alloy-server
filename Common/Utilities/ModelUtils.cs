@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Common.Database;
 using Common.Database.Models;
 using Common.Resources.Config;
 
@@ -16,10 +17,10 @@ public static class ModelUtils {
                 !string.IsNullOrEmpty(acc.GuildName)
                     ? new XElement("Guild",
                         new XElement("Name", acc.GuildName),
-                        new XElement("Rank", acc.GuildMember!.GuildRank))
+                        new XElement("Rank", acc.GuildRank))
                     : null,
                 acc.IsAdmin ? new XElement("Admin") : null,
-                acc.AccStats.ToXml(acc)
+                acc.Stats.ToXml(acc)
             );
         }
 
@@ -46,18 +47,14 @@ public static class ModelUtils {
         }
     }
 
-    extension(AccountStat stat) {
+    extension(AccountStats stat) {
         public XElement ToXml(Account acc) {
-            Logger.Debug(acc.AccStats);
-            Logger.Debug(acc.AccStats.ClassStats);
             return new XElement("Stats",
                 new XElement("BestCharFame", stat.BestCharFame),
                 new XElement("TotalFame", stat.TotalFame),
                 new XElement("Fame", stat.CurrentFame),
                 new XElement("TotalCredits", stat.TotalCredits),
                 new XElement("Credits", stat.CurrentCredits),
-                new XElement("TotalGuildFame", acc.GuildMember?.Guild!.TotalFame ?? 0),
-                new XElement("GuildFame", acc.GuildMember?.Guild!.CurrentFame ?? 0),
                 stat.ClassStats.Select(s => s.ToXml())
             );
         }
@@ -73,8 +70,8 @@ public static class ModelUtils {
                 new("NextClassQuestFame", GameUtils.GetNextClassQuestFame(chr, acc)),
                 new("Experience", chr.XpPoints),
                 new("CurrentFame", chr.CurrentFame),
-                new("Equipment", chr.CharacterInventories.Select(slot => slot.ItemType).ToCommaSepString(",")),
-                new("ItemDatas", chr.CharacterInventories.Select(slot => slot.ItemData).ToCommaSepString(",")),
+                new("Equipment", chr.ItemTypes.ToCommaSepString(",")),
+                new("ItemDatas", chr.ItemDatas.ToCommaSepString(",")),
                 new("MaxHitPoints", chr.Stats!.MaxHp),
                 new("HitPoints", chr.Stats.Hp),
                 new("MaxMagicPoints", chr.Stats.MaxMp),
@@ -89,11 +86,11 @@ public static class ModelUtils {
                 new("Tex2", chr.TextureTwo),
                 new("Texture", chr.SkinType)
             };
-            return new XElement("Char", new XAttribute("id", chr.AccCharId!), elements);
+            return new XElement("Char", new XAttribute("id", chr.CharId), elements);
         }
     }
 
-    extension(ClassStat stat) {
+    extension(ClassStats stat) {
         public XElement ToXml() {
             return new XElement("ClassStats",
                 new XAttribute("objectType", stat.ObjectType!),
@@ -105,18 +102,16 @@ public static class ModelUtils {
 
     extension(Guild guild) {
         public XElement ToXml() {
-            return new XElement("Guild"
-                // new XAttribute("name", guild.Name ?? ""),
-                // new XElement("CurrentFame", guild.CurrentFame),
-                // guild.GuildMembers.Select(async m =>
-                // {
-                //     var acc = await DbClient.GetAccount(m.AccountId); // TODO: fix db model, Account should link to Guild, and GuildMember should link to Account
-                //     return new XElement("Member",
-                //         new XElement("Name", acc.Name),
-                //         new XElement("Rank", acc.GuildRank),
-                //         new XElement("Fame", acc.Stats.GuildFame)
-                //     );
-                // })
+            return new XElement("Guild",
+                new XAttribute("name", guild.Name),
+                new XElement("CurrentFame", guild.CurrentFame),
+                DbClient.Accounts.Find(x => x.GuildId == guild.Id).Select(acc =>
+                    new XElement("Member",
+                        new XElement("Name", acc.Name),
+                        new XElement("Rank", acc.GuildRank),
+                        new XElement("Fame", acc.Stats.CurrentGuildFame)
+                    )
+                )
             );
         }
     }

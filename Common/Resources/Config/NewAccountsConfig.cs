@@ -39,10 +39,10 @@ public class NewAccountsConfig {
         return new NewAccountsConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 
-    public static ClassStat[] CreateClassStats() {
-        var classStats = new List<ClassStat>();
+    public static ClassStats[] CreateClassStats() {
+        var classStats = new List<ClassStats>();
         foreach (var player in XmlLibrary.PlayerDescs.Values)
-            classStats.Add(new ClassStat {
+            classStats.Add(new ClassStats {
                 ObjectType = player.ObjectType,
                 BestFame = 0,
                 BestLevel = 0

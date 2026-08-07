@@ -26,11 +26,11 @@ public static class PlayerExtensions {
 
         private static void InitPlayerStats(ref EntityStats stats, Account acc, Character chr) {
             stats.Set(StatType.Name, acc.Name);
-            stats.Set(StatType.Fame, acc.AccStats.CurrentFame);
-            stats.Set(StatType.Credits, acc.AccStats.CurrentCredits);
+            stats.Set(StatType.Fame, acc.Stats.CurrentFame);
+            stats.Set(StatType.Credits, acc.Stats.CurrentCredits);
             stats.Set(StatType.GuildName, acc.GuildName);
-            stats.Set(StatType.GuildRank, acc.GuildMember?.GuildRank ?? 0);
-            stats.Set(StatType.NumStars, GetStars(acc.AccStats.ClassStats));
+            stats.Set(StatType.GuildRank, acc.GuildRank);
+            stats.Set(StatType.NumStars, GetStars(acc.Stats.ClassStats));
             stats.Set(StatType.AccRank, acc.Rank);
             Entity.LoadCharacterStats(ref stats, acc, chr);
         }
@@ -39,7 +39,7 @@ public static class PlayerExtensions {
             entityStats.Set(StatType.Level, chr.Level);
             entityStats.Set(StatType.CharFame, (int)chr.CurrentFame);
             entityStats.Set(StatType.Experience, (int)chr.XpPoints);
-            var classStat = acc.AccStats.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
+            var classStat = acc.Stats.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
             entityStats.Set(StatType.NextClassQuestFame, GetNextClassQuestFame((int)(classStat.BestFame > chr.CurrentFame ? classStat.BestFame : chr.CurrentFame)));
             entityStats.Set(StatType.NextLevelXp, GetNextLevelXPGoal(chr.Level));
             entityStats.Set(StatType.HealthPotionStack, chr.HealthPotions);
@@ -60,9 +60,18 @@ public static class PlayerExtensions {
         }
 
         private static void InitPlayerInventory(ref EntityInventory inv, Account acc, Character chr) {
-            foreach (var slot in chr.CharacterInventories) {
-                var itemData = slot.ItemData != null ? new Item(XmlLibrary.ItemDescs[slot.ItemType].Root) : null;
-                inv.SetItem(slot.SlotId, itemData);
+            using var itemDatas = new MemoryStream(chr.ItemDatas);
+            using var rdr = new BinaryReader(itemDatas);
+            for (var i = 0; i < chr.ItemTypes.Length; i++) {
+                var itemType = chr.ItemTypes[i];
+                if (itemType == -1){
+                    inv.SetItem(i, null);
+                    continue;
+                }
+                
+                var item = new Item(XmlLibrary.ItemDescs[(ushort)itemType].Root);
+                item.Import(rdr);
+                inv.SetItem(i, item);
             }
         }
         
@@ -104,7 +113,7 @@ public static class PlayerExtensions {
         CommandManager.ExecuteCommand(user, command, args);
     }
     
-    public static int GetStars(ICollection<ClassStat> classStats) {
+    public static int GetStars(ICollection<ClassStats> classStats) {
         var goals = GameConfig.Config.StarGoals;
         var stars = 0;
         foreach (var classStat in classStats)

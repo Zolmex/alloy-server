@@ -3,7 +3,6 @@ using System.Buffers;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using Common.Network.Messaging;
 
 namespace Common.Network;
 
@@ -42,39 +41,6 @@ public class SocketReceiveState : IDisposable {
     public void OnDataReceived(int count) {
         _bytesAvailable += count; // Total bytes pending to read
         // Console.WriteLine($"RECEIVED {count} BYTES");
-    }
-
-    public bool TryReadMessage(out IAppMessage msg) {
-        msg = null;
-        if (_bytesAvailable < 4)
-            return false;
-
-        var span = _buffer.AsSpan(_bytesRead, _bytesAvailable);
-        var rdr = new SpanReader(span);
-
-        var length = rdr.ReadInt32();
-        // Console.WriteLine($"Length {length} bytes");
-        if (length < 10 || length > _buffer.Length)
-            throw new InvalidDataException($"Invalid packet length: {length}");
-
-        if (length > _bytesAvailable)
-            return false;
-
-        var packetId = (AppMessageId)rdr.ReadByte();
-        var seq = rdr.ReadInt32();
-        var isAck = rdr.ReadByte() != 0;
-
-        msg = isAck ? IAppMessage.RequireAck(packetId) : IAppMessage.Require(packetId);
-        msg.Sequence = seq;
-
-        msg.Read(ref rdr);
-
-        _bytesAvailable -= length;
-        _bytesRead += length;
-        if (_bytesAvailable == 0)
-            _bytesRead = 0;
-
-        return true;
     }
 
     public bool PacketReady() {

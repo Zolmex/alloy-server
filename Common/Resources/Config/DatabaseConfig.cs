@@ -14,35 +14,15 @@ public class DatabaseConfig {
     private static DatabaseConfig _config;
 
     public DatabaseConfig(XElement e) {
-        Host = e.GetValue<string>("Host");
-        Port = e.GetValue<int>("Port");
-        Password = e.GetValue<string>("Password");
-        Redis = new RedisConfig(e.Element("Redis"));
+        DbFile = e.GetValue<string>("DbFile");
     }
 
     public static DatabaseConfig Config
         => _config ??= Load();
 
-    public string Host { get; private set; }
-    public int Port { get; private set; }
-    public string Password { get; private set; }
-    public RedisConfig Redis { get; private set; }
+    public string DbFile { get; private set; }
 
     private static DatabaseConfig Load() {
         return new DatabaseConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
-}
-
-public class RedisConfig {
-    public RedisConfig(XElement e) {
-        Host = e.GetValue<string>("Host");
-        Port = e.GetValue<int>("Port");
-        DbIndex = e.GetValue<int>("DbIndex");
-        Password = e.GetValue<string>("Password");
-    }
-
-    public string Host { get; private set; }
-    public int Port { get; private set; }
-    public int DbIndex { get; private set; }
-    public string Password { get; private set; }
 }

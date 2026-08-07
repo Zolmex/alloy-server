@@ -3,7 +3,6 @@ using System.Buffers;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using Common.Network.Messaging;
 using Common.Utilities;
 
 namespace Common.Network;
@@ -39,31 +38,6 @@ public class SocketSendState : IDisposable {
         _sendLength = 0;
         _sendOffset = 0;
         _pending = false;
-    }
-
-    public bool WriteMessage(IAppMessage msg) {
-        using (TimedLock.Lock(this)) {
-            var startPos = _writeLength;
-            var bodyStart = startPos + 10;
-
-            var span = _writeBuffer.AsSpan();
-            var writer = new SpanWriter(span);
-            writer.Position = bodyStart;
-
-            msg.Write(ref writer);
-
-            var totalLen = writer.Position - startPos;
-
-            writer.Position = startPos;
-            writer.Write(totalLen);
-            writer.Write((byte)msg.MessageId);
-            writer.Write(msg.Sequence);
-            writer.Write((byte)(msg.IsAck ? 1 : 0));
-
-            _writeLength += totalLen;
-        }
-
-        return _writeLength < 48000;
     }
 
     public void WritePacket<T>(in T pkt, byte pktId) where T : IWritable, allows ref struct {

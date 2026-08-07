@@ -145,22 +145,20 @@ public struct EntityInventory : IEntityIdentifiable, IDisposable {
     }
 
     public void Save(Character chr) {
-        chr.CharacterInventories.Clear();
+        var itemDatas = new List<byte>();
         for (var i = 0; i < _items.Length; i++) {
             var item = _items[i];
-            if (item == null)
+            if (item == null) {
+                chr.ItemTypes[i] = -1;
+                itemDatas.Add(0);
                 continue;
+            }
             
-            chr.CharacterInventories.Add(new CharacterInventory() {
-                Character = chr,
-                CharacterId = chr.Id,
-                ItemType = item.ObjectType,
-                ItemData = item.Export().ToArray(),
-                SlotId = i
-            });
+            chr.ItemTypes[i] = item.ObjectType;
+            item.Export(itemDatas);
         }
 
-        _ = DbClient.FlushAsync(chr, c => c.CharacterInventories);
+        chr.ItemDatas = itemDatas.ToArray();
     }
 
     public void Dispose() {

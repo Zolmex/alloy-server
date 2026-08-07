@@ -19,6 +19,8 @@ public class Character {
     public bool IsDeleted { get; set; }
     public bool HasBackpack { get; set; }
     public DateTime CreatedAt { get; set; }
+    public int[] ItemTypes { get; set; }
+    public byte[] ItemDatas { get; set; }
     public CharacterStats Stats { get; set; }
     public CombatStats CombatStats { get; set; }
     public DungeonStats DungeonStats { get; set; }

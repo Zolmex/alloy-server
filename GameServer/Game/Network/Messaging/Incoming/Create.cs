@@ -18,20 +18,20 @@ public record Create : IIncomingPacket {
     }
 
     public async Task Handle(User user) {
-        var createChar = await DbClient.CreateCharacterAsync(user.GameInfo.Account, (ushort)ClassType, (ushort)SkinType);
-        var chr = createChar.Character;
-        var result = createChar.Status;
-        if (chr == null) {
-            user.SendFailure(Failure.DEFAULT, result.GetDescription());
-        }
-        else {
-            var world = user.GameInfo.World;
-            if (world.Deleted) {
-                user.SendFailure(Failure.DEFAULT, "Invalid world.");
-                return;
-            }
-
-            user.Load(chr, world);
-        }
+        // var createChar = await DbClient.CreateCharacterAsync(user.GameInfo.Account, (ushort)ClassType, (ushort)SkinType);
+        // var chr = createChar.Character;
+        // var result = createChar.Status;
+        // if (chr == null) {
+        //     user.SendFailure(Failure.DEFAULT, result.GetDescription());
+        // }
+        // else {
+        //     var world = user.GameInfo.World;
+        //     if (world.Deleted) {
+        //         user.SendFailure(Failure.DEFAULT, "Invalid world.");
+        //         return;
+        //     }
+        //
+        //     user.Load(chr, world);
+        // }
     }
 }
