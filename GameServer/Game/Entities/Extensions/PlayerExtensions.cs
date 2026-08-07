@@ -45,17 +45,17 @@ public static class PlayerExtensions {
             entityStats.Set(StatType.HealthPotionStack, chr.HealthPotions);
             entityStats.Set(StatType.MagicPotionStack, chr.MagicPotions);
             
-            if (chr.CharStats != null) {
-                entityStats.Set(StatType.MaxHP, (int)chr.CharStats.MaxHp);
-                entityStats.Set(StatType.HP, (int)chr.CharStats.Hp);
-                entityStats.Set(StatType.MaxMP, (int)chr.CharStats.MaxMp);
-                entityStats.Set(StatType.MP, (int)chr.CharStats.Mp);
-                entityStats.Set(StatType.Attack, (int)chr.CharStats.Attack);
-                entityStats.Set(StatType.Defense, (int)chr.CharStats.Defense);
-                entityStats.Set(StatType.Speed, (int)chr.CharStats.Speed);
-                entityStats.Set(StatType.Dexterity, (int)chr.CharStats.Dexterity);
-                entityStats.Set(StatType.Vitality, (int)chr.CharStats.Vitality);
-                entityStats.Set(StatType.Wisdom, (int)chr.CharStats.Wisdom);
+            if (chr.Stats != null) {
+                entityStats.Set(StatType.MaxHP, (int)chr.Stats.MaxHp);
+                entityStats.Set(StatType.HP, (int)chr.Stats.Hp);
+                entityStats.Set(StatType.MaxMP, (int)chr.Stats.MaxMp);
+                entityStats.Set(StatType.MP, (int)chr.Stats.Mp);
+                entityStats.Set(StatType.Attack, (int)chr.Stats.Attack);
+                entityStats.Set(StatType.Defense, (int)chr.Stats.Defense);
+                entityStats.Set(StatType.Speed, (int)chr.Stats.Speed);
+                entityStats.Set(StatType.Dexterity, (int)chr.Stats.Dexterity);
+                entityStats.Set(StatType.Vitality, (int)chr.Stats.Vitality);
+                entityStats.Set(StatType.Wisdom, (int)chr.Stats.Wisdom);
             }
         }
 

@@ -82,10 +82,10 @@ public class User : IIdentifiable {
                 chr.AccCharId));
             SendPacket(new AccountList(
                 AccountList.Locked,
-                GameInfo.Account.AccountLocks.Select(i => i.LockedId).ToArray()));
+                GameInfo.Account.LockedAccounts.Select(i => i.LockedId).ToArray()));
             SendPacket(new AccountList(
                 AccountList.Ignored,
-                GameInfo.Account.AccountIgnores.Select(i => i.IgnoredId).ToArray()));
+                GameInfo.Account.IgnoredAccounts.Select(i => i.IgnoredId).ToArray()));
         });
     }
     
