@@ -23,6 +23,7 @@ public class Program {
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
+        AppDomain.CurrentDomain.ProcessExit += async (s, e) => await OnShutdownAsync();
         
         var config = GameServerConfig.Config;
         using (var timer =
@@ -38,11 +39,20 @@ public class Program {
 
             RealmManager.Init();
 
-            SocketServer.Start(config.Port,
-                config.MaxPlayers); // Start the socket server to accept and manage TCP connections
+            // Start the socket server to accept and manage TCP connections
+            SocketServer.Start(config.Port, config.MaxPlayers);
         }
 
         GameLogic.Run(config.MsPT);
+    }
+    
+    private static async Task OnShutdownAsync()
+    {
+        Console.WriteLine("Stopping database...");
+        
+        DbClient.Dispose();
+        
+        Console.WriteLine("Database closed cleanly.");
     }
     
     private static void UnhandledException(object sender, UnhandledExceptionEventArgs args) {
