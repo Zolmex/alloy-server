@@ -50,7 +50,7 @@ public class Program {
     {
         Console.WriteLine("Stopping database...");
         
-        DbClient.Dispose();
+        await DbClient.Dispose();
         
         Console.WriteLine("Database closed cleanly.");
     }

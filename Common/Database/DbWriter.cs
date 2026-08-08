@@ -6,7 +6,7 @@ using Common.Database.Models;
 
 namespace Common.Database;
 
-public static class DbCache<T> where T : class {
+public static class DbWriter<T> where T : class {
     private static readonly Channel<T> _channel = Channel.CreateUnbounded<T>();
     private static Task _processingTask;
     
@@ -34,8 +34,8 @@ public static class DbCache<T> where T : class {
         }
     }
 
-    public static void Enqueue(T model) {
-        _channel.Writer.TryWrite(model);
+    public static async Task WriteAsync(T model) {
+        await _channel.Writer.WriteAsync(model);
     }
     
     public static async Task StopAsync()

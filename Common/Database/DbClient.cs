@@ -11,6 +11,8 @@ using LiteDB;
 namespace Common.Database;
 
 public static class DbClient {
+    private const int MAX_ACCOUNTS_PER_IP = 3000;
+    
     public static ILiteCollection<Account> Accounts;
     public static ILiteCollection<Login> Logins;
     public static ILiteCollection<Guild> Guilds;
@@ -32,11 +34,11 @@ public static class DbClient {
         Mutes = DbCon.GetCollection<MuteRecord>("mutes");
         Bans = DbCon.GetCollection<BanRecord>("bans");
 
-        DbCache<Account>.Init();
-        DbCache<Login>.Init();
-        DbCache<Guild>.Init();
-        DbCache<MuteRecord>.Init();
-        DbCache<BanRecord>.Init();
+        DbWriter<Account>.Init();
+        DbWriter<Login>.Init();
+        DbWriter<Guild>.Init();
+        DbWriter<MuteRecord>.Init();
+        DbWriter<BanRecord>.Init();
         
         Accounts.EnsureIndex(x => x.Name, true);
         Accounts.EnsureIndex(x => x.GuildId);
@@ -50,16 +52,16 @@ public static class DbClient {
         Bans.EnsureIndex(x => x.Reason);
     }
 
-    public static void Flush<T>(T model) where T : class {
-        DbCache<T>.Enqueue(model);
+    public static async Task FlushAsync<T>(T model) where T : class {
+        await DbWriter<T>.WriteAsync(model);
     }
     
     public static async Task Dispose() {
-        await DbCache<Account>.StopAsync();
-        await DbCache<Login>.StopAsync();
-        await DbCache<Guild>.StopAsync();
-        await DbCache<MuteRecord>.StopAsync();
-        await DbCache<BanRecord>.StopAsync();
+        await DbWriter<Account>.StopAsync();
+        await DbWriter<Login>.StopAsync();
+        await DbWriter<Guild>.StopAsync();
+        await DbWriter<MuteRecord>.StopAsync();
+        await DbWriter<BanRecord>.StopAsync();
         DbCon.Dispose();
     }
     
@@ -69,6 +71,78 @@ public static class DbClient {
 
     public static bool IsValidPassword(string password) {
         return !string.IsNullOrWhiteSpace(password) && password.Length > 8;
+    }
+    
+    public static async Task<RegisterStatus> RegisterAsync(string username, string password, string ip) {
+        if (!IsValidUsername(username))
+            return RegisterStatus.InvalidName;
+        if (!IsValidPassword(password))
+            return RegisterStatus.InvalidPassword;
+
+        var status = RegisterStatus.Success;
+
+        var lowerName = username.ToLower();
+
+        // Check name in use
+        if (Logins.Exists(i => i.Name.Equals(lowerName)))
+            status = RegisterStatus.NameInUse;
+
+        // Check accounts per ip
+        else if (Logins.Count(i => i.IpAddress == ip) >= MAX_ACCOUNTS_PER_IP)
+            status = RegisterStatus.MaxAccountsReached;
+
+        if (status == RegisterStatus.Success) {
+            // Used for password encryption
+            var salt = MathUtils.GenerateSalt();
+
+            var acc = new Account {
+                Name = username,
+                NextCharId = 1,
+                MaxChars = NewAccountsConfig.Config.MaxChars,
+                VaultCount = NewAccountsConfig.Config.VaultCount,
+                Stats = new AccountStats {
+                    CurrentCredits = NewAccountsConfig.Config.Credits,
+                    TotalCredits = NewAccountsConfig.Config.Credits,
+                    CurrentFame = NewAccountsConfig.Config.Fame,
+                    TotalFame = NewAccountsConfig.Config.Fame,
+                    ClassStats = NewAccountsConfig.CreateClassStats()
+                }
+            };
+            var login = new Login {
+                Name = lowerName, IpAddress = ip, PasswordHash = (password + salt).ToSHA1(),
+                PasswordSalt = salt
+            };
+
+            await FlushAsync(acc);
+            await FlushAsync(login);
+        }
+
+        return status;
+    }
+    
+    // TODO: Lock the account once the login is successful
+    public static (Account Acc, VerifyStatus Status) VerifyAccount(string username, string password) {
+        var status = VerifyStatus.Success;
+
+        var login = Logins.FindOne(l => l.Name == username);
+        if (login == null) {
+            status = VerifyStatus.InvalidCredentials;
+            return (null, status);
+        }
+
+        var hash = (password + login.PasswordSalt).ToSHA1();
+        if (login.PasswordHash != hash) {
+            status = VerifyStatus.InvalidCredentials;
+            return (null, status);
+        }
+
+        var acc = Accounts.FindOne(acc => acc.Name == login.Name);
+        if (acc == null) {
+            status = VerifyStatus.InternalError;
+            return (null, status);
+        }
+
+        return (acc, status);
     }
     
     public static async Task<(Character Char, CreateCharacterStatus Status)> CreateCharacterAsync(Account acc, ushort objectType, ushort skinType) {
@@ -126,7 +200,7 @@ public static class DbClient {
 
             acc.NextCharId++;
             acc.Characters.Add(chr);
-            Flush(acc);
+            await FlushAsync(acc);
         }
 
         return (chr, status);

@@ -39,7 +39,7 @@ public class NewAccountsConfig {
         return new NewAccountsConfig(XElement.Parse(File.ReadAllText(ConfigFile)));
     }
 
-    public static ClassStats[] CreateClassStats() {
+    public static List<ClassStats> CreateClassStats() {
         var classStats = new List<ClassStats>();
         foreach (var player in XmlLibrary.PlayerDescs.Values)
             classStats.Add(new ClassStats {
@@ -48,6 +48,6 @@ public class NewAccountsConfig {
                 BestLevel = 0
             });
 
-        return classStats.ToArray();
+        return classStats;
     }
 }
