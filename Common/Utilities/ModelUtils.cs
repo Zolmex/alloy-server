@@ -26,12 +26,12 @@ public static class ModelUtils {
 
         public XElement ToCharListXml() {
             return new XElement("Chars",
-                new XAttribute("nextCharId", acc.NextCharId!),
-                new XAttribute("maxNumChars", acc.MaxChars!),
+                new XAttribute("nextCharId", acc.NextCharId),
+                new XAttribute("maxNumChars", acc.MaxChars),
                 new XAttribute("charSlotCost", NewAccountsConfig.Config.CharSlotCost),
                 new XElement("OwnedSkins", acc.OwnedSkins.ToCommaSepString(",")),
                 acc.ToXml(),
-                acc.Characters.Select(c => c.ToXml(acc)),
+                acc.Characters.Where(c => !c.IsDead && !c.IsDeleted).Select(c => c.ToXml(acc)),
                 NewsConfig.Config.Models.Select(n => n.ToXml()),
                 new XElement("Servers",
                     new XElement("Server",
@@ -72,7 +72,7 @@ public static class ModelUtils {
                 new("CurrentFame", chr.CurrentFame),
                 new("Equipment", chr.ItemTypes.ToCommaSepString(",")),
                 new("ItemDatas", chr.ItemDatas.ToCommaSepString(",")),
-                new("MaxHitPoints", chr.Stats!.MaxHp),
+                new("MaxHitPoints", chr.Stats.MaxHp),
                 new("HitPoints", chr.Stats.Hp),
                 new("MaxMagicPoints", chr.Stats.MaxMp),
                 new("MagicPoints", chr.Stats.Mp),
@@ -93,7 +93,7 @@ public static class ModelUtils {
     extension(ClassStats stat) {
         public XElement ToXml() {
             return new XElement("ClassStats",
-                new XAttribute("objectType", stat.ObjectType!),
+                new XAttribute("objectType", stat.ObjectType),
                 new XElement("BestLevel", stat.BestLevel),
                 new XElement("BestFame", stat.BestFame)
             );

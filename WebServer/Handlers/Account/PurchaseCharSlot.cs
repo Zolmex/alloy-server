@@ -2,6 +2,7 @@
 
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using Common;
 using Common.Database;
 using Common.Utilities;
 
@@ -13,14 +14,17 @@ public class PurchaseCharSlot : RequestHandler {
     public override string Path => "/account/purchaseCharSlot";
 
     public override async Task<string> Handle(string ip, NameValueCollection query) {
-        // var verify = await DbClient.VerifyAccountAsync(query["username"], query["password"]);
-        //
-        // var acc = verify.Account;
-        // var status = verify.Status;
-        // if (acc == null)
-        //     return status.GetDescription();
-        //
-        // await DbClient.BuyCharSlotAsync(acc);
+        var verify = DbClient.VerifyAccount(query["username"], query["password"]);
+        
+        var acc = verify.Acc;
+        var status = verify.Status;
+        if (acc == null)
+            return status.GetDescription();
+        
+        var buyStatus = await DbClient.BuyCharSlotAsync(acc);
+        if (buyStatus != BuyStatus.Success)
+            return buyStatus.GetDescription();
+        
         return WriteSuccess();
     }
 }

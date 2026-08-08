@@ -1,9 +1,23 @@
 using System;
 using System.Collections.Generic;
+using Common.Resources.Config;
 
 namespace Common.Database.Models;
 
 public class Account {
+    public static readonly Account Guest = new() {
+        Id = -1,
+        Name = "Guest",
+        MaxChars = NewAccountsConfig.Config.MaxChars,
+        VaultCount = NewAccountsConfig.Config.VaultCount,
+        Stats = new AccountStats {
+            CurrentCredits = NewAccountsConfig.Config.Credits,
+            TotalCredits = NewAccountsConfig.Config.Credits, CurrentFame = NewAccountsConfig.Config.Fame,
+            TotalFame = NewAccountsConfig.Config.Fame
+        },
+        CreatedAt = DateTime.Now
+    };
+    
     public int Id { get; set; }
     public string Name { get; set; }
     public int Rank { get; set; }

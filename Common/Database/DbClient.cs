@@ -97,7 +97,6 @@ public static class DbClient {
 
             var acc = new Account {
                 Name = username,
-                NextCharId = 1,
                 MaxChars = NewAccountsConfig.Config.MaxChars,
                 VaultCount = NewAccountsConfig.Config.VaultCount,
                 Stats = new AccountStats {
@@ -120,7 +119,7 @@ public static class DbClient {
         return status;
     }
     
-    // TODO: Lock the account once the login is successful
+    // TODO: For GameServer, when login is successful, register a new session and lock the account with the server's GUID
     public static (Account Acc, VerifyStatus Status) VerifyAccount(string username, string password) {
         var status = VerifyStatus.Success;
 
@@ -204,5 +203,50 @@ public static class DbClient {
         }
 
         return (chr, status);
+    }
+    
+    public static async Task<bool> DeleteCharacterAsync(int accId, int charId) {
+        var success = true;
+
+        var acc = Accounts.FindById(accId);
+        if (acc == null || charId < 0 || charId >= acc.NextCharId) {
+            success = false;
+        }
+        else {
+            var chr = acc.Characters[charId];
+            if (chr == null) {
+                success = false;
+            }
+            else {
+                // Perform a "soft" delete, doesn't actually delete from database, instead we mark it as deleted
+                chr.IsDeleted = true;
+                await FlushAsync(chr);
+            }
+        }
+
+        return success;
+    }
+    
+    public static async Task<BuyStatus> BuyCharSlotAsync(Account acc) {
+        var cost = NewAccountsConfig.Config.CharSlotCost;
+        if (acc.Stats.CurrentFame < cost)
+            return BuyStatus.NotEnoughFame;
+
+        acc.Stats.CurrentFame -= cost;
+        acc.MaxChars++;
+
+        await FlushAsync(acc);
+        return BuyStatus.Success;
+    }
+    
+    public static Character GetCharacter(int accId, int charId) {
+        var acc = Accounts.FindById(accId);
+        if (acc == null)
+            return null;
+
+        if (charId < 0 || charId >= acc.NextCharId)
+            return null;
+        
+        return acc.Characters[charId];
     }
 }
