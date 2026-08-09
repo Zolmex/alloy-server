@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using Common.Database;
+using Common.Messaging;
 using Common.Resources.Config;
 using Common.Resources.World;
 using Common.Resources.Xml;
@@ -9,11 +10,16 @@ using GameServer.Game;
 using GameServer.Game.Chat.Commands;
 using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Network;
+using GameServer.Messaging;
 
 namespace GameServer;
 
 public class Program {
     private static readonly Logger _log = new(typeof(Program));
+
+    public static readonly Guid Guid = Guid.NewGuid();
+    
+    public static IWebServerRpc WebServerRpc { get; private set; }
     
     public static async Task Main(string[] args) {
         var version = Assembly.GetExecutingAssembly()
@@ -26,8 +32,7 @@ public class Program {
         AppDomain.CurrentDomain.ProcessExit += async (s, e) => await OnShutdownAsync();
         
         var config = GameServerConfig.Config;
-        using (var timer =
-               new EasyTimer(LogLevel.Info, "Starting server...", $"Listening on port {config.Port} ([TIME])")) {
+        using (var timer = new EasyTimer(LogLevel.Info, "Starting server...", $"Listening on port {config.Port} ([TIME])")) {
             EnumUtils.Load();
             XmlLibrary.Load(config.XmlsDir);
             MerchantsLibrary.Load(config.MerchantsDir);
@@ -35,6 +40,10 @@ public class Program {
             BehaviorLibrary.Load();
             CommandManager.Load();
 
+            (_, WebServerRpc) = await IpcClient.ConnectAsync(new GameServerRpcHandler());
+            await WebServerRpc.GameServerConnected(Guid);
+            _log.Info($"[RPC] Connected to WebServer. GUID: {Guid}");
+            
             DbClient.Load(DatabaseConfig.Config.DbFile);
 
             RealmManager.Init();

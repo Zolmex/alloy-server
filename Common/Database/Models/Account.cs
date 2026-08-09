@@ -19,6 +19,7 @@ public class Account {
     };
     
     public int Id { get; set; }
+    public Guid LockOwner { get; set; }
     public string Name { get; set; }
     public int Rank { get; set; }
     public string GuildName { get; set; }

@@ -1,7 +1,10 @@
-using System.Threading.Tasks;
+using Common;
+using Common.Messaging;
+using Common.Structs;
 using Common.Utilities;
+using GameServer.Game;
 
-namespace Common.Messaging;
+namespace GameServer.Messaging;
 
 public class GameServerRpcHandler : IGameServerRpc {
     private static readonly Logger _log = new Logger(typeof(GameServerRpcHandler));
@@ -11,7 +14,7 @@ public class GameServerRpcHandler : IGameServerRpc {
         return Task.FromResult(true);
     }
     
-    public Task<GameServerStatus> GetGameServerStatus() {
-        return Task.FromResult(new GameServerStatus(0, 5, 0));
+    public Task<ServerInfo> GetGameServer() {
+        return Task.FromResult(new ServerInfo(Program.Guid, ServerType.GameServer, GameLogic.WorldTime.TotalElapsedMs, RealmManager.Users.Count));
     }
 }

@@ -11,10 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Common.Database;
+using Common.Messaging;
 using Common.Resources.Config;
 using Common.Resources.Xml;
 using Common.Utilities;
 using WebServer.Handlers;
+using WebServer.Messaging;
 
 #endregion
 
@@ -39,6 +41,7 @@ internal class Program {
             RequestHandler.Load();
             XmlLibrary.Load(config.XmlsDir);
 
+            _ = IpcServer.StartAsync<WebServerRpcHandler>();
             DbClient.Load(DatabaseConfig.Config.DbFile);
 
             listener.Prefixes.Add($"http://{config.Address}:{config.Port}/");

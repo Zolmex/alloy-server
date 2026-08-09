@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Common;
 using Common.Database;
 using Common.Network;
 using Common.Resources.Config;
@@ -40,7 +41,7 @@ public record Hello : IIncomingPacket {
         
         var acc = user.GameInfo.Account;
         if (user.State != ConnectionState.Reconnecting) {
-            var verify = DbClient.VerifyAccount(Username, Password);
+            var verify = DbClient.VerifyAccount(Username, Password, Program.Guid);
             var status = verify.Status;
             acc = verify.Acc;
             if (acc == null) {
@@ -48,8 +49,8 @@ public record Hello : IIncomingPacket {
                 return;
             }
             
-            if (RealmManager.Accounts.TryGetValue(acc.Id, out _)) {
-                user.SendFailure(Failure.ACCOUNT_IN_USE, $"Account in use: {Username}/{acc.Id}");
+            if (status == VerifyStatus.AccountInUse) {
+                user.SendFailure(Failure.ACCOUNT_IN_USE, "Account in use.");
                 return;
             }
         }

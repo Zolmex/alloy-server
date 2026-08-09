@@ -5,9 +5,9 @@ using StreamJsonRpc;
 
 namespace Common.Messaging;
 
-public class IpcClient {
+public static class IpcClient {
     
-    public static async Task<IGameServerRpc> ConnectAsync(CancellationToken cancellationToken = default)
+    public static async Task<(JsonRpc Session, IWebServerRpc ServerProxy)> ConnectAsync(IGameServerRpc localHandler, CancellationToken cancellationToken = default)
     {
         var pipeClient = new NamedPipeClientStream(
             ".", // Localhost
@@ -17,8 +17,12 @@ public class IpcClient {
 
         await pipeClient.ConnectAsync(cancellationToken);
 
-        var rpc = JsonRpc.Attach<IGameServerRpc>(pipeClient);
+        // Listener for incoming calls from IpcServer
+        var jsonRpc = JsonRpc.Attach(pipeClient, localHandler);
+        
+        // Proxy for outgoing calls to IpcServer
+        var proxy = jsonRpc.Attach<IWebServerRpc>();
 
-        return rpc;
+        return (jsonRpc, proxy);
     }
 }

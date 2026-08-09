@@ -11,7 +11,7 @@ using LiteDB;
 namespace Common.Database;
 
 public static class DbClient {
-    private const int MAX_ACCOUNTS_PER_IP = 3000;
+    private const int MaxAccountsPerIp = 3000;
     
     public static ILiteCollection<Account> Accounts;
     public static ILiteCollection<Login> Logins;
@@ -88,7 +88,7 @@ public static class DbClient {
             status = RegisterStatus.NameInUse;
 
         // Check accounts per ip
-        else if (Logins.Count(i => i.IpAddress == ip) >= MAX_ACCOUNTS_PER_IP)
+        else if (Logins.Count(i => i.IpAddress == ip) >= MaxAccountsPerIp)
             status = RegisterStatus.MaxAccountsReached;
 
         if (status == RegisterStatus.Success) {
@@ -119,8 +119,7 @@ public static class DbClient {
         return status;
     }
     
-    // TODO: For GameServer, when login is successful, register a new session and lock the account with the server's GUID
-    public static (Account Acc, VerifyStatus Status) VerifyAccount(string username, string password) {
+    public static (Account Acc, VerifyStatus Status) VerifyAccount(string username, string password, Guid gameServerGuid) {
         var status = VerifyStatus.Success;
 
         var login = Logins.FindOne(l => l.Name == username);
@@ -139,6 +138,16 @@ public static class DbClient {
         if (acc == null) {
             status = VerifyStatus.InternalError;
             return (null, status);
+        }
+
+        if (acc.LockOwner != gameServerGuid) {
+            if (acc.LockOwner != Guid.Empty) {
+                status = VerifyStatus.AccountInUse;
+                return (null, status);
+            }
+            
+            // Lock account to the specified GameServer instance
+            acc.LockOwner = gameServerGuid;
         }
 
         return (acc, status);

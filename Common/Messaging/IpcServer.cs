@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,13 +11,15 @@ using StreamJsonRpc;
 namespace Common.Messaging;
 
 public class IpcServer {
-    public const string PIPE_NAME = "alloy_gameserver_rpc";
+    public const string PIPE_NAME = "alloy_rpc";
     
     private static readonly Logger _log = new Logger(typeof(IpcServer));
+    
+    public static readonly ConcurrentDictionary<Guid, IGameServerRpc> Clients = new();
 
-    public async Task StartAsync(CancellationToken ct) {
+    public static async Task StartAsync<THandler>(CancellationToken ct = default) where THandler : IWebServerHandler, new() {
         _log.Info("[RPC] Starting IpcServer...");
-        
+
         while (!ct.IsCancellationRequested)
         {
             // Named Pipe streams in .NET are single-use per connection.
@@ -26,27 +31,34 @@ public class IpcServer {
                 PipeTransmissionMode.Byte,
                 PipeOptions.Asynchronous);
 
+            _log.Info($"[RPC] Waiting for connection at pipe '{PIPE_NAME}'...");
+
             await pipeServer.WaitForConnectionAsync(ct);
 
             // Handle connection in background so the loop can accept new clients
-            _ = HandleClientConnectionAsync(pipeServer, ct);
+            _ = HandleClientConnectionAsync<THandler>(pipeServer, ct);
         }
     }
     
-    private async Task HandleClientConnectionAsync(NamedPipeServerStream pipeStream, CancellationToken cancellationToken)
-    {
-        using (pipeStream)
+    private static async Task HandleClientConnectionAsync<THandler>(NamedPipeServerStream pipeStream, CancellationToken cancellationToken) where THandler : IWebServerHandler, new() {
+        await using (pipeStream)
         {
-            // Attach the RPC target to the stream
-            var handler = new GameServerRpcHandler();
-            var jsonRpc = JsonRpc.Attach(pipeStream, handler);
+            // Bind for incoming calls from GameServer
+            var handler = new THandler();
+            var jsonRpc = new JsonRpc(pipeStream);
+            jsonRpc.AddLocalRpcTarget<IWebServerRpc>(handler, null);
+            
+            var gameServerProxy = jsonRpc.Attach<IGameServerRpc>();
+            handler.Attach(gameServerProxy);
 
-            Console.WriteLine("[RPC] WebServer connected.");
+            jsonRpc.StartListening();
+            _log.Info("[RPC] Received new GameServer client");
 
             // Completion waits until the client disconnects or the pipe breaks
             await jsonRpc.Completion;
 
-            Console.WriteLine("[RPC] WebServer disconnected.");
+            handler.Close();
+            _log.Info($"[RPC] GameServer {handler.ServerId} has disconnected.");
         }
     }
 }

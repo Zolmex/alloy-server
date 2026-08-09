@@ -1,5 +1,6 @@
 ﻿#region
 
+using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Common;
@@ -14,7 +15,7 @@ public class PurchaseCharSlot : RequestHandler {
     public override string Path => "/account/purchaseCharSlot";
 
     public override async Task<string> Handle(string ip, NameValueCollection query) {
-        var verify = DbClient.VerifyAccount(query["username"], query["password"]);
+        var verify = DbClient.VerifyAccount(query["username"], query["password"], Guid.Empty);
         
         var acc = verify.Acc;
         var status = verify.Status;

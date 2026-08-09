@@ -38,10 +38,14 @@ public enum CharResult {
 }
 
 public enum VerifyStatus {
-    [Description("Success")] Success,
+    [Description("Success")]
+    Success,
 
     [Description("Invalid account credentials.")]
     InvalidCredentials,
+    
+    [Description("Account in use.")]
+    AccountInUse,
 
     [Description("Internal server error.")]
     InternalError
@@ -413,4 +417,9 @@ public enum BagType {
     Blue = 3,
     White = 4,
     Purple = 5
+}
+
+public enum ServerType {
+    WebServer,
+    GameServer
 }
