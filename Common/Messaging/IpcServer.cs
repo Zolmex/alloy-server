@@ -18,11 +18,11 @@ public class IpcServer {
     public static readonly ConcurrentDictionary<Guid, IGameServerRpc> Clients = new();
 
     public static async Task StartAsync<THandler>(CancellationToken ct = default) where THandler : IWebServerHandler, new() {
-        _log.Info("[RPC] Starting IpcServer...");
-
+        _log.Info($"[RPC] Starting IpcServer at pipe '{PIPE_NAME}'...");
+        
         while (!ct.IsCancellationRequested)
         {
-            // Named Pipe streams in .NET are single-use per connection.
+            // Named Pipe streams are single-use per connection.
             // Create a new stream for each incoming client.
             var pipeServer = new NamedPipeServerStream(
                 PIPE_NAME,
@@ -30,8 +30,6 @@ public class IpcServer {
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Byte,
                 PipeOptions.Asynchronous);
-
-            _log.Info($"[RPC] Waiting for connection at pipe '{PIPE_NAME}'...");
 
             await pipeServer.WaitForConnectionAsync(ct);
 
@@ -52,7 +50,6 @@ public class IpcServer {
             handler.Attach(gameServerProxy);
 
             jsonRpc.StartListening();
-            _log.Info("[RPC] Received new GameServer client");
 
             // Completion waits until the client disconnects or the pipe breaks
             await jsonRpc.Completion;

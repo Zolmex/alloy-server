@@ -21,7 +21,7 @@ public struct EntityInventory : IEntityIdentifiable, IDisposable {
     public readonly List<int> OwnerAccIds = [];
     public Item this[int slot] {
         get {
-            if (slot < 0 || slot >= _items.Length)
+            if (slot < 0 || slot >= _size)
                 return null;
             return _items[slot];
         }
@@ -146,7 +146,7 @@ public struct EntityInventory : IEntityIdentifiable, IDisposable {
 
     public void Save(Character chr) {
         var itemDatas = new List<byte>();
-        for (var i = 0; i < _items.Length; i++) {
+        for (var i = 0; i < _size; i++) {
             var item = _items[i];
             if (item == null) {
                 chr.ItemTypes[i] = -1;

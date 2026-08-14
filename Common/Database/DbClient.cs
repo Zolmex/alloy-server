@@ -28,11 +28,11 @@ public static class DbClient {
         };
         
         DbCon = new LiteDatabase(connectionString);
-        Accounts = DbCon.GetCollection<Account>("accounts");
-        Logins = DbCon.GetCollection<Login>("logins");
-        Guilds = DbCon.GetCollection<Guild>("guilds");
-        Mutes = DbCon.GetCollection<MuteRecord>("mutes");
-        Bans = DbCon.GetCollection<BanRecord>("bans");
+        Accounts = DbCon.GetCollection<Account>();
+        Logins = DbCon.GetCollection<Login>();
+        Guilds = DbCon.GetCollection<Guild>();
+        Mutes = DbCon.GetCollection<MuteRecord>();
+        Bans = DbCon.GetCollection<BanRecord>();
 
         DbWriter<Account>.Init();
         DbWriter<Login>.Init();

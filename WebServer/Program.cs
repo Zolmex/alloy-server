@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Common.Database;
+using Common.Database.Models;
 using Common.Messaging;
 using Common.Resources.Config;
 using Common.Resources.Xml;
@@ -28,7 +29,10 @@ internal class Program {
     private static async Task Main(string[] args) {
         ThreadPool.SetMinThreads(1000, 1000);
 
-        Console.Title = $"Realm Server v{Assembly.GetExecutingAssembly().GetName().Version} - WebServer";
+        var version = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+        Console.Title = $"Alloy Server v{version} - WebServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
@@ -43,6 +47,8 @@ internal class Program {
 
             _ = IpcServer.StartAsync<WebServerRpcHandler>();
             DbClient.Load(DatabaseConfig.Config.DbFile);
+
+            ReleaseLocks(); // Release all account locks at startup
 
             listener.Prefixes.Add($"http://{config.Address}:{config.Port}/");
             listener.Start();
@@ -70,6 +76,10 @@ internal class Program {
                 }
             });
         }
+    }
+
+    private static void ReleaseLocks() {
+        DbClient.Accounts.UpdateMany(acc => new Account { LockOwner = Guid.Empty }, acc => true);
     }
 
     private static async Task HandleRequestAsync(HttpListenerContext context) {

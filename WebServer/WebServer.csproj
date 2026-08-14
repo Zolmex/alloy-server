@@ -5,8 +5,6 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>disable</Nullable>
         <Authors>Zolmex</Authors>
-        <AssemblyVersion>0.3.3.0</AssemblyVersion>
-        <FileVersion>0.3.3.0</FileVersion>
         <StartupObject>WebServer.Program</StartupObject>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     </PropertyGroup>
@@ -24,7 +22,18 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="MinVer" Version="7.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
+
+    <PropertyGroup>
+        <MinVerTagPrefix>v</MinVerTagPrefix>
+        <MinVerDefaultPreReleaseIdentifiers>0</MinVerDefaultPreReleaseIdentifiers>
+        <!-- This forces the version to ignore the commit hash -->
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Common\Common.csproj"/>

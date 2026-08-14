@@ -25,7 +25,7 @@ public class Program {
         var version = Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
             .InformationalVersion;
-        Console.Title = $"Realm Server v{version} - GameServer";
+        Console.Title = $"Alloy Server v{version} - GameServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
@@ -40,7 +40,7 @@ public class Program {
             BehaviorLibrary.Load();
             CommandManager.Load();
 
-            (_, WebServerRpc) = await IpcClient.ConnectAsync(new GameServerRpcHandler());
+            (_, WebServerRpc) = await IpcClient.ConnectAsync(new GameServerRpcHandler(), TaskUtils.Timeout(5));
             await WebServerRpc.GameServerConnected(Guid);
             _log.Info($"[RPC] Connected to WebServer. GUID: {Guid}");
             
