@@ -6,7 +6,7 @@ using Common.Database;
 
 #endregion
 
-namespace WebServer.Handlers.Char;
+namespace AccountServer.Handlers.Char;
 
 public class Fame : RequestHandler {
     public override string Path => "/char/fame";

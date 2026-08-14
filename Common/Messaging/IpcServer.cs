@@ -17,7 +17,7 @@ public class IpcServer {
     
     public static readonly ConcurrentDictionary<Guid, IGameServerRpc> Clients = new();
 
-    public static async Task StartAsync<THandler>(CancellationToken ct = default) where THandler : IWebServerHandler, new() {
+    public static async Task StartAsync<THandler>(CancellationToken ct = default) where THandler : IAccountServerHandler, new() {
         _log.Info($"[RPC] Starting IpcServer at pipe '{PIPE_NAME}'...");
         
         while (!ct.IsCancellationRequested)
@@ -38,13 +38,13 @@ public class IpcServer {
         }
     }
     
-    private static async Task HandleClientConnectionAsync<THandler>(NamedPipeServerStream pipeStream, CancellationToken cancellationToken) where THandler : IWebServerHandler, new() {
+    private static async Task HandleClientConnectionAsync<THandler>(NamedPipeServerStream pipeStream, CancellationToken cancellationToken) where THandler : IAccountServerHandler, new() {
         await using (pipeStream)
         {
             // Bind for incoming calls from GameServer
             var handler = new THandler();
             var jsonRpc = new JsonRpc(pipeStream);
-            jsonRpc.AddLocalRpcTarget<IWebServerRpc>(handler, null);
+            jsonRpc.AddLocalRpcTarget<IAccountServerRpc>(handler, null);
             
             var gameServerProxy = jsonRpc.Attach<IGameServerRpc>();
             handler.Attach(gameServerProxy);

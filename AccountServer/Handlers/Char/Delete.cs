@@ -8,7 +8,7 @@ using Common.Utilities;
 
 #endregion
 
-namespace WebServer.Handlers.Char;
+namespace AccountServer.Handlers.Char;
 
 public class Delete : RequestHandler {
     public override string Path => "/char/delete";

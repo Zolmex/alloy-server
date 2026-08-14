@@ -3,23 +3,19 @@
 // using System.Collections.Specialized;
 // using System.Threading.Tasks;
 // using Common.Database;
+// using Common.Utilities;
 //
 // #endregion
 //
-// namespace WebServer.Handlers.Guild;
+// namespace AccountServer.Handlers.Guild;
 //
-// public class SetBoard : RequestHandler {
-//     public override string Path => "/guild/setBoard";
+// public class ListMembers : RequestHandler {
+//     public override string Path => "/guild/listMembers";
 //
 //     public override async Task<string> Handle(string ip, NameValueCollection query) {
-//         var board = query["board"];
-//         if (string.IsNullOrWhiteSpace(board))
-//             return WriteError("Invalid board text.");
-//
 //         var verify = await DbClient.VerifyAccountAsync(query["username"], query["password"]);
 //
 //         var acc = verify.Account;
-//         var status = verify.Status;
 //         if (acc == null)
 //             return WriteError("Invalid account credentials.");
 //
@@ -27,9 +23,6 @@
 //         if (guild == null)
 //             return WriteError("Invalid guild id.");
 //
-//         guild.GuildBoard = board;
-//         await DbClient.FlushAsync(guild, g => g.GuildBoard);
-//
-//         return guild.GuildBoard;
+//         return guild.ToXml().ToString();
 //     }
 // }

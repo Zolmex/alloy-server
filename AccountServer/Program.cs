@@ -10,18 +10,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using AccountServer.Handlers;
+using AccountServer.Messaging;
 using Common.Database;
 using Common.Database.Models;
 using Common.Messaging;
 using Common.Resources.Config;
 using Common.Resources.Xml;
 using Common.Utilities;
-using WebServer.Handlers;
-using WebServer.Messaging;
 
 #endregion
 
-namespace WebServer;
+namespace AccountServer;
 
 internal class Program {
     private static readonly Logger Log = new(typeof(Program));
@@ -32,7 +32,7 @@ internal class Program {
         var version = Assembly.GetExecutingAssembly()
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
             .InformationalVersion;
-        Console.Title = $"Alloy Server v{version} - WebServer";
+        Console.Title = $"Alloy Server v{version} - AccountServer";
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
         AppDomain.CurrentDomain.UnhandledException += UnhandledException;
@@ -45,7 +45,7 @@ internal class Program {
             RequestHandler.Load();
             XmlLibrary.Load(config.XmlsDir);
 
-            _ = IpcServer.StartAsync<WebServerRpcHandler>();
+            _ = IpcServer.StartAsync<AccountServerRpcHandler>();
             DbClient.Load(DatabaseConfig.Config.DbFile);
 
             ReleaseLocks(); // Release all account locks at startup

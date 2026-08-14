@@ -19,7 +19,7 @@ public class Program {
 
     public static readonly Guid Guid = Guid.NewGuid();
     
-    public static IWebServerRpc WebServerRpc { get; private set; }
+    public static IAccountServerRpc AccountServerRpc { get; private set; }
     
     public static async Task Main(string[] args) {
         var version = Assembly.GetExecutingAssembly()
@@ -40,9 +40,9 @@ public class Program {
             BehaviorLibrary.Load();
             CommandManager.Load();
 
-            (_, WebServerRpc) = await IpcClient.ConnectAsync(new GameServerRpcHandler(), TaskUtils.Timeout(5));
-            await WebServerRpc.GameServerConnected(Guid);
-            _log.Info($"[RPC] Connected to WebServer. GUID: {Guid}");
+            (_, AccountServerRpc) = await IpcClient.ConnectAsync(new GameServerRpcHandler(), TaskUtils.Timeout(5));
+            await AccountServerRpc.GameServerConnected(Guid);
+            _log.Info($"[RPC] Connected to AccountServer. GUID: {Guid}");
             
             DbClient.Load(DatabaseConfig.Config.DbFile);
 

@@ -5,7 +5,6 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>disable</Nullable>
         <Authors>Zolmex</Authors>
-        <StartupObject>WebServer.Program</StartupObject>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     </PropertyGroup>
 

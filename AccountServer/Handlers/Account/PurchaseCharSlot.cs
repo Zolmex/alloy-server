@@ -9,7 +9,7 @@ using Common.Utilities;
 
 #endregion
 
-namespace WebServer.Handlers.Account;
+namespace AccountServer.Handlers.Account;
 
 public class PurchaseCharSlot : RequestHandler {
     public override string Path => "/account/purchaseCharSlot";

@@ -8,15 +8,19 @@ using Common.Utilities;
 
 #endregion
 
-namespace WebServer.Handlers.Char;
+namespace AccountServer.Handlers.Account;
 
-public class ListMembers : RequestHandler {
-    public override string Path => "/char/list";
+public class Verify : RequestHandler {
+    public override string Path => "/account/verify";
 
     public override async Task<string> Handle(string ip, NameValueCollection query) {
         var verify = DbClient.VerifyAccount(query["username"], query["password"], Guid.Empty);
 
-        var acc = verify.Acc ?? Common.Database.Models.Account.Guest;
-        return acc.ToCharListXml().ToString();
+        var acc = verify.Acc;
+        var status = verify.Status;
+        if (acc == null)
+            return status.GetDescription();
+
+        return acc.ToXml().ToString();
     }
 }

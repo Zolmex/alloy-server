@@ -7,7 +7,7 @@ namespace Common.Messaging;
 
 public static class IpcClient {
     
-    public static async Task<(JsonRpc Session, IWebServerRpc ServerProxy)> ConnectAsync(IGameServerRpc localHandler, CancellationToken cancellationToken = default)
+    public static async Task<(JsonRpc Session, IAccountServerRpc ServerProxy)> ConnectAsync(IGameServerRpc localHandler, CancellationToken cancellationToken = default)
     {
         var pipeClient = new NamedPipeClientStream(
             ".", // Localhost
@@ -21,7 +21,7 @@ public static class IpcClient {
         var jsonRpc = JsonRpc.Attach(pipeClient, localHandler);
         
         // Proxy for outgoing calls to IpcServer
-        var proxy = jsonRpc.Attach<IWebServerRpc>();
+        var proxy = jsonRpc.Attach<IAccountServerRpc>();
 
         return (jsonRpc, proxy);
     }

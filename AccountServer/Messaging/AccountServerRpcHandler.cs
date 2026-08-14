@@ -8,10 +8,10 @@ using Common.Structs;
 using Common.Utilities;
 using StreamJsonRpc;
 
-namespace WebServer.Messaging;
+namespace AccountServer.Messaging;
 
-public class WebServerRpcHandler : IWebServerHandler {
-    private static readonly Logger _log = new Logger(typeof(WebServerRpcHandler));
+public class AccountServerRpcHandler : IAccountServerHandler {
+    private static readonly Logger _log = new Logger(typeof(AccountServerRpcHandler));
 
     public Guid ServerId { get; set; }
 

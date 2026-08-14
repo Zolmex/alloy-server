@@ -15,11 +15,11 @@ public partial interface IGameServerRpc {
 
 [JsonRpcContract]
 [GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
-public partial interface IWebServerRpc {
+public partial interface IAccountServerRpc {
     Task GameServerConnected(Guid gameServerId);
 }
 
-public interface IWebServerHandler : IWebServerRpc {
+public interface IAccountServerHandler : IAccountServerRpc {
     Guid ServerId { get; set; }
     void Attach(IGameServerRpc proxy);
     void Close();

@@ -420,6 +420,6 @@ public enum BagType {
 }
 
 public enum ServerType {
-    WebServer,
+    AccountServer,
     GameServer
 }

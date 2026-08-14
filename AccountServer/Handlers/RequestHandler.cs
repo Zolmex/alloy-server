@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 #endregion
 
-namespace WebServer.Handlers;
+namespace AccountServer.Handlers;
 
 public abstract class RequestHandler {
     private static readonly Dictionary<string, RequestHandler> _handlers = new();
