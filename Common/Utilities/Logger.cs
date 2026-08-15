@@ -17,7 +17,7 @@ public enum LogLevel {
 }
 
 public class Logger : ILogger {
-    private static int Padding = 18;
+    private const int PADDING = 18;
 
     private static readonly string CurrentDir = Directory.GetCurrentDirectory();
     private static readonly string LogDir = $"/logs/{Process.GetCurrentProcess().ProcessName}/";
@@ -93,10 +93,11 @@ public class Logger : ILogger {
         var lvl = level.ToString().ToUpper();
         var lvlPad = lvl.Length + (7 - lvl.Length);
 
-        if (loggerName.Length > Padding)
-            Padding = loggerName.Length + 2;
+        const int maxLoggerLen = PADDING - 2;
+        if (loggerName.Length > maxLoggerLen)
+            loggerName = loggerName.Substring(0, maxLoggerLen - 3) + "...";
         
-        var senderPad = loggerName.Length + (Padding - loggerName.Length);
+        var senderPad = loggerName.Length + (PADDING - loggerName.Length);
 
         text = $"{DateTime.Now.TimeOfDay}  {lvl.PadRight(lvlPad) + loggerName.PadRight(senderPad) + text}";
 
