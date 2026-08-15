@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Common;
 using Common.Database;
 using Common.Database.Models;
+using Common.Game;
 using Common.Messaging;
 using Common.Structs;
 using Common.Utilities;
@@ -35,5 +36,9 @@ public class AccServerRpcHandler : IAccountServerHandler {
         
         _log.Info($"[RPC] GameServer ({gameServerId}) connected");
         return Task.CompletedTask;
+    }
+
+    public async Task<GameInfoDto?> GetUserInfo(string name, int accountId) {
+        return await _proxy.GetUserInfo(name, accountId);
     }
 }

@@ -4,6 +4,7 @@ using Common.Database.Models;
 using Common.Resources.Config;
 using Common.Resources.Xml;
 using Common.Utilities;
+using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
@@ -55,7 +56,27 @@ public class RealmManager {
         return ret;
     }
 
-    private static void SendServerProjectiles(User user) {
+    public static async Task<bool> ReloadAllBehaviors() {
+        var success = BehaviorLibrary.Reload(GameServerConfig.Config.BehaviorsDir);
+        if (!success)
+            return false;
+
+        await Task.Run(() => {
+            foreach (var world in Worlds) {
+                foreach (var behavior in world.Value.EntityBehaviors) {
+                    behavior.Load();
+                }
+            }
+        });
+        return true;
+    }
+
+    public static void BroadcastAll(Action<User> act) {
+        foreach (var user in Users.Values)
+            act(user);
+    }
+    
+    private static void SendServerProjectiles(User user) { // TODO: Send all projectiles in 1 packet instead of per-projectile -_-
         foreach (var type in Shoot.CustomProjectileOwners) {
             var desc = XmlLibrary.ObjectDescs[type];
             foreach (var conProps in desc.Projectiles.Custom) {

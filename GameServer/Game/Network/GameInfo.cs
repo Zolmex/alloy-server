@@ -1,5 +1,6 @@
 ﻿using Common.Database.Models;
 using Common.Game;
+using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities;
@@ -24,6 +25,7 @@ public class GameInfo {
     public EntityId PlayerId;
     
     public ref Entity Player => ref World.Entities.Get(PlayerId);
+    public GameInfoDto Data => new GameInfoDto(Account.Id, World.Id, World.DisplayName, World.EntityStats.Get(PlayerId).Pos);
 
     public GameInfo(User user) {
         User = user;

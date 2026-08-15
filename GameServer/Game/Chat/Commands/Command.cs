@@ -18,12 +18,12 @@ public enum CommandPermissionLevel {
 
 public class Command {
     public CommandPermissionLevel PermissionLevel;
-    public virtual void Execute(User user, string args) { }
+    public virtual async Task ExecuteAsync(User user, string args) { }
 }
 
 [AttributeUsage(AttributeTargets.Class)]
 public class CommandAttribute : Attribute {
-    public CommandAttribute(string command, CommandPermissionLevel permissionLevel, string[] aliases = null) {
+    public CommandAttribute(string command, CommandPermissionLevel permissionLevel, params string[] aliases) {
         Command = command;
         PermissionLevel = permissionLevel;
         Aliases = aliases;

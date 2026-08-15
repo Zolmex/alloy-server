@@ -1,4 +1,5 @@
 using Common;
+using Common.Game;
 using Common.Messaging;
 using Common.Structs;
 using Common.Utilities;
@@ -16,5 +17,10 @@ public class GameServerRpcHandler : IGameServerRpc {
     
     public Task<ServerInfo> GetGameServer() {
         return Task.FromResult(new ServerInfo(Program.Guid, ServerType.GameServer, GameLogic.WorldTime.TotalElapsedMs, RealmManager.Users.Count));
+    }
+    
+    public Task<GameInfoDto?> GetUserInfo(string name, int accountId) {
+        var target = RealmManager.Users.Values.FirstOrDefault(c => c.GameInfo.Account.Id == accountId || c.GameInfo.Account.Name == name);
+        return Task.FromResult(target?.GameInfo.Data);
     }
 }

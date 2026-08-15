@@ -5,7 +5,7 @@ namespace GameServer.Game.Chat.Commands;
 
 [Command("commands", CommandPermissionLevel.Player)]
 public class CommandListCommand : Command {
-    public override void Execute(User user, string args) {
+    public override async Task ExecuteAsync(User user, string args) {
         var cmdList = string.Join(", ", CommandManager.GetCommandList(user.GameInfo.Account.Rank));
         user.SendInfo($"Available commands: {cmdList}");
     }
@@ -14,7 +14,7 @@ public class CommandListCommand : Command {
 [Command("online", CommandPermissionLevel.Player)]
 public class OnlineCommand : Command
 {
-    public override void Execute(User user, string args)
+    public override async Task ExecuteAsync(User user, string args)
     {
         var totalCount = RealmManager.Users.Count;
         var localCount = user.GameInfo.World.Users.Count;

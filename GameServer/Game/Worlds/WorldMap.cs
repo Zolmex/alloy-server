@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Common;
 using Common.Game;
@@ -40,8 +41,7 @@ public class WorldMap {
         _tiles = new MapTileData[data.Width, data.Height];
         for (var y = 0; y < data.Height; y++)
             for (var x = 0; x < data.Width; x++) {
-                var tile = data.Tiles[x, y];
-                _tiles[x, y] = tile.Clone();
+                var tile = _tiles[x, y] = data.Tiles[x, y].Clone();
                 if (tile.Region == TileRegion.None)
                     continue;
                 

@@ -35,7 +35,12 @@ public struct EntityBehavior : IEntityIdentifiable, IDisposable {
         _objectId = XmlLibrary.ObjectDescs[en.ObjectType].ObjectId;
     }
 
-    public void Load(State rootState) {
+    public void Load() {
+        if (!BehaviorLibrary.ClassicBehaviors.TryGetValue(_objectId, out var rootState)) {
+            _log.Error($"Behavior not found for '{_objectId}'");
+            return;
+        }
+        
         _rootState = rootState;
         Resources.ClearResources();
 

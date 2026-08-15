@@ -132,9 +132,8 @@ public class World {
                 var events = new EntityEvents(this, ref en);
                 EntityEvents.Add(ref events);
                 var behavior = new EntityBehavior(this, ref en);
-                ref var entityBehavior = ref EntityBehaviors.Add(ref behavior);
-                if (BehaviorLibrary.ClassicBehaviors.TryGetValue(en.Desc.ObjectId, out var rootState))
-                    entityBehavior.Load(rootState);
+                behavior.Load();
+                EntityBehaviors.Add(ref behavior);
                 var enProjectiles = new EntityProjectiles(this, ref en);
                 EntityProjectiles.Add(ref enProjectiles);
                 var combat = new EntityCombat(this, ref en);

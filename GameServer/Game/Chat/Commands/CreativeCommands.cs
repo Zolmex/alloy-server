@@ -7,7 +7,7 @@ namespace GameServer.Game.Chat.Commands;
 
 [Command("spawn", CommandPermissionLevel.Player)]
 public class SpawnCommand : Command {
-    public override void Execute(User user, string args) {
+    public override async Task ExecuteAsync(User user, string args) {
         // if (user.GameInfo.Account.Rank < (int)CommandPermissionLevel.Moderator && player.World is not TestWorld) {
         //     user.SendError("Can only use this command in a test world.");
         //     return;

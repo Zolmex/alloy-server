@@ -1,3 +1,4 @@
+using Common.Game;
 using Common.Structs;
 using Common.Utilities.Collections;
 
@@ -14,8 +15,8 @@ public class ChunkMap {
     public ChunkMap(World world, int mapWidth, int mapHeight) {
         _world = world;
         
-        Width = mapWidth / Chunk.CHUNK_SIZE;
-        Height = mapHeight / Chunk.CHUNK_SIZE;
+        Width = (int)MathF.Ceiling((float)mapWidth / Chunk.CHUNK_SIZE);
+        Height = (int)MathF.Ceiling((float)mapHeight / Chunk.CHUNK_SIZE);
         Chunks = new Chunk[Width, Height];
         for (var y = 0; y < Height; y++)
             for (var x = 0; x < Width; x++) {
