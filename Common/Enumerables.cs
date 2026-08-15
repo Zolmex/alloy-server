@@ -79,7 +79,7 @@ public enum StatType {
     NextLevelXp = 5,
     Experience = 6,
     Level = 7,
-    Inventory0 = 8, // TODO: move all inventory/backpack item types/data into a single array-like stat
+    Inventory0 = 8,
     Inventory1 = 9,
     Inventory2 = 10,
     Inventory3 = 11,
