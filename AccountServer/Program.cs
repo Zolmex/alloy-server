@@ -45,7 +45,7 @@ internal class Program {
             RequestHandler.Load();
             XmlLibrary.Load(config.XmlsDir);
 
-            _ = IpcServer.StartAsync<AccountServerRpcHandler>();
+            _ = IpcServer.StartAsync<AccServerRpcHandler>();
             DbClient.Load(DatabaseConfig.Config.DbFile);
 
             ReleaseLocks(); // Release all account locks at startup

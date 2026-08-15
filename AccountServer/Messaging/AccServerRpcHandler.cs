@@ -10,8 +10,8 @@ using StreamJsonRpc;
 
 namespace AccountServer.Messaging;
 
-public class AccountServerRpcHandler : IAccountServerHandler {
-    private static readonly Logger _log = new Logger(typeof(AccountServerRpcHandler));
+public class AccServerRpcHandler : IAccountServerHandler {
+    private static readonly Logger _log = new Logger(typeof(AccServerRpcHandler));
 
     public Guid ServerId { get; set; }
 
