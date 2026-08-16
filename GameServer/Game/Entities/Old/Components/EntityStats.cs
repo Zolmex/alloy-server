@@ -10,7 +10,7 @@ using Common.Utilities.Collections;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Components;
+namespace GameServer.Game.Entities.Old.Components;
 
 public struct EntityStats : IEntityIdentifiable, IDisposable {
     public const int STAT_COUNT = (int)StatType.StatTypeCount;

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace GameServer.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Old.Behaviors;
 
 public class StateResourceController {
     private readonly ConcurrentDictionary<object, object> _stateResources = new();

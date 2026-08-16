@@ -1,11 +1,11 @@
 ﻿using System;
 using Common.Resources.Xml;
 using Common.Utilities;
-using GameServer.Game.Entities.Events;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
+using GameServer.Game.Entities.Old.Events;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record DropPortalOnDeath : BehaviorScript {
     private readonly string _portalId;

@@ -5,10 +5,10 @@ using Common.Game;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Behaviors.Actions.Info;
+using GameServer.Game.Entities.Old.Behaviors.Actions.Info;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record Dash : BehaviorScript {
     private readonly float acquireRadiusSqr;

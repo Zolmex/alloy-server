@@ -1,6 +1,6 @@
-﻿using GameServer.Game.Entities.Events;
+﻿using GameServer.Game.Entities.Old.Events;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record OrderOnDeath : BehaviorScript {
     private readonly string _children;

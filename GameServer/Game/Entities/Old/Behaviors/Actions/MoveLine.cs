@@ -4,9 +4,9 @@ using Common;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class MoveLineInfo {
     public float DistLeft;

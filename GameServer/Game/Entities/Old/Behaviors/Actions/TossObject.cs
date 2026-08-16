@@ -10,7 +10,7 @@ using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Network.Messaging.Outgoing;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class TossObjectInfo {
     public int CooldownLeft;

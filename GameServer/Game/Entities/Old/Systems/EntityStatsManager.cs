@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Common.Game;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Systems;
+namespace GameServer.Game.Entities.Old.Systems;
 
 public class EntityStatsManager(World world, int capacity) : ManagerBase<EntityStats>(world, capacity) {
     

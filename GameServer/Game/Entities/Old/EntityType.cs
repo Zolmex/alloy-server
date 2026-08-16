@@ -1,4 +1,4 @@
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Old;
 
 public enum EntityType : byte {
     GameObject,

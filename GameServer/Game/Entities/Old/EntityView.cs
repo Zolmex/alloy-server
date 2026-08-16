@@ -1,9 +1,9 @@
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Old.Events;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Old;
 
 public readonly ref struct EntityView {
     public readonly World World;

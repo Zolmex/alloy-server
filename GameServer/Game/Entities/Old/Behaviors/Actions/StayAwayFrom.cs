@@ -6,7 +6,7 @@ using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class StayAwayFromInfo {
     public bool FirstTick;

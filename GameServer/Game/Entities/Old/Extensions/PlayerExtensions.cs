@@ -6,14 +6,14 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Chat.Commands;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Systems;
+using GameServer.Game.Entities.Old.Components;
+using GameServer.Game.Entities.Old.Systems;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Extensions;
+namespace GameServer.Game.Entities.Old.Extensions;
 
 public static class PlayerExtensions {
     extension(ref Entity player) {

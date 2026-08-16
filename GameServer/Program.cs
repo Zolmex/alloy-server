@@ -8,7 +8,7 @@ using Common.Resources.Xml;
 using Common.Utilities;
 using GameServer.Game;
 using GameServer.Game.Chat.Commands;
-using GameServer.Game.Entities.Behaviors;
+using GameServer.Game.Entities.Old.Behaviors;
 using GameServer.Game.Network;
 using GameServer.Messaging;
 

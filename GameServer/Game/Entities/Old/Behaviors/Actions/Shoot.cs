@@ -8,12 +8,12 @@ using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class ShootInfo {
     public float AngleOffset;

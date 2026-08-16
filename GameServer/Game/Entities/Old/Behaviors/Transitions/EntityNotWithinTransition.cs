@@ -1,7 +1,7 @@
 ﻿using Common.Game;
-using GameServer.Game.Entities;
+using GameServer.Game.Entities.Old;
 
-namespace GameServer.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 public class EntityNotWithinTransition : BehaviorTransition {
     private readonly float radius;

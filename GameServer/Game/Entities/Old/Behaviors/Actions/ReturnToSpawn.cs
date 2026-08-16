@@ -2,11 +2,11 @@
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Behaviors;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Behaviors;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record ReturnToSpawn : BehaviorScript {
     private readonly float _distanceFromSpawn;

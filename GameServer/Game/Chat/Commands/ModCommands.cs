@@ -6,8 +6,8 @@ using Common;
 using Common.Database;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Extensions;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds.Logic;
 

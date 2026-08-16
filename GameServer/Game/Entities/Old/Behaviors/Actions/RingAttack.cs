@@ -4,9 +4,9 @@ using Common.Game;
 using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class RingAttackInfo {
     public float AngleToIncrement;

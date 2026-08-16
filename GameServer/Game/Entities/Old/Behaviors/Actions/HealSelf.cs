@@ -3,7 +3,7 @@ using Common;
 using Common.Game;
 using GameServer.Game.Network.Messaging.Outgoing;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class HealSelfInfo {
     public int TimeLeft;

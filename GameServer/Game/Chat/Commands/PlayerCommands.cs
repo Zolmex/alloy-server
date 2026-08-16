@@ -1,4 +1,4 @@
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
 using GameServer.Game.Network;
 
 namespace GameServer.Game.Chat.Commands;

@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.Game;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record ConditionEffectBehavior : BehaviorScript { // TODO: COndition efects
     private readonly ConditionEffectIndex _condEffect;

@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using Common.Game;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Old;
 
 public abstract class ManagerBase<T> where T : struct, IEntityIdentifiable, IDisposable {
 

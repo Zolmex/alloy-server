@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Common.Utilities.Collections;
 
-namespace GameServer.Game.Entities.Behaviors.Actions.Info;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions.Info;
 
 public class DashInfo {
     public int DashCount { get; set; }

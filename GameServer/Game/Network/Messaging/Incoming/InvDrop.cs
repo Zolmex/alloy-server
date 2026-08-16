@@ -2,7 +2,7 @@
 using Common.Network;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities;
+using GameServer.Game.Entities.Old;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Network.Messaging.Incoming;

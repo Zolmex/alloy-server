@@ -1,7 +1,7 @@
-﻿using GameServer.Game.Entities;
-using GameServer.Game.Entities.Events;
+﻿using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Events;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record RemoveObjectOnDeath : BehaviorScript {
     private readonly string _objName;

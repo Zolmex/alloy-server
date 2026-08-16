@@ -3,7 +3,7 @@ using System.Numerics;
 using Common;
 using Common.Game;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class BuzzInfo {
     public Vector2 Direction;

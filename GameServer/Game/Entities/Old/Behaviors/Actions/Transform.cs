@@ -1,6 +1,6 @@
 ﻿using Common.Resources.Xml;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record Transform : BehaviorScript {
     private readonly string _target;

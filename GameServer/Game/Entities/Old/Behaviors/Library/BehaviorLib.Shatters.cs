@@ -1,6 +1,6 @@
 ﻿using Common;
-using GameServer.Game.Entities.Behaviors.Actions;
-using GameServer.Game.Entities.Behaviors.Transitions;
+using GameServer.Game.Entities.Old.Behaviors.Actions;
+using GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 //FULLY SHATTERS
 //BEHAVIORS
@@ -8,7 +8,7 @@ using GameServer.Game.Entities.Behaviors.Transitions;
 //MIKE (Qkm)
 //MOISTED ON BY PATPOT
 
-namespace GameServer.Game.Entities.Behaviors.Library;
+namespace GameServer.Game.Entities.Old.Behaviors.Library;
 
 public partial class BehaviorLib {
     #region generators

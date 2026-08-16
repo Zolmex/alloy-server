@@ -4,7 +4,7 @@ using Common.Game;
 using Common.Utilities.Collections;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Systems;
+namespace GameServer.Game.Entities.Old.Systems;
 
 public class EntityManager : ManagerBase<Entity> {
 

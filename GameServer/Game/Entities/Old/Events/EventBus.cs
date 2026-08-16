@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GameServer.Game.Entities.Events;
+namespace GameServer.Game.Entities.Old.Events;
 
 public delegate void RefAction<T>(ref T data);
 

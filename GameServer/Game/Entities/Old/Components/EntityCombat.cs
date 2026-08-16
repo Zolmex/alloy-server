@@ -6,13 +6,13 @@ using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components.Data;
-using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Old.Events;
+using GameServer.Game.Entities.Old.Components.Data;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Components;
+namespace GameServer.Game.Entities.Old.Components;
 
 public struct EntityCombat : IEntityIdentifiable, IDisposable {
     public EntityId Id { get; set; }

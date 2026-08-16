@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Common.Game;
 
-namespace GameServer.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 public class EntitiesWithinTransition : BehaviorTransition {
     private readonly float _radius;

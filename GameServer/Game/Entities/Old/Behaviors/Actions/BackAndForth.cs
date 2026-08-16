@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.Game;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class BackAndForthInfo {
     public float Distance;

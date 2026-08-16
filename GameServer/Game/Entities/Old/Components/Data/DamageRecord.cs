@@ -1,7 +1,7 @@
 using Common.Utilities;
 using Common.Utilities.Collections;
 
-namespace GameServer.Game.Entities.Components.Data;
+namespace GameServer.Game.Entities.Old.Components.Data;
 
 public record struct DamageRecord : IEntityIdentifiable {
     public EntityId Id { get; set; }

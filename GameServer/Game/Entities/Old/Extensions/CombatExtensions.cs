@@ -2,12 +2,12 @@ using Common.Game;
 using Common.Projectiles.ProjectilePaths;
 using Common.Structs;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Projectiles;
+using GameServer.Game.Entities.Old.Projectiles;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace GameServer.Game.Entities.Extensions;
+namespace GameServer.Game.Entities.Old.Extensions;
 
 public static class CombatExtensions {
     extension(World world) {

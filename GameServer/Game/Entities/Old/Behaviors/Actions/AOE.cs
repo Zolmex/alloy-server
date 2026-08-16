@@ -11,7 +11,7 @@ using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class AOEInfo {
     public float AngleOffset;

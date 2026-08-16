@@ -1,4 +1,4 @@
-﻿namespace GameServer.Game.Entities.Behaviors;
+﻿namespace GameServer.Game.Entities.Old.Behaviors;
 
 public enum TransitionType {
     Random,

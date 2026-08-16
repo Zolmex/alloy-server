@@ -1,8 +1,8 @@
 using Common;
-using GameServer.Game.Entities.Behaviors.Actions;
-using GameServer.Game.Entities.Behaviors.Transitions;
+using GameServer.Game.Entities.Old.Behaviors.Actions;
+using GameServer.Game.Entities.Old.Behaviors.Transitions;
 
-namespace GameServer.Game.Entities.Behaviors.Library;
+namespace GameServer.Game.Entities.Old.Behaviors.Library;
 
 public partial class BehaviorLib {
     private const float fixedAngle_RingAttack2 = 22.5f;

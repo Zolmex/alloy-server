@@ -1,4 +1,4 @@
-﻿namespace GameServer.Game.Entities.Behaviors.Actions;
+﻿namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record Suicide : BehaviorScript {
     private readonly int _delay;

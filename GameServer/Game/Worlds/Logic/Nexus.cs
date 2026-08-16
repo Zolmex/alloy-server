@@ -1,8 +1,8 @@
 using Common.Resources.Config;
 using Common.Resources.World;
 using Common.Utilities;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Extensions;
 
 namespace GameServer.Game.Worlds.Logic;
 

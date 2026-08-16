@@ -1,21 +1,24 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Arch.System;
 using Common.Game;
 using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Behaviors;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Events;
-using GameServer.Game.Entities.Extensions;
-using GameServer.Game.Entities.Projectiles;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Behaviors;
+using GameServer.Game.Entities.Old.Components;
+using GameServer.Game.Entities.Old.Events;
+using GameServer.Game.Entities.Old.Extensions;
+using GameServer.Game.Entities.Old.Projectiles;
+using GameServer.Game.Entities.Old.Systems;
 using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
 using GameServer.Utilities;
+using ArchWorld = Arch.Core.World;
 
 namespace GameServer.Game.Worlds;
 
@@ -55,12 +58,17 @@ public class World {
 
     private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
     private readonly ConcurrentQueue<EntityId> _removeEntities = [];
+    
+    private readonly ArchWorld _archWorld = ArchWorld.Create();
+    private readonly StatsSystem _statsSystem;
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
         MapId = mapId;
         Config = config;
-
+        
+        _statsSystem = new StatsSystem(_archWorld);
+        
         Entities = new EntityManager(this, 5_000);
         Projectiles = new ProjectileManager(this, 5_000);
         
@@ -81,6 +89,7 @@ public class World {
         Music = config.Music;
 
         Load(mapId);
+        _statsSystem.Initialize();
     }
 
     public void Load(int mapId) {
@@ -229,6 +238,8 @@ public class World {
         EntityBehaviors.Tick(ref time);
         PlayerSights.Tick(ref time);
         EntityStats.Tick(ref time);
+        
+        _statsSystem.UpdateStatsQuery(_archWorld, ref time);
         
         ClearTextCache();
     }

@@ -9,7 +9,7 @@ using Common.Utilities.Collections;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Projectiles;
+namespace GameServer.Game.Entities.Old.Projectiles;
 
 public struct Projectile : IEntityIdentifiable, IDisposable {
     public const float HIT_DIST_SQR = 0.5f * 0.5f;

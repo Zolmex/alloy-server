@@ -3,7 +3,7 @@ using Common;
 using Common.Game;
 using Common.Utilities.Collections;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class ChargeInfo {
     public Vector2 Direction;

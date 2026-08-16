@@ -8,13 +8,13 @@ using Common.Resources.World;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Systems;
+namespace GameServer.Game.Entities.Old.Systems;
 
 public readonly record struct SwapCommand(User User, SlotObjectData SlotA, SlotObjectData SlotB);
 

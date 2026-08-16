@@ -3,7 +3,7 @@ using Common.Network;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Systems;
+using GameServer.Game.Entities.Old.Systems;
 using GameServer.Game.Network.Messaging;
 
 namespace GameServer.Game.Network.Messaging.Outgoing;

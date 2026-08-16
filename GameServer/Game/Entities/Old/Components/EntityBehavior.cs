@@ -6,11 +6,11 @@ using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Behaviors;
+using GameServer.Game.Entities.Old.Behaviors;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Components;
+namespace GameServer.Game.Entities.Old.Components;
 
 public struct EntityBehavior : IEntityIdentifiable, IDisposable {
     private static readonly Logger _log = new(typeof(EntityBehavior));

@@ -13,12 +13,12 @@ using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Structs;
 using Common.Utilities;
-using GameServer.Game.Entities.Behaviors.Library;
-using GameServer.Game.Entities.Behaviors.Transitions;
+using GameServer.Game.Entities.Old.Behaviors.Library;
+using GameServer.Game.Entities.Old.Behaviors.Transitions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace GameServer.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Old.Behaviors;
 
 public static class BehaviorLibrary {
     private static readonly Logger _log = new(typeof(BehaviorLibrary));

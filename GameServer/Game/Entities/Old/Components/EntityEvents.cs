@@ -6,11 +6,11 @@ using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Old.Events;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Components;
+namespace GameServer.Game.Entities.Old.Components;
 
 public struct EntityEvents : IEntityIdentifiable, IDisposable {
     public EntityId Id { get; set; }

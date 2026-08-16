@@ -6,7 +6,7 @@ using Common.Game;
 using Common.Resources.Xml;
 using Common.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class SpawnInfo {
     public int CooldownMs;

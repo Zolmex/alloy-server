@@ -7,7 +7,7 @@ using Common.Utilities.Collections;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Components;
+namespace GameServer.Game.Entities.Old.Components;
 
 public struct PlayerChat : IEntityIdentifiable, IDisposable {
     private const int TextCooldown = 500;

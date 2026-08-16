@@ -1,7 +1,7 @@
 using System.Numerics;
 using Common.Structs;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Utilities;

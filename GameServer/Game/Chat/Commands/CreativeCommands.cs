@@ -1,6 +1,6 @@
 using Common.Resources.Xml;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Extensions;
 using GameServer.Game.Network;
 
 namespace GameServer.Game.Chat.Commands;

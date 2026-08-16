@@ -1,5 +1,5 @@
 ﻿using Common.Network;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Game.Network.Messaging.Incoming;

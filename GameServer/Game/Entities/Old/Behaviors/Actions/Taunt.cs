@@ -1,9 +1,9 @@
 ﻿using System;
 using Common.Game;
 using Common.Utilities;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class TauntInfo {
     public int CooldownLeft;

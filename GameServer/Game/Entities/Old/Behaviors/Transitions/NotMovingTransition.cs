@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using Common.Game;
 
-namespace GameServer.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 public class NotMovingTransitionInfo {
     public Vector2 Position;

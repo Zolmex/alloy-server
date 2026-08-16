@@ -6,7 +6,7 @@ using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Old.Behaviors;
 
 public class CircleInfo {
     public float CurrentAngle;

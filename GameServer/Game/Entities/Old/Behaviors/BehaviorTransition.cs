@@ -2,9 +2,9 @@
 using System.Linq;
 using Common.Game;
 using Common.Utilities;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 
-namespace GameServer.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Old.Behaviors;
 
 public class BehaviorTransition(TransitionType transitionType = TransitionType.Random) : IStateChild {
     private readonly List<string> targetStates = new();

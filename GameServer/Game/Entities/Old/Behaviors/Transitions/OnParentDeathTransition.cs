@@ -1,7 +1,7 @@
 ﻿using Common.Game;
 using Common.Utilities.Collections;
 
-namespace GameServer.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 public class OnParentDeathInfo {
     public bool ParentDead;

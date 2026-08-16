@@ -2,9 +2,9 @@
 using Common.Game;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 
-namespace GameServer.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Old.Behaviors;
 
 public class State : IStateChild {
     private static readonly Logger _log = new(typeof(State));

@@ -1,9 +1,9 @@
 ﻿using System.Numerics;
 using Common.Game;
 using Common.Structs;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class MoveToState {
     public WorldPosData StartPos;

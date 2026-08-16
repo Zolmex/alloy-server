@@ -6,7 +6,7 @@ using Common.Structs;
 using Common.Utilities;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class WanderInfo {
     public float AngleDir;

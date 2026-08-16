@@ -3,12 +3,12 @@ using Common;
 using Common.Game;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
-using GameServer.Game.Entities.Behaviors.Loot;
-using GameServer.Game.Entities.Events;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
+using GameServer.Game.Entities.Old.Behaviors.Loot;
+using GameServer.Game.Entities.Old.Events;
 using GameServer.Game.Network.Messaging.Outgoing;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record LootDrop : BehaviorScript {
     private readonly ILoot[] _loots;

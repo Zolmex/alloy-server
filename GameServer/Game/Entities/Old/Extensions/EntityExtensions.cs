@@ -1,9 +1,9 @@
 using Common.Structs;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Extensions;
+namespace GameServer.Game.Entities.Old.Extensions;
 
 public static class EntityExtensions {
     extension(Entity en) {

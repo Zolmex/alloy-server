@@ -1,9 +1,9 @@
 ﻿using System;
 using Common.Game;
 using Common.Resources.Xml;
-using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Old.Events;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record TransformOnDeath : BehaviorScript {
     private readonly int _max;

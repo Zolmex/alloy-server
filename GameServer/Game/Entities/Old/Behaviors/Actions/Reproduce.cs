@@ -3,7 +3,7 @@ using System.Numerics;
 using Common.Game;
 using Common.Resources.Xml;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class ReproduceInfo {
     public int CooldownMs;

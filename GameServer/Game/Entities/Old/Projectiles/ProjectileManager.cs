@@ -5,7 +5,7 @@ using Common.Projectiles.ProjectilePaths;
 using Common.Utilities.Collections;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Projectiles;
+namespace GameServer.Game.Entities.Old.Projectiles;
 
 public class ProjectileManager : ManagerBase<Projectile> {
 

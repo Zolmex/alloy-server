@@ -4,10 +4,10 @@ using System.Xml.Linq;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class MoveInfo {
     public int CooldownMs;

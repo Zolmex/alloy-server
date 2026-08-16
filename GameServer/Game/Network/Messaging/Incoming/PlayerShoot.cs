@@ -7,8 +7,8 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Extensions;
 
 namespace GameServer.Game.Network.Messaging.Incoming;
 

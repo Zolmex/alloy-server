@@ -1,10 +1,10 @@
 using Common;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 
-namespace GameServer.Game.Entities.Extensions;
+namespace GameServer.Game.Entities.Old.Extensions;
 
 public static class ChatExtensions {
     extension(User user) {

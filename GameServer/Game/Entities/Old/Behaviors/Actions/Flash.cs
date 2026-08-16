@@ -2,7 +2,7 @@
 using Common.Structs;
 using GameServer.Game.Network.Messaging.Outgoing;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public record Flash : BehaviorScript {
     private readonly int _color;

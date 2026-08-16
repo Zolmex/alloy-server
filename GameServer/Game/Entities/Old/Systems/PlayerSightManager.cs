@@ -3,7 +3,6 @@ using Common.Game;
 using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Components;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
@@ -13,8 +12,9 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using GameServer.Game.Entities.Old.Components;
 
-namespace GameServer.Game.Entities.Systems;
+namespace GameServer.Game.Entities.Old.Systems;
 
 public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerSight>(world, capacity) {
     private struct Frustum

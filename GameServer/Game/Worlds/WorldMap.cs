@@ -8,9 +8,9 @@ using Common.Resources.World;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Systems;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Components;
+using GameServer.Game.Entities.Old.Systems;
 using GameServer.Game.Network;
 using GameServer.Utilities;
 

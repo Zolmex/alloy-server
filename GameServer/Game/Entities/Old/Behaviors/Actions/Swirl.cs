@@ -5,7 +5,7 @@ using Common.Game;
 using Common.Utilities.Collections;
 using GameServer.Utilities;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class SwirlInfo {
     public bool Acquired;

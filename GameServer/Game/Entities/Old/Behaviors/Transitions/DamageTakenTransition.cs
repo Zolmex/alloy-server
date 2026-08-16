@@ -1,8 +1,8 @@
 ﻿using Common.Game;
-using GameServer.Game.Entities;
-using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Old.Events;
 
-namespace GameServer.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 public class DamageTakenRecord {
     public int DamageTaken;

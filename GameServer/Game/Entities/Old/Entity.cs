@@ -8,7 +8,7 @@ using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
 
-namespace GameServer.Game.Entities;
+namespace GameServer.Game.Entities.Old;
 
 public struct Entity : IEntityIdentifiable, IEquatable<Entity>, IDisposable {
     public EntityId Id { get; set; }

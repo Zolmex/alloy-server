@@ -1,9 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using Common.Game;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Events;
+using GameServer.Game.Entities.Old.Components;
+using GameServer.Game.Entities.Old.Events;
 
-namespace GameServer.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 public class PlayerTextInfo {
     public Regex Rgx;

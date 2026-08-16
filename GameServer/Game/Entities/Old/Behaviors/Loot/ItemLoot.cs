@@ -1,9 +1,9 @@
 using Common;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
-using GameServer.Game.Entities.Components.Data;
+using GameServer.Game.Entities.Old.Components.Data;
 
-namespace GameServer.Game.Entities.Behaviors.Loot;
+namespace GameServer.Game.Entities.Old.Behaviors.Loot;
 
 public class ItemLoot : ILoot {
 

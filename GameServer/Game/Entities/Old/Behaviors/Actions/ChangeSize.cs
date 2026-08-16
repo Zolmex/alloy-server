@@ -1,8 +1,8 @@
 ﻿using Common;
 using Common.Game;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class SizeInfo {
     public int CooldownLeft;

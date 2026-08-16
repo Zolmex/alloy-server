@@ -1,8 +1,8 @@
 ﻿using Common.Game;
 using Common.Resources.Xml.Descriptors;
-using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Old.Components;
 
-namespace GameServer.Game.Entities.Behaviors;
+namespace GameServer.Game.Entities.Old.Behaviors;
 
 public record BehaviorScript : IStateChild {
     

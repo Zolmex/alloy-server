@@ -1,4 +1,4 @@
-﻿namespace GameServer.Game.Entities.Behaviors;
+﻿namespace GameServer.Game.Entities.Old.Behaviors;
 
 public class CharacterBehaviorAttribute : Attribute {
     public CharacterBehaviorAttribute(string objectId) {

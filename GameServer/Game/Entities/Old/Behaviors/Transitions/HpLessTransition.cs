@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.Game;
 
-namespace GameServer.Game.Entities.Behaviors.Transitions;
+namespace GameServer.Game.Entities.Old.Behaviors.Transitions;
 
 public class HpLessTransition : BehaviorTransition {
     private readonly float _threshold;

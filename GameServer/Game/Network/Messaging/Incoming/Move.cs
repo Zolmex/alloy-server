@@ -2,7 +2,7 @@
 
 using Common.Network;
 using Common.Structs;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Old.Extensions;
 
 #endregion
 

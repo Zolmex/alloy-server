@@ -8,7 +8,7 @@ using Common.Utilities.Collections;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 
-namespace GameServer.Game.Entities.Components;
+namespace GameServer.Game.Entities.Old.Components;
 
 public struct EntityProjectiles : IEntityIdentifiable, IDisposable {
     public const int MAX_PROJECTILES = 2000; // Maximum amount of concurrent projectiles

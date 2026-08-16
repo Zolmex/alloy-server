@@ -2,7 +2,7 @@
 using Common.Game;
 using GameServer.Game.Network.Messaging.Outgoing;
 
-namespace GameServer.Game.Entities.Behaviors.Actions;
+namespace GameServer.Game.Entities.Old.Behaviors.Actions;
 
 public class HealGroupInfo {
     public int RemainingTime;
