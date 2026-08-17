@@ -111,7 +111,7 @@ public class MapTileData { // Don't modify this tile data with game logic, use W
     public TileRegion Region;
     public TerrainType Terrain;
 
-    public EntityId ObjectId; // Set at World.Load()
+    public int ObjectId; // Set at World.Load()
     public bool BlocksSight;
     public bool FullOccupy;
     public bool EnemyOccupySquare;

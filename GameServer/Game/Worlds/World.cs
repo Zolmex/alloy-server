@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Arch.Core;
+using Arch.Core.Extensions;
 using Arch.System;
 using Common.Game;
 using Common.Resources.World;
@@ -8,6 +10,7 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using Common.Utilities.Collections;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 using GameServer.Game.Entities.Old.Behaviors;
 using GameServer.Game.Entities.Old.Components;
@@ -19,6 +22,7 @@ using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
 using GameServer.Utilities;
 using ArchWorld = Arch.Core.World;
+using Entity = Arch.Core.Entity;
 
 namespace GameServer.Game.Worlds;
 
@@ -48,7 +52,7 @@ public class World {
     public readonly PlayerChatManager PlayerChat;
 
     public readonly List<string> TextCache = [];
-    public ImmutableDictionary<EntityId, User> Users;
+    public ImmutableDictionary<int, User> Users;
 
     public WorldMap Map;
     public string DisplayName;
@@ -57,7 +61,7 @@ public class World {
     public bool Deleted;
 
     private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
-    private readonly ConcurrentQueue<EntityId> _removeEntities = [];
+    private readonly ConcurrentQueue<Entity> _removeEntities = [];
     
     private readonly ArchWorld _archWorld = ArchWorld.Create();
     private readonly StatsSystem _statsSystem;
@@ -83,7 +87,7 @@ public class World {
         PlayerSights = new PlayerSightManager(this, 100);
         PlayerChat = new PlayerChatManager(this, 100);
 
-        Users = ImmutableDictionary<EntityId, User>.Empty;
+        Users = ImmutableDictionary<int, User>.Empty;
 
         DisplayName = config.DisplayName;
         Music = config.Music;
@@ -103,96 +107,110 @@ public class World {
 
     public void LoadEntities() {
         foreach (var orig in Map.Data.Entities) {
-            var en = new Entity(orig.ObjType);
-            ref var newEn = ref EnterWorld(ref en);
-            newEn.Init(this, orig.Pos);
+            var desc = XmlLibrary.ObjectDescs[orig.ObjType];
+            var en = Create(desc);
+            ref var pos = ref en.Get<Position>();
+            pos.Init(this, orig.Pos);
+            if (desc.Static) {
+                var tile = Map[(int)orig.Pos.X, (int)orig.Pos.Y];
+                if (tile.ObjectId == -1)
+                    tile.ObjectId = en.Id;
+            }
         }
     }
 
-    public ref Entity EnterPlayer(ref Entity en, User user) {
-        ref var ret = ref EnterWorld(ref en);
-        Users = Users.Add(ret.Id, user);
-        return ref ret;
+    public Entity EnterPlayer(ushort objType, User user) {
+        var en = Create(XmlLibrary.ObjectDescs[objType]);
+        Users = Users.Add(en.Id, user);
+        return en;
     }
 
-    public ref Entity EnterWorld(ref Entity en) {
-        ref var ret = ref Entities.Add(ref en);
-        AddComponents(ref ret);
-        return ref ret;
-    }
+    private Entity Create(ObjectDesc desc) {
+        if (desc.Class != null)
+            switch (desc.Class) {
+                case "ConnectedWall":
+                case "CaveWall":
+                case "Wall":
+                    return CreateStaticObject(desc);
+                case "Portal":
+                case "GuildHallPortal":
+                    return _archWorld.Create(
+                        new Portal(),
+                        new Stats(desc),
+                        new Flags(),
+                        new Position()
+                        );
+                case "Character":
+                    if (desc.Enemy)
+                        return CreateEnemy(desc);
+                    return _archWorld.Create(
+                        new Character(),
+                        new Stats(desc),
+                        new Flags(),
+                        new Position()
+                        );
+                case "ClosedVaultChest":
+                case "Container":
+                    return _archWorld.Create(
+                        new Container(),
+                        new Stats(desc),
+                        new Flags(),
+                        new Position()
+                        );
+                case "Merchant":
+                case "GuildMerchant":
+                    return _archWorld.Create(
+                        new Merchant(),
+                        new Stats(desc),
+                        new Flags(),
+                        new Position()
+                        );
+            }
 
-    private void AddComponents(ref Entity en) {
-        var stats = new EntityStats(this, ref en);
-        EntityStats.Add(ref stats); // All entities must have
+        if (desc.Enemy)
+            return CreateEnemy(desc);
+        
+        if (desc.Static)
+            return CreateStaticObject(desc);
 
-        switch (en.Type) {
-            case EntityType.GameObject:
-                break;
-            case EntityType.StaticObject:
-                break;
-            case EntityType.Portal:
-                var portalData = new PortalData(this, ref en);
-                PortalDatas.Add(ref portalData);
-                break;
-            case EntityType.Merchant:
-                break;
-            case EntityType.Character:
-            case EntityType.Enemy:
-                var events = new EntityEvents(this, ref en);
-                EntityEvents.Add(ref events);
-                var behavior = new EntityBehavior(this, ref en);
-                behavior.Load();
-                EntityBehaviors.Add(ref behavior);
-                var enProjectiles = new EntityProjectiles(this, ref en);
-                EntityProjectiles.Add(ref enProjectiles);
-                var combat = new EntityCombat(this, ref en);
-                EntityCombat.Add(ref combat);
-                break;
-            case EntityType.Container:
-                var desc = XmlLibrary.ContainerDescs[en.Desc.ObjectType];
-                var inv = new EntityInventory(this, ref en, 8);
-                inv.Init(desc.SlotTypes, []);
-                EntityInventories.Add(ref inv);
-                break;
-            case EntityType.Player:
-                var slotTypes = XmlLibrary.PlayerDescs[en.Desc.ObjectType].SlotTypes;
-                inv = new EntityInventory(this, ref en, 20);
-                inv.Init(slotTypes, []);
-                EntityInventories.Add(ref inv);
-                events = new EntityEvents(this, ref en);
-                EntityEvents.Add(ref events);
-                var sight = new PlayerSight(this, ref en);
-                PlayerSights.Add(ref sight);
-                var chat = new PlayerChat(this, ref en);
-                PlayerChat.Add(ref chat);
-                enProjectiles = new EntityProjectiles(this, ref en);
-                EntityProjectiles.Add(ref enProjectiles);
-                combat = new EntityCombat(this, ref en);
-                EntityCombat.Add(ref combat);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException($"{en.Type}");
-        }
-    }
+        if (desc.Player)
+            return CreatePlayer(desc);
 
-    public void LeaveWorld(EntityId entityId) {
-        _removeEntities.Enqueue(entityId);
+        return _archWorld.Create(new Stats(desc));
     }
     
-    private void RemoveEntity(EntityId entityId) {
-        EntityEvents.Remove(entityId); // First to go is events, so DeathEvent gets called before getting removed from the rest of component managers
-        Entities.Remove(entityId);
-        EntityBehaviors.Remove(entityId);
-        EntityCombat.Remove(entityId);
-        EntityStats.Remove(entityId);
-        EntityProjectiles.Remove(entityId);
-        EntityInventories.Remove(entityId);
-        PortalDatas.Remove(entityId);
-        PlayerSights.Remove(entityId);
-        PlayerChat.Remove(entityId);
-        Users = Users.Remove(entityId);
+    private Entity CreatePlayer(ObjectDesc desc) {
+        return _archWorld.Create(
+            new Player(),
+            new Stats(desc),
+            new Flags(),
+            new Position()
+        );
+    }
+    
+    private Entity CreateEnemy(ObjectDesc desc) {
+        return _archWorld.Create(
+            new Enemy(),
+            new Stats(desc),
+            new Flags(),
+            new Position()
+        );
     }
 
+    private Entity CreateStaticObject(ObjectDesc desc) {
+        return _archWorld.Create(
+            new StaticObject(),
+            new Stats(desc),
+            new Flags(),
+            new Position()
+            );
+    }
+
+    public void LeaveWorld(Entity en) {
+        _removeEntities.Enqueue(en);
+        Users = Users.Remove(en.Id);
+    }
+    
     private void HandleTimers() {
         for (var i = 0; i < _timedActions.Count; i++) {
             var timer = _timedActions[i];
@@ -217,8 +235,10 @@ public class World {
     }
 
     public void Update() { // Runs in-between ticks
-        while (_removeEntities.TryDequeue(out var entityId))
-            RemoveEntity(entityId);
+        while (_removeEntities.TryDequeue(out var en)) {
+            if (_archWorld.IsAlive(en)) // Needed for ID safety
+                _archWorld.Destroy(en);
+        }
     }
 
     public virtual World GetInstance(User user) {
@@ -242,5 +262,40 @@ public class World {
         _statsSystem.UpdateStatsQuery(_archWorld, ref time);
         
         ClearTextCache();
+    }
+    
+    public static EntityType ResolveType(ushort objType) {
+        var desc = XmlLibrary.ObjectDescs[objType];
+        if (desc.Class != null)
+            switch (desc.Class) {
+                case "ConnectedWall":
+                case "CaveWall":
+                case "Wall":
+                    return EntityType.StaticObject;
+                case "Portal":
+                case "GuildHallPortal":
+                    return EntityType.Portal;
+                case "Character":
+                    if (desc.Enemy)
+                        return EntityType.Enemy;
+                    return EntityType.Character;
+                case "ClosedVaultChest":
+                case "Container":
+                    return EntityType.Container;
+                case "Merchant":
+                case "GuildMerchant":
+                    return EntityType.Merchant;
+            }
+
+        if (desc.Enemy)
+            return EntityType.Enemy;
+        
+        if (desc.Static)
+            return EntityType.StaticObject;
+
+        if (desc.Player)
+            return EntityType.Player;
+
+        return EntityType.GameObject;
     }
 }
