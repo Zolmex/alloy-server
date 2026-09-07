@@ -1,5 +1,6 @@
 using System.Numerics;
 using Common.Structs;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
@@ -7,44 +8,44 @@ using GameServer.Game.Worlds;
 namespace GameServer.Utilities;
 
 public static class PositionUtils {
-    extension(ref EntityStats en) {
+    extension(ref Position pos) {
         public float DistSqr(float x, float y) {
-            return DistSqr(en.Pos.X, en.Pos.Y, x, y);
+            return DistSqr(pos.Pos.X, pos.Pos.Y, x, y);
         }
 
-        public float DistSqr(ref EntityStats b) {
-            var dx = en.Pos.X - b.Pos.X;
-            var dy = en.Pos.Y - b.Pos.Y;
+        public float DistSqr(ref Position b) {
+            var dx = pos.Pos.X - b.Pos.X;
+            var dy = pos.Pos.Y - b.Pos.Y;
             return dx * dx + dy * dy;
         }
 
         public double TileDistSqr(int tileX, int tileY) {
-            var dx = (int)en.Pos.X - tileX;
-            var dy = (int)en.Pos.Y - tileY;
+            var dx = (int)pos.Pos.X - tileX;
+            var dy = (int)pos.Pos.Y - tileY;
             return dx * dx + dy * dy;
         }
 
-        public double TileDistSqr(ref EntityStats b) {
-            var dx = (int)en.Pos.X - (int)b.Pos.X;
-            var dy = (int)en.Pos.Y - (int)b.Pos.Y;
+        public double TileDistSqr(ref Position b) {
+            var dx = (int)pos.Pos.X - (int)b.Pos.X;
+            var dy = (int)pos.Pos.Y - (int)b.Pos.Y;
             return dx * dx + dy * dy;
         }
 
-        public float GetAngleBetween(Vector2 pos) {
-            return en.GetAngleBetween(pos.X, pos.Y);
+        public float GetAngleBetween(Vector2 vec) {
+            return pos.GetAngleBetween(vec.X, vec.Y);
         }
 
-        public float GetAngleBetween(ref EntityStats b) {
-            return en.GetAngleBetween(b.Pos.X, b.Pos.Y);
+        public float GetAngleBetween(ref Position b) {
+            return pos.GetAngleBetween(b.Pos.X, b.Pos.Y);
         }
 
         public float GetAngleBetween(float x, float y) {
-            return MathF.Atan2(y - en.Pos.Y, x - en.Pos.X);
+            return MathF.Atan2(y - pos.Pos.Y, x - pos.Pos.X);
         }
 
-        public float GetDistanceBetween(ref EntityStats entity2) //the diagonal distance
+        public float GetDistanceBetween(ref Position entity2) //the diagonal distance
         {
-            return GetDistanceBetween(en.Pos.X, entity2.Pos.X, en.Pos.Y, entity2.Pos.Y);
+            return GetDistanceBetween(pos.Pos.X, entity2.Pos.X, pos.Pos.Y, entity2.Pos.Y);
         }
     }
 
