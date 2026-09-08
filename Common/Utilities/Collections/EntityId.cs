@@ -29,4 +29,6 @@ public readonly struct EntityId : IEquatable<EntityId> {
 
     public static bool operator ==(EntityId a, EntityId b) => a.Value == b.Value;
     public static bool operator !=(EntityId a, EntityId b) => a.Value != b.Value;
+    
+    public static explicit operator EntityId(Entity entity) => new(entity);
 }

@@ -65,7 +65,7 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
         }
 
         if (cmd.SlotA.ObjectId == cmd.SlotB.ObjectId) {
-            if (cmd.SlotA.ObjectId == cmd.User.Session.PlayerId) 
+            if (cmd.SlotA.ObjectId == cmd.User.Session.Player) 
                 success = DoPlayerInvSwap(ref cmd, entA);
             else 
                 success = DoContainerInvSwap(ref cmd, entA);
@@ -197,7 +197,7 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
         if (!containerInv.OwnedBy(cmd.User.Session.Account.Id))
             return false;
 
-        var playerEnt = World.GetEntity(cmd.User.Session.PlayerId);
+        var playerEnt = cmd.User.Session.Player;
         if (playerEnt != Entity.Null && _archWorld.IsAlive(playerEnt)) {
             ref var pPos = ref _archWorld.Get<Position>(playerEnt);
             ref var cPos = ref _archWorld.Get<Position>(containerEnt);

@@ -12,6 +12,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Arch.LowLevel;
 using GameServer.Game.Entities.Old.Components;
 
 namespace GameServer.Game.Entities.Old.Systems;
@@ -31,10 +32,10 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     private PooledList<ObjectData> _newEntities = new(50);
     private PooledList<ObjectDropData> _dropEntities = new(50);
     private PooledList<IntPoint> _forcedTileUpdates = [];
-    private PooledList<EntityId> _removedEntities = new(50);
+    private UnsafeList<EntityId> _removedEntities = new(50);
 
-    private Dictionary<EntityId, ObjectData> _entityDataCache = new(200);
-    private Dictionary<EntityId, ObjectStatusData> _entityStatusCache = new(200);
+    private UnsafeHashMap<Entity, ObjectData> _entityDataCache = new(200);
+    private Dictionary<Entity, ObjectStatusData> _entityStatusCache = new(200);
 
     public override void Tick(ref RealmTime time) {
         _entityDataCache.Clear();

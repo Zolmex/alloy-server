@@ -81,8 +81,8 @@ public class World {
             pos.Init(this, orig.Pos);
             if (desc.Static) {
                 var tile = Map[(int)orig.Pos.X, (int)orig.Pos.Y];
-                if (tile.ObjectId == -1)
-                    tile.ObjectId = en.Id;
+                if (tile.ObjectId == EntityId.Null)
+                    tile.ObjectId = (EntityId)en;
             }
         }
     }

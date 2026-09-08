@@ -4,6 +4,8 @@ using Common.Network;
 namespace Common.Structs;
 
 public struct StatData : IEquatable<StatData> {
+    public const int STAT_COUNT = (int)StatType.StatTypeCount;
+    
     public StatType Type;
     public StatValue Value;
 

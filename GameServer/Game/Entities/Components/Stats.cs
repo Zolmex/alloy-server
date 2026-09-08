@@ -7,17 +7,9 @@ using Common.Utilities;
 
 namespace GameServer.Game.Entities.Components;
 
-[InlineArray(Stats.STAT_COUNT)]
-public struct StatValueBuffer { private StatValue _; }
-
-[InlineArray(Stats.STAT_COUNT)]
-public struct StatDataBuffer { private StatData _; }
-
 public struct Stats {
-    public const int STAT_COUNT = (int)StatType.StatTypeCount;
-
-    public StatValueBuffer All;
-    public StatDataBuffer Updated;
+    public StatValueBuffer Values;
+    public StatDataBuffer StatUpdates;
     public BitMask256 PublicMask;
     public BitMask256 PrivateMask;
     public int StatUpdateCount;
@@ -25,8 +17,8 @@ public struct Stats {
     private BitMask256 _statUpdatesMask;
     
     public Stats(ObjectDesc desc) {
-        All = new StatValueBuffer();
-        Updated = new StatDataBuffer();
+        Values = new StatValueBuffer();
+        StatUpdates = new StatDataBuffer();
         
         Set(StatType.Name, desc.ObjectId);
         Set(StatType.HP, desc.MaxHP);
@@ -34,15 +26,15 @@ public struct Stats {
     }
     
     public int GetInt(StatType s) {
-        return All[(int)s].IntVal;
+        return Values[(int)s].IntVal;
     }
 
     public float GetFloat(StatType s) {
-        return All[(int)s].FloatVal;
+        return Values[(int)s].FloatVal;
     }
 
     public string GetString(StatType s) {
-        return All[(int)s].StrVal;
+        return Values[(int)s].StrVal;
     }
 
     public void Set(StatType statType, int value, bool isPrivate = false) {
@@ -59,10 +51,10 @@ public struct Stats {
     
     private void SetInternal(StatType statType, StatValue sv, bool isPrivate) {
         var id = (int)statType;
-        if (sv == All[id])
+        if (sv == Values[id])
             return;
 
-        All[id] = sv;
+        Values[id] = sv;
         _statUpdatesMask.Set(id);
 
         if (!isPrivate)
@@ -73,9 +65,9 @@ public struct Stats {
     public void Update() {
         StatUpdateCount = 0;
         if (!_statUpdatesMask.IsEmpty)
-            for (var i = 0; i < STAT_COUNT; i++) {
+            for (var i = 0; i < StatData.STAT_COUNT; i++) {
                 if (_statUpdatesMask.IsSet(i))
-                    Updated[StatUpdateCount++] = new StatData((StatType)i, All[i]);
+                    StatUpdates[StatUpdateCount++] = new StatData((StatType)i, Values[i]);
             }
 
         _statUpdatesMask.Clear();

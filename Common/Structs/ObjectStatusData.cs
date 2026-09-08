@@ -7,22 +7,10 @@ namespace Common.Structs;
 public struct ObjectStatusData {
     public EntityId ObjectId;
     public WorldPosData Pos;
-    public StatValue[] Stats;
-    public StatData[] StatUpdates;
+    public StatValueBuffer Stats;
+    public StatDataBuffer StatUpdates;
     public BitMask256 PrivacyMask;
     public int StatCount;
-
-    public static ObjectStatusData Read(ref SpanReader rdr) {
-        var ret = new ObjectStatusData();
-        ret.ObjectId = EntityId.Read(ref rdr);
-        ret.Pos = WorldPosData.Read(ref rdr);
-        ret.Stats = new StatValue[rdr.ReadByte()];
-        for (var i = 0; i < ret.Stats.Length; i++)
-            ret.Stats[i] = StatData.Read(ref rdr).Value;
-        ret.StatCount = ret.Stats.Length;
-
-        return ret;
-    }
 
     public void WriteHeader(ref SpanWriter wtr) {
         wtr.Write(ObjectId.Value);

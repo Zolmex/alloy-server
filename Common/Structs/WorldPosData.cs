@@ -63,6 +63,9 @@ public static class WorldPosDataExtensions {
     public static Vector2 ToVec2(this in WorldPosData data) {
         return new Vector2(data.X, data.Y);
     }
+    public static IntPoint ToIntPoint(this in WorldPosData data) {
+        return new IntPoint((int)data.X, (int)data.Y);
+    }
 
     public static float DistSqr(this in Vector2 vec1, in Vector2 vec2) {
         var dx = vec1.X - vec2.X;

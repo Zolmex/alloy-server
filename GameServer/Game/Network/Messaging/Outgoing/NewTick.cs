@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Collections.Pooled;
 using Common.Network;
 using Common.Structs;
 using Common.Utilities;
@@ -18,12 +19,9 @@ public readonly struct NewTick : IOutgoingPacket {
     }
     
     public void Write(ref SpanWriter wtr) {
-        var span = _statuses.AsSpan();
+        var span = _statuses.Span;
         wtr.Write((short)span.Length);
         for (int i = 0; i < span.Length; i++)
-        {
-            ref readonly var status = ref span[i];
-            status.WriteForNewTick(ref wtr);
-        }
+            span[i].WriteForNewTick(ref wtr);
     }
 }
