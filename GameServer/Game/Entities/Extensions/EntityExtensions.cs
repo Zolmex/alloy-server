@@ -1,9 +1,13 @@
+using System.Numerics;
 using Arch.Core;
+using Arch.Core.Extensions;
+using Common.Game;
 using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Structs;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
+using GameServer.Utilities;
 using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Entities.Extensions;
@@ -26,6 +30,23 @@ public static class EntityExtensions {
         public void Move(World world, float newX, float newY) {
             ref var pos = ref world.Ecs.Get<Position>(en);
             pos.Move(newX, newY);
+        }
+        
+        public void MoveTowards(World world, ref RealmTime time, ref WorldPosData moveTo, float tilesPerSecond) {
+            ref var pos = ref world.Ecs.Get<Position>(en);
+            var angle = pos.GetAngleBetween(moveTo);
+            var dist = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+            var speed = en.GetSpeed(tilesPerSecond, world.Map[(int)pos.Pos.X, (int)pos.Pos.Y]) * (time.ElapsedMsDelta / 1000f);
+            dist *= speed;
+
+            if (moveTo.DistSqr(pos.Pos) < dist.LengthSquared()) {
+                // If the distance we're about to move is greater than the distance to the desired position, set position to the desired position
+                en.Move(world, moveTo.X, moveTo.Y);
+                return;
+            }
+
+            var newPos = pos.Pos + dist;
+            en.Move(world, newPos.X, newPos.Y);
         }
         
         public float GetSpeed(float speed, MapTileData tile) { // TODO: Condition effect system
