@@ -39,7 +39,7 @@ public struct Projectile : IEntityIdentifiable, IDisposable {
         OwnerId = ownerId;
         StartTime = time.TotalElapsedMs;
         var user = _world.Users.TryGetValue(OwnerId, out var userOwner);
-        OwnerAccId = user ? userOwner.GameInfo.Account.Id : -1;
+        OwnerAccId = user ? userOwner.Session.Account.Id : -1;
     }
 
     public void SetProps(ProjectilePath path, float angle, int damage, int lifetimeMs, bool multiHit) {

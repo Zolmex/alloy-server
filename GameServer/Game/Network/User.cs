@@ -38,7 +38,7 @@ public class User : IIdentifiable {
     public int Id { get; set; }
 
     public readonly NetworkHandler Network;
-    public readonly GameInfo GameInfo;
+    public readonly Session Session;
 
     public volatile ConnectionState State;
     public ClientRandom Random;
@@ -47,12 +47,12 @@ public class User : IIdentifiable {
     public User() {
         Id = Interlocked.Increment(ref _nextClientId);
         Network = new NetworkHandler(this);
-        GameInfo = new GameInfo(this);
+        Session = new Session(this);
     }
 
     public void Reset() {
         Network.Reset();
-        GameInfo.Reset();
+        Session.Reset();
     }
 
     public void Setup(string ip, Socket socket) {
@@ -68,32 +68,32 @@ public class User : IIdentifiable {
         Random = new ClientRandom(randomSeed);
         ServerRandom = new ClientRandom((uint)new Random().Next(1, int.MaxValue));
 
-        GameInfo.SetWorld(acc, world);
+        Session.SetWorld(acc, world);
     }
     
     public void Load(Character chr, World world) {
         GameLogic.Enqueue(() => {
             State = ConnectionState.Ready;
             
-            GameInfo.Load(chr, world);
+            Session.Load(chr, world);
 
             SendPacket(new CreateSuccess(
-                GameInfo.PlayerId,
+                Session.PlayerId,
                 chr.CharId));
             SendPacket(new AccountList(
                 AccountList.Locked,
-                GameInfo.Account.LockedAccounts.ToArray()));
+                Session.Account.LockedAccounts.ToArray()));
             SendPacket(new AccountList(
                 AccountList.Ignored,
-                GameInfo.Account.IgnoredAccounts.ToArray()));
+                Session.Account.IgnoredAccounts.ToArray()));
         });
     }
     
     public void Unload(bool reconnect) {
-        if (reconnect && GameInfo.State != GameState.Playing) // We can only unload when we've loaded in the first place
+        if (reconnect && Session.State != GameState.Playing) // We can only unload when we've loaded in the first place
             return;
 
-        GameInfo.Unload();
+        Session.Unload();
     }
     
     public void SendPacket<T>(in T packet) where T : IOutgoingPacket, allows ref struct {

@@ -13,11 +13,11 @@ public record Move : IIncomingPacket {
     public WorldPosData Pos;
 
     public async Task Handle(User user) {
-        if (user.GameInfo.State != GameState.Playing)
+        if (user.Session.State != GameState.Playing)
             return;
 
-        ref var player = ref user.GameInfo.Player;
-        player.Move(user.GameInfo.World, Pos.X, Pos.Y);
+        ref var player = ref user.Session.Player;
+        player.Move(user.Session.World, Pos.X, Pos.Y);
     }
 
     public void Read(ref SpanReader rdr) {

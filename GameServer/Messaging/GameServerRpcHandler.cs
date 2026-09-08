@@ -19,8 +19,8 @@ public class GameServerRpcHandler : IGameServerRpc {
         return Task.FromResult(new ServerInfo(Program.Guid, ServerType.GameServer, GameLogic.WorldTime.TotalElapsedMs, RealmManager.Users.Count));
     }
     
-    public Task<GameInfoDto?> GetUserInfo(string name, int accountId) {
-        var target = RealmManager.Users.Values.FirstOrDefault(c => c.GameInfo.Account.Id == accountId || c.GameInfo.Account.Name == name);
-        return Task.FromResult(target?.GameInfo.Data);
+    public Task<SessionDto?> GetUserInfo(string name, int accountId) {
+        var target = RealmManager.Users.Values.FirstOrDefault(c => c.Session.Account.Id == accountId || c.Session.Account.Name == name);
+        return Task.FromResult(target?.Session.Data);
     }
 }

@@ -1,11 +1,12 @@
-﻿using Common.Database.Models;
+﻿using Arch.Core;
+using Common.Database.Models;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Extensions;
-using GameServer.Game.Worlds;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Extensions;
+using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Network;
 
@@ -15,19 +16,18 @@ public enum GameState {
     Playing // User has established
 }
 
-public class GameInfo {
-    private static readonly Logger _log = new(typeof(GameInfo));
+public class Session {
+    private static readonly Logger _log = new(typeof(Session));
 
     public readonly User User;
     public Account Account;
     public World World;
     public Character Char;
-    public EntityId PlayerId;
+    public Entity Player;
     
-    public ref Entity Player => ref World.Entities.Get(PlayerId);
-    public GameInfoDto Data => new GameInfoDto(Account.Id, World.Id, World.DisplayName, World.EntityStats.Get(PlayerId).Pos);
+    public SessionDto Data => new(Account.Id, World.Id, World.DisplayName, World.Ecs.Get<Position>(Player).Pos);
 
-    public GameInfo(User user) {
+    public Session(User user) {
         User = user;
     }
 
@@ -43,12 +43,11 @@ public class GameInfo {
         State = GameState.Playing;
         Char = chr;
         
-        var plr = new Entity(chr.ObjectType);
-        ref var newPlr = ref world.EnterPlayer(ref plr, User);
-        newPlr.InitPlayer(User, world, Account, Char);
+        var newPlr = world.EnterPlayer(chr.ObjectType, User);
+        newPlr.InitPlayer(world, Account, Char);
         newPlr.MoveToSpawn(world);
         
-        PlayerId = newPlr.Id;
+        Player = newPlr;
     }
 
     public void Unload() {

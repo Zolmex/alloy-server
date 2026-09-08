@@ -8,7 +8,7 @@ public record PlayerText : IIncomingPacket {
     public string Text;
 
     public async Task Handle(User user) {
-        user.GameInfo.Player.Speak(user.GameInfo.World, Text);
+        user.Session.Player.Speak(user.Session.World, Text);
     }
 
     public void Read(ref SpanReader rdr) {

@@ -16,14 +16,14 @@ public record Load : IIncomingPacket {
     }
 
     public async Task Handle(User user) {
-        if (user.GameInfo.Account.IsBanned) {
+        if (user.Session.Account.IsBanned) {
             user.SendFailure(Failure.DEFAULT, "Account has been banned.");
             return;
         }
         
-        var chr = user.GameInfo.Char;
+        var chr = user.Session.Char;
         if (user.State != ConnectionState.Reconnecting) {
-            chr = DbClient.GetCharacter(user.GameInfo.Account.Id, CharId);
+            chr = DbClient.GetCharacter(user.Session.Account.Id, CharId);
             if (chr == null) {
                 user.SendFailure(Failure.DEFAULT, $"Failed to load character #{CharId}");
                 return;
@@ -40,7 +40,7 @@ public record Load : IIncomingPacket {
             return;
         }
         
-        var world = user.GameInfo.World;
+        var world = user.Session.World;
         if (world.Deleted) {
             user.SendFailure(Failure.DEFAULT, "Invalid world.");
             return;

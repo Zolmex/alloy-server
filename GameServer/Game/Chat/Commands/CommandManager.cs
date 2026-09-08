@@ -37,9 +37,9 @@ public static class CommandManager {
             return;
         }
 
-        if (cmd.PermissionLevel == CommandPermissionLevel.Admin && (!user.GameInfo.Account.IsAdmin ||
+        if (cmd.PermissionLevel == CommandPermissionLevel.Admin && (!user.Session.Account.IsAdmin ||
                                                                             (int)cmd.PermissionLevel >
-                                                                            user.GameInfo.Account.Rank)) {
+                                                                            user.Session.Account.Rank)) {
             user.SendError("You're not authorized to use this command.");
             return;
         }

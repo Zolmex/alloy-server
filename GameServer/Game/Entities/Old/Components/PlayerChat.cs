@@ -27,7 +27,7 @@ public struct PlayerChat : IEntityIdentifiable, IDisposable {
 
     public bool ValidateSpeak(RealmTime time, string text) {
         var user = _world.Users[_playerId];
-        if (user.GameInfo.Account.IsAdmin)
+        if (user.Session.Account.IsAdmin)
             return true;
 
         // If desired, word filter goes here

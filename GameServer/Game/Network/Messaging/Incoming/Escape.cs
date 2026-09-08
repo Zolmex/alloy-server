@@ -7,10 +7,10 @@ namespace GameServer.Game.Network.Messaging.Incoming;
 [Packet(PacketId.ESCAPE)]
 public record Escape : IIncomingPacket {
     public async Task Handle(User user) {
-        if (user.GameInfo.State != GameState.Playing)
+        if (user.Session.State != GameState.Playing)
             return;
 
-        if (user.GameInfo.World.Id == World.NEXUS_ID) {
+        if (user.Session.World.Id == World.NEXUS_ID) {
             user.SendInfo("You're already in the Nexus!");
             return;
         }

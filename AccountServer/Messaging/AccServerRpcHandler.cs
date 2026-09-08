@@ -38,7 +38,7 @@ public class AccServerRpcHandler : IAccountServerHandler {
         return Task.CompletedTask;
     }
 
-    public async Task<GameInfoDto?> GetUserInfo(string name, int accountId) {
+    public async Task<SessionDto?> GetUserInfo(string name, int accountId) {
         return await _proxy.GetUserInfo(name, accountId);
     }
 }

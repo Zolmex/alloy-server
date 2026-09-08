@@ -13,11 +13,11 @@ public class Vault : World {
     }
 
     public override World GetInstance(User user) {
-        if (user.GameInfo.Account == null)
+        if (user.Session.Account == null)
             return null;
 
-        if (!_vaults.TryGetValue(user.GameInfo.Account.Id, out var ret) || ret.Deleted) {
-            ret = _vaults[user.GameInfo.Account.Id] = new Vault(0, MapId, Config);
+        if (!_vaults.TryGetValue(user.Session.Account.Id, out var ret) || ret.Deleted) {
+            ret = _vaults[user.Session.Account.Id] = new Vault(0, MapId, Config);
             RealmManager.AddWorld(ret);
         }
 

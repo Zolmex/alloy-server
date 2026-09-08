@@ -17,10 +17,10 @@ public record PlayerShoot : IIncomingPacket {
     public float Angle;
 
     public async Task Handle(User user) {
-        if (user.State != ConnectionState.Ready || user.GameInfo.State != GameState.Playing)
+        if (user.State != ConnectionState.Ready || user.Session.State != GameState.Playing)
             return;
 
-        var player = new EntityView(user.GameInfo.World, user.GameInfo.PlayerId);
+        var player = new EntityView(user.Session.World, user.Session.PlayerId);
         var weapon = player.Inventory[0];
         if (weapon == null || weapon.ObjectType == 0)
             return;
@@ -32,7 +32,7 @@ public record PlayerShoot : IIncomingPacket {
         var damage = player.Combat.GetProjectileDamage(projDesc.MinDamage, projDesc.MaxDamage);
         var pos = player.Stats.Pos;
         var world = player.World;
-        GameLogic.Enqueue(() => world.SpawnProjectiles(pos, user.GameInfo.PlayerId, Angle.Rad2Deg(), weapon.ArcGap, damage, weapon.NumProjectiles,
+        GameLogic.Enqueue(() => world.SpawnProjectiles(pos, user.Session.PlayerId, Angle.Rad2Deg(), weapon.ArcGap, damage, weapon.NumProjectiles,
             ProjectilePathSegment.ParsePath(projDesc).ToPath(), projDesc.LifetimeMS, projDesc.MultiHit,
             ref GameLogic.WorldTime));
     }

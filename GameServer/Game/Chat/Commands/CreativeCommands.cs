@@ -40,8 +40,8 @@ public class SpawnCommand : Command {
 
         user.SendInfo($"Spawning <{spawnCount}> <{desc.DisplayId}> in 2 seconds");
 
-        var world = user.GameInfo.World;
-        ref var pos = ref world.EntityStats.Get(user.GameInfo.PlayerId).Pos;
+        var world = user.Session.World;
+        ref var pos = ref world.EntityStats.Get(user.Session.PlayerId).Pos;
         var x = pos.X;
         var y = pos.Y;
 

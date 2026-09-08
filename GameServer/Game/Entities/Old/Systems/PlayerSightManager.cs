@@ -250,7 +250,7 @@ public class PlayerSightManager(World world, int capacity) : ManagerBase<PlayerS
     private bool IsVisible(int blocksight, ref PlayerSight sight, ref EntityStats stats, ref EntityInventory enInv) {
         if (enInv.Id != EntityId.Null) {
             var user = _world.Users[sight.Id];
-            if (!enInv.OwnedBy(user.GameInfo.Account.Id))
+            if (!enInv.OwnedBy(user.Session.Account.Id))
                 return false;
         }
 

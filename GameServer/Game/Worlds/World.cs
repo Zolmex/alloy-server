@@ -29,9 +29,10 @@ public class World {
     public int Id;
     public readonly int MapId;
     public readonly WorldConfig Config;
+    public readonly ArchWorld Ecs = ArchWorld.Create();
 
     public readonly List<string> TextCache = [];
-    public ImmutableDictionary<int, User> Users;
+    public ImmutableDictionary<Entity, User> Users;
 
     public WorldMap Map;
     public string DisplayName;
@@ -43,7 +44,6 @@ public class World {
     private readonly ConcurrentQueue<Entity> _removeEntities = [];
     private readonly Dictionary<EntityId, Entity> _entities = []; 
     
-    private readonly ArchWorld _archWorld = ArchWorld.Create();
     private readonly StatsSystem _statsSystem;
     private readonly InventorySystem _inventorySystem;
 
@@ -53,10 +53,10 @@ public class World {
         Config = config;
         DisplayName = config.DisplayName;
         Music = config.Music;
-        Users = ImmutableDictionary<int, User>.Empty;
+        Users = ImmutableDictionary<Entity, User>.Empty;
         
-        _statsSystem = new StatsSystem(_archWorld);
-        _inventorySystem = new InventorySystem(this, _archWorld);
+        _statsSystem = new StatsSystem(Ecs);
+        _inventorySystem = new InventorySystem(this, Ecs);
 
         Load(mapId);
         
@@ -89,8 +89,8 @@ public class World {
 
     public void Update() { // Runs in-between ticks
         while (_removeEntities.TryDequeue(out var en)) {
-            if (_archWorld.IsAlive(en)) { // Needed for ID safety
-                _archWorld.Destroy(en);
+            if (Ecs.IsAlive(en)) { // Needed for ID safety
+                Ecs.Destroy(en);
                 _entities.Remove(new EntityId(en), out _);
             }
         }
@@ -109,15 +109,15 @@ public class World {
         // EntityStats.Tick(ref time);
         
         _inventorySystem.Tick(ref time);
-        _inventorySystem.ProcessQuery(_archWorld);
-        _statsSystem.TickQuery(_archWorld, ref time);
+        _inventorySystem.ProcessQuery(Ecs);
+        _statsSystem.TickQuery(Ecs, ref time);
         
         ClearTextCache();
     }
 
     public Entity EnterPlayer(ushort objType, User user) {
         var en = EnterWorld(XmlLibrary.ObjectDescs[objType]);
-        Users = Users.Add(en.Id, user);
+        Users = Users.Add(en, user);
         return en;
     }
 
@@ -132,7 +132,7 @@ public class World {
         if (desc.Class != null)
             switch (desc.Class) {
                 case "Projectile":
-                    return _archWorld.Create(
+                    return Ecs.Create(
                         new ProjectileType(), // You can add components to projectiles here if you want :)
                         new ObjectType(desc.ObjectType)
                         );
@@ -142,7 +142,7 @@ public class World {
                     return CreateStaticObject(desc);
                 case "Portal":
                 case "GuildHallPortal":
-                    return _archWorld.Create(
+                    return Ecs.Create(
                         new PortalType(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
@@ -152,7 +152,7 @@ public class World {
                 case "Character":
                     if (desc.Enemy)
                         return CreateEnemy(desc);
-                    return _archWorld.Create(
+                    return Ecs.Create(
                         new CharacterType(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
@@ -162,7 +162,7 @@ public class World {
                 case "ClosedVaultChest":
                 case "Container":
                     var containerDesc = XmlLibrary.ContainerDescs[desc.ObjectType];
-                    return _archWorld.Create(
+                    return Ecs.Create(
                         new ContainerType(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
@@ -172,7 +172,7 @@ public class World {
                         );
                 case "Merchant":
                 case "GuildMerchant":
-                    return _archWorld.Create(
+                    return Ecs.Create(
                         new MerchantType(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
@@ -190,12 +190,12 @@ public class World {
         if (desc.Player)
             return CreatePlayer(desc);
 
-        return _archWorld.Create(new Stats(desc));
+        return Ecs.Create(new Stats(desc));
     }
     
     private Entity CreatePlayer(ObjectDesc desc) {
         var playerDesc = XmlLibrary.PlayerDescs[desc.ObjectType];
-        return _archWorld.Create(
+        return Ecs.Create(
             new PlayerType(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
@@ -206,7 +206,7 @@ public class World {
     }
     
     private Entity CreateEnemy(ObjectDesc desc) {
-        return _archWorld.Create(
+        return Ecs.Create(
             new EnemyType(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
@@ -216,7 +216,7 @@ public class World {
     }
 
     private Entity CreateStaticObject(ObjectDesc desc) {
-        return _archWorld.Create(
+        return Ecs.Create(
             new StaticObjectType(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
@@ -227,7 +227,7 @@ public class World {
 
     public void LeaveWorld(Entity en) {
         _removeEntities.Enqueue(en);
-        Users = Users.Remove(en.Id);
+        Users = Users.Remove(en);
     }
 
     public Entity GetEntity(EntityId id) {

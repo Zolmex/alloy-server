@@ -30,7 +30,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         bool success;
         if (cmd.SlotA.ObjectId == cmd.SlotB.ObjectId) // Same inventory swap
         {
-            if (cmd.SlotA.ObjectId == cmd.User.GameInfo.Player.Id) // Player inv swap
+            if (cmd.SlotA.ObjectId == cmd.User.Session.Player.Id) // Player inv swap
                 success = DoPlayerInvSwap(ref cmd);
             else // Container inv swap
                 success = DoContainerInvSwap(ref cmd);
@@ -123,7 +123,7 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         if (playerStats.Id == EntityId.Null || containerInv.Id == EntityId.Null)
             return false;
 
-        if (!containerInv.OwnedBy(cmd.User.GameInfo.Account.Id))
+        if (!containerInv.OwnedBy(cmd.User.Session.Account.Id))
             return false;
         
         if (playerStats.DistSqr(ref containerStats) > 3f * 3f)
@@ -176,10 +176,10 @@ public class EntityInventoryManager(World world, int capacity) : ManagerBase<Ent
         if (containerInv.Id == EntityId.Null)
             return false;
 
-        if (!containerInv.OwnedBy(cmd.User.GameInfo.Account.Id))
+        if (!containerInv.OwnedBy(cmd.User.Session.Account.Id))
             return false;
 
-        ref var plrStats = ref _world.EntityStats.Get(cmd.User.GameInfo.PlayerId);
+        ref var plrStats = ref _world.EntityStats.Get(cmd.User.Session.PlayerId);
         ref var containerStats = ref _world.EntityStats.Get(containerInv.Id);
         if (plrStats.DistSqr(ref containerStats) > 3f * 3f)
             return false;

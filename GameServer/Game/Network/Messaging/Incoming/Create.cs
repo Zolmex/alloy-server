@@ -18,14 +18,14 @@ public record Create : IIncomingPacket {
     }
 
     public async Task Handle(User user) {
-        var result = await DbClient.CreateCharacterAsync(user.GameInfo.Account, (ushort)ClassType, (ushort)SkinType);
+        var result = await DbClient.CreateCharacterAsync(user.Session.Account, (ushort)ClassType, (ushort)SkinType);
         var chr = result.Char;
         var status = result.Status;
         if (chr == null) {
             user.SendFailure(Failure.DEFAULT, status.GetDescription());
         }
         else {
-            var world = user.GameInfo.World;
+            var world = user.Session.World;
             if (world.Deleted) {
                 user.SendFailure(Failure.DEFAULT, "Invalid world.");
                 return;

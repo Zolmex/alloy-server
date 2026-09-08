@@ -65,7 +65,7 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
         }
 
         if (cmd.SlotA.ObjectId == cmd.SlotB.ObjectId) {
-            if (cmd.SlotA.ObjectId == cmd.User.GameInfo.PlayerId) 
+            if (cmd.SlotA.ObjectId == cmd.User.Session.PlayerId) 
                 success = DoPlayerInvSwap(ref cmd, entA);
             else 
                 success = DoContainerInvSwap(ref cmd, entA);
@@ -138,7 +138,7 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
         ref var playerPos = ref _archWorld.Get<Position>(playerEnt);
         ref var containerPos = ref _archWorld.Get<Position>(containerEnt);
 
-        if (!containerInv.OwnedBy(cmd.User.GameInfo.Account.Id))
+        if (!containerInv.OwnedBy(cmd.User.Session.Account.Id))
             return false;
         
         if (playerPos.DistSqr(ref containerPos) > 9f) // 3 tiles squared
@@ -194,10 +194,10 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
             return false;
 
         ref var containerInv = ref _archWorld.Get<Inventory>(containerEnt);
-        if (!containerInv.OwnedBy(cmd.User.GameInfo.Account.Id))
+        if (!containerInv.OwnedBy(cmd.User.Session.Account.Id))
             return false;
 
-        var playerEnt = World.GetEntity(cmd.User.GameInfo.PlayerId);
+        var playerEnt = World.GetEntity(cmd.User.Session.PlayerId);
         if (playerEnt != Entity.Null && _archWorld.IsAlive(playerEnt)) {
             ref var pPos = ref _archWorld.Get<Position>(playerEnt);
             ref var cPos = ref _archWorld.Get<Position>(containerEnt);

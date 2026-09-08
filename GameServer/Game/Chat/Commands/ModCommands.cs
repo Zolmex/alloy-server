@@ -22,7 +22,7 @@ public class FindPlayerCommand : Command {
         }
 
         // Find locally first
-        var target = RealmManager.Users.Values.FirstOrDefault(c => c.GameInfo.Account.Name == args)?.GameInfo.Data;
+        var target = RealmManager.Users.Values.FirstOrDefault(c => c.Session.Account.Name == args)?.Session.Data;
         if (target == null) {
             target = await Program.AccountServerRpc.GetUserInfo(args, -1);
             if (target == null) {
@@ -122,7 +122,7 @@ public class KickCommand : Command {
             return;
         }
 
-        var target = RealmManager.Users.Values.FirstOrDefault(c => c.GameInfo.Account.Name == args);
+        var target = RealmManager.Users.Values.FirstOrDefault(c => c.Session.Account.Name == args);
         if (target == null) {
             user.SendError($"Player {args} could not be found.");
             return;

@@ -9,10 +9,10 @@ public record UsePortal : IIncomingPacket {
     public EntityId ObjectId;
 
     public async Task Handle(User user) {
-        if (user.GameInfo.State != GameState.Playing)
+        if (user.Session.State != GameState.Playing)
             return;
 
-        ref var portalData = ref user.GameInfo.World.PortalDatas.Get(ObjectId);
+        ref var portalData = ref user.Session.World.PortalDatas.Get(ObjectId);
         if (portalData.Id == EntityId.Null)
             return;
 

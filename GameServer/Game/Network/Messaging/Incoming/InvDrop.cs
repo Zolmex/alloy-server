@@ -12,9 +12,9 @@ public record InvDrop : IIncomingPacket {
     public byte SlotId;
 
     public async Task Handle(User user) {
-        var world = user.GameInfo.World;
+        var world = user.Session.World;
         GameLogic.Enqueue(() => {
-            ref var playerInv = ref world.EntityInventories.Get(user.GameInfo.PlayerId);
+            ref var playerInv = ref world.EntityInventories.Get(user.Session.PlayerId);
             if (playerInv.Id == EntityId.Null)
                 return;
 

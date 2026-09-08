@@ -12,10 +12,10 @@ public record PlayerHit : IIncomingPacket {
     public ushort ProjectileId;
 
     public async Task Handle(User user) {
-        if (user.State != ConnectionState.Ready || user.GameInfo.State != GameState.Playing)
+        if (user.State != ConnectionState.Ready || user.Session.State != GameState.Playing)
             return;
 
-        ref var entityProjectiles = ref user.GameInfo.World.EntityProjectiles.Get(OwnerId);
+        ref var entityProjectiles = ref user.Session.World.EntityProjectiles.Get(OwnerId);
         if (entityProjectiles.Id == EntityId.Null) {
             _log.Debug($"DEAD PROJECTILE OWNER {OwnerId}");
             return;
@@ -27,11 +27,11 @@ public record PlayerHit : IIncomingPacket {
             return;
         }
         
-        ref var proj = ref user.GameInfo.World.Projectiles.Get(projId);
+        ref var proj = ref user.Session.World.Projectiles.Get(projId);
         if (proj.Id == EntityId.Null)
             return;
         
-        proj.TryHitEntity(user.GameInfo.PlayerId);
+        proj.TryHitEntity(user.Session.PlayerId);
     }
 
     public void Read(ref SpanReader rdr) {

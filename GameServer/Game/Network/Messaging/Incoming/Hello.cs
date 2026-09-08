@@ -39,7 +39,7 @@ public record Hello : IIncomingPacket {
             return;
         }
         
-        var acc = user.GameInfo.Account;
+        var acc = user.Session.Account;
         if (user.State != ConnectionState.Reconnecting) {
             var verify = DbClient.VerifyAccount(Username, Password, Program.Guid);
             var status = verify.Status;
