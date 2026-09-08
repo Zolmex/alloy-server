@@ -88,7 +88,7 @@ public static class PlayerExtensions {
                 return;
             
             if (text.StartsWith('/')) {
-                ExecuteCommand(world.Users[player.Id], text);
+                ExecuteCommand(world.Users[player], text);
                 return;
             }
 

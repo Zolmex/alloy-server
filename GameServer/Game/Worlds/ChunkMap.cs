@@ -1,11 +1,13 @@
+using Arch.Core;
+using Arch.System;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities.Collections;
+using GameServer.Game.Entities.Components;
 
 namespace GameServer.Game.Worlds;
 
-public class ChunkMap {
-
+public partial class ChunkMap {
     public readonly int Width;
     public readonly int Height;
     public readonly Chunk[,] Chunks;
@@ -25,26 +27,26 @@ public class ChunkMap {
     }
 
     public void Rebuild() {
-        for (var y = 0; y < Height; y++)
-            for (var x = 0; x < Width; x++) {
-                Chunks[x, y].Clear();
-            }
+        foreach (var chunk in Chunks)
+            chunk.Clear();
 
-        foreach (ref var stats in _world.EntityStats) {
-            var chunkX = (int)stats.Pos.X / Chunk.CHUNK_SIZE;
-            var chunkY = (int)stats.Pos.Y / Chunk.CHUNK_SIZE;
-            if (chunkX < 0 || chunkX >= Width || chunkY < 0 || chunkY >= Height)
-                continue;
-            
-            Chunks[chunkX, chunkY].Entities.Add(stats.Id);
-        }
+        RebuildChunkQuery(_world, this); 
+    }
+
+    [Query]
+    private static void RebuildChunk([Data] ChunkMap grid, Entity en, ref Position pos) {
+        var chunkX = (int)pos.Pos.X / Chunk.CHUNK_SIZE;
+        var chunkY = (int)pos.Pos.Y / Chunk.CHUNK_SIZE;
+
+        if ((uint)chunkX < grid.Width && (uint)chunkY < grid.Height)
+            grid.Chunks[chunkX, chunkY].Entities.Add(en);
     }
 }
 
 public class Chunk {
     public const int CHUNK_SIZE = 16;
 
-    public readonly List<EntityId> Entities = [];
+    public readonly List<Entity> Entities = [];
 
     public void Clear() {
         Entities.Clear();

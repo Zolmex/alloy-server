@@ -44,8 +44,9 @@ public class World {
     private readonly ConcurrentQueue<Entity> _removeEntities = [];
     private readonly Dictionary<EntityId, Entity> _entities = []; 
     
-    private readonly StatsSystem _statsSystem;
-    private readonly InventorySystem _inventorySystem;
+    public readonly StatsSystem StatsSystem;
+    public readonly InventorySystem InventorySystem;
+    public readonly PlayerSightSystem PlayerSightSystem;
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -55,13 +56,15 @@ public class World {
         Music = config.Music;
         Users = ImmutableDictionary<Entity, User>.Empty;
         
-        _statsSystem = new StatsSystem(Ecs);
-        _inventorySystem = new InventorySystem(this, Ecs);
+        StatsSystem = new StatsSystem(this);
+        InventorySystem = new InventorySystem(this);
+        PlayerSightSystem = new PlayerSightSystem(this);
 
         Load(mapId);
         
-        _statsSystem.Initialize();
-        _inventorySystem.Initialize();
+        StatsSystem.Initialize();
+        InventorySystem.Initialize();
+        PlayerSightSystem.Initialize();
     }
 
     public void Load(int mapId) {
@@ -81,8 +84,8 @@ public class World {
             pos.Init(this, orig.Pos);
             if (desc.Static) {
                 var tile = Map[(int)orig.Pos.X, (int)orig.Pos.Y];
-                if (tile.ObjectId == EntityId.Null)
-                    tile.ObjectId = (EntityId)en;
+                if (tile.Object == Entity.Null)
+                    tile.Object = en;
             }
         }
     }
@@ -108,9 +111,10 @@ public class World {
         // PlayerSights.Tick(ref time);
         // EntityStats.Tick(ref time);
         
-        _inventorySystem.Tick(ref time);
-        _inventorySystem.ProcessQuery(Ecs);
-        _statsSystem.TickQuery(Ecs, ref time);
+        InventorySystem.Tick(ref time);
+        InventorySystem.ProcessQuery(Ecs);
+        PlayerSightSystem.ProcessQuery(Ecs, ref time);
+        StatsSystem.TickQuery(Ecs, ref time);
         
         ClearTextCache();
     }

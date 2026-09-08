@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Arch.Core;
 using Common.Network;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
@@ -111,7 +112,7 @@ public class MapTileData { // Don't modify this tile data with game logic, use W
     public TileRegion Region;
     public TerrainType Terrain;
 
-    public EntityId ObjectId = EntityId.Null; // Set at World.Load()
+    public Entity Object = Entity.Null; // Set at World.Load()
     public bool BlocksSight;
     public bool FullOccupy;
     public bool EnemyOccupySquare;

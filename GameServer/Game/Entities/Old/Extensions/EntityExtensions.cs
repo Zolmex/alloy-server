@@ -18,8 +18,8 @@ public static class EntityExtensions {
             
             if (en.Desc.Static) {
                 var tile = world.Map[(int)spawnPos.X, (int)spawnPos.Y];
-                if (tile.ObjectId == EntityId.Null)
-                    tile.ObjectId = en.Id;
+                if (tile.Object == EntityId.Null)
+                    tile.Object = en.Id;
             }
         }
     }

@@ -46,6 +46,10 @@ public partial class PlayerSightSystem(World world) : BaseSystem<World, RealmTim
     public override void AfterUpdate(in RealmTime t) {
         _forcedTileUpdates.Clear();
     }
+    
+    public void TileUpdate(IntPoint pos) {
+        _forcedTileUpdates.Add(pos);
+    }
 
     [Query]
     public void Process([Data] ref RealmTime time, Entity entity, ref Position pos, ref PlayerSight sight) {
@@ -53,13 +57,13 @@ public partial class PlayerSightSystem(World world) : BaseSystem<World, RealmTim
         if (!_sightStates.TryGetValue(entity, out var sightState))
             sightState = _sightStates[entity] = new PlayerSightState(entity, World.Map.Data.Width, World.Map.Data.Height);
         
-        ProcessUpdate(user, ref pos, sightState);
+        ProcessUpdate(user, entity, ref pos, sightState);
         ProcessNewtick(user, sightState);
     }
     
-    private void ProcessUpdate(User user, ref Position pos, PlayerSightState sight) {
+    private void ProcessUpdate(User user, Entity owner, ref Position pos, PlayerSightState sight) {
         GetNewTiles(ref pos, sight);
-        ProcessEntities(ref pos, sight);
+        ProcessEntities(owner, ref pos, sight);
 
         if (_newTiles.Count == 0 && _newEntities.Count == 0 && _dropEntities.Count == 0)
             return;

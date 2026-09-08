@@ -7,6 +7,7 @@ using Common.Game;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
 using GameServer.Game.Network;
 using GameServer.Game.Network.Messaging.Outgoing;
@@ -18,15 +19,10 @@ namespace GameServer.Game.Entities.Systems;
 
 public readonly record struct SwapCommand(User User, SlotObjectData SlotA, SlotObjectData SlotB);
 
-public partial class InventorySystem : BaseSystem<World, RealmTime> {
+public partial class InventorySystem(World world) : BaseSystem<World, RealmTime>(world) {
     
     private readonly ConcurrentQueue<SwapCommand> _swapCommands = new();
-    private readonly ArchWorld _archWorld;
 
-    public InventorySystem(World world, ArchWorld archWorld) : base(world) {
-        _archWorld = archWorld;
-    }
-    
     public void Tick(ref RealmTime time) {
         while (_swapCommands.TryDequeue(out var cmd)) {
             ExecuteSwap(ref cmd);
@@ -59,13 +55,13 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
         var entA = World.GetEntity(cmd.SlotA.ObjectId);
         var entB = World.GetEntity(cmd.SlotB.ObjectId);
         
-        if (!_archWorld.IsAlive(entA) || !_archWorld.IsAlive(entB)) {
+        if (!World.Ecs.IsAlive(entA) || !World.Ecs.IsAlive(entB)) {
             cmd.User.SendPacket(new InvResult(1));
             return;
         }
 
         if (cmd.SlotA.ObjectId == cmd.SlotB.ObjectId) {
-            if (cmd.SlotA.ObjectId == cmd.User.Session.Player) 
+            if (cmd.SlotA.ObjectId == cmd.User.Session.Player)
                 success = DoPlayerInvSwap(ref cmd, entA);
             else 
                 success = DoContainerInvSwap(ref cmd, entA);
@@ -81,10 +77,10 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
         if (cmd.SlotA.SlotId == cmd.SlotB.SlotId)
             return false;
         
-        if (!_archWorld.Has<Inventory>(playerEnt))
+        if (!World.Ecs.Has<Inventory>(playerEnt))
             return false;
 
-        ref var playerInv = ref _archWorld.Get<Inventory>(playerEnt);
+        ref var playerInv = ref World.Ecs.Get<Inventory>(playerEnt);
         if (cmd.SlotA.SlotId is 255 or 254) { // Unstack potion
             if (playerInv.Items[cmd.SlotB.SlotId] != null)
                 return false;
@@ -121,8 +117,8 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
     }
 
     private bool DoPlayerContainerInvSwap(ref SwapCommand cmd, Entity entA, Entity entB) {
-        if (!_archWorld.Has<Inventory>(entA) || !_archWorld.Has<Inventory>(entB) ||
-            !_archWorld.Has<Position>(entA) || !_archWorld.Has<Position>(entB)) 
+        if (!World.Ecs.Has<Inventory>(entA) || !World.Ecs.Has<Inventory>(entB) ||
+            !World.Ecs.Has<Position>(entA) || !World.Ecs.Has<Position>(entB)) 
             return false;
 
         var entAIsPlayer = entA.Has<PlayerType>();
@@ -133,10 +129,10 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
         var playerEnt = entAIsPlayer ? entA : entB;
         var containerEnt = entAIsPlayer ? entB : entA;
         
-        ref var playerInv = ref _archWorld.Get<Inventory>(playerEnt);
-        ref var containerInv = ref _archWorld.Get<Inventory>(containerEnt);
-        ref var playerPos = ref _archWorld.Get<Position>(playerEnt);
-        ref var containerPos = ref _archWorld.Get<Position>(containerEnt);
+        ref var playerInv = ref World.Ecs.Get<Inventory>(playerEnt);
+        ref var containerInv = ref World.Ecs.Get<Inventory>(containerEnt);
+        ref var playerPos = ref World.Ecs.Get<Position>(playerEnt);
+        ref var containerPos = ref World.Ecs.Get<Position>(containerEnt);
 
         if (!containerInv.OwnedBy(cmd.User.Session.Account.Id))
             return false;
@@ -190,17 +186,17 @@ public partial class InventorySystem : BaseSystem<World, RealmTime> {
     }
 
     private bool DoContainerInvSwap(ref SwapCommand cmd, Entity containerEnt) {
-        if (!_archWorld.Has<Inventory>(containerEnt))
+        if (!World.Ecs.Has<Inventory>(containerEnt))
             return false;
 
-        ref var containerInv = ref _archWorld.Get<Inventory>(containerEnt);
+        ref var containerInv = ref World.Ecs.Get<Inventory>(containerEnt);
         if (!containerInv.OwnedBy(cmd.User.Session.Account.Id))
             return false;
 
         var playerEnt = cmd.User.Session.Player;
-        if (playerEnt != Entity.Null && _archWorld.IsAlive(playerEnt)) {
-            ref var pPos = ref _archWorld.Get<Position>(playerEnt);
-            ref var cPos = ref _archWorld.Get<Position>(containerEnt);
+        if (playerEnt != Entity.Null && World.Ecs.IsAlive(playerEnt)) {
+            ref var pPos = ref World.Ecs.Get<Position>(playerEnt);
+            ref var cPos = ref World.Ecs.Get<Position>(containerEnt);
             if (pPos.DistSqr(ref cPos) > 9f)
                 return false;
         }

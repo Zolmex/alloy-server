@@ -2,15 +2,15 @@ using System.Buffers;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Arch.Core;
 using Common;
 using Common.Game;
 using Common.Resources.World;
+using Common.Resources.Xml;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Components;
-using GameServer.Game.Entities.Old.Systems;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Network;
 using GameServer.Utilities;
 
@@ -101,16 +101,16 @@ public class WorldMap {
                 }
 
                 if (spTile.ObjectType != 0xff && spTile.ObjectType != 0) {
-                    var entity = new Entity(spTile.ObjectType);
-                    if (entity.Desc.Static) {
-                        _world.LeaveWorld(tile.ObjectId);
-                        tile.SetObject(entity.Desc);
-                        tile.ObjectId = entity.Id;
+                    var desc = XmlLibrary.ObjectDescs[spTile.ObjectType];
+                    var entity =_world.EnterWorld(desc);
+                    if (desc.Static) {
+                        _world.LeaveWorld(tile.Object);
+                        tile.SetObject(desc);
+                        tile.Object = entity;
                     }
-
-                    _world.EnterWorld(ref entity);
-                    ref var enStats = ref _world.EntityStats.Get(entity.Id);
-                    enStats.Move(x + 0.5f, y + 0.5f);
+                    
+                    ref var enPos = ref _world.Ecs.Get<Position>(entity);
+                    enPos.Move(x + 0.5f, y + 0.5f);
                 }
 
                 var pos = new IntPoint { X = x, Y = y };
@@ -119,26 +119,28 @@ public class WorldMap {
                 else
                     Regions[spTile.Region].Add(pos);
 
-                _world.PlayerSights.TileUpdate(pos);
+                _world.PlayerSightSystem.TileUpdate(pos);
             }
     }
 
-    public EntityId[] GetEntityIdsWithin(float x, float y, float radiusSqr, out int count)
+    public IEnumerable<Entity> GetEntitiesWithin(WorldPosData pos, float radiusSqr)
+        => GetEntitiesWithin(pos.X, pos.Y, radiusSqr);
+
+    public Entity[] GetEntitiesWithin(float x, float y, float radiusSqr)
     {
         return _queryCache.GetOrComputeWithCount(x, y, radiusSqr,
-            compute: () => ComputeEntityIdsWithin(x, y, radiusSqr),
-            out count);
+            compute: () => ComputeEntitiesWithin(x, y, radiusSqr), out _);
     }
 
     // Raw chunk-map traversal — only called on cache miss
-    private (EntityId[] ids, int count) ComputeEntityIdsWithin(float x, float y, float radiusSqr)
+    private (Entity[] entities, int count) ComputeEntitiesWithin(float x, float y, float radiusSqr)
     {
         var chunkX = (int)x / Chunk.CHUNK_SIZE;
         var chunkY = (int)y / Chunk.CHUNK_SIZE;
         if (chunkX < 0 || chunkX >= _chunkMap.Width || chunkY < 0 || chunkY >= _chunkMap.Height)
             return ([], 0);
 
-        var selected = ArrayPool<EntityId>.Shared.Rent(10);
+        var selected = ArrayPool<Entity>.Shared.Rent(10);
         var count = 0;
 
         for (var cY = chunkY - 1; cY <= chunkY + 1; cY++)
@@ -148,20 +150,18 @@ public class WorldMap {
                     continue;
 
                 var chunk = _chunkMap.Chunks[cX, cY];
-                foreach (var enId in chunk.Entities)
+                foreach (var en in chunk.Entities)
                 {
-                    ref var stats = ref _world.EntityStats.Get(enId);
-                    if (stats.Id == EntityId.Null)
-                        continue;
-                    if (stats.DistSqr(x, y) > radiusSqr)
+                    ref var pos = ref _world.Ecs.Get<Position>(en);
+                    if (pos.DistSqr(x, y) > radiusSqr)
                         continue;
 
-                    selected[count++] = enId;
+                    selected[count++] = en;
                     if (count >= selected.Length)
                     {
-                        var grown = ArrayPool<EntityId>.Shared.Rent(count * 2);
+                        var grown = ArrayPool<Entity>.Shared.Rent(count * 2);
                         selected.AsSpan().CopyTo(grown);
-                        ArrayPool<EntityId>.Shared.Return(selected);
+                        ArrayPool<Entity>.Shared.Return(selected);
                         selected = grown;
                     }
                 }
@@ -170,58 +170,39 @@ public class WorldMap {
         // Return the ArrayPool array + count; cache will copy and return it.
         if (count == 0)
         {
-            ArrayPool<EntityId>.Shared.Return(selected);
+            ArrayPool<Entity>.Shared.Return(selected);
             return ([], 0);
         }
         return (selected, count);
     }
 
-    public RefEnumerator<Entity> GetEntitiesWithin(WorldPosData pos, float radiusSqr)
-        => GetEntitiesWithin(pos.X, pos.Y, radiusSqr);
-
-    public RefEnumerator<Entity> GetEntitiesWithin(float x, float y, float radiusSqr) {
-        var ids = GetEntityIdsWithin(x, y, radiusSqr, out var count);
-        if (count == 0)
-            return RefEnumerator<Entity>.Empty;
-        
-        var pooled = ArrayPool<EntityId>.Shared.Rent(count);
-        ids.AsSpan(0, count).CopyTo(pooled);
-        return new RefEnumerator<Entity>(_world.Entities.Set, pooled, count);
-    }
-    
-    public EntityId GetNearestPlayer(WorldPosData pos, float radiusSqr)
+    public Entity GetNearestPlayer(WorldPosData pos, float radiusSqr)
         => GetNearestPlayer(pos.X, pos.Y, radiusSqr);
     
-    public EntityId GetNearestPlayer(float x, float y, float radiusSqr) {
+    public Entity GetNearestPlayer(float x, float y, float radiusSqr) {
         var min = float.MaxValue;
-        var ret = EntityId.Null;
-        foreach (var (id, _) in _world.Users) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
-            var dist = stats.DistSqr(x, y);
+        var ret = Entity.Null;
+        foreach (var (en, _) in _world.Users) {
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr && dist < min) {
                 min = dist;
-                ret = stats.Id;
+                ret = en;
             }
         }
 
         return ret;
     }
 
-    public IEnumerable<EntityId> GetPlayersWithin(WorldPosData pos, float radiusSqr)
+    public IEnumerable<Entity> GetPlayersWithin(WorldPosData pos, float radiusSqr)
         => GetPlayersWithin(pos.X, pos.Y, radiusSqr);
 
-    public IEnumerable<EntityId> GetPlayersWithin(float x, float y, float radiusSqr) {
-        foreach (var (id, _) in _world.Users) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
-            var dist = stats.DistSqr(x, y);
+    public IEnumerable<Entity> GetPlayersWithin(float x, float y, float radiusSqr) {
+        foreach (var (en, _) in _world.Users) {
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr)
-                yield return stats.Id;
+                yield return en;
         }
     }
     
@@ -229,119 +210,105 @@ public class WorldMap {
         => GetUsersWithin(pos.X, pos.Y, radiusSqr);
 
     public IEnumerable<User> GetUsersWithin(float x, float y, float radiusSqr) {
-        foreach (var (id, user) in _world.Users) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
-            var dist = stats.DistSqr(x, y);
+        foreach (var (en, user) in _world.Users) {
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr)
                 yield return user;
         }
     }
 
-    public EntityId GetNearestEntityByName(string name, WorldPosData pos, float radiusSqr)
+    public Entity GetNearestEntityByName(string name, WorldPosData pos, float radiusSqr)
         => GetNearestEntityByName(name, pos.X, pos.Y, radiusSqr);
     
-    public EntityId GetNearestEntityByName(string name, float x, float y, float radiusSqr) {
+    public Entity GetNearestEntityByName(string name, float x, float y, float radiusSqr) {
         var min = float.MaxValue;
-        var ret = EntityId.Null;
-        foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
+        var ret = Entity.Null;
+        foreach (var en in GetEntitiesWithin(x, y, radiusSqr)) {
+            ref var stats = ref _world.Ecs.Get<Stats>(en);
             if (stats.GetString(StatType.Name) != name)
                 continue;
             
-            var dist = stats.DistSqr(x, y);
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr && dist < min) {
                 min = dist;
-                ret = stats.Id;
+                ret = en;
             }
         }
 
         return ret;
     }
     
-    public EntityId GetNearestOtherEntityByName(WorldPosData pos, EntityId entityId, string name, float radiusSqr)
-        => GetNearestOtherEntityByName(pos.X, pos.Y, entityId, name, radiusSqr);
+    public Entity GetNearestOtherEntityByName(WorldPosData pos, Entity entity, string name, float radiusSqr)
+        => GetNearestOtherEntityByName(pos.X, pos.Y, entity, name, radiusSqr);
     
-    public EntityId GetNearestOtherEntityByName(float x, float y, EntityId entityId, string name, float radiusSqr) {
+    public Entity GetNearestOtherEntityByName(float x, float y, Entity entity, string name, float radiusSqr) {
         var min = float.MaxValue;
-        var ret = EntityId.Null;
-        foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
-            if (id == entityId)
+        var ret = Entity.Null;
+        foreach (var en in GetEntitiesWithin(x, y, radiusSqr)) {
+            if (en == entity)
                 continue;
             
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
+            ref var stats = ref _world.Ecs.Get<Stats>(en);
             if (name != null && stats.GetString(StatType.Name) != name)
                 continue;
             
-            var dist = stats.DistSqr(x, y);
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr && dist < min) {
                 min = dist;
-                ret = stats.Id;
+                ret = en;
             }
         }
 
         return ret;
     }
     
-    public IEnumerable<EntityId> GetEntitiesByName(WorldPosData pos, string name, float radiusSqr)
+    public IEnumerable<Entity> GetEntitiesByName(WorldPosData pos, string name, float radiusSqr)
         => GetEntitiesByName(pos.X, pos.Y, name, radiusSqr);
     
-    public IEnumerable<EntityId> GetEntitiesByName(float x, float y, string name, float radiusSqr) {
-        foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
+    public IEnumerable<Entity> GetEntitiesByName(float x, float y, string name, float radiusSqr) {
+        foreach (var en in GetEntitiesWithin(x, y, radiusSqr)) {
+            ref var stats = ref _world.Ecs.Get<Stats>(en);
             if (stats.GetString(StatType.Name) != name)
                 continue;
             
-            var dist = stats.DistSqr(x, y);
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr)
-                yield return id;
+                yield return en;
         }
     }
     
-    public IEnumerable<EntityId> GetEntitiesByName(WorldPosData pos, string[] names, float radiusSqr)
+    public IEnumerable<Entity> GetEntitiesByName(WorldPosData pos, string[] names, float radiusSqr)
         => GetEntitiesByName(pos.X, pos.Y, names, radiusSqr);
     
-    public IEnumerable<EntityId> GetEntitiesByName(float x, float y, string[] names, float radiusSqr) {
-        foreach (var id in GetEntityIdsWithin(x, y, radiusSqr, out _)) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
+    public IEnumerable<Entity> GetEntitiesByName(float x, float y, string[] names, float radiusSqr) {
+        foreach (var en in GetEntitiesWithin(x, y, radiusSqr)) {
+            ref var stats = ref _world.Ecs.Get<Stats>(en);
             if (!names.Contains(stats.GetString(StatType.Name)))
                 continue;
             
-            var dist = stats.DistSqr(x, y);
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr)
-                yield return id;
+                yield return en;
         }
     }
 
-    public EntityId GetFarthestPlayer(WorldPosData pos, float radiusSqr)
+    public Entity GetFarthestPlayer(WorldPosData pos, float radiusSqr)
         => GetFarthestPlayer(pos.X, pos.Y, radiusSqr);
     
-    public EntityId GetFarthestPlayer(float x, float y, float radiusSqr) {
+    public Entity GetFarthestPlayer(float x, float y, float radiusSqr) {
         var max = 0f;
-        var ret = EntityId.Null;
-        foreach (var id in _world.Users.Keys) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
-            var dist = stats.DistSqr(x, y);
+        var ret = Entity.Null;
+        foreach (var en in _world.Users.Keys) {
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr && dist > max) {
                 max = dist;
-                ret = stats.Id;
+                ret = en;
             }
         }
 
@@ -352,12 +319,9 @@ public class WorldMap {
         => BroadcastNearby(pos.X, pos.Y, radiusSqr, act);
 
     public void BroadcastNearby(float x, float y, float radiusSqr, Action<User> act) {
-        foreach (var (id, user) in _world.Users) {
-            ref var stats = ref _world.EntityStats.Get(id);
-            if (stats.Id == EntityId.Null)
-                continue;
-            
-            var dist = stats.DistSqr(x, y);
+        foreach (var (en, user) in _world.Users) {
+            ref var pos = ref _world.Ecs.Get<Position>(en);
+            var dist = pos.DistSqr(x, y);
             if (dist <= radiusSqr)
                 act(user);
         }
