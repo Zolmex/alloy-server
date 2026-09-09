@@ -205,7 +205,7 @@ public partial class PlayerSightSystem(World world) : BaseSystem<World, RealmTim
                 {
                     status = new ObjectStatusData
                     {
-                        ObjectId = en.Id,
+                        ObjectId = (EntityId)en,
                         Pos = pos.Pos,
                         StatUpdates = stats.StatUpdates,
                         StatCount = stats.StatUpdateCount,
@@ -225,10 +225,10 @@ public partial class PlayerSightSystem(World world) : BaseSystem<World, RealmTim
                 {
                     objData = new ObjectData()
                     {
-                        ObjectType = en.ObjectType,
+                        ObjectType = World.Ecs.Get<ObjectType>(en),
                         Status = new ObjectStatusData()
                         {
-                            ObjectId = en.Id,
+                            ObjectId = (EntityId)en,
                             Pos = pos.Pos,
                             Stats = stats.Values,
                             StatCount = StatData.STAT_COUNT,

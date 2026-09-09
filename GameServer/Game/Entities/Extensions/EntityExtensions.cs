@@ -22,8 +22,8 @@ public static class EntityExtensions {
             var desc = XmlLibrary.ObjectDescs[objType];
             if (desc.Static) {
                 var tile = world.Map[(int)spawnPos.X, (int)spawnPos.Y];
-                if (tile.Object == EntityId.Null)
-                    tile.Object = new EntityId(en);
+                if (tile.Object == Entity.Null)
+                    tile.Object = en;
             }
         }
         
