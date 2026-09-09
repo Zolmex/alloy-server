@@ -11,6 +11,7 @@ using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
 using GameServer.Utilities;
@@ -47,6 +48,7 @@ public class World {
     public readonly StatsSystem StatsSystem;
     public readonly InventorySystem InventorySystem;
     public readonly PlayerSightSystem PlayerSightSystem;
+    public readonly EventSystem EventSystem;
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -59,12 +61,14 @@ public class World {
         StatsSystem = new StatsSystem(this);
         InventorySystem = new InventorySystem(this);
         PlayerSightSystem = new PlayerSightSystem(this);
+        EventSystem = new EventSystem(this);
 
         Load(mapId);
         
         StatsSystem.Initialize();
         InventorySystem.Initialize();
         PlayerSightSystem.Initialize();
+        EventSystem.Initialize();
     }
 
     public void Load(int mapId) {
@@ -80,13 +84,7 @@ public class World {
         foreach (var orig in Map.Data.Entities) {
             var desc = XmlLibrary.ObjectDescs[orig.ObjType];
             var en = EnterWorld(desc);
-            ref var pos = ref en.Get<Position>();
-            pos.Init(this, orig.Pos);
-            if (desc.Static) {
-                var tile = Map[(int)orig.Pos.X, (int)orig.Pos.Y];
-                if (tile.Object == Entity.Null)
-                    tile.Object = en;
-            }
+            en.Init(this, orig.Pos);
         }
     }
 
@@ -110,7 +108,8 @@ public class World {
         // EntityBehaviors.Tick(ref time);
         // PlayerSights.Tick(ref time);
         // EntityStats.Tick(ref time);
-        
+
+        EventSystem.Tick(ref time);
         InventorySystem.Tick(ref time);
         InventorySystem.ProcessQuery(Ecs);
         PlayerSightSystem.ProcessQuery(Ecs, ref time);
