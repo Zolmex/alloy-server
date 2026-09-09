@@ -51,19 +51,18 @@ public class Session {
     }
 
     public void Unload() {
-        ref var inv = ref World.EntityInventories.Get(PlayerId);
-        if (inv.Id != EntityId.Null)
-            inv.Save(Char);
+        ref var inv = ref World.Ecs.Get<Inventory>(Player);
+        inv.Save(Char);
         
-        World?.LeaveWorld(PlayerId);
+        World?.LeaveWorld(Player);
         State = GameState.Idle;
-        PlayerId = EntityId.Null;
+        Player = Entity.Null;
     }
 
     public void Reset() {
         State = GameState.Idle; // Change our state first
         World = null;
         Char = null;
-        PlayerId = EntityId.Null;
+        Player = Entity.Null;
     }
 }

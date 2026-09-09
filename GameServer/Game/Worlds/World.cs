@@ -230,6 +230,9 @@ public class World {
     }
 
     public void LeaveWorld(Entity en) {
+        if (en == Entity.Null)
+            return;
+        
         _removeEntities.Enqueue(en);
         Users = Users.Remove(en);
     }

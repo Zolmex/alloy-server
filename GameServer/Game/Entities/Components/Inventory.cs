@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Common.Database.Models;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
@@ -97,4 +98,20 @@ public struct Inventory {
         return true;
     }
     
+    public void Save(Character chr) {
+        var itemDatas = new List<byte>();
+        for (var i = 0; i < Size; i++) {
+            var item = Items[i];
+            if (item == null) {
+                chr.ItemTypes[i] = -1;
+                itemDatas.Add(0);
+                continue;
+            }
+            
+            chr.ItemTypes[i] = item.ObjectType;
+            item.Export(itemDatas);
+        }
+
+        chr.ItemDatas = itemDatas.ToArray();
+    }
 }
