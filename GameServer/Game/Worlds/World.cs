@@ -32,7 +32,6 @@ public class World {
     public readonly WorldConfig Config;
     public readonly ArchWorld Ecs = ArchWorld.Create();
 
-    public readonly List<string> TextCache = [];
     public ImmutableDictionary<Entity, User> Users;
 
     public WorldMap Map;
@@ -43,12 +42,14 @@ public class World {
 
     private readonly List<(long Delay, Action<World> Action)> _timedActions = [];
     private readonly ConcurrentQueue<Entity> _removeEntities = [];
-    private readonly Dictionary<EntityId, Entity> _entities = []; 
+    private readonly Dictionary<EntityId, Entity> _entities = [];
     
     public readonly StatsSystem StatsSystem;
     public readonly InventorySystem InventorySystem;
     public readonly PlayerSightSystem PlayerSightSystem;
     public readonly EventSystem EventSystem;
+    public readonly DamageCounterSystem DamageCounterSystem;
+    public readonly ChatSystem ChatSystem;
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -62,6 +63,8 @@ public class World {
         InventorySystem = new InventorySystem(this);
         PlayerSightSystem = new PlayerSightSystem(this);
         EventSystem = new EventSystem(this);
+        DamageCounterSystem = new DamageCounterSystem(this);
+        ChatSystem = new ChatSystem(this);
 
         Load(mapId);
         
@@ -69,6 +72,8 @@ public class World {
         InventorySystem.Initialize();
         PlayerSightSystem.Initialize();
         EventSystem.Initialize();
+        DamageCounterSystem.Initialize();
+        ChatSystem.Initialize();
     }
 
     public void Load(int mapId) {
@@ -112,10 +117,10 @@ public class World {
         EventSystem.Tick(ref time);
         InventorySystem.Tick(ref time);
         InventorySystem.ProcessQuery(Ecs);
+        DamageCounterSystem.ProcessQuery(Ecs);
         PlayerSightSystem.ProcessQuery(Ecs, ref time);
         StatsSystem.TickQuery(Ecs, ref time);
-        
-        ClearTextCache();
+        ChatSystem.Tick(ref time);
     }
 
     public Entity EnterPlayer(ushort objType, User user) {
@@ -247,10 +252,6 @@ public class World {
         _timedActions.Add((GameLogic.WorldTime.TickCount + TimeUtils.TicksFromTime(time, GameLogic.TPS), act));
     }
     
-    public void PlayerText(string text) {
-        TextCache.Add(text);
-    }
-
     public virtual World GetInstance(User user) {
         return this;
     }
@@ -264,9 +265,5 @@ public class World {
                 i--;
             }
         }
-    }
-
-    private void ClearTextCache() {
-        TextCache.Clear();
     }
 }
