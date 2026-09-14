@@ -6,7 +6,11 @@ using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
+using Common.Utilities.Collections;
+using GameServer.Game.Chat.Commands;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Network;
+using GameServer.Game.Network.Messaging.Outgoing;
 using ArchWorld = Arch.Core.World;
 using World = GameServer.Game.Worlds.World;
 
@@ -78,6 +82,39 @@ public static class PlayerExtensions {
             var spawnTile = world.Map.Data.Regions[TileRegion.Spawn].RandomElement();
             player.Move(world, spawnTile.X, spawnTile.Y);
         }
+        
+        public void Speak(World world, string text) {
+            ref var stats = ref world.Ecs.Get<Stats>(player);
+            ref var chat = ref world.Ecs.Get<PlayerChat>(player);
+
+            var user = world.Users[player];
+            if (!chat.ValidateSpeak(user, text, ref GameLogic.WorldTime))
+                return;
+            
+            if (text.StartsWith('/')) {
+                ExecuteCommand(user, text);
+                return;
+            }
+
+            world.ChatSystem.PlayerText(text);
+            foreach (var otherUser in world.Users.Values) {
+                otherUser.SendPacket(new Text(
+                    stats.GetString(StatType.Name),
+                    (EntityId)player,
+                    stats.GetInt(StatType.NumStars),
+                    5,
+                    null,
+                    text
+                ));
+            }
+        }
+    }
+    
+    public static void ExecuteCommand(User user, string text) {
+        var spaceIndex = text.IndexOf(' ');
+        var command = text.Substring(0, spaceIndex == -1 ? text.Length : spaceIndex);
+        var args = spaceIndex == -1 ? null : text.Substring(spaceIndex + 1);
+        CommandManager.ExecuteCommand(user, command, args);
     }
     
     public static int GetStars(ICollection<ClassStats> classStats) {

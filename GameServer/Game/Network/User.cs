@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
+using Common.Utilities.Collections;
 
 #endregion
 
@@ -78,7 +79,7 @@ public class User : IIdentifiable {
             Session.Load(chr, world);
 
             SendPacket(new CreateSuccess(
-                Session.PlayerId,
+                (EntityId)Session.Player,
                 chr.CharId));
             SendPacket(new AccountList(
                 AccountList.Locked,
@@ -90,7 +91,7 @@ public class User : IIdentifiable {
     }
     
     public void Unload(bool reconnect) {
-        if (reconnect && Session.State != GameState.Playing) // We can only unload when we've loaded in the first place
+        if (reconnect && Session.State != SessionState.Playing) // We can only unload when we've loaded in the first place
             return;
 
         Session.Unload();

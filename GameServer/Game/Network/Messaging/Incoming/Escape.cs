@@ -7,7 +7,7 @@ namespace GameServer.Game.Network.Messaging.Incoming;
 [Packet(PacketId.ESCAPE)]
 public record Escape : IIncomingPacket {
     public async Task Handle(User user) {
-        if (user.Session.State != GameState.Playing)
+        if (user.Session.State != SessionState.Playing)
             return;
 
         if (user.Session.World.Id == World.NEXUS_ID) {

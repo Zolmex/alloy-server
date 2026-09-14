@@ -10,7 +10,7 @@ using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Network;
 
-public enum GameState {
+public enum SessionState {
     Idle, // User has established connection to server but hasn't loaded to any world yet
     Loading, // User has sent Hello packet, and now we're waiting for client to send Load packet
     Playing // User has established
@@ -31,16 +31,16 @@ public class Session {
         User = user;
     }
 
-    public GameState State { get; private set; }
+    public SessionState State { get; private set; }
 
     public void SetWorld(Account acc, World world) {
         Account = acc;
-        State = GameState.Loading;
+        State = SessionState.Loading;
         World = world;
     }
 
     public void Load(Character chr, World world) {
-        State = GameState.Playing;
+        State = SessionState.Playing;
         Char = chr;
         
         var newPlr = world.EnterPlayer(chr.ObjectType, User);
@@ -55,12 +55,12 @@ public class Session {
         inv.Save(Char);
         
         World?.LeaveWorld(Player);
-        State = GameState.Idle;
+        State = SessionState.Idle;
         Player = Entity.Null;
     }
 
     public void Reset() {
-        State = GameState.Idle; // Change our state first
+        State = SessionState.Idle; // Change our state first
         World = null;
         Char = null;
         Player = Entity.Null;

@@ -9,7 +9,7 @@ public record UsePortal : IIncomingPacket {
     public EntityId ObjectId;
 
     public async Task Handle(User user) {
-        if (user.Session.State != GameState.Playing)
+        if (user.Session.State != SessionState.Playing)
             return;
 
         ref var portalData = ref user.Session.World.PortalDatas.Get(ObjectId);

@@ -1,10 +1,6 @@
-﻿#region
-
-using Common.Network;
+﻿using Common.Network;
 using Common.Structs;
-using GameServer.Game.Entities.Old.Extensions;
-
-#endregion
+using GameServer.Game.Entities.Extensions;
 
 namespace GameServer.Game.Network.Messaging.Incoming;
 
@@ -13,7 +9,7 @@ public record Move : IIncomingPacket {
     public WorldPosData Pos;
 
     public async Task Handle(User user) {
-        if (user.Session.State != GameState.Playing)
+        if (user.Session.State != SessionState.Playing)
             return;
 
         ref var player = ref user.Session.Player;

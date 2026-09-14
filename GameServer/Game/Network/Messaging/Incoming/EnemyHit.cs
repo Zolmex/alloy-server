@@ -10,7 +10,7 @@ public record EnemyHit : IIncomingPacket {
     public EntityId TargetId;
 
     public async Task Handle(User user) {
-        if (user.Session.State != GameState.Playing)
+        if (user.Session.State != SessionState.Playing)
             return;
 
         // TODO: Validate hit
@@ -18,7 +18,7 @@ public record EnemyHit : IIncomingPacket {
         if (targetCombat.Id == EntityId.Null)
             return;
 
-        var plrId = user.Session.PlayerId;
+        var plrId = user.Session.Player;
         var world = user.Session.World;
         GameLogic.Enqueue(() => {
             ref var enProjs = ref world.EntityProjectiles.Get(plrId);

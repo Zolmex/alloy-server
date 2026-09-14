@@ -17,7 +17,7 @@ public record PlayerShoot : IIncomingPacket {
     public float Angle;
 
     public async Task Handle(User user) {
-        if (user.State != ConnectionState.Ready || user.Session.State != GameState.Playing)
+        if (user.State != ConnectionState.Ready || user.Session.State != SessionState.Playing)
             return;
 
         var player = new EntityView(user.Session.World, user.Session.PlayerId);

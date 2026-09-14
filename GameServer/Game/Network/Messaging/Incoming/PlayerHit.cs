@@ -12,7 +12,7 @@ public record PlayerHit : IIncomingPacket {
     public ushort ProjectileId;
 
     public async Task Handle(User user) {
-        if (user.State != ConnectionState.Ready || user.Session.State != GameState.Playing)
+        if (user.State != ConnectionState.Ready || user.Session.State != SessionState.Playing)
             return;
 
         ref var entityProjectiles = ref user.Session.World.EntityProjectiles.Get(OwnerId);

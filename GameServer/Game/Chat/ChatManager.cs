@@ -13,7 +13,7 @@ public static class ChatManager {
         // TODO: send global announcement to all GameServer instances
         
         RealmManager.BroadcastAll(user => {
-            if (user.Session.State != GameState.Playing)
+            if (user.Session.State != SessionState.Playing)
                 return;
             
             user.SendInfo(msg);

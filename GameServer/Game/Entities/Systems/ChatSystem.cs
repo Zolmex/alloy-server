@@ -8,9 +8,11 @@ public class ChatSystem(World world) : BaseSystem<World, RealmTime>(world) {
     
     public readonly List<string> TextCache = [];
     
-    // TODO: When player speaks, add to TextCache
-
     public void Tick(ref RealmTime time) {
         TextCache.Clear();
+    }
+
+    public void PlayerText(string text) {
+        TextCache.Add(text);
     }
 }
