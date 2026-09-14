@@ -121,8 +121,8 @@ public partial class InventorySystem(World world) : BaseSystem<World, RealmTime>
             !World.Ecs.Has<Position>(entA) || !World.Ecs.Has<Position>(entB)) 
             return false;
 
-        var entAIsPlayer = entA.Has<PlayerType>();
-        var entBIsPlayer = entB.Has<PlayerType>();
+        var entAIsPlayer = entA.Has<PlayerTag>();
+        var entBIsPlayer = entB.Has<PlayerTag>();
         
         if (entAIsPlayer == entBIsPlayer) return false; // One must be player, one container
 

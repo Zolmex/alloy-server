@@ -2,12 +2,9 @@ using Arch.Core;
 using Collections.Pooled;
 using Common.Structs;
 using Common.Utilities.Collections;
+using Grpc.Core;
 
 namespace GameServer.Game.Entities.Components;
-
-public struct PlayerSight {
-    public float Radius;
-}
 
 public class PlayerSightState : IDisposable {
     public Entity Owner;
@@ -25,5 +22,6 @@ public class PlayerSightState : IDisposable {
     public void Dispose() {
         VisibleTiles.Dispose();
         DiscoveredTiles.Dispose();
+        Statuses.Dispose();
     }
 }

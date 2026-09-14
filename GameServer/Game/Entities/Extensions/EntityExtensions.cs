@@ -50,7 +50,7 @@ public static class EntityExtensions {
         }
         
         public float GetSpeed(float speed, MapTileData tile) { // TODO: Condition effect system
-            if (en.Has<PlayerType>()) {
+            if (en.Has<PlayerTag>()) {
                 // if (p.HasConditionEffect(ConditionEffectIndex.Slowed))
                 //     return 1;
                 //

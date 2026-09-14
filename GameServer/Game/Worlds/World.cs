@@ -50,6 +50,7 @@ public class World {
     public readonly EventSystem EventSystem;
     public readonly DamageCounterSystem DamageCounterSystem;
     public readonly ChatSystem ChatSystem;
+    public readonly BehaviorSystem BehaviorSystem;
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -65,6 +66,7 @@ public class World {
         EventSystem = new EventSystem(this);
         DamageCounterSystem = new DamageCounterSystem(this);
         ChatSystem = new ChatSystem(this);
+        BehaviorSystem = new BehaviorSystem(this);
 
         Load(mapId);
         
@@ -74,6 +76,7 @@ public class World {
         EventSystem.Initialize();
         DamageCounterSystem.Initialize();
         ChatSystem.Initialize();
+        BehaviorSystem.Initialize();
     }
 
     public void Load(int mapId) {
@@ -114,10 +117,10 @@ public class World {
         // PlayerSights.Tick(ref time);
         // EntityStats.Tick(ref time);
 
-        EventSystem.Tick(ref time);
         InventorySystem.Tick(ref time);
         InventorySystem.ProcessQuery(Ecs);
         DamageCounterSystem.ProcessQuery(Ecs);
+        BehaviorSystem.TickQuery(Ecs, ref time);
         PlayerSightSystem.ProcessQuery(Ecs, ref time);
         StatsSystem.TickQuery(Ecs, ref time);
         ChatSystem.Tick(ref time);
@@ -141,7 +144,7 @@ public class World {
             switch (desc.Class) {
                 case "Projectile":
                     return Ecs.Create(
-                        new ProjectileType(), // You can add components to projectiles here if you want :)
+                        new ProjectileTag(), // You can add components to projectiles here if you want :)
                         new ObjectType(desc.ObjectType)
                         );
                 case "ConnectedWall":
@@ -151,7 +154,7 @@ public class World {
                 case "Portal":
                 case "GuildHallPortal":
                     return Ecs.Create(
-                        new PortalType(),
+                        new PortalTag(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
                         new Flags(),
@@ -161,7 +164,7 @@ public class World {
                     if (desc.Enemy)
                         return CreateEnemy(desc);
                     return Ecs.Create(
-                        new CharacterType(),
+                        new CharacterTag(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
                         new Flags(),
@@ -171,7 +174,7 @@ public class World {
                 case "Container":
                     var containerDesc = XmlLibrary.ContainerDescs[desc.ObjectType];
                     return Ecs.Create(
-                        new ContainerType(),
+                        new ContainerTag(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
                         new Flags(),
@@ -181,7 +184,7 @@ public class World {
                 case "Merchant":
                 case "GuildMerchant":
                     return Ecs.Create(
-                        new MerchantType(),
+                        new MerchantTag(),
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
                         new Flags(),
@@ -204,7 +207,7 @@ public class World {
     private Entity CreatePlayer(ObjectDesc desc) {
         var playerDesc = XmlLibrary.PlayerDescs[desc.ObjectType];
         return Ecs.Create(
-            new PlayerType(),
+            new PlayerTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
             new Flags(),
@@ -215,7 +218,7 @@ public class World {
     
     private Entity CreateEnemy(ObjectDesc desc) {
         return Ecs.Create(
-            new EnemyType(),
+            new EnemyTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
             new Flags(),
@@ -225,7 +228,7 @@ public class World {
 
     private Entity CreateStaticObject(ObjectDesc desc) {
         return Ecs.Create(
-            new StaticObjectType(),
+            new StaticObjectTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
             new Flags(),

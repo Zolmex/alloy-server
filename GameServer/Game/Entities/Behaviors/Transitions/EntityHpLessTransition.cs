@@ -1,0 +1,30 @@
+﻿using Common;
+using Common.Game;
+using Common.Utilities.Collections;
+using GameServer.Game.Entities.Old;
+
+namespace GameServer.Game.Entities.Behaviors.Transitions;
+
+public class EntityHpLessTransition : BehaviorTransition {
+    private readonly float _dist;
+    private readonly string _entity;
+    private readonly float _threshold;
+
+    public EntityHpLessTransition(float dist, string entity, float threshold, string targetState) {
+        RegisterTargetStates(targetState);
+        _threshold = threshold;
+        _dist = dist;
+        _entity = entity;
+    }
+
+    public override string Tick(BehaviorController controller, ref RealmTime time) {
+        var entityId = host.World.Map.GetNearestEntityByName(_entity, host.Stats.Pos.X, host.Stats.Pos.Y, _dist);
+        if (entityId == EntityId.Null)
+            return null;
+
+        ref var enStats = ref host.World.EntityStats.Get(entityId);
+        var hpPerc = (float)enStats.GetInt(StatType.HP) / enStats.GetInt(StatType.MaxHP);
+        var transition = hpPerc <= _threshold;
+        return transition ? GetTargetState() : null;
+    }
+}

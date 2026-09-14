@@ -27,7 +27,7 @@ public struct Combat {
     }
     
     private void Death(World world, Entity entity) {
-        if (world.Ecs.Has<PlayerType>(entity)) {
+        if (world.Ecs.Has<PlayerTag>(entity)) {
             // TODO: Spawn gravestone, announce death, register death in database
             world.Users[entity].Disconnect(reason: DisconnectReason.Death);
             return;

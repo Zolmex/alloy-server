@@ -6,7 +6,7 @@ using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old.Behaviors;
+using GameServer.Game.Entities.Behaviors;
 using GameServer.Game.Network;
 using GameServer.Game.Worlds;
 

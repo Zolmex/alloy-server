@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServer", "GameServer\GameServer.csproj", "{CFCE656D-B4DC-43B2-986F-AC279F7543E6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generators", "Generators", "{8FBA20E1-D8B4-4221-800E-947EF5B67C33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventRouterGenerator", "EventRouterGenerator\EventRouterGenerator.csproj", "{245423D2-12D5-40CD-B267-699E79E7E45D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,10 @@ Global
 		{CFCE656D-B4DC-43B2-986F-AC279F7543E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFCE656D-B4DC-43B2-986F-AC279F7543E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFCE656D-B4DC-43B2-986F-AC279F7543E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{245423D2-12D5-40CD-B267-699E79E7E45D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{245423D2-12D5-40CD-B267-699E79E7E45D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{245423D2-12D5-40CD-B267-699E79E7E45D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{245423D2-12D5-40CD-B267-699E79E7E45D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,5 +49,6 @@ Global
 		SolutionGuid = {DA930B06-66FB-406E-9409-C97B5A8D8838}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{245423D2-12D5-40CD-B267-699E79E7E45D} = {8FBA20E1-D8B4-4221-800E-947EF5B67C33}
 	EndGlobalSection
 EndGlobal

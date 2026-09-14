@@ -1,10 +1,10 @@
 namespace GameServer.Game.Entities.Components;
 
-public readonly struct StaticObjectType {}
-public readonly struct PortalType {}
-public readonly struct MerchantType {}
-public readonly struct CharacterType {}
-public readonly struct EnemyType {}
-public readonly struct ContainerType {}
-public readonly struct PlayerType {}
-public readonly struct ProjectileType {}
+public readonly struct StaticObjectTag {}
+public readonly struct PortalTag {}
+public readonly struct MerchantTag {}
+public readonly struct CharacterTag {}
+public readonly struct EnemyTag {}
+public readonly struct ContainerTag {}
+public readonly struct PlayerTag {}
+public readonly struct ProjectileTag {}
