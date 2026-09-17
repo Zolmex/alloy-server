@@ -1,6 +1,5 @@
 using Common.Resources.Xml;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Extensions;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Network;
 
 namespace GameServer.Game.Chat.Commands;
@@ -41,15 +40,15 @@ public class SpawnCommand : Command {
         user.SendInfo($"Spawning <{spawnCount}> <{desc.DisplayId}> in 2 seconds");
 
         var world = user.Session.World;
-        ref var pos = ref world.EntityStats.Get(user.Session.PlayerId).Pos;
+        var pos = world.Ecs.Get<Position>(user.Session.Player).Pos;
         var x = pos.X;
         var y = pos.Y;
 
-        var entity = new Entity(desc.ObjectType);
         world.AddTimedAction(2000, w => {
             for (var i = 0; i < spawnCount; i++) {
-                ref var en = ref w.EnterWorld(ref entity);
-                en.Move(world, x, y);
+                var en = w.EnterWorld(desc);
+                ref var enPos = ref w.Ecs.Get<Position>(en);
+                enPos.Move(x, y);
             }
         });
     }

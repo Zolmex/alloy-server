@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Arch.Core;
 using Common;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network.Messaging.Outgoing;
-using GameServer.Game.Worlds;
 using GameServer.Utilities;
+using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -63,13 +65,13 @@ public record AOE : BehaviorScript {
         _effects = effects;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var aoeInfo = host.Behavior.Resources.ResolveResource<AOEInfo>(this);
         aoeInfo.CooldownLeft = _cooldownOffset;
         aoeInfo.AngleOffset = 0f;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var aoeInfo = host.Behavior.Resources.ResolveResource<AOEInfo>(this);
         if (aoeInfo.CooldownLeft > 0) {
             aoeInfo.CooldownLeft -= time.ElapsedMsDelta;
@@ -83,15 +85,16 @@ public record AOE : BehaviorScript {
 
         var startAngle = _fixedAngle;
         var throwDist = _range;
+        ref var hostPos = ref host.Position;
         if (_targetType != TargetType.FixedAngle) {
-            var attackTargetId = host.World.GetAttackTarget(host.Stats.Pos, _rangeSqr, _targetType);
-            if (attackTargetId == EntityId.Null)
+            var attackTarget = host.World.GetAttackTarget(hostPos.Pos, _rangeSqr, _targetType);
+            if (attackTarget == Entity.Null)
                 return BehaviorTickState.BehaviorFailed;
 
-            ref var attackTarget = ref host.World.EntityStats.Get(attackTargetId);
-            startAngle = (float)Math.Atan2(attackTarget.Pos.Y - host.Stats.Pos.Y,
-                attackTarget.Pos.X - host.Stats.Pos.X);
-            throwDist = MathF.Min(_range, host.Stats.GetDistanceBetween(ref attackTarget));
+            ref var attackTargetPos = ref host.World.Ecs.Get<Position>(attackTarget);
+            startAngle = (float)Math.Atan2(attackTargetPos.Pos.Y - hostPos.Pos.Y,
+                attackTargetPos.Pos.X - hostPos.Pos.X);
+            throwDist = MathF.Min(_range, hostPos.GetDistanceBetween(ref attackTargetPos));
         }
 
         aoeInfo.AngleOffset += _rotateAngle;
@@ -100,14 +103,14 @@ public record AOE : BehaviorScript {
 
         // TODO: predictive code
 
-        var aoeX = host.Stats.Pos.X + MathF.Cos(startAngle) * throwDist;
-        var aoeY = host.Stats.Pos.Y + MathF.Sin(startAngle) * throwDist;
-        foreach (var plrId in host.World.Map.GetPlayersWithin(host.Stats.Pos.X, host.Stats.Pos.Y, 32f)) {
+        var aoeX = hostPos.Pos.X + MathF.Cos(startAngle) * throwDist;
+        var aoeY = hostPos.Pos.Y + MathF.Sin(startAngle) * throwDist;
+        foreach (var plrId in host.World.Map.GetPlayersWithin(hostPos.Pos.X, hostPos.Pos.Y, 32f)) {
             var user = host.World.Users[plrId];
             user.SendPacket(new
                 ShowEffect(
                     (byte)ShowEffectIndex.Throw,
-                    host.Id,
+                    (EntityId)host.Entity,
                     _color,
                     _throwTime,
                     new WorldPosData(aoeX, aoeY),
@@ -115,7 +118,7 @@ public record AOE : BehaviorScript {
         }
 
         var dmg = (short)Random.Shared.Next(_minDamage, _maxDamage);
-        aoeInfo.AoeDamagerList.Add(new AOEDamager(host.Id, host.World, dmg, _throwTime, _damageCooldown, _activateCount,
+        aoeInfo.AoeDamagerList.Add(new AOEDamager(host.Entity, host.World, dmg, _throwTime, _damageCooldown, _activateCount,
             _damageColor, new Vector2(aoeX, aoeY), _radius, _effects));
         aoeInfo.CooldownLeft = _cooldownMS;
         return BehaviorTickState.BehaviorActive;
@@ -123,7 +126,7 @@ public record AOE : BehaviorScript {
 }
 
 public class AOEDamager {
-    private EntityId _hostId;
+    private Entity _host;
     private int _activateCount;
     public int ActivateCount;
     public int? Color;
@@ -135,10 +138,10 @@ public class AOEDamager {
     public float Radius;
     public World World;
 
-    public AOEDamager(EntityId hostId, World world, short damage, int cooldown, int damageCooldown, int activateCount, int? color,
+    public AOEDamager(Entity host, World world, short damage, int cooldown, int damageCooldown, int activateCount, int? color,
         Vector2 pos, float radius,
         (ConditionEffectIndex, int)[] effects = null) {
-        _hostId = hostId;
+        _host = host;
         World = world;
         Damage = damage;
         CooldownMS = damageCooldown;
@@ -152,9 +155,8 @@ public class AOEDamager {
     }
 
     public void AOEActivate(World world) {
-        foreach (var plrId in World.Map.GetPlayersWithin(Pos.X, Pos.Y, Radius)) {
-            ref var plr = ref World.EntityCombat.Get(plrId);
-            plr.DamageWithText(_hostId, Damage, -1);
+        foreach (var plr in World.Map.GetPlayersWithin(Pos.X, Pos.Y, Radius)) {
+            World.DamageSystem.Damage(new DamageRecord(_host, plr, Damage));
         }
 
         if (Color.HasValue)

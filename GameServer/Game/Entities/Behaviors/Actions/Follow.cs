@@ -4,16 +4,19 @@ using System.Xml.Linq;
 using Common.Game;
 using Common.Utilities;
 using Common.Utilities.Collections;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Entities.Old;
 using GameServer.Utilities;
+using Entity = Arch.Core.Entity;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
 public class FollowInfo {
     public bool FirstTick;
     public int FollowTimer;
-    public EntityId TargetId;
-    public bool Following => TargetId != EntityId.Null;
+    public Entity Target;
+    public bool Following => Target != Entity.Null;
 }
 
 public record Follow : BehaviorScript {
@@ -39,19 +42,19 @@ public record Follow : BehaviorScript {
         _target = target;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var followInfo = host.Behavior.Resources.ResolveResource<FollowInfo>(this);
         followInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
         followInfo.FirstTick = true;
-        followInfo.TargetId = EntityId.Null;
+        followInfo.Target = Entity.Null;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var followInfo = host.Behavior.Resources.ResolveResource<FollowInfo>(this);
         if (_cooldownMS >= 0) {
             followInfo.FollowTimer -= time.ElapsedMsDelta;
             if (followInfo.FollowTimer <= 0) {
-                followInfo.TargetId = FindTarget(host, _targetType, _acquireRadiusSqr, _target);
+                followInfo.Target = host.World.GetAttackTarget(host.Position.Pos, _acquireRadiusSqr, _targetType, _target);
                 followInfo.FirstTick = true;
 
                 followInfo.FollowTimer = followInfo.Following ? _followTimeMs : _cooldownMS;
@@ -62,21 +65,16 @@ public record Follow : BehaviorScript {
         }
 
         if (followInfo.Following) {
-            ref var targetStats = ref host.World.EntityStats.Get(followInfo.TargetId);
-            if (targetStats.Id == EntityId.Null) {
-                followInfo.TargetId = FindTarget(host, _targetType, _acquireRadiusSqr, _target);
-                return BehaviorTickState.BehaviorFailed;
-            }
-
-            var distToTarget = host.Stats.DistSqr(ref targetStats);
+            ref var targetPos = ref host.World.Ecs.Get<Position>(followInfo.Target);
+            var distToTarget = host.Position.DistSqr(ref targetPos);
             if (distToTarget == 0f || distToTarget < _distanceFromTarget)
                 return BehaviorTickState.BehaviorFailed;
 
-            var angle = host.Stats.GetAngleBetween(ref targetStats);
+            var angle = host.Position.GetAngleBetween(targetPos.Pos);
             var dist = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-            var speed = host.Stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+            var speed = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
             dist *= speed;
-            host.Stats.Move(host.Stats.Pos + dist);
+            host.Position.Move((Vector2)host.Position.Pos + dist);
 
             if (followInfo.FirstTick) {
                 followInfo.FirstTick = false;
@@ -87,20 +85,5 @@ public record Follow : BehaviorScript {
         }
 
         return BehaviorTickState.OnCooldown;
-    }
-
-    public static EntityId FindTarget(in EntityView host, TargetType targetType, float acquireRadiusSqr,
-        string target = "player") {
-        switch (targetType) {
-            case TargetType.ClosestPlayer:
-                return host.World.Map.GetNearestPlayer(host.Stats.Pos, acquireRadiusSqr);
-            case TargetType.RandomPlayerPerBehavior:
-                return host.World.Map.GetPlayersWithin(host.Stats.Pos, acquireRadiusSqr).RandomElement();
-            case TargetType.Entity:
-                return host.World.Map.GetNearestEntityByName(target, host.Stats.Pos, acquireRadiusSqr);
-            case TargetType.FarthestPlayer:
-                return host.World.Map.GetFarthestPlayer(host.Stats.Pos, acquireRadiusSqr);
-        }
-        return EntityId.Null;
     }
 }

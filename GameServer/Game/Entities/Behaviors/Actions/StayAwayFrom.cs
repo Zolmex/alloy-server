@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Numerics;
 using System.Xml.Linq;
+using Arch.Core;
 using Common.Game;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Components;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -12,8 +13,8 @@ namespace GameServer.Game.Entities.Behaviors.Actions;
 public class StayAwayFromInfo {
     public bool FirstTick;
     public int FollowTimer;
-    public EntityId TargetId;
-    public bool Following => TargetId != EntityId.Null;
+    public Entity Target;
+    public bool Following => Target != Entity.Null;
 }
 
 public record StayAwayFrom : BehaviorScript {
@@ -39,19 +40,19 @@ public record StayAwayFrom : BehaviorScript {
         _target = target;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var stayAwayFromInfo = host.Behavior.Resources.ResolveResource<StayAwayFromInfo>(this);
         stayAwayFromInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
         stayAwayFromInfo.FirstTick = true;
-        stayAwayFromInfo.TargetId = EntityId.Null;
+        stayAwayFromInfo.Target = Entity.Null;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var stayAwayFromInfo = host.Behavior.Resources.ResolveResource<StayAwayFromInfo>(this);
         if (_cooldownMS >= 0) {
             stayAwayFromInfo.FollowTimer -= time.ElapsedMsDelta;
             if (stayAwayFromInfo.FollowTimer <= 0) {
-                stayAwayFromInfo.TargetId = Follow.FindTarget(host, _targetType, _acquireRadiusSqr, _target);
+                stayAwayFromInfo.Target = host.World.GetAttackTarget(host.Position.Pos, _acquireRadiusSqr, _targetType, _target);
                 stayAwayFromInfo.FirstTick = true;
 
                 stayAwayFromInfo.FollowTimer = stayAwayFromInfo.Following ? _followTimeMs : _cooldownMS;
@@ -62,23 +63,18 @@ public record StayAwayFrom : BehaviorScript {
         }
 
         if (stayAwayFromInfo.Following) {
-            ref var targetStats = ref host.World.EntityStats.Get(stayAwayFromInfo.TargetId);
-            if (targetStats.Id == EntityId.Null) {
-                stayAwayFromInfo.TargetId = Follow.FindTarget(host, _targetType, _acquireRadiusSqr, _target);
-                return BehaviorTickState.BehaviorFailed;
-            }
-
-            var distToTarget = host.Stats.DistSqr(ref targetStats);
+            ref var targetPos = ref host.World.Ecs.Get<Position>(stayAwayFromInfo.Target);
+            var distToTarget = host.Position.DistSqr(ref targetPos);
             if (distToTarget == 0f || distToTarget > _distanceFromTarget)
                 return BehaviorTickState.BehaviorFailed;
 
-            var angle = host.Stats.GetAngleBetween(ref targetStats);
+            var angle = host.Position.GetAngleBetween(targetPos.Pos);
             var dist = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-            var speed = host.Stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+            var speed = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
             dist *= -speed;
-            var newX = host.Stats.Pos.X + dist.X;
-            var newY = host.Stats.Pos.Y + dist.Y;
-            host.Stats.Move(newX, newY);
+            var newX = host.Position.Pos.X + dist.X;
+            var newY = host.Position.Pos.Y + dist.Y;
+            host.Position.Move(newX, newY);
             return BehaviorTickState.BehaviorActive;
         }
 

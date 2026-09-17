@@ -6,4 +6,4 @@ using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Entities.Events;
 
-public readonly record struct DamageReceivedEvent(Entity Entity, int Damage);
+public readonly record struct DamageReceivedEvent(World world, Entity Entity, int Damage);

@@ -9,8 +9,8 @@ public record Suicide : BehaviorScript {
         _delay = delay;
     }
 
-    public override void Start(BehaviorController controller) {
-        var id = host.Id;
+    public override void Start(ref EntityContext host) {
+        var id = host.Entity;
         host.World.AddTimedAction(_delay, w => w.LeaveWorld(id));
     }
 }

@@ -17,12 +17,12 @@ public record Timed : BehaviorScript {
         _behaviors = behaviors;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var state = host.Behavior.Resources.ResolveResource<TimedInfo>(this);
         state.PeriodLeft = _period;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var state = host.Behavior.Resources.ResolveResource<TimedInfo>(this);
 
         if (state.PeriodLeft > 0) {

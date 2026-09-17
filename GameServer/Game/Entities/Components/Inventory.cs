@@ -114,4 +114,20 @@ public struct Inventory {
 
         chr.ItemDatas = itemDatas.ToArray();
     }
+    
+    public void InitPlayer(Account acc, Character chr) {
+        using var itemDatas = new MemoryStream(chr.ItemDatas);
+        using var rdr = new BinaryReader(itemDatas);
+        for (var i = 0; i < chr.ItemTypes.Length; i++) {
+            var itemType = chr.ItemTypes[i];
+            if (itemType == -1) {
+                SetItem(i, null);
+                continue;
+            }
+
+            var item = new Item(XmlLibrary.ItemDescs[(ushort)itemType].Root);
+            item.Import(rdr);
+            SetItem(i, item);
+        }
+    }
 }

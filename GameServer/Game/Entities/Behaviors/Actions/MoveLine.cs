@@ -24,25 +24,24 @@ public record MoveLine : BehaviorScript {
         _distance = distance;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var state = host.Behavior.Resources.ResolveResource<MoveLineInfo>(this);
         state.DistLeft = _distance;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
-        ref var stats = ref host.World.EntityStats.Get(host.Id);
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var state = host.Behavior.Resources.ResolveResource<MoveLineInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: Condition effects
         //     return BehaviorTickState.BehaviorFailed;
 
         var vect = new Vector2((float)Math.Cos(_angle), (float)Math.Sin(_angle)).ToWorldPos();
-        vect += stats.Pos;
+        vect += host.Position.Pos;
         if (state.DistLeft > 0) {
-            var moveDist = stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+            var moveDist = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
             state.DistLeft -= moveDist;
         }
 
-        stats.MoveTowards(ref time, ref vect, _speed);
+        host.Position.MoveTowards(ref time, vect, _speed);
 
         return BehaviorTickState.BehaviorActive;
     }

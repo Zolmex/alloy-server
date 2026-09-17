@@ -2,7 +2,9 @@ using System.Diagnostics;
 using Arch.Core;
 using Arch.System;
 using Common.Game;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Network.Messaging.Outgoing;
 using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Entities.Systems;
@@ -15,7 +17,7 @@ public readonly record struct DamageRecord(Entity From, Entity Target, int Damag
         => record with { Damage = record.Damage + damage };
 }
 
-public partial class DamageCounterSystem(World world) : BaseSystem<World, RealmTime>(world) {
+public partial class DamageSystem(World world) : BaseSystem<World, RealmTime>(world) {
 
     private readonly Dictionary<Entity, Dictionary<Entity, DamageRecord>> _records = [];
 
@@ -31,7 +33,7 @@ public partial class DamageCounterSystem(World world) : BaseSystem<World, RealmT
         combat.Tick(World, entity, ref stats);
     }
 
-    public void Register(DamageRecord record) {
+    public void Damage(DamageRecord record) {
         if (!_records.TryGetValue(record.Target, out var records))
             _records[record.Target] = records = new Dictionary<Entity, DamageRecord>();
         
@@ -41,5 +43,24 @@ public partial class DamageCounterSystem(World world) : BaseSystem<World, RealmT
         }
 
         records[record.From] = prev + record;
+    }
+    
+    public void DamageWithText(DamageRecord record) {
+        if (!_records.TryGetValue(record.Target, out var records))
+            _records[record.Target] = records = new Dictionary<Entity, DamageRecord>();
+        
+        if (!records.TryGetValue(record.From, out var prev)) {
+            records[record.From] = record;
+            SendNotification(record.Target, record.Damage);
+            return;
+        }
+
+        records[record.From] = prev + record;
+        SendNotification(record.Target, record.Damage);
+    }
+
+    private void SendNotification(Entity entity, int damage) {
+        var user = world.Users[entity];
+        user.SendPacket(new Notification((EntityId)entity, "-" + damage, 0xFF0000, 24));
     }
 }

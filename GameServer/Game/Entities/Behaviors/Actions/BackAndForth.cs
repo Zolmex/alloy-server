@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.Game;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Extensions;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -17,26 +18,27 @@ public record BackAndForth : BehaviorScript {
         _distance = distance;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var chargeState = host.Behavior.Resources.ResolveResource<BackAndForthInfo>(this);
         chargeState.Distance = _distance;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var backAndForthState = host.Behavior.Resources.ResolveResource<BackAndForthInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: Condition Effects
         //     return BehaviorTickState.BehaviorFailed;
 
-        var moveDist = host.Stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+        ref var hostPos = ref host.Position;
+        var moveDist = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
         if (backAndForthState.Distance > 0) {
-            host.Stats.Move(host.Stats.Pos.X + moveDist, host.Stats.Pos.Y);
+            hostPos.Move(hostPos.Pos.X + moveDist, hostPos.Pos.Y);
             backAndForthState.Distance -= moveDist;
 
             if (backAndForthState.Distance <= 0)
                 backAndForthState.Distance = -_distance;
         }
         else {
-            host.Stats.Move(host.Stats.Pos.X - moveDist, host.Stats.Pos.Y);
+            hostPos.Move(hostPos.Pos.X - moveDist, hostPos.Pos.Y);
             backAndForthState.Distance += moveDist;
 
             if (backAndForthState.Distance >= 0)

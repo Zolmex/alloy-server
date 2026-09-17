@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Structs;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Old;
 using GameServer.Game.Network.Messaging.Outgoing;
 
@@ -16,13 +17,13 @@ public record Flash : BehaviorScript {
         _flashRepeats = flashRepeats;
     }
 
-    public override void Start(BehaviorController controller) {
-        var id = host.Id;
-        host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user => {
+    public override void Start(ref EntityContext host) {
+        var en = host.Entity;
+        host.World.Map.BroadcastNearby(host.Position.Pos, 20f, user => {
             user.SendPacket(new
                 ShowEffect(
                     (byte)ShowEffectIndex.Flash,
-                    id,
+                    (EntityId)en,
                     _color,
                     0,
                     new WorldPosData(_flashPeriod, _flashRepeats),

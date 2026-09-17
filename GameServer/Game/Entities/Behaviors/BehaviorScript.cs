@@ -29,11 +29,11 @@ public record BehaviorScript : IStateChild {
     // Setup any ObjectDesc data here
     public virtual void Setup(ObjectDesc desc) { }
 
-    public virtual void Start(BehaviorController controller) { }
+    public virtual void Start(ref EntityContext host) { }
 
-    public virtual BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public virtual BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         return BehaviorTickState.OnCooldown;
     }
 
-    public virtual void End(BehaviorController controller, ref RealmTime time) { }
+    public virtual void End(ref EntityContext host, ref RealmTime time) { }
 }

@@ -47,7 +47,7 @@ public struct WorldPosData : IEquatable<WorldPosData> {
         return !pos1.Equals(pos2);
     }
 
-    public static implicit operator Vector2(WorldPosData pos) {
+    public static explicit operator Vector2(WorldPosData pos) {
         return new Vector2(pos.X, pos.Y);
     }
     

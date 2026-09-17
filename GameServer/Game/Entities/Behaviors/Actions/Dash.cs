@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Numerics;
 using System.Xml.Linq;
+using Arch.Core;
 using Common.Game;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Behaviors.Actions.Info;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Systems;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -57,7 +59,7 @@ public record Dash : BehaviorScript {
         this.dashDamageRadius = dashDamageRadius;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var dashInfo = host.Behavior.Resources.ResolveResource<DashInfo>(this);
         dashInfo.DashCooldown = cooldownOffsetMS == 0 ? cooldownMS : cooldownOffsetMS;
         dashInfo.DashCount = 0;
@@ -66,25 +68,26 @@ public record Dash : BehaviorScript {
         dashInfo.InCycle = false;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var dashInfo = host.Behavior.Resources.ResolveResource<DashInfo>(this);
         if (dashInfo.CycleCooldown > 0) {
             dashInfo.CycleCooldown -= time.ElapsedMsDelta;
             if (dashInfo.CycleCooldown > 0) return BehaviorTickState.OnCooldown;
         }
 
+        var w = host.World;
+        ref var hostPos = ref host.Position;
         if (dashInfo.Dashing) {
             var elapsedTimePerc = (time.TotalElapsedMs - dashInfo.DashStarted) / 1000f / dashTime;
             if (ease != Ease.None) Easing.EaseVal(ease, ref elapsedTimePerc);
 
             var dist = dashRange * elapsedTimePerc;
             var relMovePos = new Vector2(MathF.Cos(dashInfo.DashAngle) * dist, MathF.Sin(dashInfo.DashAngle) * dist);
-            host.Stats.Move(dashInfo.DashStartPos + relMovePos);
+            hostPos.Move(dashInfo.DashStartPos + relMovePos);
             if (damage != 0)
-                foreach (var plrId in host.World.Map.GetPlayersWithin(host.Stats.Pos, dashDamageRadius)) {
-                    ref var plr = ref host.World.EntityCombat.Get(plrId);
-                    if (dashInfo.HitThisDash.Add(plrId))
-                        plr.DamageWithText(host.Id, damage, host.OwnerAccId);
+                foreach (var player in w.Map.GetPlayersWithin(hostPos.Pos, dashDamageRadius)) {
+                    if (dashInfo.HitThisDash.Add(player))
+                        w.DamageSystem.DamageWithText(new DamageRecord(host.Entity, player, damage));
                 }
 
             dashInfo.DashCooldown -= time.ElapsedMsDelta;
@@ -114,11 +117,11 @@ public record Dash : BehaviorScript {
         if (dashInfo.DashCooldown < 0) {
             dashInfo.Dashing = true;
             dashInfo.DashCooldown = dashTimeMs;
-            dashInfo.DashStartPos = host.Stats.Pos.ToVec2();
+            dashInfo.DashStartPos = hostPos.Pos.ToVec2();
             dashInfo.DashStarted = time.TotalElapsedMs;
             dashInfo.DashStartSent = false;
             dashInfo.HitThisDash.Clear();
-            SetTarget(ref host, dashInfo);
+            SetTarget(host, dashInfo, ref hostPos);
             if (!dashInfo.Dashing) return BehaviorTickState.BehaviorFailed;
 
             dashInfo.InCycle = true;
@@ -129,35 +132,36 @@ public record Dash : BehaviorScript {
         return BehaviorTickState.OnCooldown;
     }
 
-    private void SetTarget(BehaviorController controller, DashInfo dashInfo) {
+    private void SetTarget(EntityContext host, DashInfo dashInfo, ref Position hostPos) {
+        
         switch (targetType) {
             case TargetType.ClosestPlayer:
             case TargetType.RandomPlayerPerBehavior:
             case TargetType.FarthestPlayer:
-                var targetId = host.World.GetAttackTarget(host.Stats.Pos, acquireRadiusSqr, targetType);
-                if (targetId == EntityId.Null) {
+                var target = host.World.GetAttackTarget(hostPos.Pos, acquireRadiusSqr, targetType);
+                if (target == Entity.Null) {
                     dashInfo.Dashing = false;
                     dashInfo.DashCooldown = cooldownMS;
                     return;
                 }
 
-                ref var target = ref host.World.EntityStats.Get(targetId);
-                dashInfo.DashAngle = host.Stats.GetAngleBetween(ref target);
+                ref var targetPos = ref host.World.Ecs.Get<Position>(target);
+                dashInfo.DashAngle = hostPos.GetAngleBetween(targetPos.Pos);
                 break;
             case TargetType.RandomPlayerPerCycle:
-                targetId = dashInfo.InCycle
-                    ? dashInfo.CurrentTargetID
-                    : host.World.GetAttackTarget(host.Stats.Pos, acquireRadiusSqr, targetType);
-                if (targetId == EntityId.Null) {
+                target = dashInfo.InCycle
+                    ? dashInfo.CurrentTarget
+                    : host.World.GetAttackTarget(hostPos.Pos, acquireRadiusSqr, targetType);
+                if (target == Entity.Null) {
                     dashInfo.Dashing = false;
                     dashInfo.DashCooldown = cooldownMS;
-                    dashInfo.CurrentTargetID = EntityId.Null;
+                    dashInfo.CurrentTarget = Entity.Null;
                     return;
                 }
 
-                target = ref host.World.EntityStats.Get(targetId);
-                dashInfo.CurrentTargetID = target.Id;
-                dashInfo.DashAngle = host.Stats.GetAngleBetween(ref target);
+                targetPos = ref host.World.Ecs.Get<Position>(target);
+                dashInfo.CurrentTarget = target;
+                dashInfo.DashAngle = hostPos.GetAngleBetween(targetPos.Pos);
                 break;
             case TargetType.FixedAngle:
                 dashInfo.DashAngle = fixedAngle;

@@ -22,12 +22,12 @@ public record ReturnToSpawn : BehaviorScript {
         _distanceFromSpawn = distanceFromSpawn;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
-        var distToSpawn = PositionUtils.GetDistanceBetween(host.Stats.Pos, host.Stats.SpawnPos);
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
+        var distToSpawn = PositionUtils.GetDistanceBetween(host.Position.Pos, host.Position.SpawnPos);
         if (distToSpawn <= _distanceFromSpawn + _speed / 50)
             return BehaviorTickState.BehaviorDeactivate;
 
-        host.Stats.MoveTowards(ref time, ref host.Stats.SpawnPos, _speed);
+        host.Position.MoveTowards(ref time, host.Position.SpawnPos, _speed);
         return BehaviorTickState.BehaviorActive;
     }
 }

@@ -14,7 +14,7 @@ public record Sequence : BehaviorScript {
         _behaviors = behaviors;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var state = host.Behavior.Resources.ResolveResource<SequenceInfo>(this);
         state.Index = 0;
 
@@ -22,7 +22,7 @@ public record Sequence : BehaviorScript {
             behav.Start(ref host);
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var state = host.Behavior.Resources.ResolveResource<SequenceInfo>(this);
         var status = _behaviors[state.Index].Tick(ref host, ref time);
         if (status == BehaviorTickState.BehaviorActive ||

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Game;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 using GameServer.Game.Entities.Old.Components;
 
@@ -18,12 +19,12 @@ public record ChangeSize : BehaviorScript {
         _target = target;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var state = host.Behavior.Resources.ResolveResource<SizeInfo>(this);
         state.CooldownLeft = 0;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var state = host.Behavior.Resources.ResolveResource<SizeInfo>(this);
 
         if (state.CooldownLeft > 0) {
@@ -32,7 +33,7 @@ public record ChangeSize : BehaviorScript {
         }
 
         if (state.CooldownLeft <= 0) {
-            ref var stats = ref host.World.EntityStats.Get(host.Id);
+            ref var stats = ref host.Stats;
             var size = stats.GetInt(StatType.Size);
             if (size != _target) {
                 size += _rate;

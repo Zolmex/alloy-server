@@ -1,5 +1,6 @@
-﻿using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Events;
+﻿
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Events;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -14,14 +15,14 @@ public record OrderOnDeath : BehaviorScript {
         _targetState = targetState;
     }
 
-    public override void Start(BehaviorController controller) {
-        host.Events.OnDeath.Subscribe(OnDeath);
+    public override void Start(ref EntityContext host) {
+        host.World.EventSystem.Subscribe(host.Entity, OnDeath);
     }
 
     private void OnDeath(ref DeathEvent evt) {
-        ref var stats = ref evt.World.EntityStats.Get(evt.HostId);
-        foreach (var id in evt.World.Map.GetEntitiesByName(stats.Pos, _children, _range)) {
-            ref var behavior = ref evt.World.EntityBehaviors.Get(id);
+        ref var pos = ref evt.World.Ecs.Get<Position>(evt.Entity);
+        foreach (var entity in evt.World.Map.GetEntitiesByName(pos.Pos, _children, _range)) {
+            var behavior = evt.World.BehaviorSystem.Get(entity);
             behavior.TransitionTo(_targetState, ref GameLogic.WorldTime);
         }
     }

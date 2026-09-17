@@ -1,4 +1,5 @@
 ﻿using System;
+using Common;
 using Common.Game;
 using Common.Utilities;
 using GameServer.Game.Entities.Old;
@@ -23,15 +24,17 @@ public record Taunt : BehaviorScript {
         _probability = probability;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         if (_cooldownMS == 0 && _rand.NextDouble() < _probability) {
             var text = _text.RandomElement();
-            foreach (var user in host.World.Users.Values)
-                user.SendEnemy(ref host.Entity, text);
+            foreach (var user in host.World.Users.Values) {
+                var name = host.Stats.GetString(StatType.Name);
+                user.SendEnemy(name, text);
+            }
         }
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         if (_cooldownMS == 0)
             return BehaviorTickState.BehaviorFailed; // IDK ??!??!
 
@@ -44,8 +47,10 @@ public record Taunt : BehaviorScript {
         tauntInfo.CooldownLeft = _cooldownMS;
         if (_rand.NextDouble() < _probability) {
             var text = _text.RandomElement();
-            foreach (var user in host.World.Users.Values)
-                user.SendEnemy(ref host.Entity, text);
+            foreach (var user in host.World.Users.Values) {
+                var name = host.Stats.GetString(StatType.Name);
+                user.SendEnemy(name, text);
+            }
         }
         return BehaviorTickState.BehaviorActive;
     }

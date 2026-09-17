@@ -1,5 +1,6 @@
-﻿using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Events;
+﻿
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Events;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -12,13 +13,13 @@ public record SpawnSetpieceOnDeath : BehaviorScript {
         _useSpawnPoint = useSpawnPoint;
     }
 
-    public override void Start(BehaviorController controller) {
-        host.Events.OnDeath.Subscribe(OnDeath);
+    public override void Start(ref EntityContext host) {
+        host.World.EventSystem.Subscribe(host.Entity, OnDeath);
     }
 
     private void OnDeath(ref DeathEvent evt) {
-        ref var enStats = ref evt.World.EntityStats.Get(evt.HostId);
-        var pos = _useSpawnPoint ? enStats.SpawnPos : enStats.Pos;
+        ref var enPos = ref evt.World.Ecs.Get<Position>(evt.Entity);
+        var pos = _useSpawnPoint ? enPos.SpawnPos : enPos.Pos;
         evt.World.Map.SpawnSetPiece(_setpiece, (int)pos.X, (int)pos.Y, center: true);
     }
 }

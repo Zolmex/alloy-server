@@ -32,7 +32,7 @@ public enum DisconnectReason {
     IllegalAction
 }
 
-public class User : IIdentifiable {
+public partial class User : IIdentifiable {
     private static readonly Logger _log = new(typeof(User));
     private static int _nextClientId;
     

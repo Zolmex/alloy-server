@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Common.Database.Models;
+using Common.Resources.Config;
 
 namespace Common.Utilities;
 
@@ -39,14 +41,29 @@ public static class GameUtils {
         return level + 10;
     }
 
-    public static int GetNextClassQuestFame(Character chr, Account acc) {
-        // TODO: based on chr.ObjectType and classStat.BestFame find the next class quest fame
-        var classStat = acc.Stats.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
-        if (classStat == null) {
-            Logger.Debug($"BITCH {chr.ObjectType}");
-            return 0;
+    public static int GetStars(ICollection<ClassStats> classStats) {
+        var goals = GameConfig.Config.StarGoals;
+        var stars = 0;
+        foreach (var classStat in classStats)
+            for (var i = 0; i < goals.Length; i++)
+                if (classStat.BestFame >= goals[i])
+                    stars++;
+        return stars;
+    }
+    
+    public static int GetNextLevelXPGoal(int level) {
+        return (int)(50f + (level - 1f) * 100f * (1f + level / 10f));
+    }
+
+    public static int GetNextClassQuestFame(int fame) {
+        var goals = GameConfig.Config.StarGoals;
+        for (var i = 0; i < goals.Length; i++) {
+            if (fame >= goals[i] && i == goals.Length - 1)
+                return 0;
+            if (fame < goals[i])
+                return goals[i];
         }
 
-        return (int)classStat!.BestFame;
+        return -1;
     }
 }

@@ -21,15 +21,15 @@ public record MoveTo : BehaviorScript {
         _relative = relative;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var moveToState = host.Behavior.Resources.ResolveResource<MoveToState>(this);
-        moveToState.StartPos = host.Stats.Pos;
+        moveToState.StartPos = host.Position.Pos;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var moveToState = host.Behavior.Resources.ResolveResource<MoveToState>(this);
         var pos = _relative ? moveToState.StartPos + _targetPos : _targetPos;
-        host.Stats.MoveTowards(ref time, ref pos, _tilesPerSecond);
+        host.Position.MoveTowards(ref time, pos, _tilesPerSecond);
         return BehaviorTickState.BehaviorActive;
     }
 }

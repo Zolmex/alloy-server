@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Arch.Core;
 using Common;
 using Common.Game;
 using Common.Resources.World;
@@ -8,7 +9,7 @@ using Common.Resources.Xml;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Network.Messaging.Outgoing;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -70,7 +71,7 @@ public record TossObject : BehaviorScript {
         _targeted = targeted;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var tossObjectInfo = host.Behavior.Resources.ResolveResource<TossObjectInfo>(this);
         tossObjectInfo.CooldownLeft = _cooldownOffsetMS;
 
@@ -91,7 +92,7 @@ public record TossObject : BehaviorScript {
             }
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var tossObjectInfo = host.Behavior.Resources.ResolveResource<TossObjectInfo>(this);
         if (tossObjectInfo.CooldownLeft <= 0) {
             // if (host.HasConditionEffect(ConditionEffectIndex.Stunned)) // TODO: condition Effects
@@ -102,13 +103,13 @@ public record TossObject : BehaviorScript {
                 return BehaviorTickState.BehaviorDeactivate;
             }
 
-            var playerId = _targeted ? host.World.Map.GetNearestPlayer(host.Stats.Pos, _range) : EntityId.Null;
+            var player = _targeted ? host.World.Map.GetNearestPlayer(host.Position.Pos, _range) : Entity.Null;
             if (_densityRange != 0 && _maxDensity != 0) {
                 var cnt = 0;
                 if (_children.Length > 1)
-                    cnt = host.World.Map.GetEntitiesByName(host.Stats.Pos, _group, _densityRange).Count();
+                    cnt = host.World.Map.GetEntitiesByName(host.Position.Pos, _group, _densityRange).Count();
                 else
-                    cnt = host.World.Map.GetEntitiesByName(host.Stats.Pos, _children[0], _densityRange).Count();
+                    cnt = host.World.Map.GetEntitiesByName(host.Position.Pos, _children[0], _densityRange).Count();
 
                 if (cnt >= _maxDensity) {
                     tossObjectInfo.CooldownLeft = _cooldownMS;
@@ -125,18 +126,18 @@ public record TossObject : BehaviorScript {
                 a = (float)(_minAngle + Random.Shared.NextDouble() * (_maxAngle - _minAngle));
 
             WorldPosData target;
-            if (playerId == EntityId.Null)
+            if (player == Entity.Null)
                 target = new WorldPosData {
-                    X = host.Stats.Pos.X + (float)(r * Math.Cos(a)), Y = host.Stats.Pos.Y + (float)(r * Math.Sin(a))
+                    X = host.Position.Pos.X + (float)(r * Math.Cos(a)), Y = host.Position.Pos.Y + (float)(r * Math.Sin(a))
                 };
             else {
-                ref var playerStats = ref host.World.EntityStats.Get(playerId);
-                target = new WorldPosData { X = playerStats.Pos.X, Y = playerStats.Pos.Y };
+                ref var playerPosition = ref host.World.Ecs.Get<Position>(player);
+                target = new WorldPosData { X = playerPosition.Pos.X, Y = playerPosition.Pos.Y };
             }
 
             if (_reproduceRegions != null && _reproduceRegions.Count > 0) {
-                var sx = (int)host.Stats.Pos.X;
-                var sy = (int)host.Stats.Pos.Y;
+                var sx = (int)host.Position.Pos.X;
+                var sy = (int)host.Position.Pos.Y;
                 var regions = _reproduceRegions
                     .Where(p => Math.Abs(sx - p.X) <= _regionRange &&
                                 Math.Abs(sy - p.Y) <= _regionRange).ToList();
@@ -144,9 +145,9 @@ public record TossObject : BehaviorScript {
                 target = new WorldPosData { X = tile.X, Y = tile.Y };
             }
 
-            var hostId = host.Id;
+            var hostId = (EntityId)host.Entity;
             if (!_tossInvis)
-                host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user =>
+                host.World.Map.BroadcastNearby(host.Position.Pos, 20f, user =>
                     user.SendPacket(new ShowEffect(
                         (byte)ShowEffectIndex.Throw,
                         hostId,
@@ -160,16 +161,17 @@ public record TossObject : BehaviorScript {
             if (!world.Map.IsPassable((int)target.X, (int)target.Y, true))
                 return BehaviorTickState.BehaviorFailed;
 
-            var objType = XmlLibrary.Id2Object(_children[Random.Shared.Next(_children.Length)]).ObjectType;
-            var isSpawned = host.Stats.Flags.IsSet((int)EntityFlags.Spawned);
+            var objDesc = XmlLibrary.Id2Object(_children[Random.Shared.Next(_children.Length)]);
+            var isSpawned = host.Flags.Mask.IsSet((int)EntityFlags.Spawned);
 
             GameLogic.Enqueue(() => {
-                var child = new Entity(objType);
-                world.EnterWorld(ref child);
-                ref var childStats = ref world.EntityStats.Get(child.Id);
-                childStats.Move(target.X, target.Y);
-                if (isSpawned)
-                    childStats.Flags.Set((int)EntityFlags.Spawned);
+                var child = world.EnterWorld(objDesc);
+                ref var childPosition = ref world.Ecs.Get<Position>(child);
+                childPosition.Move(target.X, target.Y);
+                if (isSpawned) {
+                    ref var childFlags = ref world.Ecs.Get<Flags>(child);
+                    childFlags.Mask.Set((int)EntityFlags.Spawned);
+                }
             });
 
             tossObjectInfo.CooldownLeft = _cooldownMS;

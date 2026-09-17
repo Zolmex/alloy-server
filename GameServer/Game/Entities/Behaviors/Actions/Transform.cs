@@ -1,4 +1,5 @@
 ﻿using Common.Resources.Xml;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -10,24 +11,24 @@ public record Transform : BehaviorScript {
         _target = target;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var obj = XmlLibrary.Id2Object(_target);
         if (obj.Class.Contains("Portal"))
             return;
 
-        var hostId = host.Id;
-        var spawnX = host.Stats.Pos.X;
-        var spawnY = host.Stats.Pos.Y;
-        var isSpawned = host.Stats.Flags.IsSet((int)EntityFlags.Spawned);
+        var hostId = host.Entity;
+        var spawnX = host.Position.Pos.X;
+        var spawnY = host.Position.Pos.Y;
+        var isSpawned = host.Flags.Mask.IsSet((int)EntityFlags.Spawned);
         var world = host.World;
         GameLogic.Enqueue(() => {
-            var entity = new Entity(obj.ObjectType);
-            ref var newEn = ref world.EnterWorld(ref entity);
-            ref var enStats = ref world.EntityStats.Get(newEn.Id);
-            if (isSpawned)
-                enStats.Flags.Set((int)EntityFlags.Spawned);
-
+            var newEn = world.EnterWorld(obj);
+            ref var enStats = ref world.Ecs.Get<Position>(newEn);
             enStats.Move(spawnX, spawnY);
+            if (isSpawned) {
+                ref var enFlags = ref world.Ecs.Get<Flags>(newEn);
+                enFlags.Mask.Set((int)EntityFlags.Spawned);
+            }
 
             world.LeaveWorld(hostId);
         });

@@ -1,8 +1,10 @@
 ﻿using System.Numerics;
+using Arch.Core;
 using Common;
 using Common.Game;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Extensions;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -22,33 +24,34 @@ public record Charge : BehaviorScript {
         _cooldownMS = cooldownMS;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var chargeState = host.Behavior.Resources.ResolveResource<ChargeInfo>(this);
         chargeState.RemainingTime = 0; // Make sure the behavior runs once
         chargeState.Direction = Vector2.Zero;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var chargeState = host.Behavior.Resources.ResolveResource<ChargeInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
 
+        ref var hostPos = ref host.Position;
         var status = BehaviorTickState.BehaviorActive;
         if (chargeState.RemainingTime <= 0) {
             if (chargeState.Direction == Vector2.Zero) {
-                var plrId = host.World.Map.GetNearestPlayer(host.Stats.Pos, _range);
-                if (plrId == EntityId.Null)
+                var player = host.World.Map.GetNearestPlayer(hostPos.Pos, _range);
+                if (player == Entity.Null)
                     return status;
-                
-                ref var player = ref host.World.EntityStats.Get(plrId);
-                if (player.Pos.X != host.Stats.Pos.X && player.Pos.Y != host.Stats.Pos.Y) {
-                    chargeState.Direction = new Vector2(player.Pos.X - host.Stats.Pos.X,
-                        player.Pos.Y - host.Stats.Pos.Y);
+
+                ref var plrPos = ref host.World.Ecs.Get<Position>(player);
+                if (plrPos.Pos.X != hostPos.Pos.X && plrPos.Pos.Y != hostPos.Pos.Y) {
+                    chargeState.Direction = new Vector2(plrPos.Pos.X - hostPos.Pos.X,
+                        plrPos.Pos.Y - hostPos.Pos.Y);
 
                     var d = chargeState.Direction.Length();
 
                     chargeState.Direction = Vector2.Normalize(chargeState.Direction);
-                    chargeState.RemainingTime = (int)(d / host.Stats.GetSpeed(_speed) * 1000);
+                    chargeState.RemainingTime = (int)(d / host.GetSpeed(_speed) * 1000);
 
                     status = BehaviorTickState.BehaviorActivate;
                 }
@@ -62,10 +65,10 @@ public record Charge : BehaviorScript {
         }
 
         if (chargeState.Direction != Vector2.Zero) {
-            var dist = host.Stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
-            var newX = host.Stats.Pos.X + chargeState.Direction.X * dist;
-            var newY = host.Stats.Pos.Y + chargeState.Direction.Y * dist;
-            host.Stats.Move(newX, newY);
+            var dist = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+            var newX = hostPos.Pos.X + chargeState.Direction.X * dist;
+            var newY = hostPos.Pos.Y + chargeState.Direction.Y * dist;
+            hostPos.Move(newX, newY);
         }
 
         chargeState.RemainingTime -= time.ElapsedMsDelta;

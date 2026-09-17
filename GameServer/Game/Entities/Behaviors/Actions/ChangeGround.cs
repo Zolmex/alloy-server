@@ -1,6 +1,7 @@
 ﻿using System;
 using Common.Resources.Xml;
 using Common.Structs;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -16,9 +17,10 @@ public record ChangeGround : BehaviorScript {
         _dist = dist;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
+        ref var hostPos = ref host.Position;
         var w = host.World;
-        var pos = new IntPoint((int)host.Stats.Pos.X - _dist / 2, (int)host.Stats.Pos.Y - _dist / 2);
+        var pos = new IntPoint((int)hostPos.Pos.X - _dist / 2, (int)hostPos.Pos.Y - _dist / 2);
 
         for (var x = 0; x < _dist; x++)
             for (var y = 0; y < _dist; y++) {
@@ -36,7 +38,7 @@ public record ChangeGround : BehaviorScript {
                     tile.GroundType = type;
                 }
 
-                w.PlayerSights.TileUpdate(tile.Pos);
+                w.PlayerSightSystem.TileUpdate(tile.Pos);
             }
     }
 }

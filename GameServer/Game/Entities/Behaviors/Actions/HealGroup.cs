@@ -1,5 +1,7 @@
 ﻿using Common;
 using Common.Game;
+using Common.Utilities.Collections;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 using GameServer.Game.Network.Messaging.Outgoing;
 
@@ -22,19 +24,19 @@ public record HealGroup : BehaviorScript {
         _healAmount = healAmount;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var healGroupInfo = host.Behavior.Resources.ResolveResource<HealGroupInfo>(this);
         healGroupInfo.RemainingTime = 0; // Make sure the behavior runs once
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var healGroupInfo = host.Behavior.Resources.ResolveResource<HealGroupInfo>(this);
         if (healGroupInfo.RemainingTime <= 0) {
             // if (host.HasConditionEffect(ConditionEffectIndex.Stunned)) // TODO: Condition Effects
             //     return BehaviorTickState.BehaviorFailed;
 
-            foreach (var enId in host.World.Map.GetEntitiesByName(host.Stats.Pos, _group, _range)) {
-                ref var stats = ref host.World.EntityStats.Get(enId);
+            foreach (var en in host.World.Map.GetEntitiesByName(host.Position.Pos, _group, _range)) {
+                ref var stats = ref host.World.Ecs.Get<Stats>(en);
                 var newHp = stats.GetInt(StatType.MaxHP);
                 var hp = stats.GetInt(StatType.HP);
                 if (_healAmount != 0) {
@@ -43,22 +45,22 @@ public record HealGroup : BehaviorScript {
                         newHp = newHealth;
                 }
 
-                var hostId = host.Id;
-                var hostPos = host.Stats.Pos;
+                var hostId = (EntityId)host.Entity;
+                var hostPos = host.Position.Pos;
                 if (newHp != hp) {
                     var n = newHp - hp;
 
                     stats.Set(StatType.HP, newHp);
-                    host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user =>
+                    host.World.Map.BroadcastNearby(hostPos, 20f, user =>
                         user.SendPacket(new ShowEffect(
                             (byte)ShowEffectIndex.Heal,
-                            enId,
+                            (EntityId)en,
                             0xFFFFFF,
                             0,
                             default,
                             default
                         )));
-                    host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user =>
+                    host.World.Map.BroadcastNearby(hostPos, 20f, user =>
                         user.SendPacket(new ShowEffect(
                             (byte)ShowEffectIndex.Line,
                             hostId,
@@ -67,9 +69,9 @@ public record HealGroup : BehaviorScript {
                             hostPos,
                             default
                         )));
-                    host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user =>
+                    host.World.Map.BroadcastNearby(hostPos, 20f, user =>
                         user.SendPacket(new Notification(
-                            enId,
+                            (EntityId)en,
                             "+" + n,
                             0x00FF00)
                         ));

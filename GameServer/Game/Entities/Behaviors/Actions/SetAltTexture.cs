@@ -22,7 +22,7 @@ public record SetAltTexture : BehaviorScript {
         _loop = loop;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var state = host.Behavior.Resources.ResolveResource<SetAltTextureInfo>(this);
         var altTexture = host.Stats.GetInt(StatType.AltTextureIndex);
         state.CurrentTexture = altTexture;
@@ -34,7 +34,7 @@ public record SetAltTexture : BehaviorScript {
         }
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var state = host.Behavior.Resources.ResolveResource<SetAltTextureInfo>(this);
 
         if (_indexMax == -1 || (state.CurrentTexture == _indexMax && !_loop))

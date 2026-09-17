@@ -1,8 +1,6 @@
 using System.Numerics;
 using Common.Structs;
 using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Components;
 using GameServer.Game.Worlds;
 
 namespace GameServer.Utilities;
@@ -35,8 +33,8 @@ public static class PositionUtils {
             return pos.GetAngleBetween(vec.X, vec.Y);
         }
 
-        public float GetAngleBetween(ref Position b) {
-            return pos.GetAngleBetween(b.Pos.X, b.Pos.Y);
+        public float GetAngleBetween(WorldPosData b) {
+            return pos.GetAngleBetween(b.X, b.Y);
         }
 
         public float GetAngleBetween(float x, float y) {

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Numerics;
 using System.Xml.Linq;
+using Arch.Core;
 using Common.Game;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities.Components;
 using GameServer.Utilities;
 
 namespace GameServer.Game.Entities.Behaviors;
@@ -27,40 +28,42 @@ public record Circle : BehaviorScript {
         _target = target;
     }
 
-    public override void Start(BehaviorController controller) {
-        EntityId targetId;
+    public override void Start(ref EntityContext host) {
+        ref var hostPos = ref host.Position;
+        
+        Entity target;
         if (_target == "player")
-            targetId = host.World.Map.GetNearestPlayer(host.Stats.Pos, _acquireRadiusSqr);
+            target = host.World.Map.GetNearestPlayer(hostPos.Pos, _acquireRadiusSqr);
         else
-            targetId = host.World.Map.GetNearestEntityByName(_target, host.Stats.Pos.X, host.Stats.Pos.Y, _acquireRadiusSqr);
+            target = host.World.Map.GetNearestEntityByName(_target, hostPos.Pos.X, hostPos.Pos.Y, _acquireRadiusSqr);
 
-        if (targetId == EntityId.Null)
+        if (target == Entity.Null)
             return;
 
-        ref var target = ref host.World.EntityStats.Get(targetId);
+        ref var targetPos = ref host.World.Ecs.Get<Position>(target);
         var resource = host.Behavior.Resources.ResolveResource<CircleInfo>(this);
-        resource.CurrentAngle = host.Stats.GetAngleBetween(ref target).Rad2Deg();
+        resource.CurrentAngle = hostPos.GetAngleBetween(targetPos.Pos).Rad2Deg();
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var resource = host.Behavior.Resources.ResolveResource<CircleInfo>(this);
         var angleInc = 360f * (_rotationsPerSecond * time.ElapsedMsDelta / 1000);
 
-        EntityId targetId;
+        ref var hostPos = ref host.Position;
+        
+        Entity target;
         if (_target == "player")
-            targetId = host.World.Map.GetNearestPlayer(host.Stats.Pos, _acquireRadiusSqr);
+            target = host.World.Map.GetNearestPlayer(hostPos.Pos, _acquireRadiusSqr);
         else
-            targetId = host.World.Map.GetNearestEntityByName(_target, host.Stats.Pos.X, host.Stats.Pos.Y, _acquireRadiusSqr);
+            target = host.World.Map.GetNearestEntityByName(_target, hostPos.Pos.X, hostPos.Pos.Y, _acquireRadiusSqr);
 
-        if (targetId == EntityId.Null)
+        if (target == Entity.Null)
             return BehaviorTickState.BehaviorFailed;
 
-        ref var target = ref host.World.EntityStats.Get(targetId);
-        var targetPos = new Vector2(target.Pos.X, target.Pos.Y);
-        targetPos +=
-            new Vector2(MathF.Cos(resource.CurrentAngle.Deg2Rad()), MathF.Sin(resource.CurrentAngle.Deg2Rad())) *
-            _radius;
-        host.Stats.Move(targetPos);
+        ref var targetPos = ref host.World.Ecs.Get<Position>(target);
+        hostPos.Move(
+            targetPos.Pos.X + MathF.Cos(resource.CurrentAngle.Deg2Rad()) * _radius,
+            targetPos.Pos.Y + MathF.Sin(resource.CurrentAngle.Deg2Rad()) * _radius);
         resource.CurrentAngle += angleInc;
         return BehaviorTickState.BehaviorActive;
     }

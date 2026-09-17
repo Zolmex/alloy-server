@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Arch.Core;
 using Common;
 using Common.Game;
 using Common.Projectiles.ProjectilePaths;
@@ -8,9 +9,7 @@ using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Extensions;
-using GameServer.Game.Entities.Old.Components;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
@@ -254,13 +253,13 @@ public record Shoot : BehaviorScript {
         }
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var shootInfo = host.Behavior.Resources.ResolveResource<ShootInfo>(this);
         shootInfo.CooldownLeft = _cooldownOffsetMs;
         shootInfo.AngleOffset = 0;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var shootInfo = host.Behavior.Resources.ResolveResource<ShootInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Stunned)) // TODO: Condition Effects
         //     return BehaviorTickState.BehaviorFailed;
@@ -273,16 +272,16 @@ public record Shoot : BehaviorScript {
 
         var startAngle = _fixedAngle;
         if (_targetType != TargetType.FixedAngle) {
-            var attackTargetId = host.World.GetAttackTarget(host.Stats.Pos, _maxRadiusSqr, _targetType);
-            if (attackTargetId == EntityId.Null)
+            var attackTarget = host.World.GetAttackTarget(host.Position.Pos, _maxRadiusSqr, _targetType);
+            if (attackTarget == Entity.Null)
                 return BehaviorTickState.BehaviorFailed;
 
-            ref var attackTarget = ref host.World.EntityStats.Get(attackTargetId);
+            ref var targetPos = ref host.World.Ecs.Get<Position>(attackTarget);
             if (_predictive > 0)
-                startAngle = Predict(host.Stats.Pos, ref attackTarget);
+                startAngle = Predict(host.Position.Pos, ref targetPos);
             else
-                startAngle = (float)Math.Atan2(attackTarget.Pos.Y - host.Stats.Pos.Y,
-                    attackTarget.Pos.X - host.Stats.Pos.X);
+                startAngle = (float)Math.Atan2(targetPos.Pos.Y - host.Position.Pos.Y,
+                    targetPos.Pos.X - host.Position.Pos.X);
             startAngle -= (_count / 2f - 0.5f) * _shootAngle;
         }
 
@@ -292,19 +291,19 @@ public record Shoot : BehaviorScript {
             shootInfo.AngleOffset += _rotateAngle;
         }
 
-        var startPos = new WorldPosData(host.Stats.Pos.X + _xOffset, host.Stats.Pos.Y + _yOffset);
-        var projProps = host.Entity.Desc.Projectiles[_projectilePropsId].Props;
-        var dmg = host.Combat.GetProjectileDamage(_minDamage, _maxDamage);
-        host.World.EnemyShootProjectiles(startPos, host.Id, 
-            _projectilePropsId, startAngle.Rad2Deg(), dmg, _count,
-            _shootAngle.Rad2Deg(), _path,
-            _path.LifetimeMs, projProps.MultiHit, ref time);
+        var startPos = new WorldPosData(host.Position.Pos.X + _xOffset, host.Position.Pos.Y + _yOffset);
+        var projProps = host.Desc.Projectiles[_projectilePropsId].Props;
+        // var dmg = host.Combat.GetProjectileDamage(_minDamage, _maxDamage);
+        // host.World.EnemyShootProjectiles(startPos, host.Id, 
+        //     _projectilePropsId, startAngle.Rad2Deg(), dmg, _count,
+        //     _shootAngle.Rad2Deg(), _path,
+        //     _path.LifetimeMs, projProps.MultiHit, ref time);
 
         shootInfo.CooldownLeft = _cooldownMs;
         return BehaviorTickState.BehaviorActive;
     }
 
-    private static float Predict(WorldPosData hostPos, ref EntityStats target) {
+    private static float Predict(WorldPosData hostPos, ref Position target) {
         var targetX = target.Pos.X + PREDICT_NUM_TICKS * (target.Pos.X - target.PrevPos.X);
         var targetY = target.Pos.Y + PREDICT_NUM_TICKS * (target.Pos.Y - target.PrevPos.Y);
         var angle = MathF.Atan2(targetY - hostPos.Y, targetX - hostPos.X);

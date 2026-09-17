@@ -27,10 +27,10 @@ public record OpenGate : BehaviorScript {
         _useArea = true;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         if (_useArea)
-            for (var x = (int)host.Stats.Pos.X - _area; x <= (int)host.Stats.Pos.X + _area; x++) {
-                for (var y = (int)host.Stats.Pos.Y - _area; y <= (int)host.Stats.Pos.Y + _area; y++) {
+            for (var x = (int)host.Position.Pos.X - _area; x <= (int)host.Position.Pos.X + _area; x++) {
+                for (var y = (int)host.Position.Pos.Y - _area; y <= (int)host.Position.Pos.Y + _area; y++) {
                     var tile = host.World.Map[x, y];
                     if (tile.ObjectType == XmlLibrary.Id2Object(_target).ObjectType) {
                         tile.ObjectType = 0;

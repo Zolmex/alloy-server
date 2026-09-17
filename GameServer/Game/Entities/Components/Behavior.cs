@@ -6,7 +6,7 @@ using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Entities.Components;
 
-public readonly struct Behavior {} 
+public record struct Behavior(Entity Parent) { }
 
 public class BehaviorController : IDisposable {
     
@@ -67,6 +67,10 @@ public class BehaviorController : IDisposable {
         var targetState = _currentState.Tick(this, ref time);
         if (targetState != null)
             TransitionTo(targetState, ref time);
+    }
+
+    public ref T Get<T>() where T : struct {
+        return ref World.Ecs.Get<T>(Host);
     }
 
     public void Dispose() {

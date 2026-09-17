@@ -1,5 +1,7 @@
-﻿using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Events;
+﻿
+using Common.Resources.Xml;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Events;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -12,14 +14,16 @@ public record RemoveObjectOnDeath : BehaviorScript {
         _range = range;
     }
 
-    public override void Start(BehaviorController controller) {
-        host.Events.OnDeath.Subscribe(OnDeath);
+    public override void Start(ref EntityContext host) {
+        host.World.EventSystem.Subscribe(host.Entity, OnDeath);
     }
 
     public void OnDeath(ref DeathEvent evt) {
-        ref var stats = ref evt.World.EntityStats.Get(evt.HostId);
-        foreach (ref var en in evt.World.Map.GetEntitiesWithin(stats.Pos, _range))
-            if (en.Desc.ObjectId == _objName)
-                evt.World.LeaveWorld(en.Id);
+        ref var pos = ref evt.World.Ecs.Get<Position>(evt.Entity);
+        foreach (var en in evt.World.Map.GetEntitiesWithin(pos.Pos, _range)) {
+            var desc = XmlLibrary.ObjectDescs[evt.World.Ecs.Get<ObjectType>(en)];
+            if (desc.ObjectId == _objName)
+                evt.World.LeaveWorld(en);
+        }
     }
 }

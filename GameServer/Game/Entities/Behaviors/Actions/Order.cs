@@ -13,10 +13,10 @@ public record Order : BehaviorScript {
         _targetState = targetState;
     }
 
-    public override void Start(BehaviorController controller) {
-        foreach (var id in host.World.Map.GetEntitiesByName(host.Stats.Pos, _children, _range)) {
-            ref var behavior = ref host.World.EntityBehaviors.Get(id);
-            behavior.TransitionTo(_targetState, ref GameLogic.WorldTime);
+    public override void Start(ref EntityContext host) {
+        foreach (var entity in host.World.Map.GetEntitiesByName(host.Position.Pos, _children, _range)) {
+            var behaviorController = host.World.BehaviorSystem.Get(entity);
+            behaviorController.TransitionTo(_targetState, ref GameLogic.WorldTime);
         }
     }
 }

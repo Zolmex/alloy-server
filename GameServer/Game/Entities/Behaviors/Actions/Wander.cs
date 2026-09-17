@@ -36,14 +36,14 @@ public record Wander : BehaviorScript {
         _ease = ease;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var wanderInfo = host.Behavior.Resources.ResolveResource<WanderInfo>(this);
         wanderInfo.WanderCooldown = _cooldownMs;
-        wanderInfo.InitialPos = new Vector2(host.Stats.Pos.X, host.Stats.Pos.Y);
+        wanderInfo.InitialPos = new Vector2(host.Position.Pos.X, host.Position.Pos.Y);
         wanderInfo.Wandering = false;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var wanderInfo = host.Behavior.Resources.ResolveResource<WanderInfo>(this);
         var firstMove = false;
         if (!wanderInfo.Wandering && wanderInfo.WanderCooldown > 0) {
@@ -53,10 +53,10 @@ public record Wander : BehaviorScript {
         }
         else if (!wanderInfo.Wandering && wanderInfo.WanderCooldown <= 0) {
             var intersect = Utils.FindCircleCircleIntersections(wanderInfo.InitialPos, _distanceFromSpawn,
-                host.Stats.Pos.ToVec2(), _distance, out var interSect1, out var intersect2);
+                host.Position.Pos.ToVec2(), _distance, out var interSect1, out var intersect2);
             if (intersect == 2) {
-                var angle1Deg = host.Stats.GetAngleBetween(interSect1).Rad2Deg();
-                var angle2Deg = host.Stats.GetAngleBetween(intersect2).Rad2Deg();
+                var angle1Deg = host.Position.GetAngleBetween(interSect1).Rad2Deg();
+                var angle2Deg = host.Position.GetAngleBetween(intersect2).Rad2Deg();
                 if (angle2Deg < 0) angle2Deg += 360;
                 while (angle1Deg < angle2Deg)
                     angle1Deg += 360;
@@ -71,7 +71,7 @@ public record Wander : BehaviorScript {
             wanderInfo.WanderCooldown = _moveTimeMs - time.ElapsedMsDelta;
             wanderInfo.Wandering = true;
             wanderInfo.WanderStarted = time.TotalElapsedMs;
-            wanderInfo.StartPos = host.Stats.Pos.ToVec2();
+            wanderInfo.StartPos = host.Position.Pos.ToVec2();
             firstMove = true;
         }
 
@@ -80,7 +80,7 @@ public record Wander : BehaviorScript {
             Easing.EaseVal(_ease, ref elapsedTimePerc);
         var relMove = new Vector2(MathF.Cos(wanderInfo.AngleDir) * elapsedTimePerc * _distance,
             MathF.Sin(wanderInfo.AngleDir) * elapsedTimePerc * _distance);
-        host.Stats.Move(host.Stats.Pos + relMove);
+        host.Position.Move((Vector2)host.Position.Pos + relMove);
         if (firstMove)
             return BehaviorTickState.BehaviorActivate;
 

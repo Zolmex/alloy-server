@@ -20,4 +20,10 @@ public partial class BehaviorSystem(World world) : BaseSystem<World, RealmTime>(
         
         behaviorController.Tick(ref realmTime);
     }
+
+    public BehaviorController Get(Entity entity) {
+        if (!_behaviorControllers.TryGetValue(entity, out var behaviorController))
+            return null;
+        return behaviorController;
+    }
 }

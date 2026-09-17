@@ -1,8 +1,8 @@
 ﻿using System;
 using Common.Game;
 using Common.Resources.Xml;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Events;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Events;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -19,8 +19,8 @@ public record TransformOnDeath : BehaviorScript {
         _probability = probability;
     }
 
-    public override void Start(BehaviorController controller) {
-        host.Events.OnDeath.Subscribe(HandleDeath);
+    public override void Start(ref EntityContext host) {
+        host.World.EventSystem.Subscribe(host.Entity, HandleDeath);
     }
 
     private void HandleDeath(ref DeathEvent evt) {
@@ -35,16 +35,17 @@ public record TransformOnDeath : BehaviorScript {
         if (_min > _max)
             max = _min;
 
+        var host = new EntityContext(evt.World, evt.Entity);
+        var isSpawned = host.Flags.Mask.IsSet((int)EntityFlags.Spawned);
         var count = Random.Shared.Next(_min, max + 1);
         for (var i = 0; i < count; i++) {
-            var entity = new Entity(obj.ObjectType);
-            evt.World.EnterWorld(ref entity);
-            ref var hostStats = ref evt.World.EntityStats.Get(evt.HostId);
-            ref var enStats = ref evt.World.EntityStats.Get(entity.Id);
-            if (hostStats.Flags.IsSet((int)EntityFlags.Spawned))
-                enStats.Flags.Set((int)EntityFlags.Spawned);
-
-            enStats.Move(hostStats.Pos.X, hostStats.Pos.Y);
+            var newEn = evt.World.EnterWorld(obj);
+            ref var enPos = ref evt.World.Ecs.Get<Position>(newEn);
+            enPos.Move(host.Position.Pos.X, host.Position.Pos.Y);
+            if (isSpawned) {
+                ref var newFlags = ref evt.World.Ecs.Get<Flags>(newEn);
+                newFlags.Mask.Set((int)EntityFlags.Spawned);
+            }
         }
     }
 }

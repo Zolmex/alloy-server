@@ -1,10 +1,10 @@
 ﻿using System;
+using Arch.Core;
 using Common.Resources.Xml;
 using Common.Utilities;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Extensions;
-using GameServer.Game.Entities.Old.Events;
-using GameServer.Game.Worlds;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Events;
+using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -19,29 +19,28 @@ public record DropPortalOnDeath : BehaviorScript {
         _timeout = timeout;
     }
 
-    public override void Start(BehaviorController controller) {
-        host.Events.OnDeath.Subscribe(HandleDeath);
+    public override void Start(ref EntityContext host) {
+        host.World.EventSystem.Subscribe(host.Entity, HandleDeath);
     }
 
     private void HandleDeath(ref DeathEvent evt) {
-        var host = new EntityView(evt.World, evt.HostId);
+        var host = new EntityContext(evt.World, evt.Entity);
 
-        if (host.World.DisplayName.Contains("Arena") || host.Stats.Flags.IsSet((int)EntityFlags.Spawned))
+        if (host.World.DisplayName.Contains("Arena") || host.Flags.Mask.IsSet((int)EntityFlags.Spawned))
             return;
 
         if (Random.Shared.NextDouble() <= _probability) {
             var portalDesc = XmlLibrary.Id2Object(_portalId);
             var timeoutTime = _timeout == null ? portalDesc.XML.GetValue<int>("Timeout") : _timeout;
 
-            var entity = new Entity(portalDesc.ObjectType);
-            ref var en = ref host.World.EnterWorld(ref entity);
-            var childX = host.Stats.Pos.X + (float)Random.Shared.NextDouble() * 1.5f;
-            var childY = host.Stats.Pos.Y + (float)Random.Shared.NextDouble() * 1.5f;
-            en.Move(host.World, childX, childY);
+            var en = host.World.EnterWorld(portalDesc);
+            ref var enPos = ref host.World.Ecs.Get<Position>(en);
+            var childX = host.Position.Pos.X + (float)Random.Shared.NextDouble() * 1.5f;
+            var childY = host.Position.Pos.Y + (float)Random.Shared.NextDouble() * 1.5f;
+            enPos.Move(childX, childY);
 
-            var id = en.Id;
             if (timeoutTime != 0)
-                host.World.AddTimedAction(timeoutTime * 1000, w => w.LeaveWorld(id));
+                host.World.AddTimedAction(timeoutTime * 1000, w => w.LeaveWorld(en));
         }
     }
 }

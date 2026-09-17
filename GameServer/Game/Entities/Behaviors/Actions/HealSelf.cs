@@ -1,6 +1,7 @@
 ﻿using System;
 using Common;
 using Common.Game;
+using Common.Utilities.Collections;
 using GameServer.Game.Entities.Old;
 using GameServer.Game.Network.Messaging.Outgoing;
 
@@ -25,13 +26,13 @@ public record HealSelf : BehaviorScript {
         _cooldownOffset = cooldownOffset;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var healGroupInfo = host.Behavior.Resources.ResolveResource<HealSelfInfo>(this);
         // Instead of forcing TimeLeft = 0, start it at the cooldownOffset.
         healGroupInfo.TimeLeft = _cooldownOffset;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var healSelfInfo = host.Behavior.Resources.ResolveResource<HealSelfInfo>(this);
 
         // If we still have time left in the (offset or cooldown) timer, decrement and remain on cooldown
@@ -66,9 +67,9 @@ public record HealSelf : BehaviorScript {
                 host.Stats.Set(StatType.HP, maxHp);
 
             // Show effect broadcasts
-            var hostId = host.Id;
-            var hostPos = host.Stats.Pos;
-            host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user => {
+            var hostId = (EntityId)host.Entity;
+            var hostPos = host.Position.Pos;
+            host.World.Map.BroadcastNearby(hostPos, 20f, user => {
                 user.SendPacket(new ShowEffect(
                     (byte)ShowEffectIndex.Heal,
                     hostId,
@@ -77,7 +78,7 @@ public record HealSelf : BehaviorScript {
                     default,
                     default));
             });
-            host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user => {
+            host.World.Map.BroadcastNearby(hostPos, 20f, user => {
                 user.SendPacket(new ShowEffect(
                     (byte)ShowEffectIndex.Line,
                     hostId,
@@ -86,7 +87,7 @@ public record HealSelf : BehaviorScript {
                     hostPos,
                     default));
             });
-            host.World.Map.BroadcastNearby(host.Stats.Pos, 20f, user => {
+            host.World.Map.BroadcastNearby(hostPos, 20f, user => {
                 user.SendPacket(new Notification(
                     hostId,
                     "+" + actualHeal, // Display the actual health restored

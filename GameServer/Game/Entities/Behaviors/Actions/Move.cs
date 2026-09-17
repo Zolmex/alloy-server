@@ -33,13 +33,13 @@ public record Move : BehaviorScript {
         _ease = ease;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var moveInfo = host.Behavior.Resources.ResolveResource<MoveInfo>(this);
         moveInfo.CooldownMs = _cooldownMsDefault;
         moveInfo.Moving = false;
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var moveInfo = host.Behavior.Resources.ResolveResource<MoveInfo>(this);
         var firstMove = false;
         if (!moveInfo.Moving && moveInfo.CooldownMs > 0) {
@@ -50,7 +50,7 @@ public record Move : BehaviorScript {
         else if (!moveInfo.Moving && moveInfo.CooldownMs <= 0) {
             moveInfo.CooldownMs = _moveTimeMs - time.ElapsedMsDelta;
             moveInfo.Moving = true;
-            moveInfo.StartPos = host.Stats.Pos.ToVec2();
+            moveInfo.StartPos = host.Position.Pos.ToVec2();
             moveInfo.MoveStarted = time.TotalElapsedMs;
             firstMove = true;
         }
@@ -58,7 +58,7 @@ public record Move : BehaviorScript {
         var elapsedTimePerc = (time.TotalElapsedMs - moveInfo.MoveStarted) / 1000f / _moveTime;
         if (_ease != Ease.None)
             Easing.EaseVal(_ease, ref elapsedTimePerc);
-        host.Stats.Move(moveInfo.StartPos + _move * elapsedTimePerc);
+        host.Position.Move(moveInfo.StartPos + _move * elapsedTimePerc);
         
         if (firstMove)
             return BehaviorTickState.BehaviorActivate;

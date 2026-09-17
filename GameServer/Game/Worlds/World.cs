@@ -4,10 +4,12 @@ using System.Diagnostics;
 using Arch.Core;
 using Arch.Core.Extensions;
 using Arch.System;
+using Common.Database.Models;
 using Common.Game;
 using Common.Resources.World;
 using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
+using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
@@ -48,7 +50,7 @@ public class World {
     public readonly InventorySystem InventorySystem;
     public readonly PlayerSightSystem PlayerSightSystem;
     public readonly EventSystem EventSystem;
-    public readonly DamageCounterSystem DamageCounterSystem;
+    public readonly DamageSystem DamageSystem;
     public readonly ChatSystem ChatSystem;
     public readonly BehaviorSystem BehaviorSystem;
 
@@ -64,7 +66,7 @@ public class World {
         InventorySystem = new InventorySystem(this);
         PlayerSightSystem = new PlayerSightSystem(this);
         EventSystem = new EventSystem(this);
-        DamageCounterSystem = new DamageCounterSystem(this);
+        DamageSystem = new DamageSystem(this);
         ChatSystem = new ChatSystem(this);
         BehaviorSystem = new BehaviorSystem(this);
 
@@ -74,7 +76,7 @@ public class World {
         InventorySystem.Initialize();
         PlayerSightSystem.Initialize();
         EventSystem.Initialize();
-        DamageCounterSystem.Initialize();
+        DamageSystem.Initialize();
         ChatSystem.Initialize();
         BehaviorSystem.Initialize();
     }
@@ -92,7 +94,7 @@ public class World {
         foreach (var orig in Map.Data.Entities) {
             var desc = XmlLibrary.ObjectDescs[orig.ObjType];
             var en = EnterWorld(desc);
-            en.Init(this, orig.Pos);
+            InitEntity(en, desc, orig.Pos);
         }
     }
 
@@ -119,7 +121,7 @@ public class World {
 
         InventorySystem.Tick(ref time);
         InventorySystem.ProcessQuery(Ecs);
-        DamageCounterSystem.ProcessQuery(Ecs);
+        DamageSystem.ProcessQuery(Ecs);
         BehaviorSystem.TickQuery(Ecs, ref time);
         PlayerSightSystem.ProcessQuery(Ecs, ref time);
         StatsSystem.TickQuery(Ecs, ref time);
@@ -128,6 +130,7 @@ public class World {
 
     public Entity EnterPlayer(ushort objType, User user) {
         var en = EnterWorld(XmlLibrary.ObjectDescs[objType]);
+        InitPlayer(en, user.Session.Account, user.Session.Char);
         Users = Users.Add(en, user);
         return en;
     }
@@ -257,6 +260,28 @@ public class World {
     
     public virtual World GetInstance(User user) {
         return this;
+    }
+    
+    private void InitEntity(Entity en, ObjectDesc desc, WorldPosData spawnPos) {
+        ref var pos = ref Ecs.Get<Position>(en);
+        pos.Move(spawnPos.X, spawnPos.Y);
+
+        if (desc.Static) {
+            var tile = Map[(int)spawnPos.X, (int)spawnPos.Y];
+            if (tile.Object == Entity.Null)
+                tile.Object = en;
+        }
+    }
+    
+    public void InitPlayer(Entity player, Account acc, Character chr) {
+        ref var stats = ref Ecs.Get<Stats>(player);
+        ref var inv = ref Ecs.Get<Inventory>(player);
+        stats.InitPlayer(acc, chr);
+        inv.InitPlayer(acc, chr);
+        
+        var spawnTile = Map.Data.Regions[TileRegion.Spawn].RandomElement();
+        ref var pos = ref Ecs.Get<Position>(player);
+        pos.Move(spawnTile.X, spawnTile.Y);
     }
     
     private void HandleTimers() {

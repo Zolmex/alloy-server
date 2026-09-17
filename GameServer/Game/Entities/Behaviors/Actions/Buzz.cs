@@ -2,6 +2,8 @@
 using System.Numerics;
 using Common;
 using Common.Game;
+using GameServer.Game.Entities.Components;
+using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Entities.Old;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -20,11 +22,11 @@ public record Buzz : BehaviorScript {
         _distance = distance;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         var buzzState = host.Behavior.Resources.ResolveResource<BuzzInfo>(this);
     }
 
-    public override BehaviorTickState Tick(BehaviorController controller, ref RealmTime time) {
+    public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
         var buzzState = host.Behavior.Resources.ResolveResource<BuzzInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
@@ -38,11 +40,12 @@ public record Buzz : BehaviorScript {
             buzzState.RemainingDistance = _distance;
         }
 
-        var dist = host.Stats.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
+        ref var hostPos = ref host.Position;
+        var dist = host.GetSpeed(_speed) * (time.ElapsedMsDelta / 1000f);
 
-        var newX = host.Stats.Pos.X + buzzState.Direction.X * dist;
-        var newY = host.Stats.Pos.Y + buzzState.Direction.Y * dist;
-        host.Stats.Move(newX, newY);
+        var newX = hostPos.Pos.X + buzzState.Direction.X * dist;
+        var newY = hostPos.Pos.Y + buzzState.Direction.Y * dist;
+        hostPos.Move(newX, newY);
 
         buzzState.RemainingDistance -= dist;
 

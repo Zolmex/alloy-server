@@ -1,4 +1,4 @@
-namespace GameServer.Game.Entities.Old;
+namespace GameServer.Game.Entities;
 
 public enum EntityFlags {
     None,

@@ -5,7 +5,6 @@ using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Extensions;
 using World = GameServer.Game.Worlds.World;
 
 namespace GameServer.Game.Network;
@@ -43,11 +42,7 @@ public class Session {
         State = SessionState.Playing;
         Char = chr;
         
-        var newPlr = world.EnterPlayer(chr.ObjectType, User);
-        newPlr.InitPlayer(world, Account, Char);
-        newPlr.MoveToSpawn(world);
-        
-        Player = newPlr;
+        Player = world.EnterPlayer(chr.ObjectType, User);
     }
 
     public void Unload() {

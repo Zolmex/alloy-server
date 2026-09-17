@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Game;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
@@ -15,7 +16,7 @@ public record ConditionEffectBehavior : BehaviorScript { // TODO: COndition efec
         _persist = persist;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         // if (_durationMS == 0) { // Remove effect
         //     host.RemoveConditionEffect(_condEffect);
         //     return;
@@ -24,7 +25,7 @@ public record ConditionEffectBehavior : BehaviorScript { // TODO: COndition efec
         // host.ApplyConditionEffect(_condEffect, _durationMS);
     }
 
-    public override void End(BehaviorController controller, ref RealmTime time) {
+    public override void End(ref EntityContext host, ref RealmTime time) {
         // if (_persist)
         //     return;
         //
