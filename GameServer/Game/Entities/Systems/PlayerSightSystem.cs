@@ -55,10 +55,18 @@ public partial class PlayerSightSystem(World world) : BaseSystem<World, RealmTim
     public void Process([Data] ref RealmTime time, Entity entity, ref Position pos, ref PlayerTag playerTag) {
         var user = World.Users[entity];
         if (!_sightStates.TryGetValue(entity, out var sightState))
-            sightState = _sightStates[entity] = new PlayerSightState(entity, World.Map.Data.Width, World.Map.Data.Height);
+            return;
         
         ProcessUpdate(user, entity, ref pos, sightState);
         ProcessNewtick(user, sightState);
+    }
+    
+    public void Add(Entity entity) {
+        _sightStates[entity] = new PlayerSightState(entity, World.Map.Data.Width, World.Map.Data.Height);
+    }
+
+    public void Remove(Entity entity) {
+        _sightStates.Remove(entity);
     }
     
     private void ProcessUpdate(User user, Entity owner, ref Position pos, PlayerSightState sight) {

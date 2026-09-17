@@ -99,9 +99,8 @@ public class World {
 
     public void Update() { // Runs in-between ticks
         while (_removeEntities.TryDequeue(out var en)) {
-            if (Ecs.IsAlive(en)) { // Needed for ID safety
-                Ecs.Destroy(en);
-                _entities.Remove(new EntityId(en), out _);
+            if (Ecs.IsAlive(en)) { // Needed for ID + version safety
+                DestroyEntity(en);
             }
         }
     }
@@ -160,7 +159,8 @@ public class World {
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
                         new Flags(),
-                        new Position()
+                        new Position(),
+                        new Behavior()
                         );
                 case "Character":
                     if (desc.Enemy)
@@ -170,7 +170,9 @@ public class World {
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
                         new Flags(),
-                        new Position()
+                        new Position(),
+                        new Behavior(),
+                        new Combat()
                         );
                 case "ClosedVaultChest":
                 case "Container":
@@ -181,7 +183,8 @@ public class World {
                         new Stats(desc),
                         new Flags(),
                         new Position(),
-                        new Inventory(containerDesc.SlotTypes)
+                        new Inventory(containerDesc.SlotTypes),
+                        new Behavior()
                         );
                 case "Merchant":
                 case "GuildMerchant":
@@ -208,34 +211,46 @@ public class World {
     
     private Entity CreatePlayer(ObjectDesc desc) {
         var playerDesc = XmlLibrary.PlayerDescs[desc.ObjectType];
-        return Ecs.Create(
+        var ret = Ecs.Create(
             new PlayerTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
             new Flags(),
             new Position(),
-            new Inventory(playerDesc.SlotTypes)
+            new Inventory(playerDesc.SlotTypes),
+            new PlayerChat(),
+            new Combat()
         );
+        PlayerSightSystem.Add(ret);
+        return ret;
     }
     
     private Entity CreateEnemy(ObjectDesc desc) {
-        return Ecs.Create(
+        var ret = Ecs.Create(
             new EnemyTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
             new Flags(),
-            new Position()
+            new Position(),
+            new Behavior(),
+            new Combat()
         );
+        BehaviorSystem.Add(ret, desc);
+        return ret;
     }
 
     private Entity CreateStaticObject(ObjectDesc desc) {
-        return Ecs.Create(
+        var ret = Ecs.Create(
             new StaticObjectTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
             new Flags(),
-            new Position()
-            );
+            new Position(),
+            new Behavior(),
+            new Combat()
+        );
+        BehaviorSystem.Add(ret, desc);
+        return ret;
     }
 
     public void LeaveWorld(Entity en) {
@@ -272,7 +287,7 @@ public class World {
         }
     }
     
-    public void InitPlayer(Entity player, Account acc, Character chr) {
+    private void InitPlayer(Entity player, Account acc, Character chr) {
         ref var stats = ref Ecs.Get<Stats>(player);
         ref var inv = ref Ecs.Get<Inventory>(player);
         stats.InitPlayer(acc, chr);
@@ -281,6 +296,14 @@ public class World {
         var spawnTile = Map.Data.Regions[TileRegion.Spawn].RandomElement();
         ref var pos = ref Ecs.Get<Position>(player);
         pos.Move(spawnTile.X, spawnTile.Y);
+    }
+
+    private void DestroyEntity(Entity en) { // This is the deallocation part, use LeaveWorld to kill an entity
+        Ecs.Destroy(en);
+        _entities.Remove((EntityId)en, out _);
+        
+        PlayerSightSystem.Remove(en);
+        BehaviorSystem.Remove(en);
     }
     
     private void HandleTimers() {

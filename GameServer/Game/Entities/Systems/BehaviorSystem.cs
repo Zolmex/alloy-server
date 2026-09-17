@@ -3,6 +3,7 @@ using Arch.System;
 using Collections.Pooled;
 using Common.Game;
 using Common.Resources.Xml;
+using Common.Resources.Xml.Descriptors;
 using GameServer.Game.Entities.Components;
 using World = GameServer.Game.Worlds.World;
 
@@ -13,12 +14,19 @@ public partial class BehaviorSystem(World world) : BaseSystem<World, RealmTime>(
     private readonly PooledDictionary<Entity, BehaviorController> _behaviorControllers = [];
     
     [Query]
-    public void Tick([Data] ref RealmTime realmTime, Entity entity, ref Behavior behavior, ref ObjectType objType) {
-        var desc = XmlLibrary.ObjectDescs[objType];
+    public void Tick([Data] ref RealmTime realmTime, Entity entity, ref Behavior behavior) {
         if (!_behaviorControllers.TryGetValue(entity, out var behaviorController))
-            behaviorController = _behaviorControllers[entity] = new BehaviorController(World, entity, desc.ObjectId);
+            return;
         
         behaviorController.Tick(ref realmTime);
+    }
+
+    public void Add(Entity entity, ObjectDesc desc) {
+        _behaviorControllers[entity] = new BehaviorController(World, entity, desc.ObjectId);
+    }
+    
+    public void Remove(Entity entity) {
+        _behaviorControllers.Remove(entity);
     }
 
     public BehaviorController Get(Entity entity) {
