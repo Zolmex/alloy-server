@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Arch.Core;
 using Arch.System;
@@ -26,18 +27,17 @@ public record struct DamageRecord(Entity From, Entity Target, int Damage) {
 
 public partial class DamageSystem(World world) : BaseSystem<World, RealmTime>(world) {
 
-    private readonly Dictionary<Entity, Dictionary<Entity, DamageRecord>> _records = [];
+    private readonly Dictionary<Entity, Dictionary<Entity, DamageRecord>> _totalRecords = [];
+    private readonly ConcurrentQueue<DamageRecord> _newRecords = new();
 
-    [Query(Parallel = true)] // Keep Parallel as long as you don't modify _records or its entries at all
-    public void Process(Entity entity, ref Combat combat, ref Stats stats) {
-        if (!_records.TryGetValue(entity, out var records))
-            return;
-
-        foreach (var (en, record) in records) {
-            combat.DamageReceived += record.Damage;
-            record.Reset();
+    public void Tick(ref RealmTime time) {
+        while (_newRecords.TryDequeue(out var record)) {
+            RegisterDamage(record);
         }
-        
+    }
+    
+    [Query(Parallel = true)]
+    public void Process(Entity entity, ref Combat combat, ref Stats stats) {
         var hp = stats.GetInt(StatType.HP);
         var newHp = hp - combat.DamageReceived;
         stats.Set(StatType.HP, newHp);
@@ -47,19 +47,28 @@ public partial class DamageSystem(World world) : BaseSystem<World, RealmTime>(wo
         
         combat.DamageReceived = 0;
     }
-    
-    private void Death(Entity entity) {
-        if (World.Ecs.Has<PlayerTag>(entity)) {
-            // TODO: Spawn gravestone, announce death, register death in database
-            World.Users[entity].Disconnect(reason: DisconnectReason.Death);
-            return;
-        }
-        World.LeaveWorld(entity);
+
+    public void AddRecord(Entity en) {
+        _totalRecords[en] = new Dictionary<Entity, DamageRecord>();
+    }
+
+    public void RemoveRecord(Entity en) {
+        _totalRecords.Remove(en);
     }
 
     public void Damage(DamageRecord record) {
-        if (!_records.TryGetValue(record.Target, out var records))
-            _records[record.Target] = records = new Dictionary<Entity, DamageRecord>();
+        _newRecords.Enqueue(record);
+    }
+    
+    public void DamageWithText(DamageRecord record) {
+        Damage(record);
+        var user = World.Users[record.Target];
+        user.SendPacket(new Notification((EntityId)record.Target, "-" + record.Damage, 0xFF0000, 24));
+    }
+
+    private void RegisterDamage(DamageRecord record) {
+        if (!_totalRecords.TryGetValue(record.Target, out var records))
+            return; // Ignore. Should be added through AddRecord
         
         if (!records.TryGetValue(record.From, out var prev)) {
             records[record.From] = record;
@@ -69,9 +78,12 @@ public partial class DamageSystem(World world) : BaseSystem<World, RealmTime>(wo
         records[record.From] = prev + record;
     }
     
-    public void DamageWithText(DamageRecord record) {
-        Damage(record);
-        var user = World.Users[record.Target];
-        user.SendPacket(new Notification((EntityId)record.Target, "-" + record.Damage, 0xFF0000, 24));
+    private void Death(Entity entity) {
+        if (World.Ecs.Has<PlayerTag>(entity)) {
+            // TODO: Spawn gravestone, announce death, register death in database
+            World.Users[entity].Disconnect(reason: DisconnectReason.Death);
+            return;
+        }
+        World.LeaveWorld(entity);
     }
 }

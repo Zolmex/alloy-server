@@ -63,7 +63,7 @@ public class RealmManager {
 
         await Task.Run(() => {
             foreach (var world in Worlds) {
-                foreach (var behavior in world.Value.EntityBehaviors) {
+                foreach (var behavior in world.Value.BehaviorSystem.Controllers) {
                     behavior.Load();
                 }
             }

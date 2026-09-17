@@ -119,6 +119,7 @@ public class World {
 
         InventorySystem.Tick(ref time);
         InventorySystem.ProcessQuery(Ecs);
+        DamageSystem.Tick(ref time);
         DamageSystem.ProcessQuery(Ecs);
         BehaviorSystem.TickQuery(Ecs, ref time);
         PlayerSightSystem.ProcessQuery(Ecs, ref time);
@@ -135,6 +136,14 @@ public class World {
 
     public Entity EnterWorld(ObjectDesc desc) {
         var en = Create(desc);
+
+        if (Ecs.Has<Combat>(en))
+            DamageSystem.AddRecord(en);
+        if (Ecs.Has<Behavior>(en))
+            BehaviorSystem.Add(en, desc);
+        if (Ecs.Has<PlayerTag>(en))
+            PlayerSightSystem.Add(en);
+        
         if (!_entities.TryAdd(new EntityId(en), en))
             throw new Exception($"Entity {en.Id}[{en.Version}]('{desc.ObjectId}') already exists.");
         return en;
@@ -159,8 +168,7 @@ public class World {
                         new ObjectType(desc.ObjectType),
                         new Stats(desc),
                         new Flags(),
-                        new Position(),
-                        new Behavior()
+                        new Position()
                         );
                 case "Character":
                     if (desc.Enemy)
@@ -211,7 +219,7 @@ public class World {
     
     private Entity CreatePlayer(ObjectDesc desc) {
         var playerDesc = XmlLibrary.PlayerDescs[desc.ObjectType];
-        var ret = Ecs.Create(
+        return Ecs.Create(
             new PlayerTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
@@ -221,12 +229,10 @@ public class World {
             new PlayerChat(),
             new Combat()
         );
-        PlayerSightSystem.Add(ret);
-        return ret;
     }
     
     private Entity CreateEnemy(ObjectDesc desc) {
-        var ret = Ecs.Create(
+        return Ecs.Create(
             new EnemyTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
@@ -235,12 +241,10 @@ public class World {
             new Behavior(),
             new Combat()
         );
-        BehaviorSystem.Add(ret, desc);
-        return ret;
     }
 
     private Entity CreateStaticObject(ObjectDesc desc) {
-        var ret = Ecs.Create(
+        return Ecs.Create(
             new StaticObjectTag(),
             new ObjectType(desc.ObjectType),
             new Stats(desc),
@@ -249,8 +253,6 @@ public class World {
             new Behavior(),
             new Combat()
         );
-        BehaviorSystem.Add(ret, desc);
-        return ret;
     }
 
     public void LeaveWorld(Entity en) {
@@ -301,7 +303,8 @@ public class World {
     private void DestroyEntity(Entity en) { // This is the deallocation part, use LeaveWorld to kill an entity
         Ecs.Destroy(en);
         _entities.Remove((EntityId)en, out _);
-        
+
+        DamageSystem.RemoveRecord(en);
         PlayerSightSystem.Remove(en);
         BehaviorSystem.Remove(en);
     }
