@@ -38,21 +38,23 @@ public class BehaviorController : IDisposable {
         Resources.ClearResources();
 
         _currentState = rootState.GetDeepState();
-        _currentState.Enter(this);
+        var host = new EntityContext(World, Host);
+        _currentState.Enter(ref host);
     }
 
     public void TransitionTo(string targetState, ref RealmTime time) {
         if (_currentState == null)
             return;
 
-        _currentState.Exit(this, ref time);
+        var host = new EntityContext(World, Host);
+        _currentState.Exit(ref host, ref time);
 
         if (_rootState.States.TryGetValue(targetState, out var newState)) {
-            _currentState.ExitInactiveParent(this, time,
+            _currentState.ExitInactiveParent(ref host, time,
                 newState); // Calls parent's Exit method if it's not parent of the new State
 
             _currentState = newState.GetDeepState();
-            _currentState.Enter(this);
+            _currentState.Enter(ref host);
         }
         else {
             _log.Error($"{_objectId}: State {targetState} not found.");
@@ -64,13 +66,10 @@ public class BehaviorController : IDisposable {
         if (_currentState == null)
             return;
 
-        var targetState = _currentState.Tick(this, ref time);
+        var host = new EntityContext(World, Host);
+        var targetState = _currentState.Tick(ref host, ref time);
         if (targetState != null)
             TransitionTo(targetState, ref time);
-    }
-
-    public ref T Get<T>() where T : struct {
-        return ref World.Ecs.Get<T>(Host);
     }
 
     public void Dispose() {

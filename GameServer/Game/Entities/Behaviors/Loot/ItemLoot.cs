@@ -18,7 +18,7 @@ public class ItemLoot : ILoot {
         _chance = chance;
     }
     
-    public void Populate(BehaviorController controller, ref Queue<Item> drops, ref DamageRecord record) {
+    public void Populate(ref EntityContext host, ref Queue<Item> drops, ref DamageRecord record) {
         if ((float)record.DamageDealt / host.Stats.GetInt(StatType.MaxHP) < _threshold)
             return;
         

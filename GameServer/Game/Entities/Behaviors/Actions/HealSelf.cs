@@ -27,13 +27,13 @@ public record HealSelf : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var healGroupInfo = host.Behavior.Resources.ResolveResource<HealSelfInfo>(this);
+        var healGroupInfo = host.BehavController.Resources.ResolveResource<HealSelfInfo>(this);
         // Instead of forcing TimeLeft = 0, start it at the cooldownOffset.
         healGroupInfo.TimeLeft = _cooldownOffset;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var healSelfInfo = host.Behavior.Resources.ResolveResource<HealSelfInfo>(this);
+        var healSelfInfo = host.BehavController.Resources.ResolveResource<HealSelfInfo>(this);
 
         // If we still have time left in the (offset or cooldown) timer, decrement and remain on cooldown
         if (healSelfInfo.TimeLeft > 0) {

@@ -11,7 +11,7 @@ public class TierLoot : ILoot {
         
     }
     
-    public void Populate(BehaviorController controller, ref Queue<Item> drops, ref DamageRecord record) {
+    public void Populate(ref EntityContext host, ref Queue<Item> drops, ref DamageRecord record) {
         throw new NotImplementedException();
     }
 }

@@ -2,9 +2,6 @@
 using System.Numerics;
 using Common;
 using Common.Game;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Extensions;
-using GameServer.Game.Entities.Old;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -23,11 +20,11 @@ public record Buzz : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var buzzState = host.Behavior.Resources.ResolveResource<BuzzInfo>(this);
+        var buzzState = host.BehavController.Resources.ResolveResource<BuzzInfo>(this);
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var buzzState = host.Behavior.Resources.ResolveResource<BuzzInfo>(this);
+        var buzzState = host.BehavController.Resources.ResolveResource<BuzzInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
 

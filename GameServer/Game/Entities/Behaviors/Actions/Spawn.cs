@@ -76,13 +76,13 @@ public record Spawn : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var spawnInfo = host.Behavior.Resources.ResolveResource<SpawnInfo>(this);
+        var spawnInfo = host.BehavController.Resources.ResolveResource<SpawnInfo>(this);
         spawnInfo.CooldownMs = _cooldownOffsetMs;
         spawnInfo.SpawnCount = 0;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var spawnInfo = host.Behavior.Resources.ResolveResource<SpawnInfo>(this);
+        var spawnInfo = host.BehavController.Resources.ResolveResource<SpawnInfo>(this);
         if (spawnInfo.SpawnCount > _maxSpawnsPerReset) return BehaviorTickState.BehaviorFailed;
         if (spawnInfo.CooldownMs > 0) {
             spawnInfo.CooldownMs -= time.ElapsedMsDelta;

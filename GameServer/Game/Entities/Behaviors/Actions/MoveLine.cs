@@ -25,12 +25,12 @@ public record MoveLine : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var state = host.Behavior.Resources.ResolveResource<MoveLineInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<MoveLineInfo>(this);
         state.DistLeft = _distance;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<MoveLineInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<MoveLineInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: Condition effects
         //     return BehaviorTickState.BehaviorFailed;
 

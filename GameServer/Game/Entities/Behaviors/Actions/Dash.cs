@@ -60,7 +60,7 @@ public record Dash : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var dashInfo = host.Behavior.Resources.ResolveResource<DashInfo>(this);
+        var dashInfo = host.BehavController.Resources.ResolveResource<DashInfo>(this);
         dashInfo.DashCooldown = cooldownOffsetMS == 0 ? cooldownMS : cooldownOffsetMS;
         dashInfo.DashCount = 0;
         dashInfo.CycleCooldown = 0;
@@ -69,7 +69,7 @@ public record Dash : BehaviorScript {
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var dashInfo = host.Behavior.Resources.ResolveResource<DashInfo>(this);
+        var dashInfo = host.BehavController.Resources.ResolveResource<DashInfo>(this);
         if (dashInfo.CycleCooldown > 0) {
             dashInfo.CycleCooldown -= time.ElapsedMsDelta;
             if (dashInfo.CycleCooldown > 0) return BehaviorTickState.OnCooldown;

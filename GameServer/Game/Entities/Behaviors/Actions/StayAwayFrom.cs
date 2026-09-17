@@ -41,14 +41,14 @@ public record StayAwayFrom : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var stayAwayFromInfo = host.Behavior.Resources.ResolveResource<StayAwayFromInfo>(this);
+        var stayAwayFromInfo = host.BehavController.Resources.ResolveResource<StayAwayFromInfo>(this);
         stayAwayFromInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
         stayAwayFromInfo.FirstTick = true;
         stayAwayFromInfo.Target = Entity.Null;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var stayAwayFromInfo = host.Behavior.Resources.ResolveResource<StayAwayFromInfo>(this);
+        var stayAwayFromInfo = host.BehavController.Resources.ResolveResource<StayAwayFromInfo>(this);
         if (_cooldownMS >= 0) {
             stayAwayFromInfo.FollowTimer -= time.ElapsedMsDelta;
             if (stayAwayFromInfo.FollowTimer <= 0) {

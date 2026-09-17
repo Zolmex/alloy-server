@@ -26,12 +26,12 @@ public record Reproduce : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var spawnInfo = host.Behavior.Resources.ResolveResource<ReproduceInfo>(this);
+        var spawnInfo = host.BehavController.Resources.ResolveResource<ReproduceInfo>(this);
         spawnInfo.CooldownMs = 0;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var spawnInfo = host.Behavior.Resources.ResolveResource<ReproduceInfo>(this);
+        var spawnInfo = host.BehavController.Resources.ResolveResource<ReproduceInfo>(this);
         if (spawnInfo.CooldownMs > 0) {
             spawnInfo.CooldownMs -= time.ElapsedMsDelta;
             if (spawnInfo.CooldownMs > 0)

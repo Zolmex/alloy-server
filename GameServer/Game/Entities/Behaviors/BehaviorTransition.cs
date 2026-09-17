@@ -37,11 +37,11 @@ public class BehaviorTransition(TransitionType transitionType = TransitionType.R
         return null; // never happens but compiler is loud.
     }
 
-    public virtual void Start(BehaviorController controller) { }
+    public virtual void Start(ref EntityContext host) { }
 
-    public virtual string Tick(BehaviorController controller, ref RealmTime time) {
+    public virtual string Tick(ref EntityContext host, ref RealmTime time) {
         return null;
     }
 
-    public virtual void End(BehaviorController controller, ref RealmTime time) { }
+    public virtual void End(ref EntityContext host, ref RealmTime time) { }
 }

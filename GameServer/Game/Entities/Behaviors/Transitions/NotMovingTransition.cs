@@ -17,24 +17,24 @@ public class NotMovingTransition : BehaviorTransition {
         _delay = delay;
     }
 
-    public override void Start(BehaviorController controller) {
-        var state = host.Behavior.Resources.ResolveResource<NotMovingTransitionInfo>(this);
-        state.Position = new Vector2(host.Stats.Pos.X, host.Stats.Pos.Y);
+    public override void Start(ref EntityContext host) {
+        var state = host.BehavController.Resources.ResolveResource<NotMovingTransitionInfo>(this);
+        state.Position = new Vector2(host.Position.Pos.X, host.Position.Pos.Y);
         state.TimeLeft = _delay;
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<NotMovingTransitionInfo>(this);
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
+        var state = host.BehavController.Resources.ResolveResource<NotMovingTransitionInfo>(this);
         if (state.TimeLeft > 0) {
             state.TimeLeft -= time.ElapsedMsDelta;
             return null;
         }
 
-        if (host.Stats.Pos.X == state.Position.X && host.Stats.Pos.Y == state.Position.Y)
+        if (host.Position.Pos.X == state.Position.X && host.Position.Pos.Y == state.Position.Y)
             return GetTargetState();
 
         // Re-assign the position and reset the delay
-        state.Position = new Vector2(host.Stats.Pos.X, host.Stats.Pos.Y);
+        state.Position = new Vector2(host.Position.Pos.X, host.Position.Pos.Y);
         state.TimeLeft = _delay;
         return null;
     }

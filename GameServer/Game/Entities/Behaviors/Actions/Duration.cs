@@ -17,13 +17,13 @@ public record Duration : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var state = host.Behavior.Resources.ResolveResource<DurationInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<DurationInfo>(this);
         state.TimeLeft = _duration;
         _behavior.Start(ref host);
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<DurationInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<DurationInfo>(this);
 
         if (state.TimeLeft <= 0) return BehaviorTickState.BehaviorFailed;
 

@@ -29,14 +29,14 @@ public record Swirl : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var swirlState = host.Behavior.Resources.ResolveResource<SwirlInfo>(this);
+        var swirlState = host.BehavController.Resources.ResolveResource<SwirlInfo>(this);
         swirlState.Center = _targeted ? Vector2.Zero : new Vector2(host.Position.Pos.X, host.Position.Pos.Y);
         swirlState.Acquired = !_targeted;
         swirlState.RemainingTime = 0;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var swirlState = host.Behavior.Resources.ResolveResource<SwirlInfo>(this);
+        var swirlState = host.BehavController.Resources.ResolveResource<SwirlInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
 

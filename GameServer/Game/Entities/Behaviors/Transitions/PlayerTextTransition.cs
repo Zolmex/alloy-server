@@ -21,14 +21,14 @@ public class PlayerTextTransition : BehaviorTransition {
         _ignoreCase = ignoreCase;
     }
 
-    public override void Start(BehaviorController controller) {
-        var state = host.Behavior.Resources.ResolveResource<PlayerTextInfo>(this);
+    public override void Start(ref EntityContext host) {
+        var state = host.BehavController.Resources.ResolveResource<PlayerTextInfo>(this);
         state.Rgx = _ignoreCase ? new Regex(_regex, RegexOptions.IgnoreCase) : new Regex(_regex);
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<PlayerTextInfo>(this);
-        foreach (var text in host.World.TextCache) {
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
+        var state = host.BehavController.Resources.ResolveResource<PlayerTextInfo>(this);
+        foreach (var text in host.World.ChatSystem.TextCache) {
             var match = state.Rgx.Match(text);
             if (!match.Success)
                 continue;

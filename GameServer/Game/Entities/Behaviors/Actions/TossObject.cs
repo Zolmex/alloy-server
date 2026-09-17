@@ -72,7 +72,7 @@ public record TossObject : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var tossObjectInfo = host.Behavior.Resources.ResolveResource<TossObjectInfo>(this);
+        var tossObjectInfo = host.BehavController.Resources.ResolveResource<TossObjectInfo>(this);
         tossObjectInfo.CooldownLeft = _cooldownOffsetMS;
 
         if (_region == TileRegion.None)
@@ -93,7 +93,7 @@ public record TossObject : BehaviorScript {
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var tossObjectInfo = host.Behavior.Resources.ResolveResource<TossObjectInfo>(this);
+        var tossObjectInfo = host.BehavController.Resources.ResolveResource<TossObjectInfo>(this);
         if (tossObjectInfo.CooldownLeft <= 0) {
             // if (host.HasConditionEffect(ConditionEffectIndex.Stunned)) // TODO: condition Effects
             //     return BehaviorTickState.BehaviorFailed;

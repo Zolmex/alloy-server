@@ -23,14 +23,14 @@ public class TimedTransition : BehaviorTransition {
         _timeDefault = time;
     }
 
-    public override void Start(BehaviorController controller) {
+    public override void Start(ref EntityContext host) {
         base.Start(ref host);
-        var state = host.Behavior.Resources.ResolveResource<TimedTransitionInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<TimedTransitionInfo>(this);
         state.TimeLeft = _timeDefault;
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<TimedTransitionInfo>(this);
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
+        var state = host.BehavController.Resources.ResolveResource<TimedTransitionInfo>(this);
         state.TimeLeft -= time.ElapsedMsDelta;
 
         if (state.TimeLeft <= 0) {

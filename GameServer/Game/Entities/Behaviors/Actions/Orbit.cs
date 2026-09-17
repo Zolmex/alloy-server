@@ -40,7 +40,7 @@ public record Orbit : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var orbitInfo = host.Behavior.Resources.ResolveResource<OrbitInfo>(this);
+        var orbitInfo = host.BehavController.Resources.ResolveResource<OrbitInfo>(this);
         orbitInfo.Direction = _orbitClockwise ? 1 : -1;
         orbitInfo.FinalSpeed = _speed + _speedVariance * (float)(Random.Shared.NextDouble() * 2 - 1);
         orbitInfo.FinalRadius = _radius + _radiusVariance * (float)(Random.Shared.NextDouble() * 2 - 1);
@@ -48,7 +48,7 @@ public record Orbit : BehaviorScript {
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var orbitInfo = host.Behavior.Resources.ResolveResource<OrbitInfo>(this);
+        var orbitInfo = host.BehavController.Resources.ResolveResource<OrbitInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
 

@@ -44,7 +44,7 @@ public record RingAttack : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var state = host.Behavior.Resources.ResolveResource<RingAttackInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<RingAttackInfo>(this);
         state.AngleToIncrement = _angleToIncrement;
         state.FixedAngle = _fixedAngle;
         state.CoolDownLeft = _coolDownMS;
@@ -52,7 +52,7 @@ public record RingAttack : BehaviorScript {
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<RingAttackInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<RingAttackInfo>(this);
 
         // if (host.HasConditionEffect(ConditionEffectIndex.Stunned)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;

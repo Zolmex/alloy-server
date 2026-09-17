@@ -5,8 +5,6 @@ using Common.Game;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Extensions;
-using GameServer.Game.Entities.Old;
 using GameServer.Utilities;
 using Entity = Arch.Core.Entity;
 
@@ -43,14 +41,14 @@ public record Follow : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var followInfo = host.Behavior.Resources.ResolveResource<FollowInfo>(this);
+        var followInfo = host.BehavController.Resources.ResolveResource<FollowInfo>(this);
         followInfo.FollowTimer = _cooldownOffsetMS == 0 ? _cooldownMS : _cooldownOffsetMS;
         followInfo.FirstTick = true;
         followInfo.Target = Entity.Null;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var followInfo = host.Behavior.Resources.ResolveResource<FollowInfo>(this);
+        var followInfo = host.BehavController.Resources.ResolveResource<FollowInfo>(this);
         if (_cooldownMS >= 0) {
             followInfo.FollowTimer -= time.ElapsedMsDelta;
             if (followInfo.FollowTimer <= 0) {

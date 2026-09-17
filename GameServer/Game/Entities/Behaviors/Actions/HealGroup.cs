@@ -25,12 +25,12 @@ public record HealGroup : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var healGroupInfo = host.Behavior.Resources.ResolveResource<HealGroupInfo>(this);
+        var healGroupInfo = host.BehavController.Resources.ResolveResource<HealGroupInfo>(this);
         healGroupInfo.RemainingTime = 0; // Make sure the behavior runs once
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var healGroupInfo = host.Behavior.Resources.ResolveResource<HealGroupInfo>(this);
+        var healGroupInfo = host.BehavController.Resources.ResolveResource<HealGroupInfo>(this);
         if (healGroupInfo.RemainingTime <= 0) {
             // if (host.HasConditionEffect(ConditionEffectIndex.Stunned)) // TODO: Condition Effects
             //     return BehaviorTickState.BehaviorFailed;

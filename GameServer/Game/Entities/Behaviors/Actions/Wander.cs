@@ -37,14 +37,14 @@ public record Wander : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var wanderInfo = host.Behavior.Resources.ResolveResource<WanderInfo>(this);
+        var wanderInfo = host.BehavController.Resources.ResolveResource<WanderInfo>(this);
         wanderInfo.WanderCooldown = _cooldownMs;
         wanderInfo.InitialPos = new Vector2(host.Position.Pos.X, host.Position.Pos.Y);
         wanderInfo.Wandering = false;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var wanderInfo = host.Behavior.Resources.ResolveResource<WanderInfo>(this);
+        var wanderInfo = host.BehavController.Resources.ResolveResource<WanderInfo>(this);
         var firstMove = false;
         if (!wanderInfo.Wandering && wanderInfo.WanderCooldown > 0) {
             wanderInfo.WanderCooldown -= time.ElapsedMsDelta;

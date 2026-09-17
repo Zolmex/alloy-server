@@ -34,13 +34,13 @@ public record Move : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var moveInfo = host.Behavior.Resources.ResolveResource<MoveInfo>(this);
+        var moveInfo = host.BehavController.Resources.ResolveResource<MoveInfo>(this);
         moveInfo.CooldownMs = _cooldownMsDefault;
         moveInfo.Moving = false;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var moveInfo = host.Behavior.Resources.ResolveResource<MoveInfo>(this);
+        var moveInfo = host.BehavController.Resources.ResolveResource<MoveInfo>(this);
         var firstMove = false;
         if (!moveInfo.Moving && moveInfo.CooldownMs > 0) {
             moveInfo.CooldownMs -= time.ElapsedMsDelta;

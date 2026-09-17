@@ -254,13 +254,13 @@ public record Shoot : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var shootInfo = host.Behavior.Resources.ResolveResource<ShootInfo>(this);
+        var shootInfo = host.BehavController.Resources.ResolveResource<ShootInfo>(this);
         shootInfo.CooldownLeft = _cooldownOffsetMs;
         shootInfo.AngleOffset = 0;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var shootInfo = host.Behavior.Resources.ResolveResource<ShootInfo>(this);
+        var shootInfo = host.BehavController.Resources.ResolveResource<ShootInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Stunned)) // TODO: Condition Effects
         //     return BehaviorTickState.BehaviorFailed;
 

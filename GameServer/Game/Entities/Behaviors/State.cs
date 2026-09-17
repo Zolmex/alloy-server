@@ -3,8 +3,6 @@ using Common.Game;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities;
 using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Old;
-using GameServer.Game.Entities.Old.Components;
 
 namespace GameServer.Game.Entities.Behaviors;
 
@@ -66,54 +64,56 @@ public class State : IStateChild {
             child.Setup(desc);
     }
 
-    public void Enter(BehaviorController controller) // Perform any initial setups we need for current and child states
+    public void Enter(ref EntityContext host) // Perform any initial setups we need for current and child states
     {
-        if (!controller.ActiveStates.Add(this))
+        if (!host.BehavController.ActiveStates.Add(this))
             return;
 
-        Parent?.Enter(controller); // Call parent to enter
+        Parent?.Enter(ref host); // Call parent to enter
 
-        foreach (var trans in Transitions) trans.Start(controller);
+        foreach (var trans in Transitions)
+            trans.Start(ref host);
 
-        foreach (var script in Scripts) script.Start(controller);
+        foreach (var script in Scripts)
+            script.Start(ref host);
     }
 
-    public string Tick(BehaviorController controller, ref RealmTime time) {
-        var targetState = Parent?.Tick(controller, ref time);
+    public string Tick(ref EntityContext host, ref RealmTime time) {
+        var targetState = Parent?.Tick(ref host, ref time);
         if (targetState != null)
             return targetState;
 
         foreach (var trans in Transitions) { // Check if we have a transition to make
-            targetState = trans.Tick(controller, ref time);
-            if (targetState != null && controller.PastTransitions.Add(trans))
+            targetState = trans.Tick(ref host, ref time);
+            if (targetState != null && host.BehavController.PastTransitions.Add(trans))
                 // Make sure transitions only occur once (prevents parent state transitions to happen multiple times)
                 return targetState;
         }
 
         foreach (var script in Scripts)
-            script.Tick(controller, ref time);
+            script.Tick(ref host, ref time);
 
         return null;
     }
 
-    public void Exit(BehaviorController controller, ref RealmTime time) {
-        if (!controller.ActiveStates.Remove(this)) // Prevents exiting the same state twice
+    public void Exit(ref EntityContext host, ref RealmTime time) {
+        if (!host.BehavController.ActiveStates.Remove(this)) // Prevents exiting the same state twice
             return;
         
         // Instead of clearing resources (we might end up deleting parent state's resources), remove each script's resources
         foreach (var script in Scripts) {
-            script.End(controller, ref time);
-            controller.Resources.RemoveResource(script);
+            script.End(ref host, ref time);
+            host.BehavController.Resources.RemoveResource(script);
         }
 
         foreach (var trans in Transitions) {
-            controller.Resources.RemoveResource(trans);
-            controller.PastTransitions.Remove(trans);
-            trans.End(controller, ref time);
+            host.BehavController.Resources.RemoveResource(trans);
+            host.BehavController.PastTransitions.Remove(trans);
+            trans.End(ref host, ref time);
         }
     }
 
-    public void ExitInactiveParent(BehaviorController controller, RealmTime time, State targetState) {
+    public void ExitInactiveParent(ref EntityContext host, RealmTime time, State targetState) {
         // Will exit parent if it is not parent of the targetState
         if (Parent == null)
             return;
@@ -121,7 +121,7 @@ public class State : IStateChild {
         if (Parent.ChildStates.Contains(targetState))
             return;
 
-        Parent.Exit(controller, ref time);
-        Parent.ExitInactiveParent(controller, time, targetState); // Recursively call exit on each parent
+        Parent.Exit(ref host, ref time);
+        Parent.ExitInactiveParent(ref host, time, targetState); // Recursively call exit on each parent
     }
 }

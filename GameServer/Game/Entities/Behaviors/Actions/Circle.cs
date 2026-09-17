@@ -41,12 +41,12 @@ public record Circle : BehaviorScript {
             return;
 
         ref var targetPos = ref host.World.Ecs.Get<Position>(target);
-        var resource = host.Behavior.Resources.ResolveResource<CircleInfo>(this);
+        var resource = host.BehavController.Resources.ResolveResource<CircleInfo>(this);
         resource.CurrentAngle = hostPos.GetAngleBetween(targetPos.Pos).Rad2Deg();
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var resource = host.Behavior.Resources.ResolveResource<CircleInfo>(this);
+        var resource = host.BehavController.Resources.ResolveResource<CircleInfo>(this);
         var angleInc = 360f * (_rotationsPerSecond * time.ElapsedMsDelta / 1000);
 
         ref var hostPos = ref host.Position;

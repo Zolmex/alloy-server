@@ -35,12 +35,12 @@ public record Protect : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var protectInfo = host.Behavior.Resources.ResolveResource<ProtectInfo>(this);
+        var protectInfo = host.BehavController.Resources.ResolveResource<ProtectInfo>(this);
         protectInfo.State = ProtectState.DontKnowWhere;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var protectInfo = host.Behavior.Resources.ResolveResource<ProtectInfo>(this);
+        var protectInfo = host.BehavController.Resources.ResolveResource<ProtectInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
 

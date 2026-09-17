@@ -21,21 +21,21 @@ public class DamageTakenTransition : BehaviorTransition {
         _damage = damage;
     }
 
-    public override void Start(BehaviorController controller) {
-        var dmgTakenInfo = controller.Resources.ResolveResource<DamageTakenRecord>(this);
-        controller.World.EventSystem.Subscribe(controller.Host, dmgTakenInfo.OnEntityDamaged);
+    public override void Start(ref EntityContext host) {
+        var dmgTakenInfo = host.BehavController.Resources.ResolveResource<DamageTakenRecord>(this);
+        host.World.EventSystem.Subscribe(host.Entity, dmgTakenInfo.OnEntityDamaged);
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
-        var dmgTakenInfo = controller.Resources.ResolveResource<DamageTakenRecord>(this);
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
+        var dmgTakenInfo = host.BehavController.Resources.ResolveResource<DamageTakenRecord>(this);
         if (dmgTakenInfo.DamageTaken >= _damage)
             return GetTargetState();
 
         return null;
     }
 
-    public override void End(BehaviorController controller, ref RealmTime time) {
-        var dmgTakenInfo = controller.Resources.ResolveResource<DamageTakenRecord>(this);
-        controller.World.EventSystem.Unsubscribe(controller.Host, dmgTakenInfo.OnEntityDamaged);
+    public override void End(ref EntityContext host, ref RealmTime time) {
+        var dmgTakenInfo = host.BehavController.Resources.ResolveResource<DamageTakenRecord>(this);
+        host.World.EventSystem.Unsubscribe(host.Entity, dmgTakenInfo.OnEntityDamaged);
     }
 }

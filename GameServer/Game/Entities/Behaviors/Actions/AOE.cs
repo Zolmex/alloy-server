@@ -66,13 +66,13 @@ public record AOE : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var aoeInfo = host.Behavior.Resources.ResolveResource<AOEInfo>(this);
+        var aoeInfo = host.BehavController.Resources.ResolveResource<AOEInfo>(this);
         aoeInfo.CooldownLeft = _cooldownOffset;
         aoeInfo.AngleOffset = 0f;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var aoeInfo = host.Behavior.Resources.ResolveResource<AOEInfo>(this);
+        var aoeInfo = host.BehavController.Resources.ResolveResource<AOEInfo>(this);
         if (aoeInfo.CooldownLeft > 0) {
             aoeInfo.CooldownLeft -= time.ElapsedMsDelta;
             return BehaviorTickState.OnCooldown;

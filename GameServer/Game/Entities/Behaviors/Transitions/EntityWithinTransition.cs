@@ -27,10 +27,10 @@ public class EntityWithinTransition : BehaviorTransition {
         targetType = this.target == "player" ? BehaviorScript.TargetType.Player : BehaviorScript.TargetType.Entity;
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
-        if (targetType == BehaviorScript.TargetType.Player && host.World.Map.GetPlayersWithin(host.Stats.Pos, radius).Any()) return GetTargetState();
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
+        if (targetType == BehaviorScript.TargetType.Player && host.World.Map.GetPlayersWithin(host.Position.Pos, radius).Any()) return GetTargetState();
 
-        if (targetType == BehaviorScript.TargetType.Entity && host.World.Map.GetEntitiesByName(host.Stats.Pos, target, radius).Any())
+        if (targetType == BehaviorScript.TargetType.Entity && host.World.Map.GetEntitiesByName(host.Position.Pos, target, radius).Any())
             return GetTargetState();
 
         return null;

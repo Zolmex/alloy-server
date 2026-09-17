@@ -1,6 +1,6 @@
-﻿using Common.Game;
-using Common.Utilities.Collections;
-using GameServer.Game.Entities.Old;
+﻿using Arch.Core;
+using Common.Game;
+using GameServer.Game.Entities.Events;
 
 namespace GameServer.Game.Entities.Behaviors.Transitions;
 
@@ -13,17 +13,15 @@ public class OnParentDeathTransition : BehaviorTransition {
         RegisterTargetStates(targetState);
     }
 
-    public override void Start(BehaviorController controller) {
-        var state = host.Behavior.Resources.ResolveResource<OnParentDeathInfo>(this);
-        ref var parentStats = ref host.World.EntityStats.Get(host.Behavior.ParentId);
-        ref var parentEvents = ref host.World.EntityEvents.Get(host.Behavior.ParentId);
-        state.ParentDead = parentStats.Id == EntityId.Null;
+    public override void Start(ref EntityContext host) {
+        var state = host.BehavController.Resources.ResolveResource<OnParentDeathInfo>(this);
+        state.ParentDead = host.Behavior.Parent == Entity.Null;
         if (!state.ParentDead)
-            parentEvents.OnDeath.Subscribe((ref evt) => state.ParentDead = true);
+            host.World.EventSystem.Subscribe(host.Entity, (ref DeathEvent _) => state.ParentDead = true);
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<OnParentDeathInfo>(this);
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
+        var state = host.BehavController.Resources.ResolveResource<OnParentDeathInfo>(this);
         return state.ParentDead ? GetTargetState() : null;
     }
 }

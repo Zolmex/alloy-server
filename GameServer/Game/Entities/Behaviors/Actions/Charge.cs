@@ -4,7 +4,6 @@ using Common;
 using Common.Game;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Extensions;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -25,13 +24,13 @@ public record Charge : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var chargeState = host.Behavior.Resources.ResolveResource<ChargeInfo>(this);
+        var chargeState = host.BehavController.Resources.ResolveResource<ChargeInfo>(this);
         chargeState.RemainingTime = 0; // Make sure the behavior runs once
         chargeState.Direction = Vector2.Zero;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var chargeState = host.Behavior.Resources.ResolveResource<ChargeInfo>(this);
+        var chargeState = host.BehavController.Resources.ResolveResource<ChargeInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: condition effects
         //     return BehaviorTickState.BehaviorFailed;
 

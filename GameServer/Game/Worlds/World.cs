@@ -13,7 +13,6 @@ using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Extensions;
 using GameServer.Game.Entities.Systems;
 using GameServer.Game.Network;
 using GameServer.Utilities;

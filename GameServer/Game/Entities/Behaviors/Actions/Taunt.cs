@@ -38,7 +38,7 @@ public record Taunt : BehaviorScript {
         if (_cooldownMS == 0)
             return BehaviorTickState.BehaviorFailed; // IDK ??!??!
 
-        var tauntInfo = host.Behavior.Resources.ResolveResource<TauntInfo>(this);
+        var tauntInfo = host.BehavController.Resources.ResolveResource<TauntInfo>(this);
         if (tauntInfo.CooldownLeft > 0) {
             tauntInfo.CooldownLeft -= time.ElapsedMsDelta;
             return BehaviorTickState.OnCooldown;

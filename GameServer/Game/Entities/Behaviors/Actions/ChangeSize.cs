@@ -20,12 +20,12 @@ public record ChangeSize : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var state = host.Behavior.Resources.ResolveResource<SizeInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<SizeInfo>(this);
         state.CooldownLeft = 0;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var state = host.Behavior.Resources.ResolveResource<SizeInfo>(this);
+        var state = host.BehavController.Resources.ResolveResource<SizeInfo>(this);
 
         if (state.CooldownLeft > 0) {
             state.CooldownLeft -= time.ElapsedMsDelta;

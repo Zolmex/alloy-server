@@ -14,14 +14,14 @@ public class EntitiesNotWithinTransition : BehaviorTransition {
         _radius = radius;
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
         if (_targets == null) {
-            foreach (var _ in host.World.Map.GetEntitiesWithin(host.Stats.Pos, _radius))
+            foreach (var _ in host.World.Map.GetEntitiesWithin(host.Position.Pos, _radius))
                 return null;
             return GetTargetState();
         }
 
-        if (!host.World.Map.GetEntitiesByName(host.Stats.Pos, _targets, _radius).Any())
+        if (!host.World.Map.GetEntitiesByName(host.Position.Pos, _targets, _radius).Any())
             return GetTargetState();
 
         return null;

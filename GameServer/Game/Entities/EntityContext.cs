@@ -11,7 +11,8 @@ public readonly ref struct EntityContext {
     public readonly World World;
     public readonly Entity Entity;
     public readonly ObjectDesc Desc;
-    public readonly BehaviorController Behavior;
+    public readonly BehaviorController BehavController;
+    public readonly ref Behavior Behavior;
     public readonly ref Position Position;
     public readonly ref Stats Stats;
     public readonly ref Combat Combat;
@@ -21,7 +22,8 @@ public readonly ref struct EntityContext {
         World = world;
         Entity = entity;
         Desc = XmlLibrary.ObjectDescs[world.Ecs.Get<ObjectType>(entity)];
-        Behavior = world.BehaviorSystem.Get(entity);
+        BehavController = world.BehaviorSystem.Get(entity);
+        Behavior = world.Ecs.Get<Behavior>(entity);
         Position = world.Ecs.Get<Position>(entity);
         Stats = world.Ecs.Get<Stats>(entity);
         Combat = world.Ecs.Get<Combat>(entity);

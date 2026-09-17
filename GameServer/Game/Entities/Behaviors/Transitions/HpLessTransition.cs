@@ -13,7 +13,7 @@ public class HpLessTransition : BehaviorTransition {
         _threshold = threshold;
     }
 
-    public override string Tick(BehaviorController controller, ref RealmTime time) {
+    public override string Tick(ref EntityContext host, ref RealmTime time) {
         var transition = (float)host.Stats.GetInt(StatType.HP) / host.Stats.GetInt(StatType.MaxHP) < _threshold;
         return transition ? GetTargetState() : null;
     }

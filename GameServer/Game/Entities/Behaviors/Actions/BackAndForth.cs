@@ -1,7 +1,5 @@
 ﻿using Common;
 using Common.Game;
-using GameServer.Game.Entities.Components;
-using GameServer.Game.Entities.Extensions;
 
 namespace GameServer.Game.Entities.Behaviors.Actions;
 
@@ -19,12 +17,12 @@ public record BackAndForth : BehaviorScript {
     }
 
     public override void Start(ref EntityContext host) {
-        var chargeState = host.Behavior.Resources.ResolveResource<BackAndForthInfo>(this);
+        var chargeState = host.BehavController.Resources.ResolveResource<BackAndForthInfo>(this);
         chargeState.Distance = _distance;
     }
 
     public override BehaviorTickState Tick(ref EntityContext host, ref RealmTime time) {
-        var backAndForthState = host.Behavior.Resources.ResolveResource<BackAndForthInfo>(this);
+        var backAndForthState = host.BehavController.Resources.ResolveResource<BackAndForthInfo>(this);
         // if (host.HasConditionEffect(ConditionEffectIndex.Paralyzed)) // TODO: Condition Effects
         //     return BehaviorTickState.BehaviorFailed;
 
