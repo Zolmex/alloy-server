@@ -8,8 +8,14 @@ change. When in doubt, the rules below override general C#/.NET conventions.
 > **Scope:** These rules apply to the active services — `Common/`, `WebServer/`,
 > and `GameServer/`. The `GameServerOld/` project is a legacy reference kept only
 > for porting behavior scripts and packet handlers; **do not extend it**. New work
-> targets the modern `GameServer/` (ECS-style Managers under
-> `GameServer/Game/Entities/Systems/`).
+> targets the modern `GameServer/`, which runs on the **Arch ECS** (`Arch.Core`)
+> with components in `GameServer/Game/Entities/Components/` and `Arch.System`-
+> based systems in `GameServer/Game/Entities/Systems/`.
+>
+> `GameServer/Game/Entities/Old/` is a **transitional legacy folder** from the
+> pre-Arch ECS attempt. It is still referenced by some unmigrated code (chat
+> helpers, loot records, a few packet handlers); treat it as read-only reference,
+> **do not extend it**, and remove references to it as the migration completes.
 
 ---
 
@@ -72,15 +78,63 @@ WebServer/
 GameServer/
   Game/
     Entities/
-      Systems/           # ECS-style Managers (EntityManager, EntityStatsManager, ...)
-      Components/        # EntityStats, EntityInventory, PlayerChat, ...
+      EntityContext.cs   # thin ref-struct facade over World + components (behavior scripts only)
+      Systems/           # Arch.System BaseSystem classes (StatsSystem, DamageSystem, BehaviorSystem, ...)
+      Components/        # Arch components (Stats, Position, Inventory, Combat, Behavior, tags, ...)
+      Events/            # publish/subscribe event structs + EventRouter
       Behaviors/         # State/Action/Transition behavior engine + per-boss libraries
+      Old/               # transitional legacy ECS attempt — reference only, do not extend
     Network/             # TCP socket server + packet messaging (Incoming/Outgoing/)
-    Worlds/              # World, ChunkMap, Realm/Nexus/Vault logic
+    Worlds/              # World (entity lifecycle), WorldMap (spatial queries), ChunkMap
   Messaging/
     GameServerRpcHandler.cs  # IGameServerRpc impl
 GameServerOld/           # legacy — reference only
 ```
+
+### 2.1 GameServer ECS — where methods live
+
+The GameServer uses the **Arch ECS** (`Arch.Core`). An `Arch.Core.Entity` is a
+plain ID handle — it has no behavior and must never gain any. Every piece of
+logic has exactly **one** legitimate home, chosen by what data it needs:
+
+| Needs…                                        | Home                                                     | Examples                                        |
+|-----------------------------------------------|----------------------------------------------------------|-------------------------------------------------|
+| Only its own component's fields               | **Method on the component struct**                       | `Stats.Set`, `Position.Move`, `Inventory.SetItem` |
+| Per-tick processing over many entities        | **`[Query]` method on an `Arch.System.BaseSystem`**      | `StatsSystem.Tick`, `DamageSystem.Process`      |
+| Event-driven op across components/services    | **Public method on the owning System**, or on `World`    | `DamageSystem.Damage`, `InventorySystem.EnqueueSwap` |
+| World/entity lifecycle, spawning, world queries | **Method on `World` (`GameServer/Game/Worlds/World.cs`)** | `World.EnterPlayer`, `World.LeaveWorld`, `InitPlayer`/`InitEntity` (private) |
+| Behavior-script-facing per-entity API         | **`EntityContext`** (`Game/Entities/EntityContext.cs`)   | `host.Position.Move(...)`, `host.GetSpeed(...)` |
+| Pure function of its inputs                   | **Static utility** (`Common/Utilities/GameUtils.cs`, `GameServer/Utils/`) | `GameUtils.GetStars`, `GetNextLevelXp` |
+| Building a packet / message flavor            | **Factory/method on the packet type or on `User`**       | `user.SendPacket(new Text(...))`                |
+
+Rules that follow from this:
+
+- **No extension classes** (including C# `extension` members) on `Entity`,
+  `World`, or components in `GameServer.Game`. A method whose signature is
+  `(World world, Entity entity, ...)` is a system or `World` method with the
+  receiver written backwards — declare it on the real owner instead.
+- **Components never reference** `World`, `Entity`, `User`, or packets. If a
+  component method starts needing those, the logic belongs to a system.
+- **Systems own cross-component operations in their domain**, including the
+  public entry points called from packet handlers and behaviors. Off-thread
+  callers (network threads) enqueue via a `ConcurrentQueue`/channel processed
+  on the tick thread (see `InventorySystem._swapCommands`) — never touch Arch
+  component storage directly from a network thread.
+- **`World` owns the entity lifecycle**: `Create*` composition, `EnterWorld`/
+  `EnterPlayer`, spawn/init (`InitEntity`, `InitPlayer`), `LeaveWorld`/
+  `DestroyEntity`. When a system keeps per-entity state (e.g. `BehaviorSystem`'s
+  `BehaviorController`s, `PlayerSightSystem`), its `Add`/`Remove` is wired into
+  `World.Create*`/`DestroyEntity` — keep those in sync when adding components.
+- **`EntityContext`** is a thin, readonly `ref struct` facade (`World` + `ref`s
+  to the behavior-relevant components) passed to `BehaviorScript.Start/Tick/End`.
+  It is for **behavior scripts only** — systems and `World` internals operate on
+  components directly. Keep it thin (no state of its own, no caching), never
+  store it beyond a single call, and give real verbs only when scripts need them
+  repeatedly; otherwise scripts reach through `host.Position`, `host.Stats`,
+  `host.World` directly.
+- **Pure formulas** (XP curves, star goals, angle/distance math) are static
+  utilities. If `WebServer`/Common code needs the same formula, it lives in
+  `Common/Utilities/GameUtils.cs` — one implementation per formula.
 
 ---
 
@@ -425,6 +479,8 @@ owns which account. `GameServer` instances do **not** coordinate with each other
   goes through `DbClient`.
 - **No passing of POCO persistence models over the RPC boundary** — project to a
   struct in `Common/Structs/`.
+- **No extension classes on `Entity`, `World`, or ECS components** in
+  `GameServer` — see §2.1 for where each kind of method belongs.
 - Match existing file style: `ImplicitUsings` on in `GameServer`, off elsewhere;
   `Nullable` disabled everywhere; brace style is Allman; `var` for locals, explicit
   types for fields/properties/parameters.
