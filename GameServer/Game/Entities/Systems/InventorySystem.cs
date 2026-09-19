@@ -27,6 +27,8 @@ public partial class InventorySystem(World world) : BaseSystem<World, RealmTime>
         while (_swapCommands.TryDequeue(out var cmd)) {
             ExecuteSwap(ref cmd);
         }
+        
+        ProcessQuery(World.Ecs);
     }
     
     [Query(Parallel = true)]

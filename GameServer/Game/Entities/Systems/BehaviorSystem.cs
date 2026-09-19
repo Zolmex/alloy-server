@@ -14,9 +14,13 @@ public partial class BehaviorSystem(World world) : BaseSystem<World, RealmTime>(
     public IEnumerable<BehaviorController> Controllers => _behaviorControllers.Values;
     
     private readonly PooledDictionary<Entity, BehaviorController> _behaviorControllers = [];
+
+    public void Tick(ref RealmTime time) {
+        ProcessQuery(World.Ecs, ref time);
+    }
     
     [Query]
-    public void Tick([Data] ref RealmTime realmTime, Entity entity, ref Behavior behavior) {
+    public void Process([Data] ref RealmTime realmTime, Entity entity, ref Behavior behavior) {
         if (!_behaviorControllers.TryGetValue(entity, out var behaviorController))
             return;
         

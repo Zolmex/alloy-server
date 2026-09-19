@@ -38,17 +38,13 @@ public partial class PlayerSightSystem(World world) : BaseSystem<World, RealmTim
     private readonly PooledDictionary<Entity, ObjectStatusData> _entityStatusCache = new(200);
     private readonly PooledDictionary<Entity, PlayerSightState> _sightStates = [];
     
-    public override void BeforeUpdate(in RealmTime t) {
+    public void Tick(ref RealmTime t) {
         _entityDataCache.Clear();
         _entityStatusCache.Clear();
-    }
-
-    public override void AfterUpdate(in RealmTime t) {
+        
+        ProcessQuery(World.Ecs, ref t);
+        
         _forcedTileUpdates.Clear();
-    }
-    
-    public void TileUpdate(IntPoint pos) {
-        _forcedTileUpdates.Add(pos);
     }
 
     [Query]
@@ -59,6 +55,10 @@ public partial class PlayerSightSystem(World world) : BaseSystem<World, RealmTim
         
         ProcessUpdate(user, entity, ref pos, sightState);
         ProcessNewtick(user, sightState);
+    }
+    
+    public void TileUpdate(IntPoint pos) {
+        _forcedTileUpdates.Add(pos);
     }
     
     public void Add(Entity entity) {

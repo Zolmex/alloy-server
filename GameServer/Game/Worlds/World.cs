@@ -118,12 +118,10 @@ public class World {
         // EntityStats.Tick(ref time);
 
         InventorySystem.Tick(ref time);
-        InventorySystem.ProcessQuery(Ecs);
         DamageSystem.Tick(ref time);
-        DamageSystem.ProcessQuery(Ecs);
-        BehaviorSystem.TickQuery(Ecs, ref time);
-        PlayerSightSystem.ProcessQuery(Ecs, ref time);
-        StatsSystem.TickQuery(Ecs, ref time);
+        BehaviorSystem.Tick(ref time);
+        PlayerSightSystem.Tick(ref time);
+        StatsSystem.Tick(ref time);
         ChatSystem.Tick(ref time);
     }
 

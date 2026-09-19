@@ -34,6 +34,8 @@ public partial class DamageSystem(World world) : BaseSystem<World, RealmTime>(wo
         while (_newRecords.TryDequeue(out var record)) {
             RegisterDamage(record);
         }
+        
+        ProcessQuery(World.Ecs);
     }
     
     [Query(Parallel = true)]
