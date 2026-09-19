@@ -16,6 +16,10 @@ public readonly struct EntityId : IEquatable<EntityId> {
         Value = value;
     }
     
+    public EntityId(int index, int generation) {
+        Value = ((long)(uint)generation << 32) | (uint)index;
+    }
+    
     public EntityId(Entity en) {
         Value = ((long)(uint)en.Version << 32) | (uint)en.Id;
     }

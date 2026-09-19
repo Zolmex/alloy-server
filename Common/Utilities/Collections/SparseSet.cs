@@ -1,5 +1,7 @@
 using System;
 using System.Buffers;
+using System.Collections.Generic;
+using Collections.Pooled;
 
 namespace Common.Utilities.Collections;
 
@@ -9,6 +11,9 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
     private int[] _sparse;
     private int[] _generations; // parallel to _sparse, stores expected generation
     private T[] _dense;
+    
+    private readonly PooledStack<int> _freeIdxs;
+    private int _idxCounter;
 
     public SparseSet(int sparseCapacity = 10, int denseCapacity = 10) {
         _sparse = ArrayPool<int>.Shared.Rent(sparseCapacity);
@@ -17,9 +22,16 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
         Array.Fill(_generations, 0);
         _dense = ArrayPool<T>.Shared.Rent(denseCapacity);
         _dense[0] = default;
+        _freeIdxs = new PooledStack<int>(sparseCapacity);
         Count = 1;
     }
 
+    public ref T Push(ref T elem) {
+        int index = _freeIdxs.Count > 0 ? _freeIdxs.Pop() : ++_idxCounter;
+        elem.Id = new EntityId(index, MoveNextGeneration(index));
+        return ref Add(ref elem);
+    }
+    
     public ref T Add(ref T elem) {
         var index = elem.Id.Index;
 
@@ -30,7 +42,7 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
             ResizeDense(Count * 2);
 
         _sparse[index] = Count;
-        _generations[index] = elem.Id.Generation;
+        _generations[index] = elem.Id.Version;
         _dense[Count] = elem;
         return ref _dense[Count++];
     }
@@ -40,7 +52,7 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
             ResizeSparse(id.Index + 1);
 
         var idx = _sparse[id.Index];
-        if (idx != 0 && _generations[id.Index] == id.Generation) {
+        if (idx != 0 && _generations[id.Index] == id.Version) {
             added = false;
             return ref _dense[idx];
         }
@@ -49,8 +61,9 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
             ResizeDense(Count * 2);
 
         _sparse[id.Index] = Count;
-        _generations[id.Index] = id.Generation;
+        _generations[id.Index] = id.Version;
         _dense[Count] = default;
+        _dense[Count].Id = id;
         added = true;
         return ref _dense[Count++];
     }
@@ -61,22 +74,24 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
             return false;
 
         var indexInDense = _sparse[id.Index];
-        if (indexInDense == 0 || _generations[id.Index] != id.Generation)
+        if (indexInDense == 0 || _generations[id.Index] != id.Version)
             return false;
 
         elem = _dense[indexInDense];
         _sparse[id.Index] = 0;
-        _generations[id.Index] = 0;
+        
         Count--;
-
-        if (indexInDense == Count)
-            return true;
-
-        ref var slot = ref _dense[indexInDense];
-        slot = _dense[Count];
-        _sparse[slot.Id.Index] = indexInDense;
-        _generations[slot.Id.Index] = slot.Id.Generation;
-        _dense[Count] = default;
+        _freeIdxs.Push(id.Index);
+        
+        if (indexInDense < Count) {
+            // Swap last element into the removed slot
+            _dense[indexInDense] = _dense[Count];
+            // Update sparse pointer for the moved element
+            _sparse[_dense[indexInDense].Id.Index] = indexInDense;
+        }
+    
+        // Always clear the last slot, even if we just removed it
+        _dense[Count] = default; 
         return true;
     }
 
@@ -85,14 +100,14 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
             return ref _dense[0];
 
         var idx = _sparse[id.Index];
-        if (_generations[id.Index] != id.Generation)
+        if (_generations[id.Index] != id.Version)
             return ref _dense[0]; // Stale reference, return invalid slot
         
         return ref _dense[idx];
     }
 
     public ref T GetAt(int denseIndex) {
-        if (denseIndex < 0 || denseIndex >= _dense.Length)
+        if (denseIndex < 0 || denseIndex >= Count)
             return ref _dense[0];
         return ref _dense[denseIndex];
     }
@@ -133,7 +148,7 @@ public sealed class SparseSet<T> : IDisposable where T : struct, IEntityIdentifi
     public void Dispose() {
         ArrayPool<int>.Shared.Return(_sparse);
         ArrayPool<int>.Shared.Return(_generations);
-        ArrayPool<T>.Shared.Return(_dense);
+        ArrayPool<T>.Shared.Return(_dense, true);
     }
 
     public SparseEnumerator<T> GetEnumerator() => new(this);
