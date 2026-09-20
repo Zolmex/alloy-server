@@ -7,13 +7,6 @@ namespace Common.Projectiles.ProjectilePaths;
 public partial struct PathSegment {
     private readonly Vector2 PositionLine(int elapsed, float angle) {
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
-        ApplyModifiers(ref elapsed);
-
         var dist = elapsed * (Speed / 1000f);
         p.X = dist * MathF.Cos(GetAngle(angle));
         p.Y = dist * MathF.Sin(GetAngle(angle));
@@ -22,13 +15,6 @@ public partial struct PathSegment {
 
     private readonly Vector2 PositionWavy(int elapsed, int projId, float angle) {
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
-        ApplyModifiers(ref elapsed);
-
         var dist = elapsed * (Speed / 1000f);
         var phase = projId % 2 == 0 ? 0 : MathF.PI;
         var periodFactor = 6 * MathF.PI;
@@ -41,13 +27,6 @@ public partial struct PathSegment {
 
     private readonly Vector2 PositionAmplitude(int elapsed, int projId, float angle) {
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
-        ApplyModifiers(ref elapsed);
-
         var dist = elapsed * (Speed / 1000f);
         p.X = dist * MathF.Cos(GetAngle(angle));
         p.Y = dist * MathF.Sin(GetAngle(angle));
@@ -62,13 +41,6 @@ public partial struct PathSegment {
 
     private readonly Vector2 PositionCircle(int elapsed, int projId, float angle) {
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
-        ApplyModifiers(ref elapsed);
-
         var elapsedSeconds = elapsed / 1000f;
         if (elapsedSeconds != 0)
             angle = GetAngle(angle) + Speed * elapsedSeconds * 360f.Deg2Rad();
@@ -80,11 +52,6 @@ public partial struct PathSegment {
 
     private readonly Vector2 PositionBoomerang(int elapsed, float angle) {
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
         if (elapsed > LifetimeMs / 2)
             elapsed = LifetimeMs - elapsed;
         var dist = elapsed * (Speed / 1000f);
@@ -96,13 +63,6 @@ public partial struct PathSegment {
     private readonly Vector2 PositionAccelerate(int elapsed, float angle) {
         var speed = Speed;
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
-        ApplyModifiers(ref elapsed);
-
         speed *= elapsed / (float)LifetimeMs;
         var dist = elapsed * (speed / 1000f);
 
@@ -114,13 +74,6 @@ public partial struct PathSegment {
     private readonly Vector2 PositionDecelerate(int elapsed, float angle) {
         var speed = Speed;
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
-        ApplyModifiers(ref elapsed);
-
         speed *= 2 - elapsed / (LifetimeMs + 10f);
         var dist = elapsed * (speed / 1000f);
 
@@ -131,13 +84,6 @@ public partial struct PathSegment {
 
     private readonly Vector2 PositionChangeSpeed(int elapsed, float angle) {
         var p = Vector2.Zero;
-        if (TimeOffset > 0 && elapsed < TimeOffset)
-            return p;
-
-        elapsed -= TimeOffset;
-
-        ApplyModifiers(ref elapsed);
-
         var dist = Math.Clamp(elapsed, 0, _cooldownOffset) * (Speed / 1000f); // 0 -> cooldown offset
 
         if (elapsed > _cooldownOffset) // cooldown offset -> end
@@ -153,5 +99,20 @@ public partial struct PathSegment {
         p.X = dist * MathF.Cos(GetAngle(angle));
         p.Y = dist * MathF.Sin(GetAngle(angle));
         return p;
+    }
+    
+    private readonly Vector2 PositionCombined(int elapsedLifetimeMs, int projId, float angle, ref readonly PathSegmentBuffer buffer, int selfIndex) {
+        var p = Vector2.Zero;
+        var count = 0;
+        for (var i = selfIndex + 1; i <= selfIndex + SubCount; i++) {
+            ref readonly var child = ref buffer[i];
+            if (child.TimeOffset > 0 && elapsedLifetimeMs < child.TimeOffset)
+                continue;                                  // excluded from the average, per old behavior
+            var offset = child.PositionAt(elapsedLifetimeMs, projId, angle, in buffer, selfIndex); // child's own offset math applies
+            p += offset;
+            count++;
+        }
+
+        return count == 0 ? Vector2.Zero : p / count;     // guard: old code divided by zero here
     }
 }

@@ -26,6 +26,8 @@ public partial struct PathSegment {
     private float _increment;
     private int _repeat;
 
+    public byte SubCount; // Combined path
+
     public PathSegment(PathType pathType, float speed, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods) {
         Type = pathType;
         Speed = speed;
@@ -46,12 +48,17 @@ public partial struct PathSegment {
         }
     }
 
-    public readonly Vector2 PositionAt(int elapsedLifetimeMs, int projId, float angle) {
+    public readonly Vector2 PositionAt(int elapsedLifetimeMs, int projId, float angle, ref readonly PathSegmentBuffer buffer, int selfIndex) {
         var elapsed = elapsedLifetimeMs;
+        if (TimeOffset > 0 && elapsed < TimeOffset)
+            return Vector2.Zero;
+        
+        elapsed -= TimeOffset;
+        
         ApplyModifiers(ref elapsed);
 
         var targetAngle = GetAngle(angle);
-
+        
         return Type switch {
             PathType.LinePath => PositionLine(elapsed, targetAngle),
             PathType.WavyPath => PositionWavy(elapsed, projId, targetAngle),
@@ -61,12 +68,13 @@ public partial struct PathSegment {
             PathType.AcceleratePath => PositionAccelerate(elapsed, targetAngle),
             PathType.DeceleratePath => PositionDecelerate(elapsed, targetAngle),
             PathType.ChangeSpeedPath => PositionChangeSpeed(elapsed, targetAngle),
+            PathType.CombinedPath => PositionCombined(elapsed, projId, targetAngle, in buffer, selfIndex),
             _ => Vector2.Zero
         };
     }
 
-    public readonly Vector2 PositionAtEnd(int projId, float angle) {
-        return PositionAt(LifetimeMs, projId, angle);
+    public readonly Vector2 PositionAtEnd(int projId, float angle, ref readonly PathSegmentBuffer buffer, int selfIndex) {
+        return PositionAt(LifetimeMs, projId, angle, in buffer, selfIndex);
     }
 
     public readonly float GetAngle(float angle) {
@@ -84,7 +92,7 @@ public partial struct PathSegment {
         WritePathData(ref wtr);
     }
 
-    private readonly void WritePathData(ref SpanWriter wtr) {
+    public readonly void WritePathData(ref SpanWriter wtr) {
         switch (Type) {
             case PathType.CirclePath:
                 wtr.Write(_radius);
@@ -98,6 +106,10 @@ public partial struct PathSegment {
                 wtr.Write(_cooldown);
                 wtr.Write(_cooldownOffset);
                 wtr.Write(_repeat);
+                break;
+            case PathType.CombinedPath:
+                wtr.Write(TimeOffset);
+                wtr.Write(_mods);
                 break;
         }
     }
@@ -145,6 +157,12 @@ public partial struct PathSegment {
             _cooldown = cooldown,
             _cooldownOffset = cooldownOffset,
             _repeat = repeat
+        };
+    }
+    
+    public static PathSegment NewCombined(byte subCount, int lifetimeMs, int? timeOffset = null) {
+        return new PathSegment(PathType.CombinedPath, 0, null, lifetimeMs, timeOffset) {
+            SubCount = subCount
         };
     }
 
