@@ -1,6 +1,8 @@
 using Common.Resources.Config;
 using Common.Resources.World;
+using Common.Resources.Xml;
 using Common.Utilities;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 using GameServer.Game.Entities.Old.Extensions;
 
@@ -35,19 +37,22 @@ public class Nexus : World {
             _log.Error($"All realm portal regions have been occupied ({_realmPortalTiles.Count}).");
             return;
         }
-
-        var en = new Entity(0x0704);
-        ref var portal = ref EnterWorld(ref en);
+        
+        var portal = EnterWorld(XmlLibrary.ObjectDescs[0x0704]);
         
         MapTileData tile = null; // Select a random realm portal tile
         while (tile == null || _realmPortals.Contains(tile))
             tile = _realmPortalTiles.RandomElement();
-        
-        portal.Move(this, tile.X, tile.Y);
+
+        ref var portalPos = ref Ecs.Get<Position>(portal);
+        portalPos.Move(tile.X, tile.Y);
         _realmPortals.Add(tile);
 
-        ref var portalData = ref PortalDatas.Get(portal.Id);
-        portalData.Init(new Realm());
+        var realm = new Realm();
+        RealmManager.AddWorld(realm);
+        
+        ref var portalData = ref Ecs.Get<PortalData>(portal);
         portalData.DisplayPlayerCount = true;
+        portalData.LinkWorld(realm);
     }
 }

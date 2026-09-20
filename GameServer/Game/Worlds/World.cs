@@ -53,6 +53,7 @@ public class World {
     public readonly ChatSystem ChatSystem;
     public readonly BehaviorSystem BehaviorSystem;
     public readonly ProjectileSystem ProjectileSystem;
+    public readonly PortalSystem PortalSystem;
 
     public World(int id, int mapId, WorldConfig config) {
         Id = id;
@@ -70,6 +71,7 @@ public class World {
         ChatSystem = new ChatSystem(this);
         BehaviorSystem = new BehaviorSystem(this);
         ProjectileSystem = new ProjectileSystem(this);
+        PortalSystem = new PortalSystem(this);
 
         Load(mapId);
         
@@ -81,6 +83,7 @@ public class World {
         ChatSystem.Initialize();
         BehaviorSystem.Initialize();
         ProjectileSystem.Initialize();
+        PortalSystem.Initialize();
     }
 
     public void Load(int mapId) {
@@ -113,6 +116,7 @@ public class World {
 
         Map.Tick(ref time);
         
+        PortalSystem.Tick(ref time);
         InventorySystem.Tick(ref time);
         DamageSystem.Tick(ref time);
         ProjectileSystem.Tick(ref time);
