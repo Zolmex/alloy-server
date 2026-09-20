@@ -62,12 +62,13 @@ public static class ModelUtils {
 
     extension(Character chr) {
         public XElement ToXml(Account acc) {
+            var classStat = acc.Stats.ClassStats.FirstOrDefault(i => i.ObjectType == chr.ObjectType);
             var elements = new List<XElement> {
                 new("ObjectType", chr.ObjectType),
                 new("Level", chr.Level),
                 new("CharFame", chr.CurrentFame),
                 new("NextLevelXp", GameUtils.GetNextLevelXp(chr.Level)),
-                new("NextClassQuestFame", GameUtils.GetNextClassQuestFame(chr, acc)),
+                new("NextClassQuestFame", GameUtils.GetNextClassQuestFame(classStat != null && classStat.BestFame > chr.CurrentFame ? classStat.BestFame : chr.CurrentFame)),
                 new("Experience", chr.XpPoints),
                 new("CurrentFame", chr.CurrentFame),
                 new("Equipment", chr.ItemTypes.ToCommaSepString(",")),

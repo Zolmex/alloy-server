@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Behaviors.Transitions;
@@ -28,31 +28,31 @@ public partial class BehaviorLib {
                 new TimedTransition(200, "spam_blades")
             ),
             new State("spam_blades",
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
                     maxRadius: 8, count: 1, cooldownMS: 100000, coolDownOffset: 1000, multiHit: true,
                     passesCover: true),
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
                     maxRadius: 8, count: 2, shootAngle: 16, cooldownMS: 100000, coolDownOffset: 1200, multiHit: true,
                     passesCover: true),
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
                     maxRadius: 8, count: 3, predictive: 0.2f, cooldownMS: 100000, coolDownOffset: 1600, multiHit: true,
                     passesCover: true),
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
                     maxRadius: 8, count: 1, shootAngle: 24, cooldownMS: 100000, coolDownOffset: 2200, multiHit: true,
                     passesCover: true),
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
                     maxRadius: 8, count: 2, predictive: 0.2f, cooldownMS: 100000, coolDownOffset: 2800, multiHit: true,
                     passesCover: true),
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 1200,
                     maxRadius: 8, count: 3, shootAngle: 16, cooldownMS: 100000, coolDownOffset: 3200),
                 new Wander(4.07f),
                 new TimedTransition(4400, "blade_ring")
             ),
             new State("blade_ring",
-                new Shoot(path: new LinePath(9f), targeted: false, projName: "Blade", damage: 28, lifetimeMs: 430,
+                new Shoot(path: PathSegment.NewLine(9f), targeted: false, projName: "Blade", damage: 28, lifetimeMs: 430,
                     maxRadius: 7, fixedAngle: 0, count: 12, shootAngle: 30, cooldownMS: 800, coolDownOffset: 600,
                     multiHit: true, passesCover: true),
-                new Shoot(path: new LinePath(9f), targeted: false, projName: "Blade", damage: 28, lifetimeMs: 430,
+                new Shoot(path: PathSegment.NewLine(9f), targeted: false, projName: "Blade", damage: 28, lifetimeMs: 430,
                     maxRadius: 7, fixedAngle: 15, count: 6, shootAngle: 60, cooldownMS: 800, coolDownOffset: 1000,
                     multiHit: true, passesCover: true),
                 new Follow(4.07f, acquireRange: 10, distFromTarget: 1),
@@ -96,7 +96,7 @@ public partial class BehaviorLib {
                     new TimedTransition(3000, "slow_follow")
                 ),
                 new State("slow_follow",
-                    new Shoot(path: new LinePath(10f), targeted: true, projName: "Blade", damage: 50,
+                    new Shoot(path: PathSegment.NewLine(10f), targeted: true, projName: "Blade", damage: 50,
                         lifetimeMs: 400, maxRadius: 13, cooldownMS: 1000),
                     new Follow(2.96f, acquireRange: 9, distFromTarget: 3.5f),
                     new Wander(2.96f),
@@ -114,7 +114,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Ogre Warrior")]
     public static State OgreWarrior =>
         new(
-            new Shoot(path: new LinePath(10f), targeted: true, projName: "Blade", damage: 45, lifetimeMs: 400,
+            new Shoot(path: PathSegment.NewLine(10f), targeted: true, projName: "Blade", damage: 45, lifetimeMs: 400,
                 maxRadius: 3, predictive: 0.5f, cooldownMS: 1000),
             new Protect(1.2f, "Ogre King", 15, 10, 5),
             new Follow(1.4f, acquireRange: 10.5f, distFromTarget: 1.6f, cooldownOffsetMS: 2600, cooldownMS: 2200),
@@ -125,7 +125,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Ogre Mage")]
     public static State OgreMage =>
         new(
-            new Shoot(path: new LinePath(6.7f), targeted: true, projName: "Green Magic", damage: 38,
+            new Shoot(path: PathSegment.NewLine(6.7f), targeted: true, projName: "Green Magic", damage: 38,
                 lifetimeMs: 1500, maxRadius: 10, predictive: 0.3f, cooldownMS: 1000),
             new Protect(1.2f, "Ogre King", 30, 10),
             new Orbit(3.5f, 6),
@@ -135,7 +135,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Ogre Wizard")]
     public static State OgreWizard =>
         new(
-            new Shoot(path: new LinePath(5f), targeted: true, projName: "Green Bolt", damage: 40, lifetimeMs: 2200,
+            new Shoot(path: PathSegment.NewLine(5f), targeted: true, projName: "Green Bolt", damage: 40, lifetimeMs: 2200,
                 maxRadius: 10, cooldownMS: 300),
             new Protect(1.2f, "Ogre King", 30, 10),
             new Orbit(3.5f, 6),
@@ -166,15 +166,15 @@ public partial class BehaviorLib {
                 new EntityWithinTransition("normal_attack", radius: 10.2f)
             ),
             new State("normal_attack",
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Green Bolt", damage: 30,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Green Bolt", damage: 30,
                     lifetimeMs: 1600, maxRadius: 10, count: 3, shootAngle: 3, predictive: 0.5f, cooldownMS: 1000),
                 new TimedTransition(4000, "if_cloaked")
             ),
             new State("if_cloaked",
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Green Bolt", damage: 30,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Green Bolt", damage: 30,
                     lifetimeMs: 1600, maxRadius: 10, count: 8, shootAngle: 45, fixedAngle: 20, cooldownMS: 1600,
                     coolDownOffset: 400),
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Green Bolt", damage: 30,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Green Bolt", damage: 30,
                     lifetimeMs: 1600, maxRadius: 10, count: 8, shootAngle: 45, fixedAngle: 42, cooldownMS: 1600,
                     coolDownOffset: 1200),
                 new EntityWithinTransition("normal_attack", radius: 10)
@@ -184,7 +184,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Night Elf Archer")]
     public static State NightElfArcher =>
         new(
-            new Shoot(path: new LinePath(7.5f), targeted: true, projName: "Blue Arrow", damage: 36,
+            new Shoot(path: PathSegment.NewLine(7.5f), targeted: true, projName: "Blue Arrow", damage: 36,
                 lifetimeMs: 2000, maxRadius: 10, predictive: 1f, cooldownMS: 1000),
             new Follow(9f, 7),
             new Wander(2.96f)
@@ -193,7 +193,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Night Elf Warrior")]
     public static State NightElfWarrior =>
         new(
-            new Shoot(path: new LinePath(10f), targeted: true, projName: "Blade", damage: 36, lifetimeMs: 800,
+            new Shoot(path: PathSegment.NewLine(10f), targeted: true, projName: "Blade", damage: 36, lifetimeMs: 800,
                 maxRadius: 3, predictive: 1f, cooldownMS: 1000),
             new Follow(9f, 1),
             new Wander(2.96f)
@@ -202,7 +202,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Night Elf Mage")]
     public static State NightElfMage =>
         new(
-            new Shoot(path: new LinePath(6f), targeted: true, projName: "Blue Magic", damage: 40, lifetimeMs: 2000,
+            new Shoot(path: PathSegment.NewLine(6f), targeted: true, projName: "Blue Magic", damage: 40, lifetimeMs: 2000,
                 maxRadius: 10, predictive: 1f, cooldownMS: 1000, multiHit: true),
             new Follow(9f, 7),
             new Wander(2.96f)
@@ -211,7 +211,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Night Elf Veteran")]
     public static State NightElfVeteran =>
         new(
-            new Shoot(path: new LinePath(8f), targeted: true, projName: "Gold Arrow", damage: 45, lifetimeMs: 2000,
+            new Shoot(path: PathSegment.NewLine(8f), targeted: true, projName: "Gold Arrow", damage: 45, lifetimeMs: 2000,
                 maxRadius: 10, predictive: 1f, cooldownMS: 1000, size: 120, multiHit: true),
             new Follow(9f, 7),
             new Wander(2.96f)
@@ -220,7 +220,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Night Elf King")]
     public static State NightElfKing =>
         new(
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Green Magic", damage: 55, lifetimeMs: 1200,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Green Magic", damage: 55, lifetimeMs: 1200,
                 maxRadius: 10, predictive: 1f, cooldownMS: 1000),
             new Follow(9f, 7),
             new Wander(2.96f)
@@ -246,16 +246,16 @@ public partial class BehaviorLib {
             new Spawn("Soulless Dwarf", maxSpawnsPerReset: 1),
             new Follow(6.3f, 7),
             new Wander(2.96f),
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Pink Bolt", damage: 30, lifetimeMs: 1700,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Pink Bolt", damage: 30, lifetimeMs: 1700,
                 maxRadius: 10, count: 3, shootAngle: 15, cooldownMS: 1000),
-            new Shoot(path: new LinePath(6f), targeted: true, projName: "Blue Star", damage: 0, lifetimeMs: 2200,
+            new Shoot(path: PathSegment.NewLine(6f), targeted: true, projName: "Blue Star", damage: 0, lifetimeMs: 2200,
                 maxRadius: 10, predictive: 0.5f, cooldownMS: 1200, effects: (ConditionEffectIndex.Confused, 3000))
         );
 
     [CharacterBehavior("Undead Dwarf Warrior")]
     public static State UndeadDwarfWarrior =>
         new(
-            new Shoot(path: new LinePath(6f), targeted: true, projName: "Blade", damage: 40, lifetimeMs: 1200,
+            new Shoot(path: PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 40, lifetimeMs: 1200,
                 maxRadius: 3, cooldownMS: 1000),
             new Follow(6.3f, 1),
             new Wander(2.96f)
@@ -264,7 +264,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Undead Dwarf Axebearer")]
     public static State UndeadDwarfAxebearer =>
         new(
-            new Shoot(path: new LinePath(12f), targeted: true, projName: "Blade", damage: 46, lifetimeMs: 400,
+            new Shoot(path: PathSegment.NewLine(12f), targeted: true, projName: "Blade", damage: 46, lifetimeMs: 400,
                 maxRadius: 3, cooldownMS: 1000),
             new Follow(6.3f, 1),
             new Wander(2.96f)
@@ -274,7 +274,7 @@ public partial class BehaviorLib {
     public static State UndeadDwarfMage =>
         new(
             new State("circle_player",
-                new Shoot(path: new LinePath(5), targeted: true, projName: "Blue Bolt", damage: 32,
+                new Shoot(path: PathSegment.NewLine(5), targeted: true, projName: "Blue Bolt", damage: 32,
                     lifetimeMs: 2400, maxRadius: 8, predictive: 0.3f, cooldownMS: 1000, coolDownOffset: 500,
                     multiHit: true),
                 new Protect(4.62f, "Undead Dwarf King", 11, 10, 3),
@@ -283,10 +283,10 @@ public partial class BehaviorLib {
                 new TimedTransition(3500, "circle_king")
             ),
             new State("circle_king",
-                new Shoot(path: new LinePath(5), targeted: true, projName: "Blue Bolt", damage: 32,
+                new Shoot(path: PathSegment.NewLine(5), targeted: true, projName: "Blue Bolt", damage: 32,
                     lifetimeMs: 2400, maxRadius: 8, count: 5, shootAngle: 72, fixedAngle: 20, predictive: 0.3f,
                     cooldownMS: 1600, coolDownOffset: 500, multiHit: true),
-                new Shoot(path: new LinePath(5), targeted: true, projName: "Blue Bolt", damage: 32,
+                new Shoot(path: PathSegment.NewLine(5), targeted: true, projName: "Blue Bolt", damage: 32,
                     lifetimeMs: 2400, maxRadius: 8, count: 5, shootAngle: 72, fixedAngle: 33, predictive: 0.3f,
                     cooldownMS: 1600, coolDownOffset: 1300, multiHit: true),
                 new Orbit(7.4f, 2.5f, target: "Undead Dwarf King", acquireRange: 12, radiusVariance: 0.1f,
@@ -299,7 +299,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Undead Dwarf King")]
     public static State UndeadDwarfKing =>
         new(
-            new Shoot(path: new LinePath(10f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 600,
+            new Shoot(path: PathSegment.NewLine(10f), targeted: true, projName: "Blade", damage: 52, lifetimeMs: 600,
                 maxRadius: 3, cooldownMS: 1000),
             new Follow(5.1f, 1.4f),
             new Wander(2.96f)
@@ -308,7 +308,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Soulless Dwarf")]
     public static State SoullessDwarf =>
         new(
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Blue Magic", damage: 55, lifetimeMs: 1700,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Blue Magic", damage: 55, lifetimeMs: 1700,
                 maxRadius: 10, cooldownMS: 1000),
             new State("idle",
                 new EntityWithinTransition("run1", 10.5f)
@@ -351,16 +351,16 @@ public partial class BehaviorLib {
             new Spawn("Flayer God", maxSpawnsPerReset: 2, maxDensity: 2, cooldownMs: 60000),
             new Follow(6.3f, 7),
             new Wander(2.96f),
-            new Shoot(path: new LinePath(5f), targeted: true, projName: "Green Magic", damage: 60, lifetimeMs: 2200,
+            new Shoot(path: PathSegment.NewLine(5f), targeted: true, projName: "Green Magic", damage: 60, lifetimeMs: 2200,
                 maxRadius: 10, predictive: 0.5f, cooldownMS: 400),
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Grey Star", damage: 0, lifetimeMs: 2200,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Grey Star", damage: 0, lifetimeMs: 2200,
                 maxRadius: 10, predictive: 1f, cooldownMS: 1000, effects: (ConditionEffectIndex.Quiet, 10000))
         );
 
     [CharacterBehavior("Flayer")]
     public static State Flayer =>
         new(
-            new Shoot(path: new LinePath(5f), targeted: true, projName: "Blue Magic", damage: 40, lifetimeMs: 2700,
+            new Shoot(path: PathSegment.NewLine(5f), targeted: true, projName: "Blue Magic", damage: 40, lifetimeMs: 2700,
                 maxRadius: 10, predictive: 0.5f, cooldownMS: 1000),
             new Follow(7.4f, 7),
             new Wander(2.96f)
@@ -369,7 +369,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Flayer Veteran")]
     public static State FlayerVeteran =>
         new(
-            new Shoot(path: new LinePath(8f), targeted: true, projName: "Purple Magic", damage: 50,
+            new Shoot(path: PathSegment.NewLine(8f), targeted: true, projName: "Purple Magic", damage: 50,
                 lifetimeMs: 1500, maxRadius: 10, predictive: 0.5f, cooldownMS: 1000),
             new Follow(7.4f, 7),
             new Wander(2.96f)
@@ -387,7 +387,7 @@ public partial class BehaviorLib {
                 new State("Bullet",
                     new Flash(0xffaa00, 0.2, 20),
                     new ChangeSize(20, 140),
-                    new Shoot(path: new AmplitudePath(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: true,
+                    new Shoot(path: PathSegment.NewAmplitude(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: true,
                         projName: "White Flame",
                         damage: 29, lifetimeMs: 500, maxRadius: 8, cooldownMS: 200, size: 105, multiHit: true),
                     new TimedTransition(4000, "Wait")
@@ -403,7 +403,7 @@ public partial class BehaviorLib {
                 new TimedTransition(300, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new AmplitudePath(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: false,
+                new Shoot(path: PathSegment.NewAmplitude(8f, 0.6f, 0.5f, lifetimeMs: 500), targeted: false,
                     projName: "White Flame",
                     damage: 29, lifetimeMs: 500, maxRadius: 12, count: 10, shootAngle: 36, fixedAngle: 0,
                     cooldownMS: 1000, size: 105, multiHit: true),
@@ -426,7 +426,7 @@ public partial class BehaviorLib {
                 new State("Bullet",
                     new Flash(0xffaa00, 0.2, 20),
                     new ChangeSize(20, 130),
-                    new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
+                    new Shoot(path: PathSegment.NewAmplitude(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
                         projName: "White Flame",
                         damage: 29, lifetimeMs: 500, maxRadius: 8, cooldownMS: 200, multiHit: true),
                     new TimedTransition(4000, "Wait")
@@ -442,7 +442,7 @@ public partial class BehaviorLib {
                 new TimedTransition(300, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: false,
+                new Shoot(path: PathSegment.NewAmplitude(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: false,
                     projName: "White Flame",
                     damage: 29, lifetimeMs: 500, maxRadius: 12, count: 10, shootAngle: 36, fixedAngle: 0,
                     cooldownMS: 1000, multiHit: true),
@@ -461,7 +461,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("White Dragon Whelp")]
     public static State WhiteDragonWhelp =>
         new(
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Red Fire", damage: 30, lifetimeMs: 2300,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Red Fire", damage: 30, lifetimeMs: 2300,
                 maxRadius: 10, count: 2, shootAngle: 20, predictive: 0.3f, cooldownMS: 750, size: 80),
             new Follow(11.84f, 2.5f, 10.5f, cooldownOffsetMS: 2200, cooldownMS: 3200),
             new Wander(5.73f)
@@ -470,7 +470,7 @@ public partial class BehaviorLib {
     [CharacterBehavior("Juvenile White Dragon")]
     public static State JuvenileWhiteDragon =>
         new(
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Red Fire", damage: 43, lifetimeMs: 2200,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Red Fire", damage: 43, lifetimeMs: 2200,
                 maxRadius: 10, count: 2, shootAngle: 20, predictive: 0.3f, cooldownMS: 750),
             new Follow(10.73f, 2.2f, 10.5f, cooldownOffsetMS: 3000, cooldownMS: 3000),
             new Wander(4.9f)
@@ -484,7 +484,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Seal of the Divine", 0.015f, 0.01f),
             //     new ItemLoot("White Drake Egg", 0.004f, 0.01f)
             // ),
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Red Fire", damage: 70, lifetimeMs: 2200,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Red Fire", damage: 70, lifetimeMs: 2200,
                 maxRadius: 10, count: 3, shootAngle: 15, predictive: 0.3f, cooldownMS: 750, size: 120),
             new Follow(8.5f, 1.8f, 10.5f, cooldownOffsetMS: 4000, cooldownMS: 2000),
             new Wander(4.9f)
@@ -501,7 +501,7 @@ public partial class BehaviorLib {
             new State("Attacking",
                 new State("Attack",
                     new Flash(0x000000, 10, 100),
-                    new Shoot(path: new LinePath(6f), targeted: true, projName: "White Bullet", damage: 40,
+                    new Shoot(path: PathSegment.NewLine(6f), targeted: true, projName: "White Bullet", damage: 40,
                         lifetimeMs: 700, maxRadius: 10, cooldownMS: 500, size: 30, multiHit: true),
                     new HpLessTransition(0.5f, "Heal"),
                     new EntityNotWithinTransition("Shield Orc Key", 7, targetStates: "Idling")
@@ -529,7 +529,7 @@ public partial class BehaviorLib {
             new State("Attacking",
                 new State("Attack",
                     new Flash(0x000000, 10, 100),
-                    new Shoot(path: new LinePath(6f), targeted: true, projName: "White Bullet", damage: 40,
+                    new Shoot(path: PathSegment.NewLine(6f), targeted: true, projName: "White Bullet", damage: 40,
                         lifetimeMs: 700, maxRadius: 10, cooldownMS: 500, size: 30, multiHit: true),
                     new HpLessTransition(0.5f, "Heal"),
                     new EntityNotWithinTransition("Shield Orc Key", 7, targetStates: "Idling")
@@ -572,7 +572,7 @@ public partial class BehaviorLib {
                 new TimedTransition(300, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new LinePath(3f), targeted: true, projName: "White Bullet", damage: 40,
+                new Shoot(path: PathSegment.NewLine(3f), targeted: true, projName: "White Bullet", damage: 40,
                     lifetimeMs: 3000, maxRadius: 12, count: 10, shootAngle: 36, fixedAngle: 0, cooldownMS: 1000,
                     size: 30, multiHit: true),
                 new Suicide()
@@ -584,19 +584,19 @@ public partial class BehaviorLib {
         new(
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread", damage: 20,
                     lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 2", damage: 20,
                     lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 3", damage: 20,
                     lifetimeMs: 1450, maxRadius: 1, fixedAngle: 0, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
                 new TimedTransition(2000, "weak_effect")
@@ -609,19 +609,19 @@ public partial class BehaviorLib {
         new(
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread", damage: 20,
                     lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 2", damage: 20,
                     lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 3", damage: 20,
                     lifetimeMs: 1450, maxRadius: 1, fixedAngle: 90, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
                 new TimedTransition(2000, "weak_effect")
@@ -634,19 +634,19 @@ public partial class BehaviorLib {
         new(
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread", damage: 20,
                     lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 2", damage: 20,
                     lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 3", damage: 20,
                     lifetimeMs: 370, maxRadius: 1, fixedAngle: 45, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 2400)),
                 new TimedTransition(2000, "weak_effect")
@@ -659,19 +659,19 @@ public partial class BehaviorLib {
         new(
             new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
             new State("weak_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread", damage: 20,
                     lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Weak, 6000)),
                 new TimedTransition(2000, "blind_effect")
             ),
             new State("blind_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 2", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 2", damage: 20,
                     lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.Blind, 2000)),
                 new TimedTransition(2000, "pierce_effect")
             ),
             new State("pierce_effect",
-                new Shoot(path: new LinePath(7f), targeted: false, projName: "Web Thread 3", damage: 20,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: false, projName: "Web Thread 3", damage: 20,
                     lifetimeMs: 370, maxRadius: 1, fixedAngle: 135, cooldownMS: 200, size: 210, multiHit: true,
                     passesCover: true, effects: (ConditionEffectIndex.ArmorBroken, 6000)),
                 new TimedTransition(2000, "weak_effect")
@@ -694,7 +694,7 @@ public partial class BehaviorLib {
             // ),
             new DropPortalOnDeath("Spider Den Portal", 0.9f),
             new Wander(3.5f, distanceFromSpawn: 3),
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "White Bullet", damage: 48,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "White Bullet", damage: 48,
                 lifetimeMs: 1500, maxRadius: 8, predictive: 0.3f, cooldownMS: 1000, size: 80, multiHit: true),
             new State("idle",
                 new EntityWithinTransition("toss_horizontal_traps", radius: 10.5f)
@@ -753,16 +753,16 @@ public partial class BehaviorLib {
                 new TimedTransition(5000, "Charge"),
                 new TossObject("Specter Mine", cooldownMS: 2000),
                 new State("Shoot1",
-                    new Shoot(path: new LinePath(3.5f), targeted: false, projName: "Specter Shot", damage: 75,
+                    new Shoot(path: PathSegment.NewLine(3.5f), targeted: false, projName: "Specter Shot", damage: 75,
                         lifetimeMs: 2600, maxRadius: 12, count: 1, fixedAngle: 0, rotateAngle: 30, cooldownMS: 300,
                         size: 90, effects: (ConditionEffectIndex.Paralyzed, 400)),
-                    new Shoot(path: new LinePath(3.5f), targeted: false, projName: "Specter Shot", damage: 75,
+                    new Shoot(path: PathSegment.NewLine(3.5f), targeted: false, projName: "Specter Shot", damage: 75,
                         lifetimeMs: 2600, maxRadius: 12, count: 1, fixedAngle: 180, rotateAngle: 30, cooldownMS: 300,
                         size: 90, effects: (ConditionEffectIndex.Paralyzed, 400)),
                     new TimedTransition(1000, "Shoot2")
                 ),
                 new State("Shoot2",
-                    new Shoot(path: new LinePath(3.5f), targeted: false, projName: "Specter Shot", damage: 75,
+                    new Shoot(path: PathSegment.NewLine(3.5f), targeted: false, projName: "Specter Shot", damage: 75,
                         lifetimeMs: 2600, maxRadius: 20, count: 2, shootAngle: 180, cooldownMS: 400, size: 90),
                     new TimedTransition(400, "Shoot1")
                 )
@@ -772,7 +772,7 @@ public partial class BehaviorLib {
                 new TossObject("Specter Mine", cooldownMS: 2000),
                 new SetAltTexture(2),
                 new Follow(5.18f, 20, 1),
-                new Shoot(path: new LinePath(5.5f), targeted: false, projName: "Specter Spinner", damage: 50,
+                new Shoot(path: PathSegment.NewLine(5.5f), targeted: false, projName: "Specter Spinner", damage: 50,
                     lifetimeMs: 2000, maxRadius: 20, count: 2, shootAngle: 50, cooldownMS: 400, size: 80,
                     effects: [(ConditionEffectIndex.Sick, 4000), (ConditionEffectIndex.Confused, 1000)]),
                 new TimedTransition(4000, "Attack")
@@ -787,7 +787,7 @@ public partial class BehaviorLib {
                 new TimedTransition(4000, "Suicide")
             ),
             new State("Suicide",
-                new Shoot(path: new LinePath(6f), targeted: true, projName: "Specter Spike", damage: 55,
+                new Shoot(path: PathSegment.NewLine(6f), targeted: true, projName: "Specter Spike", damage: 55,
                     lifetimeMs: 1200, maxRadius: 60, count: 4, shootAngle: 45, cooldownMS: 1000, multiHit: true,
                     effects: (ConditionEffectIndex.Sick, 4000)),
                 new Suicide()

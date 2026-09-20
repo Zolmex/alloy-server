@@ -1,4 +1,4 @@
-﻿using Common.Projectiles.ProjectilePaths;
+using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Behaviors.Loot;
 using GameServer.Game.Entities.Behaviors.Transitions;
@@ -12,7 +12,7 @@ public partial class BehaviorLib {
             new LootDrop(true,
                 new ItemLoot("Health Potion", 0.03f, 0.9f)
             ),
-            new Shoot(3, new LinePath(4f), targeted: true, projName: "Blade", damage: 4,
+            new Shoot(3, PathSegment.NewLine(4f), targeted: true, projName: "Blade", damage: 4,
                 lifetimeMs: 600, cooldownMS: 2500),
             new Follow(distFromTarget: 1, speed: 5.46f),
             new Wander(2.94f)
@@ -27,7 +27,7 @@ public partial class BehaviorLib {
             // ),
             new Follow(6.825f, 1, cooldownOffsetMS: 3000, cooldownMS: 1500),
             new Wander(4.07f),
-            new Shoot(3, new LinePath(4f), targeted: true, projName: "Blade", damage: 4,
+            new Shoot(3, PathSegment.NewLine(4f), targeted: true, projName: "Blade", damage: 4,
                 lifetimeMs: 600, cooldownMS: 2500),
             new Spawn("Pirate", 0, 0, 60000, maxDensity: 5, densityRadius: 40),
             new Spawn("Piratess", 0, 0, 60000, maxDensity: 5, densityRadius: 40)
@@ -41,7 +41,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Magic Potion", 0.02f)
             // ),
             new Wander(2.94f),
-            new Shoot(10, new LinePath(4f), targeted: true, projName: "Green Magic", damage: 4,
+            new Shoot(10, PathSegment.NewLine(4f), targeted: true, projName: "Green Magic", damage: 4,
                 lifetimeMs: 2000, cooldownMS: 2000),
             new Spawn("Snake", 0, 0, 60000, maxDensity: 5, densityRadius: 40)
         );
@@ -51,7 +51,7 @@ public partial class BehaviorLib {
         new(
             new Protect(2.94f, "Scorpion Queen"),
             new Wander(2.94f),
-            new Shoot(8, new LinePath(4f), targeted: true, projName: "Green Magic", damage: 7,
+            new Shoot(8, PathSegment.NewLine(4f), targeted: true, projName: "Green Magic", damage: 7,
                 lifetimeMs: 2000, cooldownMS: 2000)
         );
 
@@ -72,7 +72,7 @@ public partial class BehaviorLib {
     public static State BanditEnemy =>
         new(
             new State("fast_follow",
-                new Shoot(3, new LinePath(6f), targeted: true, projName: "Blade", damage: 9,
+                new Shoot(3, PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 9,
                     lifetimeMs: 600, cooldownMS: 1000, size: 60),
                 new Protect(4.07f, "Bandit Leader", 9, 7,
                     3),
@@ -88,7 +88,7 @@ public partial class BehaviorLib {
                 new TimedTransition(2000, "slow_follow")
             ),
             new State("slow_follow",
-                new Shoot(4.5f, new LinePath(6f), targeted: true, projName: "Blade", damage: 9,
+                new Shoot(4.5f, PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 9,
                     lifetimeMs: 600, cooldownMS: 1000, size: 60),
                 new Protect(4.07f, "Bandit Leader", 9, 7,
                     3),
@@ -137,7 +137,7 @@ public partial class BehaviorLib {
                     new TimedTransition(3000, "slow_follow")
                 ),
                 new State("slow_follow",
-                    new Shoot(13, new LinePath(6f), targeted: true, projName: "Blade", damage: 9,
+                    new Shoot(13, PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 9,
                         lifetimeMs: 800, cooldownMS: 1000, size: 60),
                     new Follow(2.94f, acquireRange: 9, distFromTarget: 3.5f, cooldownOffsetMS: 4000),
                     new Wander(2.94f),
@@ -160,7 +160,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Health Potion", 0.04f),
             //     new ItemLoot("Magic Potion", 0.04f)
             // ),
-            new Shoot(8, new LinePath(6f), targeted: true, projName: "Salmon Missile", damage: 9,
+            new Shoot(8, PathSegment.NewLine(6f), targeted: true, projName: "Salmon Missile", damage: 9,
                 lifetimeMs: 2000, count: 2, shootAngle: 10, predictive: 0.2f, cooldownMS: 1000),
             new Wander(2.94f),
             new Spawn("Red Gelatinous Cube", 0, 0, 60000, maxDensity: 5, densityRadius: 40),
@@ -174,7 +174,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Health Potion", 0.04f),
             //     new ItemLoot("Magic Potion", 0.04f)
             // ),
-            new Shoot(8, new LinePath(6.5f), targeted: true, projName: "Purple Magic", damage: 12,
+            new Shoot(8, PathSegment.NewLine(6.5f), targeted: true, projName: "Purple Magic", damage: 12,
                 lifetimeMs: 2000, predictive: 0.2f, cooldownMS: 600),
             new Wander(2.94f),
             new Spawn("Purple Gelatinous Cube", 0, 0, 60000, maxDensity: 5, densityRadius: 40),
@@ -188,7 +188,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Health Potion", 0.04f),
             //     new ItemLoot("Magic Potion", 0.04f)
             // ),
-            new Shoot(8, new LinePath(6f), targeted: true, projName: "Green Magic", damage: 10,
+            new Shoot(8, PathSegment.NewLine(6f), targeted: true, projName: "Green Magic", damage: 10,
                 lifetimeMs: 2000, count: 5, shootAngle: 72, predictive: 0.2f, cooldownMS: 1800),
             new Wander(2.94f),
             new Spawn("Green Gelatinous Cube", 0, 0, 60000, maxDensity: 5, densityRadius: 40),

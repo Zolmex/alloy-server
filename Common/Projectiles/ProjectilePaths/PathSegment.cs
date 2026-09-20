@@ -151,7 +151,7 @@ public partial struct PathSegment {
         return new PathSegment(PathType.DeceleratePath, speed, angle, lifetimeMs, timeOffset, mods);
     }
     
-    public static PathSegment NewChangeSpeed(float speed, float inc, int cooldown, float? angle, int? lifetimeMs, int cooldownOffset, int repeat, int? timeOffset = null, params PathSegmentModifier[] mods) {
+    public static PathSegment NewChangeSpeed(float speed, float inc, int cooldown, float? angle = null, int? lifetimeMs = null, int cooldownOffset = 0, int repeat = 999999, int? timeOffset = null, params PathSegmentModifier[] mods) {
         return new PathSegment(PathType.ChangeSpeedPath, speed, angle, lifetimeMs, timeOffset, mods) {
             _increment = inc,
             _cooldown = cooldown,

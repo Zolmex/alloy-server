@@ -1,6 +1,6 @@
 ﻿using Common.Network;
 using Common.Structs;
-using GameServer.Game.Entities.Extensions;
+using GameServer.Game.Entities.Components;
 
 namespace GameServer.Game.Network.Messaging.Incoming;
 
@@ -12,8 +12,8 @@ public record Move : IIncomingPacket {
         if (user.Session.State != SessionState.Playing)
             return;
 
-        ref var player = ref user.Session.Player;
-        player.Move(user.Session.World, Pos.X, Pos.Y);
+        ref var pos = ref user.Session.World.Ecs.Get<Position>(user.Session.Player);
+        pos.Move(Pos.X, Pos.Y);
     }
 
     public void Read(ref SpanReader rdr) {

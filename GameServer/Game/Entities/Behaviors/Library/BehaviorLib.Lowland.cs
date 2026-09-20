@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Behaviors.Transitions;
@@ -21,17 +21,17 @@ public partial class BehaviorLib {
                 new EntityWithinTransition("ring1", radius: 12)
             ),
             new State("ring1",
-                new Shoot(1, new LinePath(5f), targeted: false, projName: "Dark Blue Magic", damage: 10,
+                new Shoot(1, PathSegment.NewLine(5f), targeted: false, projName: "Dark Blue Magic", damage: 10,
                     lifetimeMs: 340, fixedAngle: 0, count: 15, shootAngle: 24, cooldownMS: 1200),
                 new TimedTransition(400, "ring2")
             ),
             new State("ring2",
-                new Shoot(1, new LinePath(5f), targeted: false, projName: "Blue Magic", damage: 10,
+                new Shoot(1, PathSegment.NewLine(5f), targeted: false, projName: "Blue Magic", damage: 10,
                     lifetimeMs: 340, fixedAngle: 8, count: 15, shootAngle: 24, cooldownMS: 1200),
                 new TimedTransition(400, "ring3")
             ),
             new State("ring3",
-                new Shoot(1, new LinePath(5f), targeted: false, projName: "Cyan Magic", damage: 10,
+                new Shoot(1, PathSegment.NewLine(5f), targeted: false, projName: "Cyan Magic", damage: 10,
                     lifetimeMs: 340, fixedAngle: 16, count: 15, shootAngle: 24, cooldownMS: 1200),
                 new TimedTransition(400, "idle")
             ),
@@ -47,7 +47,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Health Potion", 0.04f)
             // ),
-            new Shoot(10, new LinePath(6f), targeted: true, projName: "Green Arrow", damage: 8,
+            new Shoot(10, PathSegment.NewLine(6f), targeted: true, projName: "Green Arrow", damage: 8,
                 lifetimeMs: 2000, cooldownMS: 1000),
             new State("run1",
                 new Protect(6.85f, "Hobbit Mage", 12, 10),
@@ -73,7 +73,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Health Potion", 0.04f)
             // ),
-            new Shoot(3, new LinePath(6f), targeted: true, projName: "Blade", damage: 13,
+            new Shoot(3, PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 13,
                 lifetimeMs: 800, cooldownMS: 1000),
             new Protect(7.38f, "Hobbit Mage", 15, 9,
                 2.5f),
@@ -91,23 +91,23 @@ public partial class BehaviorLib {
             //     // new TierLoot(1, ItemType.Ability, 0.39),
             //     new ItemLoot("Magic Potion", 0.03f)
             // ),
-            new Shoot(10, new LinePath(6f), targeted: true, projName: "Salmon Missile", damage: 20,
+            new Shoot(10, PathSegment.NewLine(6f), targeted: true, projName: "Salmon Missile", damage: 20,
                 lifetimeMs: 1100, cooldownMS: 1000),
             new State("idle",
                 new EntityWithinTransition("ring1", radius: 12)
             ),
             new State("ring1",
-                new Shoot(1, new LinePath(5f), targeted: false, projName: "Yellow Missile", damage: 13,
+                new Shoot(1, PathSegment.NewLine(5f), targeted: false, projName: "Yellow Missile", damage: 13,
                     lifetimeMs: 340, fixedAngle: 0, count: 15, shootAngle: 24, cooldownMS: 1200),
                 new TimedTransition(400, "ring2")
             ),
             new State("ring2",
-                new Shoot(1, new LinePath(5f), targeted: false, projName: "Fire Missile", damage: 13,
+                new Shoot(1, PathSegment.NewLine(5f), targeted: false, projName: "Fire Missile", damage: 13,
                     lifetimeMs: 340, fixedAngle: 8, count: 15, shootAngle: 24, cooldownMS: 1200),
                 new TimedTransition(400, "ring3")
             ),
             new State("ring3",
-                new Shoot(1, new LinePath(5f), targeted: false, projName: "Violet Missile", damage: 13,
+                new Shoot(1, PathSegment.NewLine(5f), targeted: false, projName: "Violet Missile", damage: 13,
                     lifetimeMs: 340, fixedAngle: 16, count: 15, shootAngle: 24, cooldownMS: 1200),
                 new TimedTransition(400, "idle")
             ),
@@ -123,7 +123,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Magic Potion", 0.03f)
             // ),
-            new Shoot(10, new LinePath(6f), targeted: true, projName: "Green Arrow", damage: 12,
+            new Shoot(10, PathSegment.NewLine(6f), targeted: true, projName: "Green Arrow", damage: 12,
                 lifetimeMs: 2000, cooldownMS: 1000),
             new State("run1",
                 new Protect(6.85f, "Undead Hobbit Mage", 12, 10),
@@ -149,7 +149,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Health Potion", 0.04f)
             // ),
-            new Shoot(3, new LinePath(6f), targeted: true, projName: "Blade", damage: 16,
+            new Shoot(3, PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 16,
                 lifetimeMs: 800, cooldownMS: 1000),
             new Protect(7.38f, "Undead Hobbit Mage", 15, 9,
                 2.5f),
@@ -181,7 +181,7 @@ public partial class BehaviorLib {
             ),
             new State("awake",
                 new SetAltTexture(1),
-                new Shoot(3, new LinePath(7f), targeted: true, projName: "Red BigBullet", damage: 15,
+                new Shoot(3, PathSegment.NewLine(7f), targeted: true, projName: "Red BigBullet", damage: 15,
                     lifetimeMs: 500, cooldownMS: 250, size: 120),
                 new Follow(1.015f, 1),
                 new Wander(1.015f),
@@ -193,7 +193,7 @@ public partial class BehaviorLib {
                 new Follow(4.07f, 1),
                 new Wander(4.07f),
                 new State("shoot",
-                    new Shoot(8, new LinePath(10f), targeted: true, projName: "Gold Bullet", damage: 25,
+                    new Shoot(8, PathSegment.NewLine(10f), targeted: true, projName: "Gold Bullet", damage: 25,
                         lifetimeMs: 1000, cooldownMS: 150, size: 150, multiHit: true, passesCover: true),
                     new TimedTransition(700, "rest")
                 ),
@@ -210,7 +210,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Health Potion", 0.02f),
             //     new ItemLoot("Magic Potion", 0.02f)
             // ),
-            new Shoot(8, new LinePath(5f), targeted: true, projName: "Red Bullet", damage: 10,
+            new Shoot(8, PathSegment.NewLine(5f), targeted: true, projName: "Red Bullet", damage: 10,
                 lifetimeMs: 3000, cooldownMS: 1000, size: 50),
             new Orbit(2.94f, 2, target: "Sumo Master"),
             new Wander(2.94f)
@@ -232,13 +232,13 @@ public partial class BehaviorLib {
                 new EntityWithinTransition("move1", radius: 11)
             ),
             new State("move1",
-                new Shoot(10, new LinePath(7f), targeted: true, projName: "Blue Bolt", damage: 5,
+                new Shoot(10, PathSegment.NewLine(7f), targeted: true, projName: "Blue Bolt", damage: 5,
                     lifetimeMs: 2000, count: 3, shootAngle: 14, predictive: 0.3f, cooldownMS: 1000, size: 90),
                 new BackAndForth(5.18f),
                 new TimedTransition(2000, "move2")
             ),
             new State("move2",
-                new Shoot(10, new LinePath(7f), targeted: true, projName: "Blue Bolt", damage: 5,
+                new Shoot(10, PathSegment.NewLine(7f), targeted: true, projName: "Blue Bolt", damage: 5,
                     lifetimeMs: 2000, count: 3, shootAngle: 10, predictive: 0.5f, cooldownMS: 1000, size: 90),
                 new Follow(4.07f, acquireRange: 10.5f, distFromTarget: 3),
                 new Wander(2.94f),
@@ -260,7 +260,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Health Potion", 0.04f)
             // ),
-            new Shoot(10, new LinePath(6.5f), targeted: true, projName: "Green Arrow", damage: 9,
+            new Shoot(10, PathSegment.NewLine(6.5f), targeted: true, projName: "Green Arrow", damage: 9,
                 lifetimeMs: 2000, predictive: 1, cooldownMS: 1000),
             new Orbit(3.47f, 3, speedVariance: 0.1f, radiusVariance: 0.5f),
             new Protect(7.38f, "Elf Wizard", 30, 10),
@@ -273,7 +273,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Health Potion", 0.04f)
             // ),
-            new Shoot(10, new LinePath(10f), targeted: true, projName: "Blade", damage: 13,
+            new Shoot(10, PathSegment.NewLine(10f), targeted: true, projName: "Blade", damage: 13,
                 lifetimeMs: 400, predictive: 1, cooldownMS: 1000),
             new Protect(7.38f, "Elf Wizard", 15, 10,
                 5),
@@ -288,7 +288,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Magic Potion", 0.03f)
             // ),
-            new Shoot(8, new LinePath(6.5f), targeted: true, projName: "Cyan Magic", damage: 4,
+            new Shoot(8, PathSegment.NewLine(6.5f), targeted: true, projName: "Cyan Magic", damage: 4,
                 lifetimeMs: 1500, cooldownMS: 300),
             new Orbit(3.47f, 3),
             new Protect(7.38f, "Elf Wizard", 30, 10),
@@ -310,7 +310,7 @@ public partial class BehaviorLib {
                 new Orbit(5.18f, 7, target: "Goblin Mage", radiusVariance: 1),
                 new TimedTransition(2400, "protect")
             ),
-            new Shoot(3, new LinePath(6f), targeted: true, projName: "Blade", damage: 10,
+            new Shoot(3, PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 10,
                 lifetimeMs: 800, cooldownMS: 1000),
             new State("help",
                 new Protect(5.18f, "Goblin Mage", 12, 6,
@@ -335,7 +335,7 @@ public partial class BehaviorLib {
                 new Orbit(5.18f, 7, target: "Goblin Mage", radiusVariance: 1),
                 new TimedTransition(2400, "protect")
             ),
-            new Shoot(3, new LinePath(6f), targeted: true, projName: "Blade", damage: 12,
+            new Shoot(3, PathSegment.NewLine(6f), targeted: true, projName: "Blade", damage: 12,
                 lifetimeMs: 600, cooldownMS: 1000),
             new State("help",
                 new Protect(5.18f, "Goblin Mage", 12, 6,
@@ -358,18 +358,18 @@ public partial class BehaviorLib {
             //     new ItemLoot("Magic Potion", 0.02f)
             // ),
             new State("unharmed",
-                new Shoot(8, new LinePath(3.5f), targeted: true, projName: "Cyan Magic", damage: 14,
+                new Shoot(8, PathSegment.NewLine(3.5f), targeted: true, projName: "Cyan Magic", damage: 14,
                     lifetimeMs: 3000, predictive: 0.35f, cooldownMS: 1000, size: 90),
-                new Shoot(8, new LinePath(7.5f), targeted: true, projName: "Dark Blue Magic", damage: 16,
+                new Shoot(8, PathSegment.NewLine(7.5f), targeted: true, projName: "Dark Blue Magic", damage: 16,
                     lifetimeMs: 1600, predictive: 0.35f, cooldownMS: 1300, size: 130),
                 new Follow(3.47f, acquireRange: 10.5f, distFromTarget: 4),
                 new Wander(2.94f),
                 new HpLessTransition(0.65f, "activate_horde")
             ),
             new State("activate_horde",
-                new Shoot(8, new LinePath(3.5f), targeted: true, projName: "Cyan Magic", damage: 14,
+                new Shoot(8, PathSegment.NewLine(3.5f), targeted: true, projName: "Cyan Magic", damage: 14,
                     lifetimeMs: 3000, predictive: 0.25f, cooldownMS: 1000, size: 90),
-                new Shoot(8, new LinePath(7.5f), targeted: true, projName: "Dark Blue Magic", damage: 16,
+                new Shoot(8, PathSegment.NewLine(7.5f), targeted: true, projName: "Dark Blue Magic", damage: 16,
                     lifetimeMs: 1600, predictive: 0.25f, cooldownMS: 1000, size: 130),
                 new Flash(0x484848, 0.6f, 5000),
                 new Order(12, "Goblin Rogue", "help"),
@@ -394,7 +394,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Health Potion", 0.01f),
             //     new ItemLoot("Magic Potion", 0.02f)
             // ),
-            new Shoot(9, new LinePath(7f), targeted: true, projName: "Fire Missile", damage: 12,
+            new Shoot(9, PathSegment.NewLine(7f), targeted: true, projName: "Fire Missile", damage: 12,
                 lifetimeMs: 1600, predictive: 0.5f, cooldownMS: 400, size: 90),
             new State("red",
                 new Flash(0xff0000, 1.5f, 1),
@@ -420,7 +420,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Magic Potion", 0.02f)
             // ),
             new State("circle",
-                new Shoot(4, new LinePath(5.5f), targeted: true, projName: "Purple Boomerang", damage: 14,
+                new Shoot(4, PathSegment.NewLine(5.5f), targeted: true, projName: "Purple Boomerang", damage: 14,
                     lifetimeMs: 2900, count: 1, predictive: 0.1f, cooldownMS: 900, size: 70),
                 new Follow(5.735f, acquireRange: 11, distFromTarget: 3.5f, cooldownOffsetMS: 1000,
                     cooldownMS: 5000),
@@ -429,7 +429,7 @@ public partial class BehaviorLib {
                 new TimedTransition(4000, "dart_away")
             ),
             new State("dart_away",
-                new Shoot(9, new LinePath(5f), targeted: true, projName: "Blue Boomerang", damage: 10,
+                new Shoot(9, PathSegment.NewLine(5f), targeted: true, projName: "Blue Boomerang", damage: 10,
                     lifetimeMs: 2900, count: 6, fixedAngle: 20, shootAngle: 60, cooldownMS: 1400, size: 70),
                 new Wander(2.94f),
                 new TimedTransition(3600, "circle")
@@ -447,7 +447,7 @@ public partial class BehaviorLib {
             //     // new TierLoot(1, ItemType.Ability, 0.39),
             //     new ItemLoot("Health Potion", 0.04f)
             // ),
-            new Shoot(10, new LinePath(7f), targeted: true, projName: "Blade", damage: 15,
+            new Shoot(10, PathSegment.NewLine(7f), targeted: true, projName: "Blade", damage: 15,
                 lifetimeMs: 1200, cooldownMS: 10000),
             new Follow(4.07f, 4),
             new Wander(2.94f),
@@ -461,9 +461,9 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Magic Potion", 0.03f)
             // ),
-            new Shoot(10, new LinePath(0.8f), targeted: true, projName: "Purple Mystic Shot", damage: 13,
+            new Shoot(10, PathSegment.NewLine(0.8f), targeted: true, projName: "Purple Mystic Shot", damage: 13,
                 lifetimeMs: 10000, cooldownMS: 5000),
-            new Shoot(5, new LinePath(8f), targeted: true, projName: "Dark Blue Magic", damage: 17,
+            new Shoot(5, PathSegment.NewLine(8f), targeted: true, projName: "Dark Blue Magic", damage: 17,
                 lifetimeMs: 300, cooldownMS: 400),
             new Protect(7.38f, "Sandsman King", 15, 6,
                 5),
@@ -476,7 +476,7 @@ public partial class BehaviorLib {
             // new CharacterLoot(
             //     new ItemLoot("Magic Potion", 0.03f)
             // ),
-            new Shoot(10, new LinePath(8.5f), targeted: true, projName: "Green Arrow", damage: 8,
+            new Shoot(10, PathSegment.NewLine(8.5f), targeted: true, projName: "Green Arrow", damage: 8,
                 lifetimeMs: 1400, predictive: 0.5f, cooldownMS: 1000),
             new Orbit(4.15f, 3.25f, 15, "Sandsman King", radiusVariance: 0.5f),
             new Wander(2.94f)
@@ -498,13 +498,13 @@ public partial class BehaviorLib {
                 new EntityWithinTransition("scuttle", radius: 11)
             ),
             new State("scuttle",
-                new Shoot(9, new LinePath(2f), targeted: true, projName: "Beam", damage: 1,
+                new Shoot(9, PathSegment.NewLine(2f), targeted: true, projName: "Beam", damage: 1,
                     lifetimeMs: 200, cooldownMS: 1000, size: 60),
-                new Shoot(9, new LinePath(4f), targeted: true, projName: "Beam", damage: 4,
+                new Shoot(9, PathSegment.NewLine(4f), targeted: true, projName: "Beam", damage: 4,
                     lifetimeMs: 400, cooldownMS: 1000),
-                new Shoot(9, new LinePath(6f), targeted: true, projName: "Beam", damage: 7,
+                new Shoot(9, PathSegment.NewLine(6f), targeted: true, projName: "Beam", damage: 7,
                     lifetimeMs: 600, cooldownMS: 1000, size: 140),
-                new Shoot(9, new LinePath(8f), targeted: true, projName: "Beam", damage: 11,
+                new Shoot(9, PathSegment.NewLine(8f), targeted: true, projName: "Beam", damage: 11,
                     lifetimeMs: 800, cooldownMS: 1000, size: 180),
                 new State("move1",
                     new Follow(6.29f, acquireRange: 10.6f, distFromTarget: 2),
@@ -517,11 +517,11 @@ public partial class BehaviorLib {
                 new TimedTransition(4700, "tri-spit")
             ),
             new State("tri-spit",
-                new Shoot(9, new LinePath(7f), targeted: true, projName: "Blue Bolt", damage: 10,
+                new Shoot(9, PathSegment.NewLine(7f), targeted: true, projName: "Blue Bolt", damage: 10,
                     lifetimeMs: 1800, predictive: 0.5f, coolDownOffset: 1200, cooldownMS: 90000, size: 90),
-                new Shoot(9, new LinePath(7f), targeted: true, projName: "Blue Bolt", damage: 10,
+                new Shoot(9, PathSegment.NewLine(7f), targeted: true, projName: "Blue Bolt", damage: 10,
                     lifetimeMs: 1800, predictive: 0.5f, coolDownOffset: 1800, cooldownMS: 90000, size: 90),
-                new Shoot(9, new LinePath(7f), targeted: true, projName: "Blue Bolt", damage: 10,
+                new Shoot(9, PathSegment.NewLine(7f), targeted: true, projName: "Blue Bolt", damage: 10,
                     lifetimeMs: 1800, predictive: 0.5f, coolDownOffset: 2400, cooldownMS: 90000, size: 90),
                 new State("move2",
                     new Follow(6.29f, acquireRange: 10.6f, distFromTarget: 2),
@@ -540,7 +540,7 @@ public partial class BehaviorLib {
     public static State SandDevil =>
         new(
             new State("wander",
-                new Shoot(8, new LinePath(6.5f), targeted: true, projName: "Dark Gray Spinner", damage: 10,
+                new Shoot(8, PathSegment.NewLine(6.5f), targeted: true, projName: "Dark Gray Spinner", damage: 10,
                     lifetimeMs: 1500, predictive: 0.3f, cooldownMS: 700, size: 68,
                     effects: (ConditionEffectIndex.Confused, 1000)),
                 new Follow(4.63f, acquireRange: 10, distFromTarget: 2.2f),
@@ -548,7 +548,7 @@ public partial class BehaviorLib {
                 new TimedTransition(3000, "circle")
             ),
             new State("circle",
-                new Shoot(8, new LinePath(6.5f), targeted: true, projName: "Dark Gray Spinner", damage: 10,
+                new Shoot(8, PathSegment.NewLine(6.5f), targeted: true, projName: "Dark Gray Spinner", damage: 10,
                     lifetimeMs: 1500, predictive: 0.3f, coolDownOffset: 1000, cooldownMS: 1000, size: 68,
                     effects: (ConditionEffectIndex.Confused, 1000)),
                 new Orbit(4.63f, 2, 9),

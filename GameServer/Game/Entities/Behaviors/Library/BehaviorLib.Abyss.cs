@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Behaviors.Transitions;
@@ -14,7 +14,7 @@ public partial class BehaviorLib {
             //     new ItemLoot("Admin Staff", 1f, 0.01f)
             // ),
             new State("0",
-                new Shoot(path: new LinePath(8), targeted: true, maxRadius: 5, count: 3, shootAngle: 5,
+                new Shoot(path: PathSegment.NewLine(8), targeted: true, maxRadius: 5, count: 3, shootAngle: 5,
                     projName: "Red Fire", predictive: 0.45f, cooldownMS: 1200, damage: 50, lifetimeMs: 600),
                 new Orbit(3.2f, 9, 20, "Archdemon Malphas", 0,
                     0, true)
@@ -33,7 +33,7 @@ public partial class BehaviorLib {
                 "0", // Speed from old sources needs to be transformed into tiles/sec like this: spd = spd * 5.55f + 0.74f
                 new Follow(4.45f, 1, 8),
                 new Wander(2.12f),
-                new Shoot(path: new LinePath(8), targeted: true, projName: "Blade", damage: 80, lifetimeMs: 400,
+                new Shoot(path: PathSegment.NewLine(8), targeted: true, projName: "Blade", damage: 80, lifetimeMs: 400,
                     maxRadius: 8, count: 3, shootAngle: 10, cooldownMS: 500)
             )
         );
@@ -48,7 +48,7 @@ public partial class BehaviorLib {
             // ),
             new State("0",
                 new Wander(5.6f),
-                new Shoot(path: new LinePath(7), targeted: true, projName: "Fire Bolt", damage: 60,
+                new Shoot(path: PathSegment.NewLine(7), targeted: true, projName: "Fire Bolt", damage: 60,
                     lifetimeMs: 3000, maxRadius: 8, count: 5, shootAngle: 10, cooldownMS: 1000)
             )
         );
@@ -63,7 +63,7 @@ public partial class BehaviorLib {
             new State("0",
                 new Follow(6.3f, 5, 8),
                 new Wander(2.12f),
-                new Shoot(path: new LinePath(5), targeted: true, projName: "Red Fire", damage: 120,
+                new Shoot(path: PathSegment.NewLine(5), targeted: true, projName: "Red Fire", damage: 120,
                     lifetimeMs: 3000, maxRadius: 8, count: 3, shootAngle: 10, cooldownMS: 1000, size: 140)
             )
         );
@@ -78,7 +78,7 @@ public partial class BehaviorLib {
             new State("0",
                 new Follow(6.3f, 5, 8),
                 new Wander(2.12f),
-                new Shoot(path: new LinePath(6), targeted: true, projName: "Red Fire", damage: 80, lifetimeMs: 3000,
+                new Shoot(path: PathSegment.NewLine(6), targeted: true, projName: "Red Fire", damage: 80, lifetimeMs: 3000,
                     maxRadius: 8, count: 3, shootAngle: 10, cooldownMS: 1000)
             )
         );
@@ -97,7 +97,7 @@ public partial class BehaviorLib {
             new State("0",
                 new Follow(6.3f, 5, 8),
                 new Wander(2.12f),
-                new Shoot(path: new LinePath(8), targeted: true, projName: "Red Fire", damage: 80, lifetimeMs: 3000,
+                new Shoot(path: PathSegment.NewLine(8), targeted: true, projName: "Red Fire", damage: 80, lifetimeMs: 3000,
                     maxRadius: 8, count: 3, shootAngle: 10, cooldownMS: 1000)
             )
         );
@@ -113,7 +113,7 @@ public partial class BehaviorLib {
             new State("0",
                 new Follow(9f, 1, 8),
                 new Wander(2.12f),
-                new Shoot(path: new LinePath(12), targeted: true, projName: "Blade", damage: 80, lifetimeMs: 400,
+                new Shoot(path: PathSegment.NewLine(12), targeted: true, projName: "Blade", damage: 80, lifetimeMs: 400,
                     maxRadius: 8, count: 3, shootAngle: 10, cooldownMS: 500)
             )
         );
@@ -134,7 +134,7 @@ public partial class BehaviorLib {
                 new TimedTransition(600, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new LinePath(6.6f), targeted: true, projName: "Red Star", damage: 40,
+                new Shoot(path: PathSegment.NewLine(6.6f), targeted: true, projName: "Red Star", damage: 40,
                     lifetimeMs: 760, maxRadius: 12f, count: 8, shootAngle: 45, fixedAngle: 0, cooldownMS: 1000,
                     multiHit: true),
                 new Suicide()
@@ -155,7 +155,7 @@ public partial class BehaviorLib {
                 ),
                 new State("Bullet1",
                     new Flash(0xFFAA00, 0.2, 20),
-                    new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
+                    new Shoot(path: PathSegment.NewAmplitude(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
                         projName: "White Flame",
                         damage: 20, lifetimeMs: 500, maxRadius: 8, cooldownMS: 200, multiHit: true),
                     new TimedTransition(4000, "Wait1")
@@ -170,7 +170,7 @@ public partial class BehaviorLib {
                 new TimedTransition(300, "Explode")
             ),
             new State("Explode",
-                new Shoot(path: new AmplitudePath(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
+                new Shoot(path: PathSegment.NewAmplitude(8f, 0.3f, 0.5f, lifetimeMs: 500), targeted: true,
                     projName: "White Flame",
                     damage: 20, lifetimeMs: 500, maxRadius: 10f, count: 8, shootAngle: 45, fixedAngle: 0,
                     cooldownMS: 1000, multiHit: true),
@@ -283,9 +283,9 @@ public partial class BehaviorLib {
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible, 2000),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable, 2000),
                 new Shoot(15,
-                    new ProjectilePath(1600, new LinePath(6.5F))
-                        .Then(6000, new LinePath(0))
-                        .Then(1600, new LinePath(-6.5F)),
+                    new ProjectilePath(1600, PathSegment.NewLine(6.5F))
+                        .Then(6000, PathSegment.NewLine(0))
+                        .Then(1600, PathSegment.NewLine(-6.5F)),
                     10,
                     projName: "Science Fire Ball",
                     targeted: false,
@@ -296,9 +296,9 @@ public partial class BehaviorLib {
                     damage: 100,
                     shootAngle: 36),
                 new Shoot(15,
-                    new ProjectilePath(1600, new LinePath(7.5F))
-                        .Then(6000, new LinePath(0))
-                        .Then(1600, new LinePath(-7.5F)),
+                    new ProjectilePath(1600, PathSegment.NewLine(7.5F))
+                        .Then(6000, PathSegment.NewLine(0))
+                        .Then(1600, PathSegment.NewLine(-7.5F)),
                     10,
                     projName: "Science Fire Ball",
                     targeted: false,
@@ -311,8 +311,8 @@ public partial class BehaviorLib {
                 new Follow(3, cooldownOffsetMS: 1000),
                 new Protect(3, "AbyssAnchor", 10, 6),
                 new Shoot(15,
-                    new ProjectilePath(800, new LinePath(6.5F))
-                        .Then(2000, new DeceleratePath(4)),
+                    new ProjectilePath(800, PathSegment.NewLine(6.5F))
+                        .Then(2000, PathSegment.NewDecelerate(4)),
                     4,
                     10,
                     projName: "Wakizashi Fire",
@@ -321,8 +321,8 @@ public partial class BehaviorLib {
                     coolDownOffset: 1500,
                     damage: 50),
                 new Shoot(15,
-                    new ProjectilePath(200, new LinePath(6.5F))
-                        .Then(2000, new DeceleratePath(4)),
+                    new ProjectilePath(200, PathSegment.NewLine(6.5F))
+                        .Then(2000, PathSegment.NewDecelerate(4)),
                     8,
                     size: 120,
                     shootAngle: 45,
@@ -357,9 +357,9 @@ public partial class BehaviorLib {
                 new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
                 new ConditionEffectBehavior(ConditionEffectIndex.Invulnerable),
                 new Shoot(15,
-                    new ProjectilePath(1000, new LinePath(6.5F))
-                        .Then(2000, new AmplitudePath(1, 0.2F, 0.1F))
-                        .Then(8000, new AmplitudePath(-1, 8, 0.5F)),
+                    new ProjectilePath(1000, PathSegment.NewLine(6.5F))
+                        .Then(2000, PathSegment.NewAmplitude(1, 0.2F, 0.1F))
+                        .Then(8000, PathSegment.NewAmplitude(-1, 8, 0.5F)),
                     8,
                     45,
                     projName: "Science Fire Ball",
@@ -383,8 +383,8 @@ public partial class BehaviorLib {
                     new StayAwayFrom(2, 4),
                     new Wander(2, 2),
                     new Shoot(15,
-                        new ProjectilePath(400, new LinePath(0))
-                            .Then(3000, new LinePath(7)),
+                        new ProjectilePath(400, PathSegment.NewLine(0))
+                            .Then(3000, PathSegment.NewLine(7)),
                         3,
                         15,
                         projName: "Fire Bust Shot",
@@ -394,8 +394,8 @@ public partial class BehaviorLib {
                         damage: 80,
                         multiHit: true),
                     new Shoot(15,
-                        new ProjectilePath(400, new LinePath(0))
-                            .Then(3000, new LinePath(7)),
+                        new ProjectilePath(400, PathSegment.NewLine(0))
+                            .Then(3000, PathSegment.NewLine(7)),
                         2,
                         45,
                         projName: "Fire Bust Shot",
@@ -405,8 +405,8 @@ public partial class BehaviorLib {
                         damage: 80,
                         multiHit: true),
                     new Shoot(15,
-                        new ProjectilePath(400, new LinePath(0))
-                            .Then(3000, new LinePath(7)),
+                        new ProjectilePath(400, PathSegment.NewLine(0))
+                            .Then(3000, PathSegment.NewLine(7)),
                         2,
                         75,
                         projName: "Fire Bust Shot",
@@ -416,11 +416,11 @@ public partial class BehaviorLib {
                         damage: 80,
                         multiHit: true),
                     new Shoot(15,
-                        new ProjectilePath(1000, new LinePath(6))
-                            .Then(1000, new LinePath(0))
-                            .Then(1000, new LinePath(6))
-                            .Then(1000, new LinePath(0))
-                            .Then(1000, new LinePath(6)),
+                        new ProjectilePath(1000, PathSegment.NewLine(6))
+                            .Then(1000, PathSegment.NewLine(0))
+                            .Then(1000, PathSegment.NewLine(6))
+                            .Then(1000, PathSegment.NewLine(0))
+                            .Then(1000, PathSegment.NewLine(6)),
                         10,
                         36,
                         projName: "Dragon Attack Red Firewave",
@@ -469,7 +469,7 @@ public partial class BehaviorLib {
 
                 // wave
                 new Shoot(15,
-                    new ProjectilePath(4000, new DeceleratePath(2)),
+                    new ProjectilePath(4000, PathSegment.NewDecelerate(2)),
                     4,
                     90,
                     fixedAngle: 90,
@@ -482,7 +482,7 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new DeceleratePath(2)),
+                    new ProjectilePath(4000, PathSegment.NewDecelerate(2)),
                     4,
                     90,
                     fixedAngle: 110,
@@ -495,7 +495,7 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new DeceleratePath(2)),
+                    new ProjectilePath(4000, PathSegment.NewDecelerate(2)),
                     4,
                     90,
                     fixedAngle: 70,
@@ -508,7 +508,7 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new DeceleratePath(2)),
+                    new ProjectilePath(4000, PathSegment.NewDecelerate(2)),
                     4,
                     90,
                     fixedAngle: 130,
@@ -521,7 +521,7 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new DeceleratePath(2)),
+                    new ProjectilePath(4000, PathSegment.NewDecelerate(2)),
                     4,
                     90,
                     fixedAngle: 50,
@@ -536,7 +536,7 @@ public partial class BehaviorLib {
 
                 // blast
                 new Shoot(15,
-                    new ProjectilePath(2000, new ChangeSpeedPath(2, 0.5F, 500)),
+                    new ProjectilePath(2000, PathSegment.NewChangeSpeed(2, 0.5F, 500)),
                     2,
                     5,
                     projName: "Idol Blast",
@@ -547,7 +547,7 @@ public partial class BehaviorLib {
                     size: 120,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(2000, new ChangeSpeedPath(2, 0.5F, 500)),
+                    new ProjectilePath(2000, PathSegment.NewChangeSpeed(2, 0.5F, 500)),
                     2,
                     50,
                     projName: "Idol Blast",
@@ -557,7 +557,7 @@ public partial class BehaviorLib {
                     damage: 85,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(2000, new ChangeSpeedPath(2, 0.5F, 500)),
+                    new ProjectilePath(2000, PathSegment.NewChangeSpeed(2, 0.5F, 500)),
                     2,
                     55,
                     projName: "Idol Blast",
@@ -570,9 +570,9 @@ public partial class BehaviorLib {
                 // circles
                 // 1
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 90,
                     projName: "LH Yellow",
                     targeted: false,
@@ -582,9 +582,9 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 180,
                     projName: "LH Yellow",
                     targeted: false,
@@ -594,9 +594,9 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 270,
                     projName: "LH Yellow",
                     targeted: false,
@@ -606,9 +606,9 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 360,
                     projName: "LH Yellow",
                     targeted: false,
@@ -620,9 +620,9 @@ public partial class BehaviorLib {
 
                 // 2
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(-0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(-0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 90,
                     projName: "LH Yellow",
                     targeted: false,
@@ -632,9 +632,9 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(-0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(-0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 180,
                     projName: "LH Yellow",
                     targeted: false,
@@ -644,9 +644,9 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(-0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(-0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 270,
                     projName: "LH Yellow",
                     targeted: false,
@@ -656,9 +656,9 @@ public partial class BehaviorLib {
                     armorPiercing: true,
                     multiHit: true),
                 new Shoot(15,
-                    new ProjectilePath(4000, new CirclePath(-0.2F, 2))
-                        .Then(1000, new LinePath(3))
-                        .Then(1200, new LinePath(-3)),
+                    new ProjectilePath(4000, PathSegment.NewCircle(-0.2F, 2))
+                        .Then(1000, PathSegment.NewLine(3))
+                        .Then(1200, PathSegment.NewLine(-3)),
                     fixedAngle: 360,
                     projName: "LH Yellow",
                     targeted: false,

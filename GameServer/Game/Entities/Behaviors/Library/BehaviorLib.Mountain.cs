@@ -1,4 +1,4 @@
-﻿using Common;
+using Common;
 using Common.Projectiles.ProjectilePaths;
 using GameServer.Game.Entities.Behaviors.Actions;
 using GameServer.Game.Entities.Behaviors.Transitions;
@@ -24,7 +24,7 @@ public partial class BehaviorLib {
                 new HpLessTransition(0.1f, "End"),
                 new State("Circle",
                     new Shoot(
-                        path: new LinePath(7.5f),
+                        path: PathSegment.NewLine(7.5f),
                         targeted: true,
                         projName: "Orange Pumpkin Blast",
                         damage: 85,
@@ -35,7 +35,7 @@ public partial class BehaviorLib {
                         cooldownMS: 1000, size: 140
                     ),
                     new Shoot(
-                        path: new LinePath(6f),
+                        path: PathSegment.NewLine(6f),
                         targeted: true,
                         projName: "Orange Shot",
                         damage: 120,
@@ -50,7 +50,7 @@ public partial class BehaviorLib {
                     new ConditionEffectBehavior(ConditionEffectIndex.Invincible),
                     new Flash(0xF0E68C, 1, 6),
                     new Shoot(
-                        path: new LinePath(7.5f),
+                        path: PathSegment.NewLine(7.5f),
                         targeted: true,
                         projName: "Horseman Blast",
                         damage: 70,
@@ -60,7 +60,7 @@ public partial class BehaviorLib {
                         cooldownMS: 1500, size: 150
                     ),
                     new Shoot(
-                        path: new LinePath(6f),
+                        path: PathSegment.NewLine(6f),
                         targeted: true,
                         projName: "Orange Shot",
                         damage: 120,
@@ -76,7 +76,7 @@ public partial class BehaviorLib {
                 new Wander(3.995f), // Speed adjusted
                 new Flash(0xF0E68C, 1, 1000),
                 new Shoot(
-                    path: new LinePath(7.5f),
+                    path: PathSegment.NewLine(7.5f),
                     targeted: true,
                     projName: "Orange Pumpkin Blast",
                     damage: 85,
@@ -87,7 +87,7 @@ public partial class BehaviorLib {
                     cooldownMS: 1000, size: 140
                 ),
                 new Shoot(
-                    path: new LinePath(6f),
+                    path: PathSegment.NewLine(6f),
                     targeted: true,
                     projName: "Orange Shot",
                     damage: 120,
@@ -110,7 +110,7 @@ public partial class BehaviorLib {
             new Follow(5.29f, 7), // Speed adjusted
             new Wander(2.92f), // Speed adjusted
             new Shoot(
-                path: new LinePath(5f),
+                path: PathSegment.NewLine(5f),
                 targeted: true,
                 projName: "White Demon Shot",
                 damage: 45,
@@ -135,7 +135,7 @@ public partial class BehaviorLib {
             new State("0",
                 new DropPortalOnDeath("Glowing Portal", 0.25f),
                 new Wander(2.22f), // Converted speed: 0.4 -> 2.22
-                new Shoot(path: new LinePath(7f), targeted: true, projName: "Purple Magic", damage: 100,
+                new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Purple Magic", damage: 100,
                     lifetimeMs: 2000,
                     maxRadius: 12, count: 4, shootAngle: 10, cooldownMS: 1000),
                 new Shoot(projectilePropsId: 1, targeted: true, maxRadius: 10, predictive: 1, cooldownMS: 1000),
@@ -162,7 +162,7 @@ public partial class BehaviorLib {
             new DropPortalOnDeath("Snake Pit Portal", 0.25f),
             new Follow(distFromTarget: 7, speed: 6.29f), // Speed converted: 1 -> 6.29
             new Wander(2.22f), // Speed converted: 0.4 -> 2.22
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Green Bolt", damage: 100, lifetimeMs: 2000,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Green Bolt", damage: 100, lifetimeMs: 2000,
                 maxRadius: 12, count: 5, shootAngle: 10, cooldownMS: 1000),
             new AOE(4, 150, range: 8, cooldownMs: 3000),
             new Spawn("Medusa", maxDensity: 3, cooldownMs: 60000)
@@ -177,7 +177,7 @@ public partial class BehaviorLib {
             // ),
             new Follow(distFromTarget: 7, speed: 6.29f), // Speed converted: 1.0 -> 6.29
             new Wander(2.22f), // Speed converted: 0.4 -> 2.22
-            new Shoot(path: new LinePath(8f), targeted: true, projName: "Fire Bolt", damage: 70, lifetimeMs: 2000,
+            new Shoot(path: PathSegment.NewLine(8f), targeted: true, projName: "Fire Bolt", damage: 70, lifetimeMs: 2000,
                 maxRadius: 12, count: 5, shootAngle: 10, predictive: 1, cooldownMS: 1250, multiHit: true),
             new Spawn("Ent God", maxDensity: 3, cooldownMs: 60000)
         );
@@ -191,9 +191,9 @@ public partial class BehaviorLib {
             // ),
             new Follow(distFromTarget: 7, speed: 6.29f), // Speed converted: 1.0 -> 6.29
             new Wander(2.22f), // Speed converted: 0.4 -> 2.22
-            new Shoot(path: new LinePath(5f), targeted: true, projName: "White Bolt", damage: 120, lifetimeMs: 2700,
+            new Shoot(path: PathSegment.NewLine(5f), targeted: true, projName: "White Bolt", damage: 120, lifetimeMs: 2700,
                 maxRadius: 12, count: 5, shootAngle: 72, predictive: 1, cooldownMS: 750, size: 120),
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Purple Star", damage: 0, lifetimeMs: 3000,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Purple Star", damage: 0, lifetimeMs: 3000,
                 maxRadius: 10, predictive: 1, cooldownMS: 1000, effects: (ConditionEffectIndex.Blind, 5000)),
             new Spawn("Beholder", maxDensity: 3, cooldownMs: 60000)
         );
@@ -207,7 +207,7 @@ public partial class BehaviorLib {
             // ),
             new Follow(distFromTarget: 7, speed: 6.29f), // Speed converted: 1.0 -> 6.29
             new Wander(2.22f), // Speed converted: 0.4 -> 2.22
-            new Shoot(path: new LinePath(12f), targeted: true, projName: "Pink Bolt", damage: 50, lifetimeMs: 1800,
+            new Shoot(path: PathSegment.NewLine(12f), targeted: true, projName: "Pink Bolt", damage: 50, lifetimeMs: 1800,
                 maxRadius: 12, count: 5, shootAngle: 72, cooldownMS: 500),
             new Spawn("Flying Brain", maxDensity: 3, cooldownMs: 60000),
             new DropPortalOnDeath("Mad Lab Portal", 0.17f)
@@ -222,9 +222,9 @@ public partial class BehaviorLib {
             // ),
             new Follow(distFromTarget: 7, speed: 6.29f), // Speed converted: 1.0 -> 6.29
             new Wander(2.22f), // Speed converted: 0.4 -> 2.22
-            new Shoot(path: new LinePath(10f), targeted: true, projName: "Red Fire", damage: 80, lifetimeMs: 1100,
+            new Shoot(path: PathSegment.NewLine(10f), targeted: true, projName: "Red Fire", damage: 80, lifetimeMs: 1100,
                 maxRadius: 12, count: 5, shootAngle: 10, predictive: 1, cooldownMS: 1000),
-            new Shoot(path: new LinePath(7f), targeted: true, projName: "Green Star", damage: 0, lifetimeMs: 2000,
+            new Shoot(path: PathSegment.NewLine(7f), targeted: true, projName: "Green Star", damage: 0, lifetimeMs: 2000,
                 maxRadius: 10, predictive: 1, cooldownMS: 650, effects: (ConditionEffectIndex.Slowed, 6000)),
             new Spawn("Slime God", maxDensity: 2, cooldownMs: 60000),
             new DropPortalOnDeath("Toxic Sewers Portal", 0.3f)
@@ -239,7 +239,7 @@ public partial class BehaviorLib {
             // ),
             new Follow(distFromTarget: 7, speed: 6.29f), // Speed converted: 1.0 -> 6.29
             new Wander(2.22f), // Speed converted: 0.4 -> 2.22
-            new Shoot(path: new LinePath(5f), targeted: true, projName: "White Bolt", damage: 120, lifetimeMs: 2700,
+            new Shoot(path: PathSegment.NewLine(5f), targeted: true, projName: "White Bolt", damage: 120, lifetimeMs: 2700,
                 maxRadius: 12, count: 7, shootAngle: 25, predictive: 1, cooldownMS: 900, size: 110),
             new Spawn("Ghost God", maxDensity: 3, cooldownMs: 60000),
             new DropPortalOnDeath("Undead Lair Portal", 0.25f)
@@ -259,7 +259,7 @@ public partial class BehaviorLib {
                 new EntityWithinTransition("Attacking", radius: 15)
             ),
             new State("Attacking",
-                new Shoot(8, new LinePath(7f), targeted: true, projName: "White Bullet", damage: 80,
+                new Shoot(8, PathSegment.NewLine(7f), targeted: true, projName: "White Bullet", damage: 80,
                     lifetimeMs: 2000, cooldownMS: 2000, size: 80, multiHit: true),
                 new HealGroup(8, "Papers"),
                 new Taunt("We are impervious to non-mystic attacks!", probability: 0.5f),
@@ -281,14 +281,14 @@ public partial class BehaviorLib {
                 new EntityWithinTransition("Attack", radius: 15)
             ),
             new State("Attack",
-                new Shoot(8, new LinePath(3f), targeted: true, projName: "White Bullet", damage: 50,
+                new Shoot(8, PathSegment.NewLine(3f), targeted: true, projName: "White Bullet", damage: 50,
                     lifetimeMs: 4000, count: 3, shootAngle: 20, cooldownMS: 800, size: 50, multiHit: true),
                 new HealGroup(8, "Steels"),
                 new EntityNotWithinTransition("Idle", radius: 30),
                 new HpLessTransition(0.2f, "Explode")
             ),
             new State("Explode",
-                new Shoot(10, new LinePath(3f), targeted: false, projName: "White Bullet", damage: 50,
+                new Shoot(10, PathSegment.NewLine(3f), targeted: false, projName: "White Bullet", damage: 50,
                     lifetimeMs: 4000, count: 10, shootAngle: 36, fixedAngle: 0, cooldownMS: 1000, size: 50,
                     multiHit: true),
                 new Suicide()
@@ -308,7 +308,7 @@ public partial class BehaviorLib {
                 new EntityWithinTransition("Attack", radius: 15)
             ),
             new State("Attack",
-                new Shoot(8, new LinePath(3f), targeted: true, projName: "White Bullet", damage: 50,
+                new Shoot(8, PathSegment.NewLine(3f), targeted: true, projName: "White Bullet", damage: 50,
                     lifetimeMs: 4000, count: 3, shootAngle: 20, cooldownMS: 800, size: 50, multiHit: true),
                 new HealGroup(8, "Rocks"),
                 new Taunt("Silly squishy. We heal our brothers in a circle.", probability: 0.5f),
@@ -316,7 +316,7 @@ public partial class BehaviorLib {
                 new HpLessTransition(0.2f, "Explode")
             ),
             new State("Explode",
-                new Shoot(10, new LinePath(3f), targeted: false, projName: "White Bullet", damage: 50,
+                new Shoot(10, PathSegment.NewLine(3f), targeted: false, projName: "White Bullet", damage: 50,
                     lifetimeMs: 4000, count: 10, shootAngle: 36, fixedAngle: 0, cooldownMS: 1000, size: 50,
                     multiHit: true),
                 new Suicide()
@@ -512,7 +512,7 @@ public partial class BehaviorLib {
             new DropPortalOnDeath("Woodland Labyrinth"),
             new Follow(distFromTarget: 7, speed: 6.29f),
             new Wander(2.94f),
-            new Shoot(12, new LinePath(8f), targeted: true, projName: "Fire Bolt", damage: 100, lifetimeMs: 2000,
+            new Shoot(12, PathSegment.NewLine(8f), targeted: true, projName: "Fire Bolt", damage: 100, lifetimeMs: 2000,
                 count: 5, shootAngle: 10, predictive: 1, cooldownMS: 1250, multiHit: true)
         );
 
@@ -526,44 +526,44 @@ public partial class BehaviorLib {
             new DropPortalOnDeath("Puppet Theatre Portal", 0.25f),
             new State("Wander",
                 new Swirl(),
-                new Shoot(10, new LinePath(8.5f), targeted: true, projName: "Blue Missile", damage: 90,
+                new Shoot(10, PathSegment.NewLine(8.5f), targeted: true, projName: "Blue Missile", damage: 90,
                     lifetimeMs: 1800, count: 2, shootAngle: 10, cooldownMS: 500),
                 new TimedTransition(5000, "Triangle")
             ),
             new State("Triangle",
                 new State("1",
                     new MoveLine(4.07f, 40),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 34, cooldownMS: 300),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 38, cooldownMS: 300),
-                    new Shoot(1, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(1, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 42, cooldownMS: 300),
-                    new Shoot(1, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(1, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 46, cooldownMS: 300),
                     new TimedTransition(1500, "2")
                 ),
                 new State("2",
                     new MoveLine(4.07f, 160),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 94, cooldownMS: 300),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 98, cooldownMS: 300),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 102, cooldownMS: 300),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 106, cooldownMS: 300),
                     new TimedTransition(1500, "3")
                 ),
                 new State("3",
                     new MoveLine(4.07f, 280),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 274, cooldownMS: 300),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 278, cooldownMS: 300),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 282, cooldownMS: 300),
-                    new Shoot(10, new LinePath(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
+                    new Shoot(10, PathSegment.NewLine(6.7f), targeted: false, projName: "Aqua Missile", damage: 70,
                         lifetimeMs: 1700, count: 3, shootAngle: 120, fixedAngle: 286, cooldownMS: 300),
                     new TimedTransition(1500, "Wander")
                 )
