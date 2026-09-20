@@ -10,6 +10,7 @@ using Common.Structs;
 using Common.Utilities;
 using Common.Utilities.Collections;
 using GameServer.Game.Entities.Components;
+using GameServer.Game.Network.Messaging.Outgoing;
 using GameServer.Game.Worlds;
 using GameServer.Utilities;
 
@@ -26,8 +27,7 @@ public record Shoot : BehaviorScript {
     public static readonly HashSet<ushort> CustomProjectileOwners = new();
 
     private static readonly Logger _log = new(typeof(Shoot));
-    private static readonly ProjectileProps _bladeProps = new("Blade", 1000, 10, 0);
-    private static readonly ProjectilePath _bladePath = new LinePath(3).ToPath();
+    private static readonly ProjectilePath _bladePath = PathSegment.NewLine(3).ToPath();
 
     private readonly float _angleOffsetDefault;
     private readonly int _cooldownMs;
@@ -293,11 +293,41 @@ public record Shoot : BehaviorScript {
 
         var startPos = new WorldPosData(host.Position.Pos.X + _xOffset, host.Position.Pos.Y + _yOffset);
         var projProps = host.Desc.Projectiles[_projectilePropsId].Props;
-        // var dmg = host.Combat.GetProjectileDamage(_minDamage, _maxDamage);
-        // host.World.EnemyShootProjectiles(startPos, host.Id, 
-        //     _projectilePropsId, startAngle.Rad2Deg(), dmg, _count,
-        //     _shootAngle.Rad2Deg(), _path,
-        //     _path.LifetimeMs, projProps.MultiHit, ref time);
+        var dmg = host.Combat.GetProjectileDamage(_minDamage, _maxDamage);
+        
+        ushort firstBulletId = 0;
+        for (var i = 0; i < _count; i++) {
+            var bulletId = host.Combat.GetNextProjectileId();
+            if (firstBulletId == 0)
+                firstBulletId = bulletId;
+            
+            var projData = new ProjectileData() {
+                Owner = host.Entity,
+                LocalId = bulletId,
+                StartTime = time.TotalElapsedMs,
+                Path = _path,
+                Angle = startAngle + i * _shootAngle,
+                Damage = dmg,
+                LifetimeMs = _path.LifetimeMs,
+                MultiHit = projProps.MultiHit
+            };
+            host.World.ProjectileSystem.Create(ref projData);
+        }
+        
+        foreach (var plrId in host.World.Map.GetPlayersWithin(startPos, 20f)) {
+            // enProjs.AddTarget(plrId); // Cache for hit validation
+            var user = host.World.Users[plrId];
+            user.SendPacket(new EnemyShoot(
+                firstBulletId,
+                (EntityId)host.Entity,
+                _projectilePropsId,
+                startPos,
+                startAngle.Rad2Deg(),
+                dmg,
+                _count,
+                _shootAngle.Rad2Deg(),
+                _path));
+        }
 
         shootInfo.CooldownLeft = _cooldownMs;
         return BehaviorTickState.BehaviorActive;

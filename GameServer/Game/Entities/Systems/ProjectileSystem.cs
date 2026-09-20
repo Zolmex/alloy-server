@@ -18,7 +18,7 @@ public class ProjectileSystem(World world) : BaseSystem<World, RealmTime>(world)
 
         foreach (ref var proj in _projectiles) {
             if (proj.IsDead(ref time)) {
-                _pendingRemove.Enqueue(proj.Id);
+                Remove(proj.Id);
                 continue;
             }
             

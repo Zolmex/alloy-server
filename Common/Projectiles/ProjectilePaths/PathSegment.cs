@@ -126,7 +126,7 @@ public partial struct PathSegment {
         return new PathSegment(PathType.WavyPath, speed, angle, lifetimeMs, timeOffset, mods);
     }
 
-    public static PathSegment CreateCircle(float rps, float radius, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods) {
+    public static PathSegment NewCircle(float rps, float radius, float? angle = null, int? lifetimeMs = null, int? timeOffset = null, params PathSegmentModifier[] mods) {
         return new PathSegment(PathType.CirclePath, rps, angle, lifetimeMs, timeOffset, mods) {
             _radius = radius
         };
@@ -213,7 +213,7 @@ public partial struct PathSegment {
             case "Circle":
                 var rps = pathElement.GetAttribute<float>("rotationsPerSecond");
                 var radius = pathElement.GetAttribute<float>("radius");
-                return CreateCircle(rps, radius, null, lifeTimeMs);
+                return NewCircle(rps, radius, null, lifeTimeMs);
             case "Amplitude":
                 speed = pathElement.GetAttribute<float>("speed");
                 var amplitude = pathElement.GetAttribute<float>("amplitude");

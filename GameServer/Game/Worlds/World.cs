@@ -113,13 +113,6 @@ public class World {
 
         Map.Tick(ref time);
         
-        // PortalDatas.Tick(ref time);
-        // EntityCombat.Tick(ref time);
-        // EntityProjectiles.Tick(ref time);
-        // EntityBehaviors.Tick(ref time);
-        // PlayerSights.Tick(ref time);
-        // EntityStats.Tick(ref time);
-
         InventorySystem.Tick(ref time);
         DamageSystem.Tick(ref time);
         ProjectileSystem.Tick(ref time);
