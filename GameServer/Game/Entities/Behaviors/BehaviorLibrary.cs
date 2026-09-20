@@ -40,7 +40,7 @@ public static class BehaviorLibrary {
         MetadataReference.CreateFromFile(typeof(State).GetTypeInfo().Assembly.Location),
         // MetadataReference.CreateFromFile(typeof(AOE).GetTypeInfo().Assembly.Location),
         // MetadataReference.CreateFromFile(typeof(Projectile).GetTypeInfo().Assembly.Location),
-        MetadataReference.CreateFromFile(typeof(ProjectilePathSegment).GetTypeInfo().Assembly.Location),
+        MetadataReference.CreateFromFile(typeof(PathSegment).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(ConditionEffectIndex).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(TileRegion).GetTypeInfo().Assembly.Location),
         MetadataReference.CreateFromFile(typeof(WorldPosData).GetTypeInfo().Assembly.Location),

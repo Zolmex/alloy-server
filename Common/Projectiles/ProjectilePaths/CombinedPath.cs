@@ -9,10 +9,10 @@ using Common.Resources.Xml.Descriptors;
 
 namespace Common.Projectiles.ProjectilePaths;
 
-public class CombinedPath : ProjectilePathSegment {
-    private readonly ProjectilePathSegment[] _segments;
+public class CombinedPath : PathSegment {
+    private readonly PathSegment[] _segments;
 
-    public CombinedPath(int? timeOffset = null, params ProjectilePathSegment[] segments)
+    public CombinedPath(int? timeOffset = null, params PathSegment[] segments)
         : base(PathType.CombinedPath, 0, timeOffset: timeOffset) {
         _segments = segments;
 
@@ -58,7 +58,7 @@ public class CombinedPath : ProjectilePathSegment {
         wtr.Write(_mods);
     }
 
-    public override ProjectilePathSegment Clone() {
-        return new CombinedPath(TimeOffset, (ProjectilePathSegment[])_segments.Clone());
+    public override PathSegment Clone() {
+        return new CombinedPath(TimeOffset, (PathSegment[])_segments.Clone());
     }
 }

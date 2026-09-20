@@ -1,5 +1,7 @@
+using System.Numerics;
 using Arch.Core;
 using Common.Game;
+using Common.Projectiles.ProjectilePaths;
 using Common.Utilities;
 using Common.Utilities.Collections;
 
@@ -10,15 +12,19 @@ public struct ProjectileData : IEntityIdentifiable {
     public long EndTime => StartTime + LifetimeMs;
     
     public Entity Owner;
-    public int OwnerAccId;
+    public ushort LocalId;
     public long StartTime;
-    // TODO: Path data
+    public ProjectilePath Path;
     public float Angle;
     public int Damage;
     public int LifetimeMs;
     public bool MultiHit;
     public byte HitCount;
 
+    public Vector2 PositionAt(ref RealmTime time) {
+        return Path.PositionAt((int)(time.TotalElapsedMs - StartTime), LocalId, Angle);
+    }
+    
     public bool IsDead(ref RealmTime time) {
         if (time.TotalElapsedMs >= EndTime)
             return true;

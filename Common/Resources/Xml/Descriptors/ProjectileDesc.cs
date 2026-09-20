@@ -51,10 +51,10 @@ public class ProjectileDesc : ItemData {
         if (e.Element("Path") != null) {
             Path = new ProjectilePath();
             foreach (var elem in e.Elements("Path"))
-                Path.RegisterSegment(ProjectilePathSegment.ParsePath(elem));
+                Path.RegisterSegment(PathSegment.ParsePath(elem));
         }
         else {
-            Path = ProjectilePathSegment.ParsePath(this).ToPath();
+            Path = PathSegment.ParsePath(this).ToPath();
         }
 
         _initialized = true;

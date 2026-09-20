@@ -76,7 +76,7 @@ public record Shoot : BehaviorScript {
         _targetType = targeted ? TargetType.ClosestPlayer : TargetType.FixedAngle;
     }
 
-    public Shoot(float maxRadius, ProjectilePathSegment path, byte count = 1, float shootAngle = 0f,
+    public Shoot(float maxRadius, PathSegment path, byte count = 1, float shootAngle = 0f,
         ushort projType = 0, float fixedAngle = 0f, float rotateAngle = 0f, float angleOffset = 0f,
         float predictive = 0f, int coolDownOffset = 0, int cooldownMS = 0, bool targeted = false,
         string projName = "",
@@ -180,7 +180,7 @@ public record Shoot : BehaviorScript {
         _effects = effects;
     }
 
-    public Shoot(float maxRadius, ProjectilePathSegment path, byte count = 1, float shootAngle = 0f,
+    public Shoot(float maxRadius, PathSegment path, byte count = 1, float shootAngle = 0f,
         ushort projType = 0, float fixedAngle = 0f, float rotateAngle = 0f, float angleOffset = 0f,
         float predictive = 0f, int coolDownOffset = 0, int cooldownMS = 0,
         TargetType targetType = TargetType.ClosestPlayer, string projName = "",
@@ -234,7 +234,7 @@ public record Shoot : BehaviorScript {
                 return;
             }
 
-            _path = ProjectilePathSegment.ParsePath(props.Props).ToPath();
+            _path = PathSegment.ParsePath(props.Props).ToPath();
             _minDamage = props.Props.MinDamage;
             _maxDamage = props.Props.MaxDamage;
             _multiHit = props.Props.MultiHit;

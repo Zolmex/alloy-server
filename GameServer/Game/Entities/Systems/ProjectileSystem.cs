@@ -15,10 +15,16 @@ public class ProjectileSystem(World world) : BaseSystem<World, RealmTime>(world)
     public void Tick(ref RealmTime time) {
         while (_pendingRemove.TryDequeue(out var id))
             _projectiles.Remove(id, out _);
-        
-        foreach (ref var proj in _projectiles)
-            if (proj.IsDead(ref time))
+
+        foreach (ref var proj in _projectiles) {
+            if (proj.IsDead(ref time)) {
                 _pendingRemove.Enqueue(proj.Id);
+                continue;
+            }
+            
+            // TODO: Hit validation goes here
+            var pos = proj.PositionAt(ref time);
+        }
     }
     
     public void Create(ref ProjectileData data) {

@@ -1,47 +1,55 @@
-﻿#region
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Common.Network;
-
-#endregion
 
 namespace Common.Projectiles.ProjectilePaths;
 
-public class ProjectilePath {
-    public int SegmentCount => projectilePathSegments.Count;
-    public int LifetimeMs => projectilePathSegments.Sum(p => p.LifetimeMs);
+[InlineArray(10)] // Increase this if you want to use more than 10 paths in a single projectile, psychopath.
+public struct PathSegmentBuffer {
+    private PathSegment _element0;
+}
 
-    private readonly List<ProjectilePathSegment> projectilePathSegments = new();
+public struct ProjectilePath {
+    public PathSegmentBuffer Segments;
+    public byte SegmentCount;
 
-    public ProjectilePath() { }
+    public readonly int LifetimeMs {
+        get {
+            var total = 0;
+            for (var i = 0; i < SegmentCount; i++) {
+                total += Segments[i].LifetimeMs;
+            }
+            return total;
+        }
+    }
 
-    public ProjectilePath(int lifetimeMs, ProjectilePathSegment baseSegment) {
+    public ProjectilePath(int lifetimeMs, PathSegment baseSegment) {
+        Segments = default;
         baseSegment.LifetimeMs = lifetimeMs;
-        projectilePathSegments.Add(baseSegment);
+        Segments[0] = baseSegment;
+        SegmentCount = 1;
     }
 
-    public ProjectilePath(List<ProjectilePathSegment> projectilePathSegments) {
-        foreach (var segment in projectilePathSegments)
-            this.projectilePathSegments.Add(segment.Clone());
+    public void RegisterSegment(PathSegment segment) {
+        if (SegmentCount < 4) {
+            Segments[SegmentCount] = segment;
+            SegmentCount++;
+        }
     }
 
-    public void RegisterSegment(ProjectilePathSegment segment) {
-        projectilePathSegments.Add(segment);
-    }
-
-    public Vector2 PositionAt(int relativeElapsed, int projId, float angle) {
+    public readonly Vector2 PositionAt(int relativeElapsed, int projId, float angle) {
         var segmentEnd = 0;
         var segmentsTotal = 0;
-        var startPos = Vector2.Zero; // Origin
-        foreach (var segment in projectilePathSegments) {
+        var startPos = Vector2.Zero;
+
+        for (var i = 0; i < SegmentCount; i++) {
+            ref readonly var segment = ref Segments[i];
             segmentEnd += segment.LifetimeMs;
+            
             if (relativeElapsed <= segmentEnd) {
-                var ret = segment.PositionAt(relativeElapsed -
-                                             segmentsTotal, projId, angle); // Position offset relative to the segment start
-                return startPos + ret; // Position offset relative to the path start
+                var ret = segment.PositionAt(relativeElapsed - segmentsTotal, projId, angle);
+                return startPos + ret;
             }
 
             startPos += segment.PositionAtEnd(projId, angle);
@@ -51,11 +59,11 @@ public class ProjectilePath {
         return Vector2.Zero;
     }
 
-    public void Write(ref SpanWriter wtr) {
+    public readonly void Write(ref SpanWriter wtr) {
         wtr.Write(SegmentCount);
-        foreach (var segment in projectilePathSegments) {
-            wtr.Write((byte)segment.Type);
-            segment.Write(ref wtr);
+        for (var i = 0; i < SegmentCount; i++) {
+            wtr.Write((byte)Segments[i].Type);
+            Segments[i].Write(ref wtr);
         }
     }
 }
