@@ -1,7 +1,9 @@
 ﻿using Common;
 using Common.Network;
+using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Utilities.Collections;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old;
 using GameServer.Utilities;
 
@@ -14,17 +16,13 @@ public record InvDrop : IIncomingPacket {
     public async Task Handle(User user) {
         var world = user.Session.World;
         GameLogic.Enqueue(() => {
-            ref var playerInv = ref world.EntityInventories.Get(user.Session.PlayerId);
-            if (playerInv.Id == EntityId.Null)
-                return;
-
+            ref var playerInv = ref world.Ecs.Get<Inventory>(user.Session.Player);
             var item = playerInv[SlotId];
             if (item == null)
                 return;
 
-            var bag = new Entity(InventoryUtils.GetBagIdFromType(BagType.Pink));
-            world.EnterWorld(ref bag);
-            ref var bagInv = ref world.EntityInventories.Get(bag.Id);
+            var bag = world.EnterWorld(XmlLibrary.ObjectDescs[InventoryUtils.GetBagIdFromType(BagType.Pink)]);
+            ref var bagInv = ref world.Ecs.Get<Inventory>(bag);
             bagInv.SetItem(0, item);
             
             playerInv.SetItem(SlotId, null);

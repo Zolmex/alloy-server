@@ -7,7 +7,8 @@ using Common.Resources.Xml;
 using Common.Resources.Xml.Descriptors;
 using Common.Structs;
 using Common.Utilities;
-using GameServer.Game.Entities.Old;
+using GameServer.Game.Entities;
+using GameServer.Game.Entities.Components;
 using GameServer.Game.Entities.Old.Extensions;
 
 namespace GameServer.Game.Network.Messaging.Incoming;
@@ -20,7 +21,7 @@ public record PlayerShoot : IIncomingPacket {
         if (user.State != ConnectionState.Ready || user.Session.State != SessionState.Playing)
             return;
 
-        var player = new EntityView(user.Session.World, user.Session.PlayerId);
+        var player = new EntityContext(user.Session.World, user.Session.Player);
         var weapon = player.Inventory[0];
         if (weapon == null || weapon.ObjectType == 0)
             return;
@@ -30,11 +31,22 @@ public record PlayerShoot : IIncomingPacket {
             return;
 
         var damage = player.Combat.GetProjectileDamage(projDesc.MinDamage, projDesc.MaxDamage);
-        var pos = player.Stats.Pos;
-        var world = player.World;
-        GameLogic.Enqueue(() => world.SpawnProjectiles(pos, user.Session.PlayerId, Angle.Rad2Deg(), weapon.ArcGap, damage, weapon.NumProjectiles,
-            PathSegment.ParsePath(projDesc).ToPath(), projDesc.LifetimeMS, projDesc.MultiHit,
-            ref GameLogic.WorldTime));
+        var startAngle = Angle;
+        var angleInc = weapon.ArcGap.Deg2Rad();
+        for (var i = 0; i < weapon.NumProjectiles; i++) {
+            var projData = new ProjectileData() {
+                Owner = player.Entity,
+                LocalId = player.Combat.GetNextProjectileId(),
+                StartPos = player.Position.Pos,
+                StartTime = GameLogic.WorldTime.TotalElapsedMs,
+                Path = PathSegment.ParsePath(projDesc).ToPath(),
+                Angle = startAngle + i * angleInc,
+                Damage = damage,
+                LifetimeMs = projDesc.LifetimeMS,
+                MultiHit = projDesc.MultiHit
+            };
+            player.World.ProjectileSystem.Create(ref projData);
+        }
     }
 
     public void Read(ref SpanReader rdr) {

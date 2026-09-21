@@ -1,4 +1,5 @@
-﻿using Common.Network;
+﻿using Arch.Core;
+using Common.Network;
 using Common.Structs;
 using Common.Utilities.Collections;
 
@@ -14,22 +15,18 @@ public record EnemyHit : IIncomingPacket {
             return;
 
         // TODO: Validate hit
-        ref var targetCombat = ref user.Session.World.EntityCombat.Get(TargetId);
-        if (targetCombat.Id == EntityId.Null)
+        var world = user.Session.World;
+        var target = world.GetEntity(TargetId);
+        if (target == Entity.Null)
             return;
 
-        var plrId = user.Session.Player;
-        var world = user.Session.World;
+        var player = user.Session.Player;
         GameLogic.Enqueue(() => {
-            ref var enProjs = ref world.EntityProjectiles.Get(plrId);
-            if (enProjs.Id == EntityId.Null)
+            ref var proj = ref world.ProjectileSystem.Get(player, ProjectileId);
+            if (proj.IsDead(ref GameLogic.WorldTime))
                 return;
             
-            ref var proj = ref world.Projectiles.Get(enProjs.GetGlobalId(ProjectileId));
-            if (proj.Id == EntityId.Null)
-                return;
-            
-            proj.TryHitEntity(TargetId);
+            world.ProjectileSystem.TryHitEntity(ref proj, player, target);
         });
     }
 

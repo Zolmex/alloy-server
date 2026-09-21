@@ -1,4 +1,5 @@
-﻿using Common.Network;
+﻿using Arch.Core;
+using Common.Network;
 using Common.Utilities;
 using Common.Utilities.Collections;
 
@@ -15,23 +16,20 @@ public record PlayerHit : IIncomingPacket {
         if (user.State != ConnectionState.Ready || user.Session.State != SessionState.Playing)
             return;
 
-        ref var entityProjectiles = ref user.Session.World.EntityProjectiles.Get(OwnerId);
-        if (entityProjectiles.Id == EntityId.Null) {
+        var world = user.Session.World;
+        var owner = world.GetEntity(OwnerId);
+        if (owner == Entity.Null) {
             _log.Debug($"DEAD PROJECTILE OWNER {OwnerId}");
             return;
         }
 
-        var projId = entityProjectiles.GetGlobalId(ProjectileId);
-        if (projId == EntityId.Null) {
+        ref var proj = ref world.ProjectileSystem.Get(owner, ProjectileId);
+        if (proj.IsDead(ref GameLogic.WorldTime)) {
             _log.Debug($"DEAD PROJECTILE {ProjectileId}");
             return;
         }
         
-        ref var proj = ref user.Session.World.Projectiles.Get(projId);
-        if (proj.Id == EntityId.Null)
-            return;
-        
-        proj.TryHitEntity(user.Session.PlayerId);
+        world.ProjectileSystem.TryHitEntity(ref proj, owner, user.Session.Player);
     }
 
     public void Read(ref SpanReader rdr) {

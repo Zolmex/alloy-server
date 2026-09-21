@@ -17,6 +17,7 @@ public readonly ref struct EntityContext {
     public readonly ref Stats Stats;
     public readonly ref Combat Combat;
     public readonly ref Flags Flags;
+    public readonly ref Inventory Inventory;
     
     public EntityContext(World world, Entity entity) {
         World = world;
@@ -28,6 +29,7 @@ public readonly ref struct EntityContext {
         Stats = world.Ecs.Get<Stats>(entity);
         Combat = world.Ecs.Get<Combat>(entity);
         Flags = world.Ecs.Get<Flags>(entity);
+        Inventory = world.Ecs.Get<Inventory>(entity);
     }
     
     public float GetSpeed(float speed) { // TODO: Condition effect system

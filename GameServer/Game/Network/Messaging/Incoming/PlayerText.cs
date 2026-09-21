@@ -1,5 +1,5 @@
 ﻿using Common.Network;
-using GameServer.Game.Entities.Old.Extensions;
+using GameServer.Game.Chat;
 
 namespace GameServer.Game.Network.Messaging.Incoming;
 
@@ -8,7 +8,7 @@ public record PlayerText : IIncomingPacket {
     public string Text;
 
     public async Task Handle(User user) {
-        user.Session.Player.Speak(user.Session.World, Text);
+        ChatManager.Speak(user.Session.Player, user.Session.World, Text);
     }
 
     public void Read(ref SpanReader rdr) {

@@ -28,12 +28,23 @@ public struct Inventory {
     public OwnerBuffer Owners;
     
     public BitMask256 ItemUpdates;
+    
+    public Item this[int slot] {
+        get => GetItem(slot);
+        set => SetItem(slot, value);
+    }
 
     public Inventory(params IEnumerable<int> slotTypes) {
         var i = 0;
         foreach (var slotType in slotTypes) {
             SlotTypes[i++] = slotType;
         }
+    }
+
+    public Item GetItem(int slot) {
+        if (slot < 0 || slot >= Size)
+            return null;
+        return Items[slot];
     }
     
     public void SetItem(int slot, Item item) {

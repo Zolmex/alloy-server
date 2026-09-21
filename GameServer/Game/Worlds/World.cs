@@ -306,6 +306,7 @@ public class World {
         DamageSystem.RemoveRecord(en);
         PlayerSightSystem.Remove(en);
         BehaviorSystem.Remove(en);
+        ProjectileSystem.RemoveOwner(en);
     }
     
     private void HandleTimers() {

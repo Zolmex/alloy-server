@@ -304,6 +304,7 @@ public record Shoot : BehaviorScript {
             var projData = new ProjectileData() {
                 Owner = host.Entity,
                 LocalId = bulletId,
+                StartPos = host.Position.Pos,
                 StartTime = time.TotalElapsedMs,
                 Path = _path,
                 Angle = startAngle + i * _shootAngle,

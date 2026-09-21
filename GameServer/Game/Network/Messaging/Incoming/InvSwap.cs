@@ -14,7 +14,7 @@ public record InvSwap : IIncomingPacket {
     public SlotObjectData SlotObject2;
 
     public async Task Handle(User user) {
-        user.Session.World.EntityInventories.EnqueueSwap(user, SlotObject1, SlotObject2);
+        user.Session.World.InventorySystem.EnqueueSwap(user, SlotObject1, SlotObject2);
     }
 
     public void Read(ref SpanReader rdr) {
